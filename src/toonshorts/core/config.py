@@ -3,7 +3,7 @@ Purpose: Central configuration, paths, model names, pricing, and limits.
 Inputs: Environment variables and optional .env file.
 Outputs: Path objects, model constants, hard caps, pricing dictionaries.
 Depends on: dotenv, os, pathlib, sys
-Used by: cli, config, core, core.assembler, core.caps, core.client, core.cost, core.pipeline, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.render.fake, plugins.render.gemini, plugins.render.pillow
+Used by: cli, config, core, core.assembler, core.caps, core.client, core.cost, core.pipeline, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.gemini_tts, plugins.voice.piper, voice_utils
 Config keys: GEMINI_API_KEY, OneDrive
 Tests: tests/unit/test_spend_cap.py, tests/unit/test_styles.py
 """
@@ -24,6 +24,9 @@ if not STYLES_DIR.exists() and (PROJECT_ROOT / "styles").exists():
 
 OUTPUT_DIR = PROJECT_ROOT / "output"
 TEMP_DIR = PROJECT_ROOT / "temp"
+ASSETS_DIR = PROJECT_ROOT / "assets"
+PIPER_VOICES_DIR = ASSETS_DIR / "voices" / "piper"
+VOICES_REGISTRY_PATH = PROJECT_ROOT / "voices.json"
 
 # Load environment variables strictly from .env located at PROJECT_ROOT
 ENV_FILE = PROJECT_ROOT / ".env"
@@ -35,7 +38,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 
 # Default Plugins
 DEFAULT_LLM = "gemini"
-DEFAULT_VOICE = "edge_tts"
+DEFAULT_VOICE = "gemini_tts"
 DEFAULT_RENDERER = "auto"
 DEFAULT_MOTION = "ffmpeg"
 
@@ -43,7 +46,19 @@ DEFAULT_MOTION = "ffmpeg"
 TEXT_MODEL_NAME = "gemini-2.5-flash"
 CRITIC_MODEL_NAME = "gemini-2.5-flash"
 IMAGE_MODEL_NAME = "imagen-3.0-generate-002"
-TTS_MODEL_NAME = "gemini-2.5-flash-preview-tts"
+TTS_MODEL_NAME = "gemini-3.8-flash-tts"
+
+# Gemini Prebuilt Voice Names for Character Assignment
+GEMINI_VOICES = [
+    "Kore",
+    "Puck",
+    "Fenrir",
+    "Aoede",
+    "Charon",
+    "Enceladus",
+    "Zephyr",
+    "Leda",
+]
 
 # Hard Caps Per Run
 MAX_API_CALLS_PER_RUN = 35

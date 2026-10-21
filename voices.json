@@ -1,0 +1,49 @@
+{
+  "voices": [
+    {
+      "name": "en_US-lessac-medium",
+      "engine": "piper",
+      "source": "https://huggingface.co/rhasspy/piper-voices",
+      "license": "unknown",
+      "commercial_ok": "unknown",
+      "model_file": "en_US-lessac-medium.onnx"
+    },
+    {
+      "name": "en_US-amy-medium",
+      "engine": "piper",
+      "source": "https://huggingface.co/rhasspy/piper-voices",
+      "license": "unknown",
+      "commercial_ok": "unknown",
+      "model_file": "en_US-amy-medium.onnx"
+    },
+    {
+      "name": "en_US-danny-low",
+      "engine": "piper",
+      "source": "https://huggingface.co/rhasspy/piper-voices",
+      "license": "unknown",
+      "commercial_ok": "unknown",
+      "model_file": "en_US-danny-low.onnx"
+    },
+    {
+      "name": "david",
+      "engine": "windows_sapi",
+      "source": "Microsoft Windows Desktop SAPI",
+      "license": "Microsoft Windows End User License Agreement (EULA)",
+      "commercial_ok": "unknown"
+    },
+    {
+      "name": "zira",
+      "engine": "windows_sapi",
+      "source": "Microsoft Windows Desktop SAPI",
+      "license": "Microsoft Windows End User License Agreement (EULA)",
+      "commercial_ok": "unknown"
+    },
+    {
+      "name": "hazel",
+      "engine": "windows_sapi",
+      "source": "Microsoft Windows Desktop SAPI",
+      "license": "Microsoft Windows End User License Agreement (EULA)",
+      "commercial_ok": "unknown"
+    }
+  ]
+}

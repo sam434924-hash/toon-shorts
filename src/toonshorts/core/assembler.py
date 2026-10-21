@@ -1,11 +1,11 @@
 """
-Purpose: FFmpeg video assembly using argument lists and ASS subtitles.
+Purpose: FFmpeg video assembly, startup capability verification, and ASS subtitles.
 Inputs: Script plan, image paths, audio clips, and motion provider.
 Outputs: Rendered vertical MP4 video file path.
 Depends on: core.audio_effects, core.config, core.models, core.subtitles, logging, pathlib, shutil, subprocess, typing
 Used by: core.pipeline
 Config keys: VIDEO_FPS
-Tests: tests/smoke/test_smoke_pipeline.py
+Tests: tests/smoke/test_smoke_pipeline.py, tests/unit/test_ffmpeg_check.py
 """
 
 import subprocess
@@ -22,6 +22,39 @@ from . import config
 logger = logging.getLogger("toonshorts.assembler")
 
 
+def check_ffmpeg_subtitles_support() -> bool:
+    """Verifies that FFmpeg is installed and has the subtitles filter enabled.
+
+    Raises:
+        RuntimeError: If FFmpeg is missing or does not support the subtitles filter.
+    """
+    ffmpeg_bin = shutil.which("ffmpeg")
+    if not ffmpeg_bin:
+        raise RuntimeError("FFmpeg is not installed or not found on PATH. FFmpeg with subtitles filter is required.")
+
+    try:
+        res = subprocess.run([ffmpeg_bin, "-filters"], capture_output=True, text=True)
+    except Exception as e:
+        raise RuntimeError(f"Failed to execute FFmpeg to check filters: {e}") from e
+
+    if res.returncode != 0:
+        raise RuntimeError(f"FFmpeg failed while checking filters:\n{res.stderr}")
+
+    lines = res.stdout.splitlines()
+    has_subtitles = any(
+        ("subtitles" in line and "Render text subtitles" in line)
+        or line.strip().startswith(".. subtitles")
+        or " subtitles " in line
+        for line in lines
+    )
+    if not has_subtitles:
+        raise RuntimeError(
+            "FFmpeg exists but does not support the 'subtitles' filter. "
+            "ToonShorts requires FFmpeg built with libass/subtitles support to ensure videos have captions."
+        )
+    return True
+
+
 def assemble_final_video(
     plan: ScriptPlan,
     scene_images: List[Path],
@@ -32,6 +65,8 @@ def assemble_final_video(
     motion_plugin: Optional[Any] = None,
 ) -> Path:
     """Renders scenes, burns in ASS subtitles, and outputs finished vertical MP4."""
+    check_ffmpeg_subtitles_support()
+    temp_dir.mkdir(parents=True, exist_ok=True)
     output_dir.mkdir(parents=True, exist_ok=True)
     safe_title = sanitize_filename(plan.title)
     final_output_path = output_dir / f"{safe_title}.mp4"
@@ -124,8 +159,9 @@ def assemble_final_video(
     logger.info("Burning in ASS word-level captions to final video...")
     res = subprocess.run(final_burn_cmd, cwd=temp_dir, capture_output=True, text=True)
     if res.returncode != 0:
-        logger.warning("Subtitle burn-in returned non-zero code:\n%s. Copying unsubbed video.", res.stderr)
-        shutil.copy2(unsubbed_video, final_output_path)
+        raise RuntimeError(
+            f"Subtitle burn-in failed (never output a video without captions):\n{res.stderr}"
+        )
 
     logger.info("Successfully assembled video: %s", final_output_path)
     return final_output_path

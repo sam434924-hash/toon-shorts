@@ -20,8 +20,9 @@ def test_registry_lists_plugins():
     assert "fake" in list_llms()
     assert "gemini" in list_llms()
     assert "fake" in list_voices()
-    assert "edge_tts" in list_voices()
-    assert "synthetic" in list_voices()
+    assert "gemini_tts" in list_voices()
+    assert "piper" in list_voices()
+    assert "windows_sapi" in list_voices()
     assert "fake" in list_renderers()
     assert "pillow" in list_renderers()
     assert "gemini" in list_renderers()
@@ -35,6 +36,15 @@ def test_get_valid_plugins():
 
     voice = get_voice("fake")
     assert voice.name == "fake"
+
+    voice_gemini = get_voice("gemini_tts")
+    assert voice_gemini.name == "gemini_tts"
+
+    voice_piper = get_voice("piper")
+    assert voice_piper.name == "piper"
+
+    voice_sapi = get_voice("windows_sapi")
+    assert voice_sapi.name == "windows_sapi"
 
     renderer = get_renderer("fake")
     assert renderer.name == "fake"

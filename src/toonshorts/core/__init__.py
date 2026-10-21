@@ -3,7 +3,7 @@ Purpose: Core initialization exporting config, models, registry, and runner.
 Inputs: Internal core module definitions.
 Outputs: Public core functions and classes.
 Depends on: core.caps, core.config, core.errors, core.models, core.pipeline, core.registry
-Used by: cli, core.assembler, core.caps, core.client, core.cost, core.pipeline, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.render.fake, plugins.render.gemini, plugins.render.pillow
+Used by: cli, core.assembler, core.caps, core.client, core.cost, core.pipeline, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.gemini_tts, plugins.voice.piper, voice_utils
 Config keys: None
 Tests: tests/unit/test_validation.py
 """

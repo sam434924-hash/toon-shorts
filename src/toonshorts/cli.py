@@ -40,18 +40,22 @@ def make_command(args: argparse.Namespace) -> int:
 
     output_dir = Path(args.output_dir) if args.output_dir else None
 
+    # Support both --voice-engine and deprecated --voice
+    voice_choice = args.voice_engine or args.voice
+
     try:
         final_video = run_pipeline(
             topic=topic,
             style_name=args.style,
             llm_name=args.llm,
-            voice_name=args.voice,
+            voice_name=voice_choice,
             renderer_name=args.renderer,
             motion_name=args.motion,
             output_dir=output_dir,
             auto_confirm=args.yes,
             keep_temp=args.keep_temp,
             mock=args.mock,
+            allow_noncommercial=args.allow_noncommercial,
         )
         if final_video:
             print("\n=======================================================")
@@ -78,7 +82,19 @@ def main():
     make_parser.add_argument("--yes", "-y", action="store_true", help="Skip cost confirmation prompt")
     make_parser.add_argument("--mock", action="store_true", help="Run with offline mock generator for testing")
     make_parser.add_argument("--llm", default=None, help="LLM plugin to use (gemini, fake)")
-    make_parser.add_argument("--voice", default=None, help="Voice plugin to use (edge_tts, synthetic, fake)")
+    make_parser.add_argument(
+        "--voice-engine",
+        dest="voice_engine",
+        choices=["gemini", "gemini_tts", "piper", "sapi", "windows_sapi", "fake"],
+        default=None,
+        help="Voice engine plugin to use (gemini, piper, sapi)",
+    )
+    make_parser.add_argument("--voice", default=None, help=argparse.SUPPRESS)
+    make_parser.add_argument(
+        "--allow-noncommercial",
+        action="store_true",
+        help="Allow voices marked as non-commercial or unverified in voices.json",
+    )
     make_parser.add_argument("--renderer", default=None, help="Renderer plugin to use (pillow, gemini, fake)")
     make_parser.add_argument("--motion", default=None, help="Motion plugin to use (ffmpeg, static)")
     make_parser.add_argument("--output-dir", default=None, help="Custom output directory")

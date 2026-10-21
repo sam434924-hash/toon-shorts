@@ -7,7 +7,7 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 ### `make`
 - **Description**: Generates an end-to-end 9:16 vertical short animated video.
 - **Files**: `src/toonshorts/cli.py`, `src/toonshorts/core/pipeline.py`
-- **Config Flags / Options**: `--style`, `--topic`, `--yes`, `--mock`, `--llm`, `--voice`, `--renderer`, `--motion`, `--output-dir`, `--keep-temp`
+- **Config Flags / Options**: `--style`, `--topic`, `--yes`, `--mock`, `--llm`, `--voice`, `--voice-engine`, `--allow-noncommercial`, `--renderer`, `--motion`, `--output-dir`, `--keep-temp`
 - **Tests**: `tests/smoke/test_smoke_pipeline.py`
 
 ---
@@ -30,20 +30,26 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 
 ## Voice Plugins (`plugins/voice`)
 
-### `edge_tts`
-- **Description**: High-fidelity speech synthesizer using Edge-TTS with word-level boundary detection.
-- **Files**: `src/toonshorts/plugins/voice/edge_tts.py`
-- **Config Flags**: `DEFAULT_VOICE`
+### `gemini_tts`
+- **Description**: Official Google Gemini text-to-speech audio generator with exponential backoff and speech verification.
+- **Files**: `src/toonshorts/plugins/voice/gemini_tts.py`, `src/toonshorts/core/client.py`
+- **Config Flags**: `GEMINI_API_KEY`, `TTS_MODEL_NAME`, `GEMINI_VOICES`
 - **Tests**: `tests/contract/test_voice_contract.py`
 
-### `synthetic`
-- **Description**: Standalone offline synthesized tone audio generator with word-level proportional timing.
-- **Files**: `src/toonshorts/plugins/voice/synthetic.py`
-- **Config Flags**: None
-- **Tests**: `tests/contract/test_voice_contract.py`, `tests/unit/test_timing.py`
+### `piper`
+- **Description**: Local fast neural TTS engine running through subprocess argument lists and stdin.
+- **Files**: `src/toonshorts/plugins/voice/piper.py`
+- **Config Flags**: `PIPER_VOICES_DIR`, `VOICES_REGISTRY_PATH`
+- **Tests**: `tests/contract/test_voice_contract.py`
+
+### `windows_sapi`
+- **Description**: Local Windows SAPI voice synthesizer via pyttsx3 for offline testing.
+- **Files**: `src/toonshorts/plugins/voice/windows_sapi.py`
+- **Config Flags**: `VOICES_REGISTRY_PATH`
+- **Tests**: `tests/contract/test_voice_contract.py`
 
 ### `fake`
-- **Description**: Minimal silence/tone audio generator for offline smoke testing.
+- **Description**: Minimal deterministic audio generator for offline contract testing and smoke runs.
 - **Files**: `src/toonshorts/plugins/voice/fake.py`
 - **Config Flags**: None
 - **Tests**: `tests/contract/test_voice_contract.py`, `tests/smoke/test_smoke_pipeline.py`

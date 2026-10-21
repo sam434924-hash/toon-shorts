@@ -1,16 +1,20 @@
 """
 Purpose: Google GenAI client wrapper with backoff, limits, and offline mock.
 Inputs: Prompts, model parameters, schemas, and credentials.
-Outputs: Generated text responses and image byte streams.
+Outputs: Generated text responses, image byte streams, and TTS audio bytes.
 Depends on: core.caps, core.config, core.errors, core.models, google.genai, json, logging, random, time, typing
-Used by: client, plugins.llm.gemini, plugins.render.gemini
-Config keys: GEMINI_API_KEY, IMAGE_MODEL_NAME, TEXT_MODEL_NAME
+Used by: client, plugins.llm.gemini, plugins.render.gemini, plugins.voice.gemini_tts
+Config keys: GEMINI_API_KEY, IMAGE_MODEL_NAME, TEXT_MODEL_NAME, TTS_MODEL_NAME
 Tests: tests/unit/test_spend_cap.py
 """
 
 import time
 import random
 import json
+import math
+import struct
+import wave
+import io
 import logging
 from typing import Optional, Any
 from google import genai
@@ -18,7 +22,7 @@ from google.genai import types
 from google.genai.errors import APIError
 
 from . import config
-from .errors import SpendCapExceededError
+from .errors import SpendCapExceededError, VoiceError
 from .caps import SpendCapTracker
 from .models import ScriptPlan, CriticReview
 
@@ -32,7 +36,7 @@ class GeminiClientWrapper:
         self.mock = mock
         self.tracker = tracker or SpendCapTracker()
         self.critic_rewrite_count = 0
-        
+
         self.api_key = api_key or config.GEMINI_API_KEY
         if not self.api_key and not self.mock:
             logger.info("No GEMINI_API_KEY found; defaulting to mock mode for offline safety.")
@@ -159,6 +163,85 @@ class GeminiClientWrapper:
                 else:
                     raise RuntimeError(f"Unexpected image generation error: {e}") from e
 
+    def generate_speech_with_retry(
+        self,
+        text: str,
+        voice_name: str,
+        model: Optional[str] = None,
+        max_retries: int = 3,
+    ) -> bytes:
+        """
+        Synthesizes speech using the official Gemini TTS API with exponential backoff for 429/503.
+        Returns complete 16-bit 24kHz WAV bytes.
+        """
+        self._increment_api_call()
+        model_name = model or config.TTS_MODEL_NAME
+
+        if self.mock:
+            return self._mock_speech_response(text)
+
+        backoff = 2.0
+        for attempt in range(max_retries + 1):
+            try:
+                gen_config = types.GenerateContentConfig(
+                    response_modalities=["AUDIO"],
+                    speech_config=types.SpeechConfig(
+                        voice_config=types.VoiceConfig(
+                            prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                                voice_name=voice_name
+                            )
+                        )
+                    ),
+                )
+                response = self.client.models.generate_content(
+                    model=model_name,
+                    contents=text,
+                    config=gen_config,
+                )
+                if response.candidates:
+                    for part in response.candidates[0].content.parts:
+                        if part.inline_data and part.inline_data.data:
+                            return part.inline_data.data
+
+                raise VoiceError(f"No audio content returned by Gemini TTS for model '{model_name}'")
+            except APIError as e:
+                status_code = getattr(e, "code", None)
+                if status_code in (429, 503) and attempt < max_retries:
+                    sleep_time = backoff + random.uniform(0.1, 0.5)
+                    logger.warning("Gemini TTS %s on attempt %d. Retrying in %.2fs...", status_code, attempt + 1, sleep_time)
+                    time.sleep(sleep_time)
+                    backoff *= 2.0
+                else:
+                    raise VoiceError(f"Gemini TTS call failed after {attempt+1} attempts: {e}") from e
+            except Exception as e:
+                if attempt < max_retries and ("429" in str(e) or "503" in str(e)):
+                    time.sleep(backoff)
+                    backoff *= 2.0
+                else:
+                    raise VoiceError(f"Unexpected error calling Gemini TTS API: {e}") from e
+
+    def _mock_speech_response(self, text: str) -> bytes:
+        """Deterministic 16-bit 24kHz WAV speech generator for offline runs."""
+        words = text.split()
+        word_count = max(len(words), 1)
+        duration = word_count * 0.38  # ~2.6 words/sec
+        sample_rate = 24000
+        num_samples = int(duration * sample_rate)
+
+        buf = io.BytesIO()
+        with wave.open(buf, "wb") as wf:
+            wf.setnchannels(1)
+            wf.setsampwidth(2)
+            wf.setframerate(sample_rate)
+            raw_bytes = bytearray()
+            for i in range(num_samples):
+                t = float(i) / sample_rate
+                val = int(8000.0 * math.sin(2.0 * math.pi * 320.0 * t))
+                raw_bytes.extend(struct.pack("<h", val))
+            wf.writeframes(raw_bytes)
+
+        return buf.getvalue()
+
     def _mock_text_response(self, prompt: str, schema: Any) -> str:
         """Deterministic mock responses for offline runs and automated test suites."""
         if schema == ScriptPlan or "ScriptPlan" in str(prompt) or "original characters" in prompt:
@@ -180,8 +263,8 @@ class GeminiClientWrapper:
                 "art_style": style_str,
                 "emotional_arc": "Intense suspicion leads to hilarious misunderstanding",
                 "characters": [
-                    {"name": "Pip", "visual_description": "Stickman wearing oversized round red glasses", "voice_id": "en-US-GuyNeural"},
-                    {"name": "Zack", "visual_description": "Stickman wearing a tall jaunty blue top hat", "voice_id": "en-US-JennyNeural"}
+                    {"name": "Pip", "visual_description": "Stickman wearing oversized round red glasses", "voice_id": "Kore"},
+                    {"name": "Zack", "visual_description": "Stickman wearing a tall jaunty blue top hat", "voice_id": "Puck"}
                 ],
                 "scenes": [
                     {"scene_number": 1, "speaker": "Pip", "dialogue_line": "Stop right there! Someone stole my semicolon!", "action": "Pip points accusingly while trembling with rage", "pose": "shocked", "camera_move": "zoom_in", "transition": "cut", "is_punchline": False},

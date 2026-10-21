@@ -17,7 +17,7 @@ from typing import Dict, Any, Optional
 from . import config
 from .models import ScriptPlan
 from .cost import estimate_costs, confirm_cost_gate
-from .assembler import assemble_final_video
+from .assembler import assemble_final_video, check_ffmpeg_subtitles_support
 from .registry import get_llm, get_voice, get_renderer, get_motion
 
 logger = logging.getLogger("toonshorts.pipeline")
@@ -58,16 +58,27 @@ def run_pipeline(
     auto_confirm: bool = False,
     keep_temp: bool = False,
     mock: bool = False,
+    allow_noncommercial: bool = False,
 ) -> Optional[Path]:
     """Executes the full modular video generation pipeline."""
     config.check_cloud_sync_warning()
+    check_ffmpeg_subtitles_support()
 
     style_clean = style_name.lower().strip()
     preset = load_style_preset(style_clean)
 
+    # Normalize engine aliases
+    resolved_voice = voice_name
+    if resolved_voice:
+        resolved_voice = resolved_voice.lower().strip()
+        if resolved_voice == "gemini":
+            resolved_voice = "gemini_tts"
+        elif resolved_voice == "sapi":
+            resolved_voice = "windows_sapi"
+
     # Resolve plugin selections (mock overrides to fake for fast offline test)
     llm_plugin_name = "fake" if mock else (llm_name or config.DEFAULT_LLM)
-    voice_plugin_name = "fake" if mock else (voice_name or config.DEFAULT_VOICE)
+    voice_plugin_name = "fake" if mock else (resolved_voice or config.DEFAULT_VOICE)
     motion_plugin_name = motion_name or config.DEFAULT_MOTION
 
     if renderer_name:
@@ -84,7 +95,11 @@ def run_pipeline(
 
     # Instantiate plugins from registry
     llm = get_llm(llm_plugin_name)
-    voice = get_voice(voice_plugin_name)
+    try:
+        voice = get_voice(voice_plugin_name, allow_noncommercial=allow_noncommercial)
+    except TypeError:
+        voice = get_voice(voice_plugin_name)
+
     renderer = get_renderer(render_plugin_name)
     motion = get_motion(motion_plugin_name)
 
