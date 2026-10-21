@@ -1,0 +1,29 @@
+{
+  "name": "crayon",
+  "renderer": "gemini",
+  "image_prompt_prefix": "Vibrant children's wax crayon drawing on rough construction paper, thick waxy colorful texture, bold hand-drawn outlines, joyful playful naive folk art style, expressive cartoon characters",
+  "color_palette": {
+    "background": "#FFFDF0",
+    "primary": "#FF3366",
+    "secondary": "#33CC99",
+    "accent": "#FFBB00"
+  },
+  "caption": {
+    "font": "Arial",
+    "font_size": 72,
+    "primary_color": "&H00FFFFFF",
+    "outline_color": "&H002B2D42",
+    "highlight_color": "&H0028E0FF",
+    "style": "chunky_outline"
+  },
+  "pacing": "moderate",
+  "default_sound_effects": ["squeak", "boing", "scribble"],
+  "avoid": [
+    "digital smoothness",
+    "3D CGI animation",
+    "sleek vector graphics",
+    "photorealism",
+    "clean geometric precision",
+    "blurry photographic textures"
+  ]
+}

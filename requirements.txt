@@ -1,0 +1,7 @@
+google-genai==2.31.0
+pydantic==2.13.3
+pillow==12.2.0
+python-dotenv==1.2.2
+pytest==9.1.1
+edge-tts==7.2.8
+numpy==2.4.4

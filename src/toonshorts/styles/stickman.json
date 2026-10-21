@@ -1,0 +1,29 @@
+{
+  "name": "stickman",
+  "renderer": "pillow",
+  "image_prompt_prefix": "Minimalist black line stick figure animation on clean textured off-white paper background, high contrast, crisp lines",
+  "color_palette": {
+    "background": "#FDFBF7",
+    "line": "#1A1A1A",
+    "accent": "#E63946",
+    "secondary": "#457B9D"
+  },
+  "caption": {
+    "font": "Arial",
+    "font_size": 72,
+    "primary_color": "&H00FFFFFF",
+    "outline_color": "&H00111111",
+    "highlight_color": "&H0000D8F6",
+    "style": "bold_outline"
+  },
+  "pacing": "fast",
+  "default_sound_effects": ["pop", "boing", "whistle"],
+  "avoid": [
+    "3D render",
+    "gradients",
+    "photorealistic",
+    "complex background scenery",
+    "muddy shadows",
+    "motion blur"
+  ]
+}

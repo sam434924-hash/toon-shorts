@@ -1,0 +1,139 @@
+"""
+Purpose: Pipeline runner orchestrating LLM, voice, render, and motion.
+Inputs: Video production topic, style name, flags, and plugin selections.
+Outputs: Path to finalized vertical animation MP4 short.
+Depends on: core.assembler, core.config, core.cost, core.errors, core.models, core.registry, json, logging, pathlib, shutil, typing
+Used by: cli, core
+Config keys: DEFAULT_LLM, DEFAULT_MOTION, DEFAULT_RENDERER, DEFAULT_VOICE, OUTPUT_DIR, STYLES_DIR, TEMP_DIR
+Tests: tests/smoke/test_smoke_pipeline.py
+"""
+
+import json
+import logging
+import shutil
+from pathlib import Path
+from typing import Dict, Any, Optional
+
+from . import config
+from .models import ScriptPlan
+from .cost import estimate_costs, confirm_cost_gate
+from .assembler import assemble_final_video
+from .registry import get_llm, get_voice, get_renderer, get_motion
+
+logger = logging.getLogger("toonshorts.pipeline")
+
+
+def load_style_preset(style_name: str, styles_dir: Path = config.STYLES_DIR) -> dict:
+    """Loads a style preset JSON file from the styles directory."""
+    preset_file = styles_dir / f"{style_name}.json"
+    if not preset_file.is_file():
+        available = [p.stem for p in styles_dir.glob("*.json")] if styles_dir.exists() else []
+        raise FileNotFoundError(
+            f"Style '{style_name}' not found at {preset_file}. "
+            f"Available styles: {', '.join(sorted(available))}"
+        )
+
+    try:
+        with open(preset_file, "r", encoding="utf-8") as f:
+            preset = json.load(f)
+    except Exception as e:
+        raise ValueError(f"Corrupt or unreadable preset file for style '{style_name}': {e}") from e
+
+    required_keys = ["image_prompt_prefix", "color_palette", "caption", "pacing", "avoid"]
+    for key in required_keys:
+        if key not in preset:
+            raise ValueError(f"Style preset '{style_name}' missing required field: '{key}'")
+
+    return preset
+
+
+def run_pipeline(
+    topic: str,
+    style_name: str,
+    llm_name: Optional[str] = None,
+    voice_name: Optional[str] = None,
+    renderer_name: Optional[str] = None,
+    motion_name: Optional[str] = None,
+    output_dir: Optional[Path] = None,
+    auto_confirm: bool = False,
+    keep_temp: bool = False,
+    mock: bool = False,
+) -> Optional[Path]:
+    """Executes the full modular video generation pipeline."""
+    config.check_cloud_sync_warning()
+
+    style_clean = style_name.lower().strip()
+    preset = load_style_preset(style_clean)
+
+    # Resolve plugin selections (mock overrides to fake for fast offline test)
+    llm_plugin_name = "fake" if mock else (llm_name or config.DEFAULT_LLM)
+    voice_plugin_name = "fake" if mock else (voice_name or config.DEFAULT_VOICE)
+    motion_plugin_name = motion_name or config.DEFAULT_MOTION
+
+    if renderer_name:
+        render_plugin_name = renderer_name
+    elif mock:
+        render_plugin_name = "fake"
+    else:
+        # Determine renderer from style preset if auto
+        preset_renderer = preset.get("renderer", "gemini").lower()
+        if preset_renderer == "pillow" or style_clean == "stickman":
+            render_plugin_name = "pillow"
+        else:
+            render_plugin_name = "gemini"
+
+    # Instantiate plugins from registry
+    llm = get_llm(llm_plugin_name)
+    voice = get_voice(voice_plugin_name)
+    renderer = get_renderer(render_plugin_name)
+    motion = get_motion(motion_plugin_name)
+
+    temp_dir = config.TEMP_DIR / f"run_{style_clean}"
+    if temp_dir.exists():
+        shutil.rmtree(temp_dir, ignore_errors=True)
+    temp_dir.mkdir(parents=True, exist_ok=True)
+
+    dest_output_dir = output_dir or config.OUTPUT_DIR
+    dest_output_dir.mkdir(parents=True, exist_ok=True)
+
+    try:
+        # 1. Planning
+        logger.info("[1/6] Planning screenplay for '%s' using %s...", topic, llm.name)
+        plan: ScriptPlan = llm.generate_plan(topic, style_clean, preset)
+
+        # 2. Critic Review
+        logger.info("[2/6] Reviewing screenplay with critic loop...")
+        refined_plan, review = llm.review_and_refine(plan, preset)
+        logger.info("Final Critic Score: %.1f/10", review.score)
+
+        # 3. Cost Gate
+        cost_est = estimate_costs(refined_plan, preset, rewrite_count=1)
+        if not confirm_cost_gate(cost_est, auto_confirm=auto_confirm):
+            return None
+
+        # 4. Voice First (Timing Spine)
+        logger.info("[3/6] Generating voice track via %s...", voice.name)
+        scene_audios = voice.generate_all_voices(refined_plan, temp_dir)
+
+        # 5. Scene Rendering
+        logger.info("[4/6] Rendering scene images via %s...", renderer.name)
+        scene_images = renderer.render_all_scenes(refined_plan, preset, temp_dir)
+
+        # 6. Assembly & Motion
+        logger.info("[5/6] Assembling video using %s motion...", motion.name)
+        final_video = assemble_final_video(
+            plan=refined_plan,
+            scene_images=scene_images,
+            scene_audios=scene_audios,
+            style_preset=preset,
+            temp_dir=temp_dir,
+            output_dir=dest_output_dir,
+            motion_plugin=motion,
+        )
+
+        logger.info("Pipeline completed successfully: %s", final_video)
+        return final_video
+
+    finally:
+        if not keep_temp and temp_dir.exists():
+            shutil.rmtree(temp_dir, ignore_errors=True)
