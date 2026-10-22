@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-22: Batch 4 asset migration: preserved Piper voice model and fallbacks, pruned redundant scratch and test audio duplicates without invalidating TTS cache.
+
 - 2026-10-22: Batch 3 asset migration: migrated assets3d/ to assets/3d/, removed obsolete stickman tests, pruned stale licenses, and updated 3D blender references.
 
 - 2026-10-22: Batch 2 asset migration: moved assets2d/ to assets/2d/, updated character pack references to paths module, and eliminated assets2d root directory.
