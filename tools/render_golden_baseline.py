@@ -1,7 +1,7 @@
 """
 Renders golden baseline for two-character whiteboard test (scenes 1 & 2) using cached audio.
-Saves 6 frames to output/pack_tests/golden/.
-Strictly protects output/What_is_an_API.mp4 and output/keep/.
+Saves 6 frames to tests/fixtures/golden/.
+Strictly protects output/What_is_an_API.mp4.
 """
 
 import json
@@ -9,7 +9,7 @@ import logging
 from pathlib import Path
 import subprocess
 
-from toonshorts.core import config
+from toonshorts.core import config, paths
 from toonshorts.core.models import Character, Scene, SceneAudio
 from toonshorts.plugins.render.animejs import (
     AnimeJSRenderPlugin,
@@ -24,7 +24,7 @@ logger = logging.getLogger("render_golden_baseline")
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 OUTPUT_DIR = PROJECT_ROOT / "output" / "pack_tests"
-GOLDEN_DIR = OUTPUT_DIR / "golden"
+GOLDEN_DIR = paths.TESTS_GOLDEN_DIR
 GOLDEN_DIR.mkdir(parents=True, exist_ok=True)
 
 PROTECTED_FILE = PROJECT_ROOT / "output" / "What_is_an_API.mp4"

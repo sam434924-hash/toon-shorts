@@ -4,7 +4,7 @@ Generates:
 1. Fast preview render (540x960, 15fps) to output/pack_tests/v2/What_is_an_API_v2_fast.mp4
 2. 3 extracted frames per visual to output/pack_tests/v2/frames/
 3. Full-size normal render (1080x1920, 30fps) to output/pack_tests/v2/What_is_an_API_v2.mp4
-Strictly preserves output/What_is_an_API.mp4 and output/keep/.
+Strictly preserves output/What_is_an_API.mp4.
 """
 
 import json

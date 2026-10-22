@@ -9,7 +9,7 @@ from PIL import Image
 from tools.render_golden_baseline import run_baseline
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-GOLDEN_DIR = PROJECT_ROOT / "output" / "pack_tests" / "golden"
+GOLDEN_DIR = PROJECT_ROOT / "tests" / "fixtures" / "golden"
 SPLIT_DIR = PROJECT_ROOT / "output" / "pack_tests" / "split_test"
 
 

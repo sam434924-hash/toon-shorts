@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-22: Batch 5 asset migration: relocated golden baselines from output/ to tests/fixtures/golden/, updated tools, and cleaned output directory.
+
 - 2026-10-22: Batch 4 asset migration: preserved Piper voice model and fallbacks, pruned redundant scratch and test audio duplicates without invalidating TTS cache.
 
 - 2026-10-22: Batch 3 asset migration: migrated assets3d/ to assets/3d/, removed obsolete stickman tests, pruned stale licenses, and updated 3D blender references.
