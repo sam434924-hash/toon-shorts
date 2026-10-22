@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-22: Integrated 2D character packs into whiteboard renderer with left/right slots, mirrored right placement, speech-driven mouth sync for active speaker, idle blinks/glances for listeners, and gesture resolution with warnings.
 - 2026-10-22: Extracted whiteboard presenter into modular character pack with swappable arm rigs, 4 mouth states, and eye look/blink states.
 - 2026-10-22: Standardized character pack manifest schema (anchors, safe_bounding_box, default_slot, scale, allowed_gestures) and upgraded SVG security to element allowlist with strict URI/event safety.
 - 2026-10-22: Unified boy_a SVG front hair into single continuous closed path eliminating seams and gaps between crown and forehead bangs while keeping eyebrows clear.

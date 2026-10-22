@@ -59,7 +59,7 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 ## Render Plugins (`plugins/render`)
 
 ### `animejs`
-- **Description**: HTML5/SVG code-driven whiteboard animation engine with local Anime.js easing curves, bundled Rough.js progressive stroke-by-stroke drawing synced to Whisper word timings (underlines, keyword circles, inter-card arrows), 7-layer character head architecture, physically attached hands and arm sleeves, 100% constant studio set and static camera across all scenes, safe area gesture boundaries (wave, point, explain, thumbs_up, shrug), and headless browser frame capture.
+- **Description**: HTML5/SVG code-driven whiteboard animation engine with local Anime.js easing curves, bundled Rough.js progressive stroke-by-stroke drawing synced to Whisper word timings (underlines, keyword circles, inter-card arrows), dynamic 2D character pack loading into left and right slots (with mirrored right placement), loudness-driven mouth sync for active speaker, idle blinking/glancing for non-speaking listener, gesture resolution with style presets and scene overrides, 100% constant studio set and static camera across all scenes, safe area gesture boundaries (wave, point, explain, thumbs_up, shrug), and headless browser frame capture.
 - **Files**: `src/toonshorts/plugins/render/animejs.py`
 - **Config Flags**: `ANIME_JS_PATH`, `ROUGH_JS_PATH`, `VIDEO_WIDTH`, `VIDEO_HEIGHT`, `VIDEO_FPS`
 - **Tests**: `tests/contract/test_render_contract.py`, `tests/unit/test_animejs.py`
@@ -153,6 +153,12 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 ---
 
 ## 2D Layered Character System (`core/character2d`, `core/character_pack`)
+
+### `presenter` (Whiteboard Presenter Character Pack)
+- **Description**: Modular 2D layered SVG character pack extracted from whiteboard inline markup. Features swappable arm rigs (`idle`, `wave`, `point`, `explain`, `thumbs_up`, `shrug`), 4 mouth states (`closed`, `slightly_open`, `wide_open`, `round_o` with legacy `open` alias), and eye states (`open`, `blink`, `screen_left`, `screen_right`).
+- **Files**: `src/toonshorts/core/character_pack.py`, `src/toonshorts/core/character2d.py`, `assets2d/characters/presenter/character.svg`, `assets2d/characters/presenter/manifest.json`
+- **Capabilities**: Full manifest compliance, 0 validation errors, swappable arm gesture rigs, eye blinking, speech-synced lip sync, and left/right slot rendering.
+- **Tests**: `tests/unit/test_character_pack.py`, `tests/unit/test_animejs.py`
 
 ### `boy_a` (2D Layered SVG Character Pack)
 - **Description**: Modular 2D layered SVG character pack with swappable eye states (`open`, `blink`, `screen_left`, `screen_right`) and mouth states (`closed`, `slightly_open`, `wide_open`, `round_o`) preserving identical head, hair (merged 2-tone facets), and eyebrows geometry. Includes simple neck and plain hoodie shoulders.

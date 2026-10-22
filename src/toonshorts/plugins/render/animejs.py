@@ -2,7 +2,7 @@
 Purpose: HTML/SVG whiteboard animation rendering engine using Anime.js, Rough.js, and headless browser.
 Inputs: Scene plans, characters, style presets, voice timing cues, and whiteboard text elements.
 Outputs: Rendered 9:16 PNG image frames and animated MP4 video sequences.
-Depends on: PIL, core.config, core.models, core.registry, html, json, logging, numpy, os, pathlib, playwright, subprocess, typing, wave
+Depends on: PIL, core.character2d, core.character_pack, core.config, core.models, core.registry, html, json, logging, numpy, os, pathlib, playwright, subprocess, typing, wave
 Used by: None
 Config keys: ANIME_JS_PATH, ROUGH_JS_PATH, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
 Tests: tests/contract/test_render_contract.py, tests/unit/test_animejs.py
@@ -24,6 +24,8 @@ from PIL import Image
 from playwright.sync_api import sync_playwright
 
 from toonshorts.core import config
+from toonshorts.core.character2d import get_character
+from toonshorts.core.character_pack import CharacterPack
 from toonshorts.core.models import Character, Scene, ScriptPlan, SceneAudio, WordTiming
 from toonshorts.core.registry import RenderInterface, register_renderer
 
@@ -57,6 +59,176 @@ def sanitize_gesture(gesture: Optional[str]) -> str:
     if clean not in ALLOWED_GESTURES:
         raise ValueError(f"Invalid gesture '{gesture}'. Must be one of {sorted(list(ALLOWED_GESTURES))}")
     return clean
+
+
+def resolve_character_gesture(
+    requested_gesture: Optional[str],
+    character_pack: Any,
+    scene_number: int,
+    style_preset: Optional[Dict[str, Any]] = None,
+    scene_gestures_override: Optional[str] = None,
+) -> str:
+    """
+    Resolves the gesture for a character in a scene:
+    1. Checks style_preset['gestures'] (default: 'on') and per-scene override.
+    2. If gestures are 'off' or no gesture requested, returns 'idle'.
+    3. If character cannot perform the requested gesture, returns 'idle' AND logs a clear warning.
+    4. Otherwise returns the sanitized requested gesture.
+    """
+    preset = style_preset or {}
+    preset_gestures = str(preset.get("gestures", "on")).lower().strip()
+    gestures_enabled = (preset_gestures != "off")
+
+    if scene_gestures_override is not None:
+        override = str(scene_gestures_override).lower().strip()
+        if override in ("off", "none", "false", "0"):
+            gestures_enabled = False
+        elif override in ("on", "true", "1"):
+            gestures_enabled = True
+
+    if not gestures_enabled:
+        return "idle"
+
+    if not requested_gesture:
+        return "idle"
+
+    try:
+        clean = sanitize_gesture(requested_gesture)
+    except ValueError:
+        clean = str(requested_gesture).lower().strip()
+
+    allowed = getattr(character_pack, "allowed_gestures", ["idle"])
+    char_id = getattr(character_pack, "pack_id", "character")
+    if clean not in allowed:
+        logger.warning(
+            "Scene %d: Character '%s' does not support gesture '%s', falling back to 'idle'",
+            scene_number,
+            char_id,
+            requested_gesture,
+        )
+        return "idle"
+
+    return clean
+
+
+def resolve_scene_cast(
+    scene: Scene,
+    characters: Optional[List[Character]] = None,
+    default_character: str = "presenter",
+) -> List[str]:
+    """
+    Resolves the list of character IDs present in a scene.
+    Supports explicit scene.cast or scene.characters, falls back to plan characters or default presenter.
+    """
+    scene_cast = getattr(scene, "cast", None)
+    if scene_cast:
+        if isinstance(scene_cast, str):
+            return [scene_cast]
+        return list(scene_cast)
+
+    scene_chars = getattr(scene, "characters", None)
+    if scene_chars:
+        if isinstance(scene_chars, str):
+            return [scene_chars]
+        return [c if isinstance(c, str) else getattr(c, "id", None) or getattr(c, "name", str(c)) for c in scene_chars]
+
+    if characters:
+        if len(characters) == 1:
+            name = characters[0].name.lower()
+            return [name if name != "host" else "presenter"]
+        names = [c.name.lower() for c in characters]
+        if names == ["host", "zack"]:
+            return ["presenter"]
+        if "presenter" in names and "boy_a" not in names:
+            return ["presenter"]
+        return names
+
+    return [default_character]
+
+
+def build_characters_data(
+    cast_ids: List[str],
+    scene: Scene,
+    style_preset: Optional[Dict[str, Any]] = None,
+) -> List[Dict[str, Any]]:
+    """Loads character packs and resolves slots, gestures, and speaker status for each character."""
+    if not cast_ids:
+        cast_ids = ["presenter"]
+
+    seen = set()
+    unique_cast = []
+    for cid in cast_ids:
+        c_clean = str(cid).lower().strip()
+        if c_clean and c_clean not in seen:
+            seen.add(c_clean)
+            unique_cast.append(c_clean)
+            if len(unique_cast) == 2:
+                break
+
+    packs = []
+    for cid in unique_cast:
+        p = get_character(cid)
+        if isinstance(p, dict) and p.get("status") in ("missing", "error"):
+            if cid in ("host", "speaker"):
+                p = get_character("presenter")
+            else:
+                logger.warning("Character '%s' not found in registry: %s", cid, p.get("message"))
+                p = get_character("presenter")
+        packs.append((cid, p))
+
+    assigned_slots: List[Tuple[str, Any, str]] = []
+    if len(packs) == 1:
+        cid, p = packs[0]
+        assigned_slots.append((cid, p, "left"))
+    else:
+        p0_slot = getattr(packs[0][1], "default_slot", "left")
+        p1_slot = getattr(packs[1][1], "default_slot", "right")
+        if p0_slot == "right" and p1_slot == "left":
+            assigned_slots.append((packs[1][0], packs[1][1], "left"))
+            assigned_slots.append((packs[0][0], packs[0][1], "right"))
+        else:
+            assigned_slots.append((packs[0][0], packs[0][1], "left"))
+            assigned_slots.append((packs[1][0], packs[1][1], "right"))
+
+    speaker_val = getattr(scene, "speaker", None)
+    speaker_lower = str(speaker_val).lower().strip() if speaker_val else ""
+
+    speaker_idx = 0
+    if speaker_lower:
+        for idx, (cid, p, slot) in enumerate(assigned_slots):
+            c_name = getattr(p, "name", "").lower()
+            if speaker_lower in (cid, c_name) or (speaker_lower in ("host", "speaker") and cid == "presenter"):
+                speaker_idx = idx
+                break
+
+    scene_req_gesture = getattr(scene, "gesture", None)
+    scene_gestures_override = getattr(scene, "gestures", None)
+    scene_num = getattr(scene, "scene_number", 1)
+
+    result = []
+    for idx, (cid, p, slot) in enumerate(assigned_slots):
+        is_spk = (idx == speaker_idx)
+        req_gest = scene_req_gesture if is_spk else "idle"
+        res_gest = resolve_character_gesture(
+            requested_gesture=req_gest,
+            character_pack=p,
+            scene_number=scene_num,
+            style_preset=style_preset,
+            scene_gestures_override=scene_gestures_override,
+        )
+
+        raw_svg = getattr(p, "raw_svg", "")
+        result.append({
+            "id": cid,
+            "pack": p,
+            "slot": slot,
+            "svg": raw_svg,
+            "is_speaker": is_spk,
+            "gesture": res_gest,
+            "scale": getattr(p, "scale", 1.0),
+        })
+
+    return result
 
 
 def compute_mouth_cues_from_audio(
@@ -418,6 +590,7 @@ def generate_whiteboard_html(
     height: int = config.VIDEO_HEIGHT,
     scene_number: int = 1,
     annotations: Optional[List[Dict[str, Any]]] = None,
+    characters_data: Optional[List[Dict[str, Any]]] = None,
 ) -> str:
     """
     Generates a high-contrast HTML5/SVG composition with Anime.js whiteboard animation,
@@ -552,76 +725,44 @@ def generate_whiteboard_html(
     else:
         gesture_trigger_ms = 600
 
-    # Build gesture arms: hand physically attached to arm sleeve in every frame
-    # All geometry strictly inside Safe Area [50..1030, 50..1870]
-    if clean_gesture == "wave":
-        arm_markup = """
-      <!-- Left Arm (Resting on Desk) -->
-      <path d="M 155 375 Q 120 450 145 540" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
-      <ellipse cx="148" cy="552" rx="28" ry="20" fill="#fed7aa"/>
-      <!-- Right Arm Waving Rig (Physically Attached Shoulder Rotation) -->
-      <g class="active-arm-gesture" id="arm-gesture-wave" style="transform-origin: 370px 375px;">
-        <path d="M 370 375 Q 425 290 450 210" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
-        <circle cx="452" cy="198" r="22" fill="#fed7aa"/>
-        <path d="M 440 184 L 436 160 M 450 180 L 450 154 M 460 182 L 463 158 M 468 188 L 476 166" stroke="#fed7aa" stroke-width="7" stroke-linecap="round"/>
-        <path d="M 438 200 L 426 195" stroke="#fed7aa" stroke-width="7" stroke-linecap="round"/>
-      </g>"""
-    elif clean_gesture == "point":
-        arm_markup = """
-      <!-- Left Arm (Resting on Desk) -->
-      <path d="M 155 375 Q 120 450 145 540" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
-      <ellipse cx="148" cy="552" rx="28" ry="20" fill="#fed7aa"/>
-      <!-- Right Arm Pointing Rig (Physically Attached Shoulder Rotation) -->
-      <g class="active-arm-gesture" id="arm-gesture-point" style="transform-origin: 370px 375px;">
-        <path d="M 370 375 Q 430 300 460 220" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
-        <circle cx="460" cy="216" r="22" fill="#fed7aa"/>
-        <path d="M 465 210 L 510 160" stroke="#fed7aa" stroke-width="14" stroke-linecap="round"/>
-        <path d="M 450 216 Q 456 206 464 212" stroke="#fed7aa" stroke-width="10" stroke-linecap="round"/>
-        <path d="M 452 226 Q 462 232 472 224" stroke="#fba785" stroke-width="3" fill="none"/>
-      </g>"""
-    elif clean_gesture == "explain":
-        arm_markup = """
-      <!-- Left Arm (Resting on Desk) -->
-      <path d="M 155 375 Q 120 450 145 540" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
-      <ellipse cx="148" cy="552" rx="28" ry="20" fill="#fed7aa"/>
-      <!-- Right Arm Explain Rig (Physically Attached Shoulder Rotation) -->
-      <g class="active-arm-gesture" id="arm-gesture-explain" style="transform-origin: 370px 375px;">
-        <path d="M 370 375 Q 425 410 460 360" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
-        <ellipse cx="468" cy="354" rx="22" ry="16" fill="#fed7aa"/>
-        <path d="M 480 348 L 506 340 M 482 355 L 510 352 M 480 363 L 506 365 M 474 370 L 498 376" stroke="#fed7aa" stroke-width="6.5" stroke-linecap="round"/>
-        <path d="M 460 346 L 454 334" stroke="#fed7aa" stroke-width="7" stroke-linecap="round"/>
-      </g>"""
-    elif clean_gesture == "thumbs_up":
-        arm_markup = """
-      <!-- Left Arm (Resting on Desk) -->
-      <path d="M 155 375 Q 120 450 145 540" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
-      <ellipse cx="148" cy="552" rx="28" ry="20" fill="#fed7aa"/>
-      <!-- Right Arm Thumbs Up Rig (Physically Attached Shoulder Rotation) -->
-      <g class="active-arm-gesture" id="arm-gesture-thumbs_up" style="transform-origin: 370px 375px;">
-        <path d="M 370 375 Q 425 390 450 320" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
-        <circle cx="450" cy="312" r="20" fill="#fed7aa"/>
-        <path d="M 450 312 L 450 270" stroke="#fed7aa" stroke-width="14" stroke-linecap="round"/>
-      </g>"""
-    elif clean_gesture == "shrug":
-        arm_markup = """
-      <!-- Left Arm (Resting on Desk) -->
-      <path d="M 155 375 Q 120 450 145 540" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
-      <ellipse cx="148" cy="552" rx="28" ry="20" fill="#fed7aa"/>
-      <!-- Right Arm Shrug Rig (Physically Attached Shoulder Rotation) -->
-      <g class="active-arm-gesture" id="arm-gesture-shrug" style="transform-origin: 370px 375px;">
-        <path d="M 370 375 Q 405 400 420 375" stroke="#1e40af" stroke-width="42" stroke-linecap="round" fill="none"/>
-        <ellipse cx="425" cy="365" rx="20" ry="16" fill="#fed7aa"/>
-      </g>"""
-    else:  # idle
-        arm_markup = """
-      <!-- Left Arm (Resting on Desk) -->
-      <path d="M 155 375 Q 120 450 145 540" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
-      <ellipse cx="148" cy="552" rx="28" ry="20" fill="#fed7aa"/>
-      <!-- Right Arm Idle Rest (Resting on Desk) -->
-      <g class="active-arm-gesture" id="arm-gesture-idle" style="transform-origin: 370px 375px;">
-        <path d="M 370 375 Q 400 450 375 540" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
-        <ellipse cx="372" cy="552" rx="28" ry="20" fill="#fed7aa"/>
-      </g>"""
+    # Build character slots markup and styles
+    if not characters_data:
+        dummy_scene = Scene(
+            scene_number=scene_number,
+            speaker="Host",
+            dialogue_line=safe_title,
+            action="Whiteboard action",
+            gesture=gesture if gesture != "idle" else None,
+        )
+        characters_data = build_characters_data(["presenter"], scene=dummy_scene, style_preset=None)
+        if clean_gesture != "idle" and characters_data:
+            characters_data[0]["gesture"] = clean_gesture
+
+    speaker_slot_id = "character-rig"
+    listener_slot_id = ""
+    speaker_gesture = "idle"
+    chars_html_list = []
+    chars_css_rules = []
+
+    for cdata in characters_data:
+        slot = cdata["slot"]
+        slot_id = "character-rig" if slot == "left" else "character-rig-right"
+        if cdata["is_speaker"]:
+            speaker_slot_id = slot_id
+            speaker_gesture = cdata["gesture"]
+        else:
+            listener_slot_id = slot_id
+
+        gest = cdata["gesture"]
+        chars_css_rules.append(f"    #{slot_id} .arm-gesture {{ display: none; }}")
+        chars_css_rules.append(f"    #{slot_id} #arm-gesture-{gest} {{ display: inline !important; }}")
+
+        c_svg = cdata["svg"]
+        c_slot_class = "char-slot-left" if slot == "left" else "char-slot-right"
+        chars_html_list.append(f'  <div id="{slot_id}" class="{c_slot_class}">\n{c_svg}\n  </div>')
+
+    characters_html = "\n".join(chars_html_list)
+    characters_dynamic_css = "\n".join(chars_css_rules)
 
     timeline_chain = "\n".join(timeline_steps)
     mouth_cues_json = json.dumps(mouth_cues or [])
@@ -794,8 +935,8 @@ def generate_whiteboard_html(
       display: inline-block;
     }}
 
-    /* Presenter Character Rig: 560x630, Soft Drop Shadow & Warm Side Lighting */
-    #character-rig {{
+    /* Character Slots: Left (Current Position 75px) & Right (Mirrored 520px) */
+    .char-slot-left, #character-rig {{
       position: absolute;
       top: 670px;
       left: 75px;
@@ -805,6 +946,20 @@ def generate_whiteboard_html(
       transform-origin: 280px 600px;
       filter: drop-shadow(0 20px 28px rgba(0, 0, 0, 0.50));
     }}
+    .char-slot-right, #character-rig-right {{
+      position: absolute;
+      top: 670px;
+      left: 520px;
+      width: 560px;
+      height: 630px;
+      z-index: 5;
+      transform-origin: 280px 600px;
+      transform: scaleX(-1);
+      filter: drop-shadow(0 20px 28px rgba(0, 0, 0, 0.50));
+    }}
+
+    /* Dynamic character arm gesture display rules */
+{characters_dynamic_css}
 
     /* Desk and Surface Props */
     .desk-container {{
@@ -867,126 +1022,8 @@ def generate_whiteboard_html(
     </div>
   </div>
 
-  <!-- Presenter Character Rig (Clean 7-Layer Head Redesign, Physically Attached Arms) -->
-  <div id="character-rig">
-    <svg viewBox="0 0 560 630" width="560" height="630" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <!-- Warm Side Light Gradient from the Right -->
-        <linearGradient id="warm-sidelight" x1="1" y1="0" x2="0" y2="0">
-          <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.65"/>
-          <stop offset="35%" stop-color="#f59e0b" stop-opacity="0.22"/>
-          <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-
-      <!-- Ergonomic Chair -->
-      <rect x="130" y="190" width="260" height="370" rx="46" fill="#1e293b"/>
-
-      <!-- Body & Royal Blue Sweater (Raised shoulders for natural neck height) -->
-      <path d="M 115 365 Q 260 320 405 365 L 440 630 L 80 630 Z" fill="#1e40af"/>
-      <!-- Warm Side Light on Right Shoulder of Sweater -->
-      <path d="M 320 335 Q 370 355 405 365 L 440 630 L 380 630 Z" fill="url(#warm-sidelight)"/>
-
-      <!-- Shirt Collar (Crisp White V-Neck, nicely seated) -->
-      <path d="M 224 320 L 260 375 L 296 320 Z" fill="#ffffff"/>
-      <path d="M 240 320 L 260 355 L 280 320 Z" fill="#0f172a" opacity="0.15"/>
-
-      <!-- ARM MARKUP (Left resting, Right rest & gesture) -->
-{arm_markup}
-
-      <!-- ==================== HEAD REDESIGN (7 STRICT LAYERS) ==================== -->
-      <!-- 1. Hair Back -->
-      <g id="layer-1-hair-back">
-        <path d="M 145 250 C 125 140, 165 45, 260 42 C 355 45, 395 140, 375 250 C 360 275, 345 240, 345 200 C 345 115, 310 85, 260 85 C 210 85, 175 115, 175 200 C 175 240, 160 275, 145 250 Z" fill="#0f172a"/>
-        <path d="M 260 42 C 355 45, 395 140, 375 250 C 360 275, 345 240, 345 200 C 345 115, 310 85, 260 85 Z" fill="url(#warm-sidelight)" opacity="0.35"/>
-      </g>
-
-      <!-- 2. Neck (Natural, proportional height and width) -->
-      <g id="layer-2-neck">
-        <rect x="222" y="275" width="76" height="55" rx="8" fill="#fed7aa"/>
-        <path d="M 222 280 Q 260 304 298 280 L 298 296 Q 260 316 222 296 Z" fill="#d97706" opacity="0.25"/>
-        <rect x="264" y="275" width="34" height="55" rx="4" fill="url(#warm-sidelight)" opacity="0.7"/>
-      </g>
-
-      <!-- 3. Head Base -->
-      <g id="layer-3-head">
-        <path d="M 172 185 C 170 105, 210 75, 260 75 C 310 75, 350 105, 348 185 C 348 245, 326 302, 260 302 C 194 302, 172 245, 172 185 Z" fill="#fed7aa"/>
-        <path d="M 285 80 C 330 100, 350 145, 348 205 C 346 255, 322 298, 260 302 C 295 296, 336 260, 336 200 C 336 145, 305 105, 285 80 Z" fill="url(#warm-sidelight)" opacity="0.85"/>
-      </g>
-
-      <!-- 4. Ears -->
-      <g id="layer-4-ears">
-        <!-- Left Ear -->
-        <ellipse cx="168" cy="206" rx="14" ry="18" fill="#fed7aa"/>
-        <path d="M 172 198 Q 161 206 170 214" stroke="#fba785" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <!-- Right Ear -->
-        <ellipse cx="352" cy="206" rx="14" ry="18" fill="#fed7aa"/>
-        <path d="M 348 198 Q 359 206 350 214" stroke="#fba785" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <ellipse cx="352" cy="206" rx="14" ry="18" fill="url(#warm-sidelight)" opacity="0.6"/>
-      </g>
-
-      <!-- 5. Face Features -->
-      <g id="layer-5-face">
-        <!-- Cheeks Blush -->
-        <ellipse cx="196" cy="236" rx="14" ry="8" fill="#fb7185" opacity="0.38"/>
-        <ellipse cx="324" cy="236" rx="14" ry="8" fill="#fb7185" opacity="0.45"/>
-
-        <!-- Eyebrows (Smart, expressive arch) -->
-        <path d="M 194 172 Q 215 160 235 170" stroke="#0f172a" stroke-width="4.8" stroke-linecap="round" fill="none"/>
-        <path d="M 285 170 Q 305 160 326 172" stroke="#0f172a" stroke-width="4.8" stroke-linecap="round" fill="none"/>
-
-        <!-- Eyes -->
-        <circle cx="215" cy="204" r="14" fill="#0f172a"/>
-        <circle cx="219" cy="199" r="4.5" fill="#ffffff"/>
-        <circle cx="212" cy="207" r="2" fill="#ffffff" opacity="0.6"/>
-
-        <circle cx="305" cy="204" r="14" fill="#0f172a"/>
-        <circle cx="309" cy="199" r="4.5" fill="#ffffff"/>
-        <circle cx="302" cy="207" r="2" fill="#ffffff" opacity="0.6"/>
-
-        <!-- Nose -->
-        <path d="M 258 218 Q 264 232 257 236" stroke="#d97706" stroke-width="2.6" stroke-linecap="round" fill="none" opacity="0.75"/>
-
-        <!-- Mouth Closed (Friendly Smile) -->
-        <g id="mouth-closed">
-          <path d="M 242 260 Q 260 274 278 260" stroke="#0f172a" stroke-width="4.5" stroke-linecap="round" fill="none"/>
-        </g>
-        <!-- Mouth Open (Speaking Viseme) -->
-        <g id="mouth-open" style="display: none;">
-          <path d="M 240 254 Q 260 248 280 254 Q 278 278 260 280 Q 242 278 240 254 Z" fill="#881337" stroke="#0f172a" stroke-width="3.5"/>
-          <path d="M 245 254 Q 260 260 275 254" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-          <ellipse cx="260" cy="272" rx="8" ry="4" fill="#f43f5e"/>
-        </g>
-      </g>
-
-      <!-- 6. Designer Glasses -->
-      <g id="layer-6-glasses">
-        <rect x="186" y="178" width="58" height="52" rx="16" stroke="#1e293b" stroke-width="4.8" fill="rgba(255,255,255,0.18)"/>
-        <rect x="276" y="178" width="58" height="52" rx="16" stroke="#1e293b" stroke-width="4.8" fill="rgba(255,255,255,0.18)"/>
-        <path d="M 244 200 Q 260 192 276 200" stroke="#1e293b" stroke-width="4.8" fill="none" stroke-linecap="round"/>
-        <path d="M 186 200 L 169 204" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round"/>
-        <path d="M 334 200 L 351 204" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round"/>
-        <line x1="194" y1="186" x2="208" y2="186" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
-        <line x1="284" y1="186" x2="298" y2="186" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
-      </g>
-
-      <!-- 7. Hair Front (Volume, Hairline, Fringe & Sideburns framing face) -->
-      <g id="layer-7-hair-front">
-        <!-- Full solid hair volume over cranium with clean outline down to hairline -->
-        <path d="M 158 175 C 150 75, 198 35, 260 35 C 322 35, 370 75, 362 175 C 348 135, 305 110, 260 110 C 215 110, 172 135, 158 175 Z" fill="#0f172a"/>
-        <!-- Solid hair crown filling cranium down to hairline at Y=125 -->
-        <path d="M 162 170 C 158 100, 200 60, 260 60 C 320 60, 362 100, 358 170 C 340 135, 305 122, 260 122 C 215 122, 180 135, 162 170 Z" fill="#0f172a"/>
-        <!-- Natural parted fringe sweeping across forehead framing face -->
-        <path d="M 162 165 C 175 132, 215 125, 260 125 C 310 125, 345 138, 360 165 C 340 144, 305 136, 260 136 C 215 136, 180 146, 162 165 Z" fill="#1e293b"/>
-        <path d="M 235 126 C 275 126, 320 136, 350 162 C 328 146, 288 142, 252 142 C 225 142, 200 148, 182 156 C 200 138, 220 126, 235 126 Z" fill="#0f172a"/>
-        <!-- Left & Right Sideburns framing face in front of ears -->
-        <path d="M 168 165 C 166 186, 168 205, 174 212 C 176 204, 177 186, 174 165 Z" fill="#0f172a"/>
-        <path d="M 352 165 C 354 186, 352 205, 346 212 C 344 204, 343 186, 346 165 Z" fill="#0f172a"/>
-        <!-- Warm rim highlight on top hair -->
-        <path d="M 260 35 C 322 35, 370 75, 362 175 C 348 115, 310 80, 260 80 Z" fill="url(#warm-sidelight)" opacity="0.35"/>
-      </g>
-    </svg>
-  </div>
+  <!-- Character Slots (Left and Right) -->
+{characters_html}
 
   <!-- Foreground Desk Props (Constant Across All Scenes) -->
   <div class="desk-props">
@@ -1008,7 +1045,9 @@ def generate_whiteboard_html(
     window.__cardTimings = {card_timing_json};
     window.__annotations = {annotations_json};
     window.__gestureTriggerMs = {gesture_trigger_ms};
-    window.__gestureType = "{clean_gesture}";
+    window.__gestureType = "{speaker_gesture}";
+    window.__speakerSlotId = "{speaker_slot_id}";
+    window.__listenerSlotId = "{listener_slot_id}";
 
     window.__timeline = anime.timeline({{
       autoplay: false,
@@ -1150,26 +1189,76 @@ def generate_whiteboard_html(
     window.seekAnimation = function(ms) {{
       window.__timeline.seek(ms);
 
-      // 1. Loudness-driven mouth sync
+      // 1. Loudness-driven mouth sync for speaker
       const frameIdx = Math.floor((ms / 1000.0) * fps);
       const isOpen = (window.__mouthCues && window.__mouthCues[frameIdx]) || false;
-      const mClosed = document.getElementById("mouth-closed");
-      const mOpen = document.getElementById("mouth-open");
-      if (mClosed && mOpen) {{
-        mClosed.style.display = isOpen ? "none" : "block";
-        mOpen.style.display = isOpen ? "block" : "none";
+      const speakerEl = document.getElementById(window.__speakerSlotId || "character-rig");
+      if (speakerEl) {{
+        const mClosed = speakerEl.querySelector("#mouth-closed");
+        const mOpen = speakerEl.querySelector("#mouth-wide_open") || speakerEl.querySelector("#mouth-open");
+        if (mClosed && mOpen) {{
+          mClosed.style.display = isOpen ? "none" : "inline";
+          mOpen.style.display = isOpen ? "inline" : "none";
+        }}
+        // Speaker natural periodic blink
+        const sBlink = (ms % 3800) < 140;
+        const seBlink = speakerEl.querySelector("#eyes-blink");
+        const seOpen = speakerEl.querySelector("#eyes-open");
+        if (seBlink && seOpen) {{
+          seBlink.style.display = sBlink ? "inline" : "none";
+          seOpen.style.display = sBlink ? "none" : "inline";
+        }}
       }}
 
-      // 2. Relaxed rest pose with gentle breathing sway only (NO constant bobbing)
+      // 2. Non-speaking listener character only blinks and glances, mouth stays closed
+      if (window.__listenerSlotId) {{
+        const listenerEl = document.getElementById(window.__listenerSlotId);
+        if (listenerEl) {{
+          const lmClosed = listenerEl.querySelector("#mouth-closed");
+          if (lmClosed) lmClosed.style.display = "inline";
+          const otherMouths = listenerEl.querySelectorAll(".mouth-state:not(#mouth-closed)");
+          otherMouths.forEach(el => el.style.display = "none");
+
+          const lBlink = ((ms + 1600) % 3200) < 140;
+          const lGlance = ((ms + 800) % 4500) < 2200;
+          const leBlink = listenerEl.querySelector("#eyes-blink");
+          const leGlance = listenerEl.querySelector("#eyes-screen_left") || listenerEl.querySelector("#eyes-screen_right");
+          const leOpen = listenerEl.querySelector("#eyes-open");
+
+          if (leBlink && leOpen) {{
+            if (lBlink) {{
+              leBlink.style.display = "inline";
+              leOpen.style.display = "none";
+              if (leGlance) leGlance.style.display = "none";
+            }} else if (lGlance && leGlance) {{
+              leBlink.style.display = "none";
+              leOpen.style.display = "none";
+              leGlance.style.display = "inline";
+            }} else {{
+              leBlink.style.display = "none";
+              leOpen.style.display = "inline";
+              if (leGlance) leGlance.style.display = "none";
+            }}
+          }}
+        }}
+      }}
+
+      // 3. Relaxed rest pose with gentle breathing sway only (NO constant bobbing)
       const charRig = document.getElementById("character-rig");
       if (charRig) {{
         const breatheY = Math.sin(ms * 0.0015) * 1.5;
         charRig.style.transform = `translateY(${{breatheY.toFixed(2)}}px)`;
       }}
+      const charRigRight = document.getElementById("character-rig-right");
+      if (charRigRight) {{
+        const breatheYRight = Math.sin((ms + 600) * 0.0015) * 1.5;
+        charRigRight.style.transform = `scaleX(-1) translateY(${{breatheYRight.toFixed(2)}}px)`;
+      }}
 
-      // 3. Purposeful gesture animation: raises at meaningful moment, holds, returns to rest with easing
+      // 4. Purposeful gesture animation: raises at meaningful moment, holds, returns to rest with easing
       const gestType = window.__gestureType;
-      const gestArm = document.getElementById(`arm-gesture-${{gestType}}`);
+      const speakerElForGest = document.getElementById(window.__speakerSlotId || "character-rig");
+      const gestArm = speakerElForGest ? speakerElForGest.querySelector(`#arm-gesture-${{gestType}}`) : document.getElementById(`arm-gesture-${{gestType}}`);
       const trigMs = window.__gestureTriggerMs;
 
       const restAngles = {{
@@ -1217,7 +1306,7 @@ def generate_whiteboard_html(
         gestArm.style.transform = "rotate(0deg)";
       }}
 
-      // 4. Progressive stroke-by-stroke drawing synced to speech
+      // 5. Progressive stroke-by-stroke drawing synced to speech
       if (window.__annotationDrawers) {{
         window.__annotationDrawers.forEach(drawer => {{
           const s = drawer.start_ms;
@@ -1254,7 +1343,7 @@ def generate_whiteboard_html(
         }});
       }}
 
-      // 5. Highlight item currently being spoken
+      // 6. Highlight item currently being spoken
       if (window.__cardTimings && window.__cardTimings.length > 0) {{
         window.__cardTimings.forEach(timing => {{
           const cardEl = document.getElementById(timing.id);
@@ -1300,6 +1389,13 @@ class AnimeJSRenderPlugin(RenderInterface):
         title, words_data, annotations = extract_whiteboard_content_and_annotations(scene, duration_sec)
 
         scene_gesture = getattr(scene, "gesture", None) or "idle"
+        scene_cast = resolve_scene_cast(scene, characters)
+        characters_data = build_characters_data(
+            scene_cast,
+            scene=scene,
+            style_preset=style_preset,
+        )
+
         html_str = generate_whiteboard_html(
             title=title,
             words=words_data,
@@ -1310,6 +1406,7 @@ class AnimeJSRenderPlugin(RenderInterface):
             height=config.VIDEO_HEIGHT,
             scene_number=scene.scene_number,
             annotations=annotations,
+            characters_data=characters_data,
         )
 
         html_file = (temp_dir / f"animejs_scene_{scene.scene_number}.html").resolve()
@@ -1338,6 +1435,7 @@ class AnimeJSRenderPlugin(RenderInterface):
         temp_dir: Optional[Path] = None,
         scene_number: int = 1,
         annotations: Optional[List[Dict[str, Any]]] = None,
+        characters_data: Optional[List[Dict[str, Any]]] = None,
     ) -> Path:
         """
         Renders a fully animated MP4 video with easing transitions synced to an audio clip.
@@ -1362,6 +1460,7 @@ class AnimeJSRenderPlugin(RenderInterface):
             height=config.VIDEO_HEIGHT,
             scene_number=scene_number,
             annotations=annotations,
+            characters_data=characters_data,
         )
 
         html_file = (work_dir / "whiteboard_scene.html").resolve()
@@ -1454,6 +1553,12 @@ class AnimeJSRenderPlugin(RenderInterface):
                     scene, audio.scene_total_duration, audio.word_timings
                 )
                 scene_gesture = getattr(scene, "gesture", None) or "idle"
+                scene_cast = resolve_scene_cast(scene, plan.characters)
+                characters_data = build_characters_data(
+                    scene_cast,
+                    scene=scene,
+                    style_preset=style_preset,
+                )
                 self.render_whiteboard_video(
                     title=title,
                     words=words,
@@ -1465,6 +1570,7 @@ class AnimeJSRenderPlugin(RenderInterface):
                     temp_dir=temp_dir / f"scene_{scene.scene_number}_tmp",
                     scene_number=scene.scene_number,
                     annotations=annotations,
+                    characters_data=characters_data,
                 )
                 results.append(clip_path)
         else:

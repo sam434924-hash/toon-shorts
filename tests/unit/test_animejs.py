@@ -21,9 +21,13 @@ from toonshorts.plugins.render.animejs import (
     sanitize_gesture,
     compute_gesture_bounds,
     generate_scene_decorations,
+    resolve_character_gesture,
+    resolve_scene_cast,
+    build_characters_data,
     SAFE_AREA,
     ALLOWED_GESTURES,
 )
+from toonshorts.core.character2d import get_character
 from toonshorts.core.errors import VoiceError
 from toonshorts.core.client import GeminiClientWrapper
 from toonshorts.plugins.voice.gemini_tts import GeminiTTSVoicePlugin
@@ -422,6 +426,169 @@ def test_annotation_start_time_equals_word_start_time():
         assert annot["start_time"] == pytest.approx(tied_wt.start_time, abs=1e-4), (
             f"Annotation {annot['id']} start_time ({annot['start_time']}) does not equal word start_time ({tied_wt.start_time})"
         )
+
+
+def test_slots_single_character_defaults_to_left():
+    """Verify single character scenes use only the left slot (#character-rig) without board overlap."""
+    scene = Scene(
+        scene_number=1,
+        speaker="Host",
+        dialogue_line="Intro to API",
+        action="Intro",
+        gesture="idle",
+    )
+    cast = resolve_scene_cast(scene, characters=[])
+    assert cast == ["presenter"]
+
+    chars_data = build_characters_data(cast, scene=scene)
+    assert len(chars_data) == 1
+    assert chars_data[0]["slot"] == "left"
+    assert chars_data[0]["is_speaker"] is True
+
+    html = generate_whiteboard_html(
+        title="Intro",
+        words=[{"text": "API"}],
+        duration_sec=2.0,
+        characters_data=chars_data,
+    )
+    assert 'id="character-rig"' in html
+    assert 'id="character-rig-right"' not in html
+    assert 'class="char-slot-left"' in html
+
+
+def test_slots_two_characters_layout_and_mirroring():
+    """Verify two characters are assigned left and right slots with right slot mirrored and no overlap."""
+    scene = Scene(
+        scene_number=1,
+        speaker="Presenter",
+        dialogue_line="Presenter talking to Boy A",
+        action="Dialogue",
+        gesture="point",
+    )
+    cast = ["presenter", "boy_a"]
+    chars_data = build_characters_data(cast, scene=scene)
+    assert len(chars_data) == 2
+    assert chars_data[0]["slot"] == "left"
+    assert chars_data[1]["slot"] == "right"
+    assert chars_data[0]["is_speaker"] is True
+    assert chars_data[1]["is_speaker"] is False
+
+    html = generate_whiteboard_html(
+        title="Dialogue",
+        words=[{"text": "Concept"}],
+        duration_sec=2.0,
+        characters_data=chars_data,
+    )
+    assert 'id="character-rig"' in html
+    assert 'id="character-rig-right"' in html
+    assert 'class="char-slot-left"' in html
+    assert 'class="char-slot-right"' in html
+    assert 'transform: scaleX(-1)' in html
+
+
+def test_gesture_resolution_preset_and_scene_override():
+    """Verify gestures resolve properly with style preset 'on'/'off' and scene-level override."""
+    presenter_pack = get_character("presenter")
+
+    # 1. Preset 'on' allows supported gestures
+    gest = resolve_character_gesture(
+        requested_gesture="wave",
+        character_pack=presenter_pack,
+        scene_number=1,
+        style_preset={"gestures": "on"},
+    )
+    assert gest == "wave"
+
+    # 2. Preset 'off' forces 'idle'
+    gest_off = resolve_character_gesture(
+        requested_gesture="wave",
+        character_pack=presenter_pack,
+        scene_number=1,
+        style_preset={"gestures": "off"},
+    )
+    assert gest_off == "idle"
+
+    # 3. Scene override 'on' overrides preset 'off'
+    gest_override_on = resolve_character_gesture(
+        requested_gesture="wave",
+        character_pack=presenter_pack,
+        scene_number=1,
+        style_preset={"gestures": "off"},
+        scene_gestures_override="on",
+    )
+    assert gest_override_on == "wave"
+
+    # 4. Scene override 'off' overrides preset 'on'
+    gest_override_off = resolve_character_gesture(
+        requested_gesture="wave",
+        character_pack=presenter_pack,
+        scene_number=1,
+        style_preset={"gestures": "on"},
+        scene_gestures_override="off",
+    )
+    assert gest_override_off == "idle"
+
+
+def test_unsupported_gesture_fallback_and_warning_log(caplog):
+    """Verify unsupported gestures fall back to 'idle' and log a warning naming scene, character, and gesture."""
+    boy_pack = get_character("boy_a")
+    assert "idle" in boy_pack.allowed_gestures
+    assert "wave" not in boy_pack.allowed_gestures
+
+    with caplog.at_level("WARNING"):
+        gest = resolve_character_gesture(
+            requested_gesture="wave",
+            character_pack=boy_pack,
+            scene_number=3,
+            style_preset={"gestures": "on"},
+        )
+    assert gest == "idle"
+
+    # Check warning log content
+    warning_logs = [rec.message for rec in caplog.records if rec.levelname == "WARNING"]
+    matching = [m for m in warning_logs if "Scene 3" in m and "boy_a" in m and "wave" in m]
+    assert len(matching) == 1, f"Expected warning log naming scene 3, boy_a, wave; got {warning_logs}"
+
+
+def test_speaker_vs_listener_mouth_and_eyes_behavior(tmp_path):
+    """Verify Playwright renders speaker mouth open while non-speaking listener mouth remains closed."""
+    scene = Scene(
+        scene_number=1,
+        speaker="presenter",
+        dialogue_line="Speaker speaks",
+        action="Dialogue",
+        gesture="idle",
+    )
+    chars_data = build_characters_data(["presenter", "boy_a"], scene=scene)
+    html_content = generate_whiteboard_html(
+        title="Two Characters Test",
+        words=[{"text": "Talking"}],
+        duration_sec=2.0,
+        mouth_cues=[True] * 60,
+        characters_data=chars_data,
+    )
+    test_html = tmp_path / "two_chars.html"
+    test_html.write_text(html_content, encoding="utf-8")
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page(viewport={"width": config.VIDEO_WIDTH, "height": config.VIDEO_HEIGHT})
+        page.goto(test_html.as_uri())
+
+        page.evaluate("window.seekAnimation(500)")
+
+        # Presenter (speaker) mouth should be open
+        spk_closed_display = page.evaluate("() => document.querySelector('#character-rig #mouth-closed').style.display")
+        spk_open_display = page.evaluate("() => (document.querySelector('#character-rig #mouth-wide_open') || document.querySelector('#character-rig #mouth-open')).style.display")
+        assert spk_closed_display == "none"
+        assert spk_open_display == "inline"
+
+        # Boy_a (listener) mouth should be closed
+        lis_closed_display = page.evaluate("() => document.querySelector('#character-rig-right #mouth-closed').style.display")
+        assert lis_closed_display != "none"
+
+        browser.close()
+
 
 
 
