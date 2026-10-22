@@ -255,3 +255,23 @@ def test_resolve_visual_timings_matched_and_fallback(caplog):
     # Second visual missed -> logged warning and even spacing
     assert any("Trigger word 'nonexistentword' not found in word timings" in record.message for record in caplog.records)
     assert resolved[1]["start_ms"] > 1650
+
+
+def test_xss_rendered_as_plain_text():
+    from toonshorts.plugins.render.animejs.visual_renderer import build_stage_elements
+
+    raw_nodes = ["<script>alert(1)</script>", '<img src="x" onerror="alert(2)">']
+    timed = [{
+        "index": 0,
+        "type": "flow",
+        "trigger_word": "test",
+        "params": {"nodes": raw_nodes},
+        "start_ms": 1000,
+        "duration_ms": 4000,
+    }]
+    html, css, descriptors = build_stage_elements(timed, scene_number=1)
+    assert "<script>" not in html
+    assert "&lt;script&gt;alert(1)&lt;/script&gt;" in html
+    assert "<img" not in html
+    assert "&lt;img" in html
+
