@@ -26,6 +26,7 @@ from toonshorts.plugins.render.animejs import (
     build_characters_data,
     SAFE_AREA,
     ALLOWED_GESTURES,
+    resolve_listener_glance_eye,
 )
 from toonshorts.core.character2d import get_character
 from toonshorts.core.errors import VoiceError
@@ -591,6 +592,86 @@ def test_speaker_vs_listener_mouth_and_eyes_behavior(tmp_path):
 
         browser.close()
 
+def test_listener_eye_direction_logic_both_slots():
+    """
+    Verify that listener eye state resolves to look toward speaker on screen for both slots.
+    Right slot is mirrored with scaleX(-1), so local 'eyes-screen_right' reflects to screen-left.
+    Left slot is unmirrored, so local 'eyes-screen_right' points to screen-right.
+    """
+    # Slot 1: Listener in right slot, Speaker in left slot
+    eye_right_slot = resolve_listener_glance_eye(listener_slot="right", speaker_slot="left")
+    assert eye_right_slot == "eyes-screen_right"
+
+    eye_rig_right = resolve_listener_glance_eye(listener_slot="character-rig-right", speaker_slot="character-rig")
+    assert eye_rig_right == "eyes-screen_right"
+
+    # Slot 2: Listener in left slot, Speaker in right slot
+    eye_left_slot = resolve_listener_glance_eye(listener_slot="left", speaker_slot="right")
+    assert eye_left_slot == "eyes-screen_right"
+
+    eye_rig_left = resolve_listener_glance_eye(listener_slot="character-rig", speaker_slot="character-rig-right")
+    assert eye_rig_left == "eyes-screen_right"
 
 
+def test_listener_eye_glance_in_dom_both_slots(tmp_path):
+    """
+    Verify in DOM that listener glances toward speaker for both left and right slot configurations.
+    """
+    scene1 = Scene(
+        scene_number=1,
+        speaker="presenter",
+        dialogue_line="Speaker on left",
+        action="Dialogue",
+        gesture="idle",
+    )
+    chars1 = build_characters_data(["presenter", "boy_a"], scene=scene1)
+    html1 = generate_whiteboard_html(
+        title="Slot 1 Test",
+        words=[{"text": "Point 1"}],
+        duration_sec=2.0,
+        mouth_cues=[False] * 60,
+        characters_data=chars1,
+    )
+    file1 = tmp_path / "listener_right.html"
+    file1.write_text(html1, encoding="utf-8")
+
+    scene2 = Scene(
+        scene_number=2,
+        speaker="boy_a",
+        dialogue_line="Speaker on right",
+        action="Dialogue",
+        gesture="idle",
+    )
+    chars2 = build_characters_data(["presenter", "boy_a"], scene=scene2)
+    html2 = generate_whiteboard_html(
+        title="Slot 2 Test",
+        words=[{"text": "Point 2"}],
+        duration_sec=2.0,
+        mouth_cues=[False] * 60,
+        characters_data=chars2,
+    )
+    file2 = tmp_path / "listener_left.html"
+    file2.write_text(html2, encoding="utf-8")
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page(viewport={"width": config.VIDEO_WIDTH, "height": config.VIDEO_HEIGHT})
+
+        # Test Config 1 (Listener in right slot, ms=500 is in glance window)
+        page.goto(file1.as_uri())
+        page.evaluate("window.seekAnimation(500)")
+        lis_glance_display_1 = page.evaluate("() => document.querySelector('#character-rig-right #eyes-screen_right').style.display")
+        lis_other_display_1 = page.evaluate("() => document.querySelector('#character-rig-right #eyes-screen_left').style.display")
+        assert lis_glance_display_1 == "inline"
+        assert lis_other_display_1 == "none"
+
+        # Test Config 2 (Listener in left slot, ms=500 is in glance window)
+        page.goto(file2.as_uri())
+        page.evaluate("window.seekAnimation(500)")
+        lis_glance_display_2 = page.evaluate("() => document.querySelector('#character-rig #eyes-screen_right').style.display")
+        lis_other_display_2 = page.evaluate("() => document.querySelector('#character-rig #eyes-screen_left').style.display")
+        assert lis_glance_display_2 == "inline"
+        assert lis_other_display_2 == "none"
+
+        browser.close()
 

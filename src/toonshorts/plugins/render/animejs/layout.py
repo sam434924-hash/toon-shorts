@@ -123,3 +123,30 @@ def compute_gesture_bounds(
         "min_y": float(rig_y + local_min_y),
         "max_y": float(rig_y + local_max_y),
     }
+
+
+def resolve_listener_glance_eye(
+    listener_slot: str,
+    speaker_slot: str = "left",
+) -> str:
+    """
+    Determines the appropriate SVG eye layer ID ('eyes-screen_left' or 'eyes-screen_right')
+    for a listener character so that pupils appear directed towards the speaker on screen,
+    accounting for horizontal mirroring in the right character slot (scaleX(-1)).
+
+    - Left slot (unmirrored):
+      Speaker on right -> look screen-right -> local 'eyes-screen_right'
+    - Right slot (mirrored with scaleX(-1)):
+      Speaker on left -> look screen-left -> local 'eyes-screen_right'
+      (Because scaleX(-1) inverts local X, local screen_right renders to screen-left).
+    """
+    is_listener_right = listener_slot in ("right", "character-rig-right")
+    is_speaker_right = speaker_slot in ("right", "character-rig-right")
+
+    speaker_on_screen_right = is_speaker_right and not is_listener_right
+    screen_direction = "right" if speaker_on_screen_right else "left"
+
+    if is_listener_right:
+        return "eyes-screen_right" if screen_direction == "left" else "eyes-screen_left"
+    else:
+        return "eyes-screen_right" if screen_direction == "right" else "eyes-screen_left"

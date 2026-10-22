@@ -18,11 +18,7 @@ function initRoughSketches() {
     const rightX = (tRect.right - canvasRect.left) - 16;
     const underY = (tRect.bottom - canvasRect.top) + 8;
     const uLine = rc.line(leftX, underY, rightX, underY, {
-      seed: 101,
-      stroke: '#f59e0b',
-      strokeWidth: 5.5,
-      roughness: 1.3,
-      bowing: 1.2
+      seed: 101, stroke: '#f59e0b', strokeWidth: 5.5, roughness: 1.3, bowing: 1.2
     });
     uLine.id = 'rough-title-underline';
     roughSvg.appendChild(uLine);
@@ -51,10 +47,7 @@ function initRoughSketches() {
     const cH = Math.max(tRect.height + 36, 80);
 
     const circleNode = rc.ellipse(cX, cY, cW, cH, {
-      seed: 201 + idx * 13,
-      stroke: '#2563eb',
-      strokeWidth: 4.5,
-      roughness: 1.25,
+      seed: 201 + idx * 13, stroke: '#2563eb', strokeWidth: 4.5, roughness: 1.25,
     });
     circleNode.id = `rough-circle-${idx+1}`;
     circleNode.classList.add("rough-card-circle");
@@ -151,7 +144,7 @@ window.seekAnimation = function(ms) {
     }
   }
 
-  // 2. Non-speaking listener character only blinks and glances, mouth stays closed
+  // 2. Non-speaking listener character blinks and glances toward speaker, mouth stays closed
   if (window.__listenerSlotId) {
     const listenerEl = document.getElementById(window.__listenerSlotId);
     if (listenerEl) {
@@ -162,24 +155,27 @@ window.seekAnimation = function(ms) {
 
       const lBlink = ((ms + 1600) % 3200) < 140;
       const lGlance = ((ms + 800) % 4500) < 2200;
-      const leBlink = listenerEl.querySelector("#eyes-blink");
-      const leGlance = listenerEl.querySelector("#eyes-screen_left") || listenerEl.querySelector("#eyes-screen_right");
-      const leOpen = listenerEl.querySelector("#eyes-open");
 
-      if (leBlink && leOpen) {
-        if (lBlink) {
-          leBlink.style.display = "inline";
-          leOpen.style.display = "none";
-          if (leGlance) leGlance.style.display = "none";
-        } else if (lGlance && leGlance) {
-          leBlink.style.display = "none";
-          leOpen.style.display = "none";
-          leGlance.style.display = "inline";
-        } else {
-          leBlink.style.display = "none";
-          leOpen.style.display = "inline";
-          if (leGlance) leGlance.style.display = "none";
-        }
+      // Choose eye state so pupils look towards the speaker on screen.
+      // Right slot is flipped with scaleX(-1), which inverts local coordinates horizontally.
+      const isListenerRight = window.__listenerSlotId === "character-rig-right" || listenerEl.classList.contains("char-slot-right");
+      const isSpeakerRight = (window.__speakerSlotId || "character-rig") === "character-rig-right";
+      const speakerOnRight = isSpeakerRight && !isListenerRight;
+      const screenDir = speakerOnRight ? "right" : "left";
+      const targetEye = isListenerRight
+        ? (screenDir === "left" ? "eyes-screen_right" : "eyes-screen_left")
+        : (screenDir === "right" ? "eyes-screen_right" : "eyes-screen_left");
+      const fallbackEye = (targetEye === "eyes-screen_right") ? "eyes-screen_left" : "eyes-screen_right";
+
+      const leGlance = listenerEl.querySelector(`#${targetEye}`) || listenerEl.querySelector(`#${fallbackEye}`);
+      const leBlink = listenerEl.querySelector("#eyes-blink");
+      const leOpen = listenerEl.querySelector("#eyes-open");
+      const activeEye = (lBlink && leBlink) ? leBlink : ((lGlance && leGlance) ? leGlance : leOpen);
+
+      if (activeEye) {
+        listenerEl.querySelectorAll(".eye-state").forEach(el => {
+          el.style.display = (el === activeEye) ? "inline" : "none";
+        });
       }
     }
   }

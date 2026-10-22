@@ -32,6 +32,7 @@ from toonshorts.plugins.render.animejs.layout import (
     SAFE_AREA,
     compute_gesture_bounds,
     generate_scene_decorations,
+    resolve_listener_glance_eye,
 )
 from toonshorts.plugins.render.animejs.plugin import AnimeJSRenderPlugin
 
@@ -52,4 +53,5 @@ __all__ = [
     "SAFE_AREA",
     "CHAR_RIG_LAYOUT",
     "ALLOWED_GESTURES",
+    "resolve_listener_glance_eye",
 ]

@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-22: Fixed listener eye glance direction in mirrored right character slot so pupils always point toward speaker on screen, and added unit tests for both slot configurations.
+
 - 2026-10-22: Configured pytest slow marker for end-to-end and browser renders, enabling fast daily test execution via -m 'not slow'.
 
 - 2026-10-22: Added --fast preview mode limiting video to 6s, half resolution (540x960), 15 fps, saved to output/fast/ with cached audio and zero Gemini API calls.
