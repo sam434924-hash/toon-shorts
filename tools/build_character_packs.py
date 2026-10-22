@@ -1058,16 +1058,35 @@ def create_character_pack(char_id: str) -> Dict[str, Any]:
 
     rendered_pose_images = []
     for pose_name, ang, eye, mouth, is_back in preview_poses:
-        pose_img = assemble_character_pose(
-            parts=body_parts,
-            head_layers=head_layers,
-            head_back_img=head_back_img,
-            angles=ang,
-            eye_state=eye,
-            mouth_state=mouth,
-            is_back_view=is_back,
-            canvas_size=(600, 1100),
-        )
+        if is_back:
+            # Authentic rear figure from body sheet right side (draped hood/vest back, rear shoes)
+            body_im = Image.open(body_path).convert("RGBA")
+            if char_id == "boy_b":
+                rear_crop = body_im.crop((175, 15, 335, 506))
+            else:
+                rear_crop = body_im.crop((170, 50, 335, 475))
+            rear_clean = floodfill_transparent_bg(rear_crop, bg_thresh=238)
+            std_bbox = rendered_pose_images[0][1].getbbox()
+            target_h = std_bbox[3] - std_bbox[1] if std_bbox else rear_clean.size[1]
+            scale = target_h / max(1, rear_clean.size[1])
+            new_w = int(round(rear_clean.size[0] * scale))
+            new_h = int(round(rear_clean.size[1] * scale))
+            scaled_rear = rear_clean.resize((new_w, new_h), Image.Resampling.LANCZOS)
+            pose_img = Image.new("RGBA", (600, 1100), (0, 0, 0, 0))
+            paste_x = (600 - new_w) // 2
+            paste_y = std_bbox[1] if std_bbox else 50
+            pose_img.alpha_composite(scaled_rear, (paste_x, paste_y))
+        else:
+            pose_img = assemble_character_pose(
+                parts=body_parts,
+                head_layers=head_layers,
+                head_back_img=head_back_img,
+                angles=ang,
+                eye_state=eye,
+                mouth_state=mouth,
+                is_back_view=is_back,
+                canvas_size=(600, 1100),
+            )
         out_pose_p = staging_dir / f"{pose_name}.png"
         pose_img.save(out_pose_p)
         rendered_pose_images.append((pose_name, pose_img))

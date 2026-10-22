@@ -167,43 +167,38 @@
   </g>
       </g>
     </g>
-    <g id="layer_torso">
-    <!-- Neck skin base connection under collar -->
-    <path fill="#fedbc3" stroke="none" d="M465 500 L465 524 Q500 545 535 524 L535 500 Z" />
-    
-    <!-- Dark under-shirt body -->
-    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M412 522 L360 670 L366 885 L634 885 L640 670 L588 522 Z" />
-    
-    <!-- Crew-neck ribbed collar band -->
-    <path fill="#221622" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M455 516 Q500 552 545 516 C548 532 542 544 538 549 Q500 568 462 549 C458 544 452 532 455 516 Z" />
-    <!-- Collar inner rim shadow -->
-    <path fill="none" stroke="#180f19" stroke-width="2.5" stroke-linecap="round" d="M459 524 Q500 556 541 524" />
-    
-    <!-- Jeans Waistband & Pelvis Area (covers leg joints, shows between vest panels) -->
-    <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M366 880 L362 945 L638 945 L634 880 Z" />
-    <path fill="#395779" stroke="none" d="M368 883 L364 942 L636 942 L632 883 Z" />
-    <!-- Jeans Fly / J-stitch -->
-    <path fill="none" stroke="#2a1523" stroke-width="4.5" stroke-linecap="round" d="M500 882 L500 928 C500 938 492 944 482 944" />
-    <!-- Rivet / Waistband Button -->
-    <circle cx="500" cy="894" r="5" fill="#d29a4a" stroke="#2a1523" stroke-width="2.5" />
-    <!-- Curved Pocket Openings on sides -->
-    <path fill="none" stroke="#2a1523" stroke-width="4" stroke-linecap="round" d="M395 905 Q415 918 425 942" />
-    <path fill="none" stroke="#2a1523" stroke-width="4" stroke-linecap="round" d="M605 905 Q585 918 575 942" />
-
-    <!-- Vest Shadow on Flanks -->
-    <path fill="#6f3477" d="M412 522 L368 670 C364 730 362 800 365 860 L368 915 C372 935 380 948 398 948 L460 942 C470 938 474 928 472 915 C468 850 464 760 458 680 L442 522 Z" />
-    <path fill="#6f3477" d="M588 522 L632 670 C636 730 638 800 635 860 L632 915 C628 935 620 948 602 948 L540 942 C530 938 526 928 528 915 C532 850 536 760 542 680 L558 522 Z" />
-
-    <!-- Left Vest Panel (Tailored sleeveless waistcoat with curved lapel, clean armhole, rounded hem) -->
-    <path fill="#934c9c" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M442 522 L408 528 C418 572 405 624 372 670 C366 730 364 800 366 860 L370 915 C372 935 382 948 398 948 C420 948 445 946 460 942 C470 938 474 926 472 915 C468 850 464 760 458 680 C454 620 448 565 442 522 Z" />
-    <!-- Left Lapel facing accent line -->
-    <path fill="none" stroke="#7b3a82" stroke-width="3" stroke-linecap="round" d="M445 535 C451 615 456 715 460 815 C462 855 463 895 464 925" />
-
-    <!-- Right Vest Panel (Tailored sleeveless waistcoat with curved lapel, clean armhole, rounded hem) -->
-    <path fill="#934c9c" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M558 522 L592 528 C582 572 595 624 628 670 C634 730 636 800 634 860 L630 915 C628 935 618 948 602 948 C580 948 555 946 540 942 C530 938 526 926 528 915 C532 850 536 760 542 680 C546 620 552 565 558 522 Z" />
-    <!-- Right Lapel facing accent line -->
-    <path fill="none" stroke="#7b3a82" stroke-width="3" stroke-linecap="round" d="M555 535 C549 615 544 715 540 815 C538 855 537 895 536 925" />
+    <g id="fk_arm_l" transform="rotate(0.0, 415, 525)">
+      <g id="layer_arm_upper_left">
+    <!-- Shoulder overlap cap (tucks under torso shoulder) -->
+    <circle cx="415" cy="525" r="32" fill="#2b1f2b" stroke="#2a1523" stroke-width="6" />
+    <!-- Sleeve Body -->
+    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M415 525 L310 680 L385 715 L435 550 Z" />
+    <!-- Sleeve Cuff (covers forearm joint cap) -->
+    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M305 675 L388 718" />
   </g>
+      <g id="fk_arm_lower_l" transform="rotate(0.0, 345, 705)">
+        <g id="layer_arm_lower_left">
+    <!-- Elbow overlap cap extending into sleeve cuff -->
+    <circle cx="345" cy="705" r="28" fill="#f1b799" stroke="#2a1523" stroke-width="5" />
+    <!-- Forearm skin -->
+    <path fill="#f1b799" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M335 695 L270 940 L340 950 L375 710 Z" />
+    <path fill="#fedbc3" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M340 695 L278 940 L338 950 L370 710 Z" />
+    <!-- Redrawn Hand matching hands sheet -->
+    <g id="girl_hand_l">
+      <!-- Wrist link -->
+      <path fill="#f1b799" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M280 940 L260 1010 L320 1025 L335 945 Z" />
+      <!-- Palm -->
+      <path fill="#fedbc3" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M272 970 C248 1005 244 1040 254 1068 C264 1088 284 1088 298 1074 C318 1054 326 1020 322 975 Z" />
+      <!-- Inward Thumb -->
+      <path fill="#fedbc3" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M305 985 C325 1005 334 1028 328 1045 C320 1056 310 1050 302 1035 Z" />
+      <!-- Fingers Crease Lines -->
+      <line x1="270" y1="1075" x2="270" y2="1032" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
+      <line x1="282" y1="1078" x2="282" y2="1028" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
+      <line x1="294" y1="1072" x2="294" y2="1028" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
+    </g>
+  </g>
+      </g>
+    </g>
     <g id="fk_head_base" transform="rotate(0.0, 500, 520)">
       <g id="layer_head_base">
     <!-- Neck extending under collar -->
@@ -301,37 +296,37 @@
     <path fill="#f1b799" d="M490 440 Q500 445 510 440 Z" />
   </g>
     </g>
-    <g id="fk_arm_l" transform="rotate(0.0, 415, 525)">
-      <g id="layer_arm_upper_left">
-    <!-- Shoulder overlap cap (tucks under torso shoulder) -->
-    <circle cx="415" cy="525" r="32" fill="#2b1f2b" stroke="#2a1523" stroke-width="6" />
-    <!-- Sleeve Body -->
-    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M415 525 L310 680 L385 715 L435 550 Z" />
-    <!-- Sleeve Cuff (covers forearm joint cap) -->
-    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M305 675 L388 718" />
+    <g id="layer_torso">
+    <!-- Neck skin base connection under collar -->
+    <path fill="#fedbc3" stroke="none" d="M465 500 L465 524 Q500 545 535 524 L535 500 Z" />
+    
+    <!-- Pelvis jeans underlay (covers leg joint rotation beneath t-shirt hem) -->
+    <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M366 910 L362 955 L638 955 L634 910 Z" />
+    <path fill="#395779" stroke="none" d="M368 912 L364 952 L636 952 L632 912 Z" />
+
+    <!-- Dark under-shirt body (extends all the way down under open vest) -->
+    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M412 522 L360 670 L364 938 L636 938 L640 670 L588 522 Z" />
+    <!-- T-shirt bottom hem band -->
+    <path fill="#221622" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M364 930 L364 938 L636 938 L636 930 Z" />
+    
+    <!-- Crew-neck ribbed collar band -->
+    <path fill="#221622" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M455 516 Q500 552 545 516 C548 532 542 544 538 549 Q500 568 462 549 C458 544 452 532 455 516 Z" />
+    <!-- Collar inner rim shadow -->
+    <path fill="none" stroke="#180f19" stroke-width="2.5" stroke-linecap="round" d="M459 524 Q500 556 541 524" />
+
+    <!-- Vest Shadow on Flanks -->
+    <path fill="#6f3477" d="M412 522 L368 670 C364 730 362 800 365 860 L368 915 C372 935 380 948 398 948 L460 942 C470 938 474 928 472 915 C468 850 464 760 458 680 L442 522 Z" />
+    <path fill="#6f3477" d="M588 522 L632 670 C636 730 638 800 635 860 L632 915 C628 935 620 948 602 948 L540 942 C530 938 526 928 528 915 C532 850 536 760 542 680 L558 522 Z" />
+
+    <!-- Left Vest Panel (Tailored open sleeveless waistcoat with curved lapel, clean armhole, rounded hem) -->
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M442 522 L408 528 C418 572 405 624 372 670 C366 730 364 800 366 860 L370 915 C372 935 382 948 398 948 C420 948 445 946 460 942 C470 938 474 926 472 915 C468 850 464 760 458 680 C454 620 448 565 442 522 Z" />
+    <!-- Left Lapel facing accent line -->
+    <path fill="none" stroke="#7b3a82" stroke-width="3" stroke-linecap="round" d="M445 535 C451 615 456 715 460 815 C462 855 463 895 464 925" />
+
+    <!-- Right Vest Panel (Tailored open sleeveless waistcoat with curved lapel, clean armhole, rounded hem) -->
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M558 522 L592 528 C582 572 595 624 628 670 C634 730 636 800 634 860 L630 915 C628 935 618 948 602 948 C580 948 555 946 540 942 C530 938 526 926 528 915 C532 850 536 760 542 680 C546 620 552 565 558 522 Z" />
+    <!-- Right Lapel facing accent line -->
+    <path fill="none" stroke="#7b3a82" stroke-width="3" stroke-linecap="round" d="M555 535 C549 615 544 715 540 815 C538 855 537 895 536 925" />
   </g>
-      <g id="fk_arm_lower_l" transform="rotate(0.0, 345, 705)">
-        <g id="layer_arm_lower_left">
-    <!-- Elbow overlap cap extending into sleeve cuff -->
-    <circle cx="345" cy="705" r="28" fill="#f1b799" stroke="#2a1523" stroke-width="5" />
-    <!-- Forearm skin -->
-    <path fill="#f1b799" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M335 695 L270 940 L340 950 L375 710 Z" />
-    <path fill="#fedbc3" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M340 695 L278 940 L338 950 L370 710 Z" />
-    <!-- Redrawn Hand matching hands sheet -->
-    <g id="girl_hand_l">
-      <!-- Wrist link -->
-      <path fill="#f1b799" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M280 940 L260 1010 L320 1025 L335 945 Z" />
-      <!-- Palm -->
-      <path fill="#fedbc3" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M272 970 C248 1005 244 1040 254 1068 C264 1088 284 1088 298 1074 C318 1054 326 1020 322 975 Z" />
-      <!-- Inward Thumb -->
-      <path fill="#fedbc3" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M305 985 C325 1005 334 1028 328 1045 C320 1056 310 1050 302 1035 Z" />
-      <!-- Fingers Crease Lines -->
-      <line x1="270" y1="1075" x2="270" y2="1032" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
-      <line x1="282" y1="1078" x2="282" y2="1028" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
-      <line x1="294" y1="1072" x2="294" y2="1028" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
-    </g>
-  </g>
-      </g>
-    </g>
   </g>
 </svg>
