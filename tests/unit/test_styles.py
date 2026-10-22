@@ -6,7 +6,7 @@ from toonshorts import config
 
 
 def test_load_all_presets():
-    expected_styles = ["stickman", "crayon", "paper_cutout", "pixel_art", "chalkboard"]
+    expected_styles = ["stickman", "crayon", "paper_cutout", "pixel_art", "chalkboard", "whiteboard"]
     for style in expected_styles:
         preset = load_style_preset(style)
         assert preset["name"] == style

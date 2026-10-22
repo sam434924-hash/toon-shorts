@@ -33,7 +33,7 @@ def check_ffmpeg_subtitles_support() -> bool:
         raise RuntimeError("FFmpeg is not installed or not found on PATH. FFmpeg with subtitles filter is required.")
 
     try:
-        res = subprocess.run([ffmpeg_bin, "-filters"], capture_output=True, text=True)
+        res = subprocess.run([ffmpeg_bin, "-filters"], capture_output=True, text=True, stdin=subprocess.DEVNULL)
     except Exception as e:
         raise RuntimeError(f"Failed to execute FFmpeg to check filters: {e}") from e
 
@@ -79,6 +79,36 @@ def assemble_final_video(
     scene_clips: List[Path] = []
     for i, (scene, img_path, audio) in enumerate(zip(plan.scenes, scene_images, scene_audios)):
         clip_path = temp_dir / f"clip_{i}.mp4"
+
+        # Check if scene was directly rendered as an animated video clip
+        if img_path.suffix.lower() == ".mp4":
+            has_punchline = scene.is_punchline
+            if has_punchline and default_sfx:
+                chosen_sfx = sfx_map.get(default_sfx[0], sfx_map.get("boing"))
+                if chosen_sfx and chosen_sfx.is_file():
+                    mixed_clip = temp_dir / f"mixed_clip_{i}.mp4"
+                    mix_cmd = [
+                        "ffmpeg", "-y",
+                        "-i", str(img_path),
+                        "-i", str(chosen_sfx),
+                        "-filter_complex", "[0:a][1:a]amix=inputs=2:duration=first:dropout_transition=2[a]",
+                        "-map", "0:v", "-map", "[a]",
+                        "-c:v", "copy", "-c:a", "aac",
+                        str(mixed_clip)
+                    ]
+                    try:
+                        subprocess.run(mix_cmd, capture_output=True, check=True, stdin=subprocess.DEVNULL)
+                        clip_path = mixed_clip
+                    except Exception as e:
+                        logger.warning("SFX mix failed for video clip (%s); using original clip.", e)
+                        clip_path = img_path
+                else:
+                    clip_path = img_path
+            else:
+                clip_path = img_path
+            scene_clips.append(clip_path)
+            continue
+
         if motion_plugin and hasattr(motion_plugin, "get_filter_chain"):
             motion_filter = motion_plugin.get_filter_chain(scene.camera_move, audio.scene_total_duration)
         else:
@@ -100,7 +130,7 @@ def assemble_final_video(
                     str(mixed_audio)
                 ]
                 try:
-                    subprocess.run(mix_cmd, capture_output=True, check=True)
+                    subprocess.run(mix_cmd, capture_output=True, check=True, stdin=subprocess.DEVNULL)
                     audio_input = mixed_audio
                 except Exception as e:
                     logger.warning("SFX mix failed (%s); using original voice audio.", e)
@@ -118,7 +148,7 @@ def assemble_final_video(
         ]
 
         logger.info("Rendering Scene %d video clip (motion: %s)...", i + 1, scene.camera_move.value)
-        res = subprocess.run(scene_cmd, capture_output=True, text=True)
+        res = subprocess.run(scene_cmd, capture_output=True, text=True, stdin=subprocess.DEVNULL)
         if res.returncode != 0:
             raise RuntimeError(f"FFmpeg scene render failed for Scene {i+1}:\n{res.stderr}")
         scene_clips.append(clip_path)
@@ -127,7 +157,7 @@ def assemble_final_video(
     concat_list_file = temp_dir / "concat_list.txt"
     with open(concat_list_file, "w", encoding="utf-8") as f:
         for clip in scene_clips:
-            f.write(f"file '{clip.name}'\n")
+            f.write(f"file '{clip.resolve().as_posix()}'\n")
 
     unsubbed_video = temp_dir / "unsubbed_full.mp4"
     concat_cmd = [
@@ -139,7 +169,7 @@ def assemble_final_video(
         str(unsubbed_video.name)
     ]
     logger.info("Concatenating all scenes into unified video stream...")
-    res = subprocess.run(concat_cmd, cwd=temp_dir, capture_output=True, text=True)
+    res = subprocess.run(concat_cmd, cwd=temp_dir, capture_output=True, text=True, stdin=subprocess.DEVNULL)
     if res.returncode != 0:
         raise RuntimeError(f"FFmpeg concat failed:\n{res.stderr}")
 
@@ -157,7 +187,7 @@ def assemble_final_video(
         str(final_output_path.resolve())
     ]
     logger.info("Burning in ASS word-level captions to final video...")
-    res = subprocess.run(final_burn_cmd, cwd=temp_dir, capture_output=True, text=True)
+    res = subprocess.run(final_burn_cmd, cwd=temp_dir, capture_output=True, text=True, stdin=subprocess.DEVNULL)
     if res.returncode != 0:
         raise RuntimeError(
             f"Subtitle burn-in failed (never output a video without captions):\n{res.stderr}"

@@ -1,0 +1,213 @@
+{
+  "version": "2.0",
+  "sheet_name": "sheet_03",
+  "image_dimensions": [1024, 571],
+  "description": "2D layered character layout for sleeveless hoodie with separated articulated sleeves, legs, shoes, and hands",
+  "transparency": {
+    "method": "exterior_floodfill",
+    "background_threshold": 240
+  },
+  "parts": {
+    "head": {
+      "slot": null,
+      "box": [58, 54, 251, 247],
+      "parent": "torso",
+      "parent_joint": "neck",
+      "pivot": [96, 185],
+      "z_index": 5,
+      "joints": {
+        "face": [96, 105],
+        "hair": [96, 30],
+        "hat": [96, 15]
+      }
+    },
+    "torso": {
+      "slot": "torso",
+      "box": [353, 55, 500, 280],
+      "parent": null,
+      "parent_joint": null,
+      "pivot": [73, 220],
+      "z_index": 4,
+      "joints": {
+        "neck": [73, 20],
+        "shoulder_left": [18, 55],
+        "shoulder_right": [128, 55],
+        "hip_left": [48, 220],
+        "hip_right": [98, 220]
+      }
+    },
+    "sleeve_upper_left": {
+      "slot": null,
+      "box": [337, 335, 404, 423],
+      "parent": "torso",
+      "parent_joint": "shoulder_left",
+      "pivot": [52, 10],
+      "z_index": 6,
+      "joints": {
+        "elbow": [33, 85]
+      }
+    },
+    "sleeve_lower_left": {
+      "slot": null,
+      "box": [337, 418, 404, 509],
+      "parent": "sleeve_upper_left",
+      "parent_joint": "elbow",
+      "pivot": [33, 5],
+      "z_index": 6,
+      "joints": {
+        "cuff": [26, 85]
+      }
+    },
+    "sleeve_upper_right": {
+      "slot": null,
+      "box": [435, 335, 503, 423],
+      "parent": "torso",
+      "parent_joint": "shoulder_right",
+      "pivot": [15, 10],
+      "z_index": 3,
+      "joints": {
+        "elbow": [34, 85]
+      }
+    },
+    "sleeve_lower_right": {
+      "slot": null,
+      "box": [435, 418, 503, 509],
+      "parent": "sleeve_upper_right",
+      "parent_joint": "elbow",
+      "pivot": [34, 5],
+      "z_index": 3,
+      "joints": {
+        "cuff": [41, 85]
+      }
+    },
+    "leg_upper_left": {
+      "slot": "legs",
+      "box": [125, 333, 136, 415],
+      "parent": "torso",
+      "parent_joint": "hip_left",
+      "pivot": [5, 2],
+      "z_index": 2,
+      "joints": {
+        "knee": [5, 80]
+      }
+    },
+    "leg_lower_left": {
+      "slot": "legs",
+      "box": [116, 420, 131, 490],
+      "parent": "leg_upper_left",
+      "parent_joint": "knee",
+      "pivot": [7, 2],
+      "z_index": 2,
+      "joints": {
+        "ankle": [7, 68]
+      }
+    },
+    "shoe_left": {
+      "slot": "shoes",
+      "box": [54, 485, 137, 528],
+      "parent": "leg_lower_left",
+      "parent_joint": "ankle",
+      "pivot": [72, 6],
+      "z_index": 2,
+      "joints": {}
+    },
+    "leg_upper_right": {
+      "slot": "legs",
+      "box": [125, 333, 136, 415],
+      "mirror": true,
+      "parent": "torso",
+      "parent_joint": "hip_right",
+      "pivot": [5, 2],
+      "z_index": 1,
+      "joints": {
+        "knee": [5, 80]
+      }
+    },
+    "leg_lower_right": {
+      "slot": "legs",
+      "box": [116, 420, 131, 490],
+      "mirror": true,
+      "parent": "leg_upper_right",
+      "parent_joint": "knee",
+      "pivot": [7, 2],
+      "z_index": 1,
+      "joints": {
+        "ankle": [7, 68]
+      }
+    },
+    "shoe_right": {
+      "slot": "shoes",
+      "box": [54, 485, 137, 528],
+      "mirror": true,
+      "parent": "leg_lower_right",
+      "parent_joint": "ankle",
+      "pivot": [11, 6],
+      "z_index": 1,
+      "joints": {}
+    }
+  },
+  "hands": {
+    "open_palm": {
+      "box": [618, 350, 680, 412],
+      "pivot_left": [32, 58],
+      "pivot_right": [30, 58]
+    },
+    "fist": {
+      "box": [728, 355, 765, 412],
+      "pivot_left": [18, 54],
+      "pivot_right": [19, 54]
+    },
+    "pointing": {
+      "box": [805, 350, 855, 412],
+      "pivot_left": [25, 58],
+      "pivot_right": [25, 58]
+    },
+    "waving": {
+      "box": [914, 355, 955, 412],
+      "pivot_left": [20, 54],
+      "pivot_right": [21, 54]
+    }
+  },
+  "expressions": {
+    "neutral": {
+      "box": [590, 73, 649, 115],
+      "pivot": [29, 21]
+    },
+    "happy": {
+      "box": [693, 70, 765, 127],
+      "pivot": [36, 28]
+    },
+    "angry": {
+      "box": [805, 69, 869, 119],
+      "pivot": [32, 25]
+    },
+    "sad": {
+      "box": [914, 65, 979, 125],
+      "pivot": [32, 30]
+    },
+    "shocked": {
+      "box": [586, 176, 652, 254],
+      "pivot": [33, 39]
+    },
+    "smirk": {
+      "box": [695, 189, 762, 245],
+      "pivot": [33, 28]
+    },
+    "talking_open": {
+      "box": [810, 178, 868, 253],
+      "pivot": [29, 37]
+    },
+    "talking_round": {
+      "box": [916, 181, 976, 253],
+      "pivot": [30, 36]
+    }
+  },
+  "slots": [
+    "hair",
+    "hat",
+    "torso",
+    "legs",
+    "shoes",
+    "hands"
+  ]
+}

@@ -38,8 +38,14 @@ def _write_fake_speech_wav(output_path: Path, text: str) -> float:
         raw_bytes = bytearray()
         for i in range(num_samples):
             t = float(i) / sample_rate
-            # Harmonic tone simulating voice formant
-            val = int(8000.0 * math.sin(2.0 * math.pi * 300.0 * t))
+            # Syllable-modulated multi-harmonic formant synthesis for realistic speech envelope
+            syllable_env = max(0.0, math.sin(2.0 * math.pi * 4.0 * t))
+            carrier = (
+                0.5 * math.sin(2.0 * math.pi * 220.0 * t)
+                + 0.3 * math.sin(2.0 * math.pi * 700.0 * t)
+                + 0.2 * math.sin(2.0 * math.pi * 2400.0 * t)
+            )
+            val = int(8000.0 * syllable_env * carrier)
             raw_bytes.extend(struct.pack("<h", val))
         wf.writeframes(raw_bytes)
 

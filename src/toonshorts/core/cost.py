@@ -40,7 +40,7 @@ def estimate_costs(plan: ScriptPlan, style_preset: dict, rewrite_count: int = 1)
     )
 
     # Image calls:
-    is_code_renderer = style_preset.get("renderer") == "pillow" or plan.art_style.lower() == "stickman"
+    is_code_renderer = style_preset.get("renderer") in ("pillow", "cairo") or plan.art_style.lower() == "stickman"
     if is_code_renderer:
         image_calls = 0
         image_cost = 0.0

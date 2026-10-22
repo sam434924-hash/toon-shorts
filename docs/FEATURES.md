@@ -18,7 +18,7 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Description**: Google Gemini screenplay writer and critic scoring loop.
 - **Files**: `src/toonshorts/plugins/llm/gemini.py`, `src/toonshorts/core/client.py`
 - **Config Flags**: `GEMINI_API_KEY`, `TEXT_MODEL_NAME`, `CRITIC_MODEL_NAME`, `MAX_CRITIC_REWRITES`
-- **Tests**: `tests/contract/test_llm_contract.py`
+- **Tests**: `tests/contract/test_llm_contract.py`, `tests/unit/test_validation.py`
 
 ### `fake`
 - **Description**: Deterministic mock screenplay planner and critic for fast offline runs.
@@ -31,10 +31,10 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 ## Voice Plugins (`plugins/voice`)
 
 ### `gemini_tts`
-- **Description**: Official Google Gemini text-to-speech audio generator with exponential backoff and speech verification.
+- **Description**: Official Google Gemini text-to-speech audio generator with deterministic SHA-256 disk audio caching, immediate quota/rate limit error abort, and speech verification.
 - **Files**: `src/toonshorts/plugins/voice/gemini_tts.py`, `src/toonshorts/core/client.py`
 - **Config Flags**: `GEMINI_API_KEY`, `TTS_MODEL_NAME`, `GEMINI_VOICES`
-- **Tests**: `tests/contract/test_voice_contract.py`
+- **Tests**: `tests/contract/test_voice_contract.py`, `tests/unit/test_gemini_tts_cache.py`
 
 ### `piper`
 - **Description**: Local fast neural TTS engine running through subprocess argument lists and stdin.
@@ -49,7 +49,7 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Tests**: `tests/contract/test_voice_contract.py`
 
 ### `fake`
-- **Description**: Minimal deterministic audio generator for offline contract testing and smoke runs.
+- **Description**: Deterministic mock WAV audio generator for rapid test suite execution.
 - **Files**: `src/toonshorts/plugins/voice/fake.py`
 - **Config Flags**: None
 - **Tests**: `tests/contract/test_voice_contract.py`, `tests/smoke/test_smoke_pipeline.py`
@@ -57,6 +57,24 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 ---
 
 ## Render Plugins (`plugins/render`)
+
+### `animejs`
+- **Description**: HTML5/SVG code-driven whiteboard animation engine with local Anime.js easing curves, bundled Rough.js progressive stroke-by-stroke drawing synced to Whisper word timings (underlines, keyword circles, inter-card arrows), 7-layer character head architecture, physically attached hands and arm sleeves, 100% constant studio set and static camera across all scenes, safe area gesture boundaries (wave, point, explain, thumbs_up, shrug), and headless browser frame capture.
+- **Files**: `src/toonshorts/plugins/render/animejs.py`
+- **Config Flags**: `ANIME_JS_PATH`, `ROUGH_JS_PATH`, `VIDEO_WIDTH`, `VIDEO_HEIGHT`, `VIDEO_FPS`
+- **Tests**: `tests/contract/test_render_contract.py`, `tests/unit/test_animejs.py`
+
+### `blender3d`
+- **Description**: Headless Blender 3D robot character renderer for RobotExpressive.glb with validated built-in actions (dance, idle, jump, running, wave, thumbs_up, etc.), clean 3-point lighting, and execution caps.
+- **Files**: `src/toonshorts/plugins/render/blender3d.py`, `assets3d/scripts/blender_render.py`
+- **Config Flags**: `BLENDER_PATH`, `BLENDER_DRAFT_WIDTH`, `BLENDER_DRAFT_HEIGHT`, `BLENDER_FINAL_WIDTH`, `BLENDER_FINAL_HEIGHT`, `BLENDER_MAX_FRAMES`, `BLENDER_MAX_SECONDS_PER_RUN`, `BLENDER_RENDER_TIMEOUT_SECONDS`
+- **Tests**: `tests/contract/test_render_contract.py`, `tests/unit/test_blender3d.py`
+
+### `cairo`
+- **Description**: Headless 2D vector stickman engine with hierarchical skeleton, facial expressions, actions with squash and stretch, hand-drawn wobble, contact shadows, and garment layering.
+- **Files**: `src/toonshorts/plugins/render/cairo.py`
+- **Config Flags**: `VIDEO_WIDTH`, `VIDEO_HEIGHT`
+- **Tests**: `tests/contract/test_render_contract.py`, `tests/unit/test_cairo_stickman.py`
 
 ### `pillow`
 - **Description**: Procedural stick figure illustration engine drawing anti-aliased 1080x1920 frames in code.
@@ -87,31 +105,57 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Tests**: `tests/contract/test_motion_contract.py`
 
 ### `static`
-- **Description**: Fixed scale-and-pad framing filter chain without camera movement.
+- **Description**: Fixed camera framing without dynamic pan or zoom.
 - **Files**: `src/toonshorts/plugins/motion/static.py`
 - **Config Flags**: None
 - **Tests**: `tests/contract/test_motion_contract.py`
 
 ---
 
-## Art Styles (`styles/`)
+## Art Styles (`src/toonshorts/styles/*.json`)
 
 ### `stickman`
+- **Description**: Minimalist 2D vector stick figure animation on textured paper, using the Cairo renderer (`cairo.py`).
 - **Files**: `src/toonshorts/styles/stickman.json`
-- **Renderer**: `pillow`
+- **Renderer**: `cairo`
+- **Tests**: `tests/unit/test_styles.py`, `tests/unit/test_cairo_stickman.py`
+
+### `whiteboard`
+- **Description**: Modern clean whiteboard explainer video with animated presenter character and dynamic Rough.js sketch annotations, using Anime.js and Playwright.
+- **Files**: `src/toonshorts/styles/whiteboard.json`
+- **Renderer**: `animejs`
+- **Tests**: `tests/unit/test_styles.py`, `tests/unit/test_animejs.py`
 
 ### `crayon`
+- **Description**: Gemini Imagen wax crayon drawing on construction paper.
 - **Files**: `src/toonshorts/styles/crayon.json`
 - **Renderer**: `gemini`
+- **Tests**: `tests/unit/test_styles.py`
 
 ### `paper_cutout`
+- **Description**: Layered papercraft stop-motion collage with drop shadows.
 - **Files**: `src/toonshorts/styles/paper_cutout.json`
 - **Renderer**: `gemini`
+- **Tests**: `tests/unit/test_styles.py`
 
 ### `pixel_art`
+- **Description**: 16-bit retro arcade pixel sprites.
 - **Files**: `src/toonshorts/styles/pixel_art.json`
 - **Renderer**: `gemini`
+- **Tests**: `tests/unit/test_styles.py`
 
 ### `chalkboard`
+- **Description**: Dusty chalk classroom illustration on dark slate blackboard.
 - **Files**: `src/toonshorts/styles/chalkboard.json`
 - **Renderer**: `gemini`
+- **Tests**: `tests/unit/test_styles.py`
+
+---
+
+## 2D Layered Character System (`core/character2d`)
+
+### `stick_hoodie`
+- **Description**: 2D layered character system sliced from coordinate layout sheets with transparent layers (head, 8 expressions, hoodie torso, articulated stick limbs, mirrored hands and shoes). Reusable asset pack (not yet connected to the main CLI pipeline).
+- **Files**: `src/toonshorts/core/character2d.py`, `assets2d/layouts/sheet_03_layout.json`, `tools/build_2d_hoodie_video.py`
+- **Capabilities**: Character registry, modular slots (hair, hat, torso, legs, shoes, hands), forward-kinematic 2D skeletal rotation, audio loudness mouth shape swapping, squash & stretch actions (idle, walk, wave, jump), soft pastel gradient background rendering with ground shadow, and standalone short video generator (`tools/build_2d_hoodie_video.py`) with Piper TTS speech and burned ASS subtitles.
+- **Tests**: `tests/unit/test_character2d.py`

@@ -77,7 +77,7 @@ def main():
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     make_parser = subparsers.add_parser("make", help="Create a finished vertical animation video")
-    make_parser.add_argument("--style", required=True, help="Art style (stickman, crayon, paper_cutout, pixel_art, chalkboard)")
+    make_parser.add_argument("--style", required=True, help="Art style (stickman, crayon, paper_cutout, pixel_art, chalkboard, whiteboard)")
     make_parser.add_argument("--topic", required=True, help="Story topic or comedy premise")
     make_parser.add_argument("--yes", "-y", action="store_true", help="Skip cost confirmation prompt")
     make_parser.add_argument("--mock", action="store_true", help="Run with offline mock generator for testing")
@@ -95,7 +95,7 @@ def main():
         action="store_true",
         help="Allow voices marked as non-commercial or unverified in voices.json",
     )
-    make_parser.add_argument("--renderer", default=None, help="Renderer plugin to use (pillow, gemini, fake)")
+    make_parser.add_argument("--renderer", default=None, help="Renderer plugin to use (animejs, cairo, pillow, gemini, fake)")
     make_parser.add_argument("--motion", default=None, help="Motion plugin to use (ffmpeg, static)")
     make_parser.add_argument("--output-dir", default=None, help="Custom output directory")
     make_parser.add_argument("--keep-temp", action="store_true", help="Retain intermediate render assets")

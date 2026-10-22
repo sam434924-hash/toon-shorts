@@ -2,7 +2,7 @@
 Purpose: Google GenAI client wrapper with backoff, limits, and offline mock.
 Inputs: Prompts, model parameters, schemas, and credentials.
 Outputs: Generated text responses, image byte streams, and TTS audio bytes.
-Depends on: core.caps, core.config, core.errors, core.models, google.genai, json, logging, random, time, typing
+Depends on: core.caps, core.config, core.errors, core.models, google.genai, json, logging, random, re, time, typing
 Used by: client, plugins.llm.gemini, plugins.render.gemini, plugins.voice.gemini_tts
 Config keys: GEMINI_API_KEY, IMAGE_MODEL_NAME, TEXT_MODEL_NAME, TTS_MODEL_NAME
 Tests: tests/unit/test_spend_cap.py
@@ -10,6 +10,7 @@ Tests: tests/unit/test_spend_cap.py
 
 import time
 import random
+import re
 import json
 import math
 import struct
@@ -38,9 +39,11 @@ class GeminiClientWrapper:
         self.critic_rewrite_count = 0
 
         self.api_key = api_key or config.GEMINI_API_KEY
+        self.is_auto_fallback = False
         if not self.api_key and not self.mock:
             logger.info("No GEMINI_API_KEY found; defaulting to mock mode for offline safety.")
             self.mock = True
+            self.is_auto_fallback = True
 
         if not self.mock:
             self.client = genai.Client(api_key=self.api_key)
@@ -133,7 +136,7 @@ class GeminiClientWrapper:
         backoff = 2.5
         for attempt in range(max_retries + 1):
             try:
-                img_config = types.GenerateImageConfig(
+                img_config = types.GenerateImagesConfig(
                     number_of_images=1,
                     output_mime_type="image/png",
                     aspect_ratio="9:16",
@@ -157,6 +160,10 @@ class GeminiClientWrapper:
                 else:
                     raise RuntimeError(f"Image generation failed after {attempt+1} attempts: {e}") from e
             except Exception as e:
+                err_str = str(e)
+                if "Enterprise Agent Platform mode" in err_str or "Developer API mode" in err_str:
+                    logger.warning("Imagen generate_images unsupported on Developer API keys. Using fallback placeholder: %s", e)
+                    return self._mock_image_response(prompt)
                 if attempt < max_retries:
                     time.sleep(backoff)
                     backoff *= 2.0
@@ -168,7 +175,7 @@ class GeminiClientWrapper:
         text: str,
         voice_name: str,
         model: Optional[str] = None,
-        max_retries: int = 3,
+        max_retries: int = 5,
     ) -> bytes:
         """
         Synthesizes speech using the official Gemini TTS API with exponential backoff for 429/503.
@@ -178,6 +185,10 @@ class GeminiClientWrapper:
         model_name = model or config.TTS_MODEL_NAME
 
         if self.mock:
+            if getattr(self, "is_auto_fallback", False) or not self.api_key:
+                raise VoiceError(
+                    "GEMINI_API_KEY is missing. Gemini TTS requires a valid GEMINI_API_KEY and will not fall back silently to mock audio."
+                )
             return self._mock_speech_response(text)
 
         backoff = 2.0
@@ -201,21 +212,42 @@ class GeminiClientWrapper:
                 if response.candidates:
                     for part in response.candidates[0].content.parts:
                         if part.inline_data and part.inline_data.data:
-                            return part.inline_data.data
+                            audio_bytes = part.inline_data.data
+                            if not audio_bytes.startswith(b"RIFF"):
+                                buf = io.BytesIO()
+                                with wave.open(buf, "wb") as wf:
+                                    wf.setnchannels(1)
+                                    wf.setsampwidth(2)
+                                    wf.setframerate(24000)
+                                    wf.writeframes(audio_bytes)
+                                return buf.getvalue()
+                            return audio_bytes
 
                 raise VoiceError(f"No audio content returned by Gemini TTS for model '{model_name}'")
             except APIError as e:
                 status_code = getattr(e, "code", None)
-                if status_code in (429, 503) and attempt < max_retries:
-                    sleep_time = backoff + random.uniform(0.1, 0.5)
-                    logger.warning("Gemini TTS %s on attempt %d. Retrying in %.2fs...", status_code, attempt + 1, sleep_time)
+                err_str = str(e).lower()
+                is_quota = (status_code == 429) or ("resource_exhausted" in err_str) or ("quota" in err_str) or ("rate" in err_str)
+                if is_quota:
+                    logger.error("Gemini TTS quota or rate limit exceeded: %s. Synthesis halted immediately without retry.", e)
+                    raise VoiceError(f"Gemini TTS quota or rate limit exceeded: {e}") from e
+                elif status_code == 503 and attempt < max_retries:
+                    sleep_time = backoff + random.uniform(0.5, 1.5)
+                    logger.warning("Gemini TTS 503 on attempt %d. Retrying in %.2fs...", attempt + 1, sleep_time)
                     time.sleep(sleep_time)
-                    backoff *= 2.0
+                    backoff = max(backoff * 1.5, 10.0)
                 else:
                     raise VoiceError(f"Gemini TTS call failed after {attempt+1} attempts: {e}") from e
             except Exception as e:
-                if attempt < max_retries and ("429" in str(e) or "503" in str(e)):
-                    time.sleep(backoff)
+                err_str = str(e).lower()
+                is_quota = ("429" in err_str) or ("quota" in err_str) or ("resource_exhausted" in err_str) or ("rate" in err_str)
+                if is_quota:
+                    logger.error("Gemini TTS quota or rate limit exceeded: %s. Synthesis halted immediately without retry.", e)
+                    raise VoiceError(f"Gemini TTS quota or rate limit exceeded: {e}") from e
+                if attempt < max_retries and "503" in err_str:
+                    sleep_time = 5.0 + random.uniform(1.0, 2.0)
+                    logger.warning("Gemini TTS error on attempt %d (%s). Retrying in %.2fs...", attempt + 1, err_str[:80], sleep_time)
+                    time.sleep(sleep_time)
                     backoff *= 2.0
                 else:
                     raise VoiceError(f"Unexpected error calling Gemini TTS API: {e}") from e
@@ -236,7 +268,13 @@ class GeminiClientWrapper:
             raw_bytes = bytearray()
             for i in range(num_samples):
                 t = float(i) / sample_rate
-                val = int(8000.0 * math.sin(2.0 * math.pi * 320.0 * t))
+                syllable_env = max(0.0, math.sin(2.0 * math.pi * 4.0 * t))
+                carrier = (
+                    0.5 * math.sin(2.0 * math.pi * 220.0 * t)
+                    + 0.3 * math.sin(2.0 * math.pi * 700.0 * t)
+                    + 0.2 * math.sin(2.0 * math.pi * 2400.0 * t)
+                )
+                val = int(8000.0 * syllable_env * carrier)
                 raw_bytes.extend(struct.pack("<h", val))
             wf.writeframes(raw_bytes)
 
@@ -258,8 +296,30 @@ class GeminiClientWrapper:
                 except Exception:
                     pass
 
+            clean_topic = topic_str[:50].strip()
+            clean_title = f"{clean_topic}_{style_str}"[:80]
+
+            if "API" in topic_str.upper() or "API" in prompt.upper():
+                return json.dumps({
+                    "title": "What_is_an_API",
+                    "art_style": style_str,
+                    "emotional_arc": "Clear informative revelation through a fun restaurant metaphor",
+                    "characters": [
+                        {"name": "Host", "visual_description": "Friendly tech presenter sitting at a modern desk next to a whiteboard", "voice_id": "Kore"},
+                        {"name": "Zack", "visual_description": "Curious coder sitting at the studio desk listening to the lesson", "voice_id": "Puck"}
+                    ],
+                    "scenes": [
+                        {"scene_number": 1, "speaker": "Host", "dialogue_line": "Ever wonder what an API actually is? Imagine you are sitting at a restaurant.", "action": "What is an API?: Application, Programming, Interface", "pose": "idle", "gesture": "wave", "camera_move": "static", "transition": "cut", "is_punchline": False},
+                        {"scene_number": 2, "speaker": "Host", "dialogue_line": "You are the customer, and the kitchen is a massive database full of delicious food.", "action": "The Restaurant Setup: Customer as Client, Kitchen as Server, Menu as Endpoints", "pose": "idle", "gesture": "explain", "camera_move": "static", "transition": "cut", "is_punchline": False},
+                        {"scene_number": 3, "speaker": "Host", "dialogue_line": "The API is your friendly waiter! It takes your request directly to the chef.", "action": "The Waiter in Action: Sends Order, Connects Systems, Fetches Results", "pose": "waving", "gesture": "point", "camera_move": "static", "transition": "cut", "is_punchline": False},
+                        {"scene_number": 4, "speaker": "Host", "dialogue_line": "Weather forecasts, ride sharing apps, and credit card payments all talk through APIs.", "action": "Everyday Examples: Weather Apps, Ride Sharing, Payment Gateways", "pose": "idle", "gesture": "explain", "camera_move": "static", "transition": "cut", "is_punchline": False},
+                        {"scene_number": 5, "speaker": "Host", "dialogue_line": "They exchange structured JSON data packets in milliseconds back and forth.", "action": "Fast Data Exchange: JSON Payloads, REST Endpoints, Instant Response", "pose": "idle", "gesture": "point", "camera_move": "static", "transition": "cut", "is_punchline": False},
+                        {"scene_number": 6, "speaker": "Host", "dialogue_line": "So without APIs, the modern connected internet would just be screaming in the dark!", "action": "The Connected World: Automation, Web Integration, Seamless Tech", "pose": "laughing", "gesture": "thumbs_up", "camera_move": "static", "transition": "fade", "is_punchline": True}
+                    ]
+                })
+
             return json.dumps({
-                "title": f"{topic_str}_{style_str}",
+                "title": clean_title,
                 "art_style": style_str,
                 "emotional_arc": "Intense suspicion leads to hilarious misunderstanding",
                 "characters": [

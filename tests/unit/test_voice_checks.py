@@ -22,7 +22,7 @@ def create_test_wav(
     amplitude: float = 8000.0,
     bits: int = 16,
 ):
-    """Utility to generate controlled test WAV files."""
+    """Utility to generate controlled test WAV files with speech-like syllable modulation."""
     num_samples = int(duration * sample_rate)
     with wave.open(str(path), "wb") as wf:
         wf.setnchannels(1)
@@ -30,7 +30,14 @@ def create_test_wav(
         wf.setframerate(sample_rate)
         raw = bytearray()
         for i in range(num_samples):
-            val = int(amplitude * math.sin(2.0 * math.pi * 300.0 * (i / sample_rate))) if amplitude > 0 else 0
+            t = float(i) / sample_rate
+            syllable_env = max(0.0, math.sin(2.0 * math.pi * 4.0 * t))
+            carrier = (
+                0.5 * math.sin(2.0 * math.pi * 220.0 * t)
+                + 0.3 * math.sin(2.0 * math.pi * 700.0 * t)
+                + 0.2 * math.sin(2.0 * math.pi * 2400.0 * t)
+            )
+            val = int(amplitude * syllable_env * carrier) if amplitude > 0 else 0
             if bits == 16:
                 raw.extend(struct.pack("<h", val))
             elif bits == 8:

@@ -3,7 +3,7 @@ Purpose: Interface definitions and centralized plugin registry.
 Inputs: Component registrations and plugin lookup queries.
 Outputs: Swappable plugin interfaces and resolved component instances.
 Depends on: abc, core.errors, core.models, pathlib, typing
-Used by: core, core.pipeline, plugins.llm.fake, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.motion.static, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.fake, plugins.voice.gemini_tts, plugins.voice.piper, plugins.voice.windows_sapi
+Used by: core, core.pipeline, plugins.llm.fake, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.motion.static, plugins.render.animejs, plugins.render.blender3d, plugins.render.cairo, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.fake, plugins.voice.gemini_tts, plugins.voice.piper, plugins.voice.windows_sapi
 Config keys: None
 Tests: tests/contract/test_llm_contract.py, tests/contract/test_motion_contract.py, tests/contract/test_render_contract.py, tests/contract/test_voice_contract.py, tests/unit/test_registry.py
 """

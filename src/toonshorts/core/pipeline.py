@@ -78,7 +78,7 @@ def run_pipeline(
 
     # Resolve plugin selections (mock overrides to fake for fast offline test)
     llm_plugin_name = "fake" if mock else (llm_name or config.DEFAULT_LLM)
-    voice_plugin_name = "fake" if mock else (resolved_voice or config.DEFAULT_VOICE)
+    voice_plugin_name = "fake" if mock else (resolved_voice or preset.get("voice") or config.DEFAULT_VOICE)
     motion_plugin_name = motion_name or config.DEFAULT_MOTION
 
     if renderer_name:
@@ -88,8 +88,10 @@ def run_pipeline(
     else:
         # Determine renderer from style preset if auto
         preset_renderer = preset.get("renderer", "gemini").lower()
-        if preset_renderer == "pillow" or style_clean == "stickman":
-            render_plugin_name = "pillow"
+        if preset_renderer in ("pillow", "cairo", "animejs", "blender3d"):
+            render_plugin_name = preset_renderer
+        elif style_clean == "stickman":
+            render_plugin_name = "cairo"
         else:
             render_plugin_name = "gemini"
 
@@ -132,7 +134,10 @@ def run_pipeline(
 
         # 5. Scene Rendering
         logger.info("[4/6] Rendering scene images via %s...", renderer.name)
-        scene_images = renderer.render_all_scenes(refined_plan, preset, temp_dir)
+        try:
+            scene_images = renderer.render_all_scenes(refined_plan, preset, temp_dir, scene_audios=scene_audios)
+        except TypeError:
+            scene_images = renderer.render_all_scenes(refined_plan, preset, temp_dir)
 
         # 6. Assembly & Motion
         logger.info("[5/6] Assembling video using %s motion...", motion.name)

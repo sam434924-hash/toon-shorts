@@ -24,6 +24,7 @@ def test_registry_lists_plugins():
     assert "piper" in list_voices()
     assert "windows_sapi" in list_voices()
     assert "fake" in list_renderers()
+    assert "cairo" in list_renderers()
     assert "pillow" in list_renderers()
     assert "gemini" in list_renderers()
     assert "ffmpeg" in list_motions()

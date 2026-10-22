@@ -256,6 +256,34 @@ def check_speech_audio(
                 f"Speech verification failed: '{audio_path.name}' is mostly silence (RMS amplitude {rms:.1f} < 60)."
             )
 
+        # Dynamic speech loudness variation and pure tone detection
+        import numpy as np
+        raw_samples = np.frombuffer(frames_bytes, dtype=np.int16)
+        mono_samples = raw_samples[::channels] if channels > 1 else raw_samples
+        frame_len = max(int(framerate * 0.05), 1)
+        if len(mono_samples) >= frame_len * 2:
+            num_windows = len(mono_samples) // frame_len
+            w_samples = mono_samples[:num_windows * frame_len].reshape(num_windows, frame_len).astype(float)
+            w_rms = np.sqrt(np.mean(w_samples**2, axis=1))
+            rms_std = float(np.std(w_rms))
+            if rms_std < 80.0:
+                raise VoiceError(
+                    f"Speech verification failed: '{audio_path.name}' has no dynamic speech variation (RMS std {rms_std:.1f} < 80.0). "
+                    f"Audio appears to be a pure tone, synth beep, or flat hum."
+                )
+
+            fft_vals = np.abs(np.fft.rfft(mono_samples))
+            total_energy = float(np.sum(fft_vals**2)) + 1e-9
+            peak_energy = float(np.max(fft_vals**2))
+            peak_ratio = peak_energy / total_energy
+            if peak_ratio > 0.40:
+                freqs = np.fft.rfftfreq(len(mono_samples), 1.0 / framerate)
+                peak_f = float(freqs[np.argmax(fft_vals)])
+                raise VoiceError(
+                    f"Speech verification failed: '{audio_path.name}' is a pure sinusoidal beep or tone "
+                    f"({peak_f:.1f}Hz holds {peak_ratio*100:.1f}% of total spectral energy)."
+                )
+
     # Optional faster-whisper transcription mismatch check
     if verify_with_whisper:
         whisper = get_whisper_model()

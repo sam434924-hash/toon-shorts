@@ -1,0 +1,32 @@
+{
+  "name": "whiteboard",
+  "renderer": "animejs",
+  "voice": "gemini_tts",
+  "motion": "static",
+  "image_prompt_prefix": "Crisp modern whiteboard explainer video with friendly flat 2D character presenting next to a clean whiteboard",
+  "color_palette": {
+    "background": "#F8FAFC",
+    "primary": "#0F172A",
+    "secondary": "#2563EB",
+    "accent": "#F59E0B"
+  },
+  "caption": {
+    "font": "Arial",
+    "font_size": 86,
+    "primary_color": "&H00FFFFFF",
+    "outline_color": "&H000F172A",
+    "highlight_color": "&H0000D8F6",
+    "margin_v": 580,
+    "outline_width": 7,
+    "shadow": 3,
+    "style": "whiteboard_modern"
+  },
+  "pacing": "moderate",
+  "default_sound_effects": ["pop", "bell"],
+  "avoid": [
+    "photorealistic human skin",
+    "dark chalkboard",
+    "3D glossy surfaces",
+    "cluttered mess"
+  ]
+}

@@ -52,6 +52,9 @@ def generate_ass_subtitles(
     primary_color = caption_cfg.get("primary_color", "&H00FFFFFF")
     outline_color = caption_cfg.get("outline_color", "&H00111111")
     highlight_color = caption_cfg.get("highlight_color", "&H0000D8F6")
+    margin_v = caption_cfg.get("margin_v", 420)
+    outline_width = caption_cfg.get("outline_width", 6)
+    shadow = caption_cfg.get("shadow", 3)
 
     ass_header = f"""[Script Info]
 Title: ToonShorts Captions
@@ -63,7 +66,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,{font_name},{font_size},{primary_color},&H000000FF,{outline_color},&H80000000,-1,0,0,0,100,100,0,0,1,6,3,2,60,60,420,1
+Style: Default,{font_name},{font_size},{primary_color},&H000000FF,{outline_color},&H80000000,-1,0,0,0,100,100,0,0,1,{outline_width},{shadow},2,60,60,{margin_v},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text

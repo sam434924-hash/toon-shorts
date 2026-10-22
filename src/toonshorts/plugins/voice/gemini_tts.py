@@ -2,13 +2,15 @@
 Purpose: Google Gemini text-to-speech voice plugin using current GenAI SDK.
 Inputs: Scene dialogue, prebuilt Gemini voice identifiers, and destination paths.
 Outputs: Generated 16-bit 24kHz WAV speech files and aligned word timestamps.
-Depends on: core.client, core.config, core.errors, core.models, core.registry, logging, pathlib, typing, voice_utils
+Depends on: core.client, core.config, core.errors, core.models, core.registry, hashlib, logging, pathlib, shutil, typing, voice_utils
 Used by: None
-Config keys: GEMINI_API_KEY, GEMINI_VOICES, TTS_MODEL_NAME
-Tests: tests/contract/test_voice_contract.py
+Config keys: GEMINI_API_KEY, GEMINI_VOICES, TTS_CACHE_DIR, TTS_MODEL_NAME
+Tests: tests/contract/test_voice_contract.py, tests/unit/test_gemini_tts_cache.py
 """
 
+import hashlib
 import logging
+import shutil
 from pathlib import Path
 from typing import List, Optional
 
@@ -26,9 +28,18 @@ from toonshorts.voice_utils import (
 logger = logging.getLogger("toonshorts.plugins.voice.gemini_tts")
 
 
+def compute_tts_cache_key(text: str, voice_name: str, model_name: str) -> str:
+    """
+    Computes a deterministic SHA-256 hash key for TTS audio cache.
+    The filename is strictly the 64-char hex hash to completely eliminate path traversal risks.
+    """
+    raw = f"{text.strip()}|{voice_name.strip()}|{model_name.strip()}".encode("utf-8")
+    return hashlib.sha256(raw).hexdigest()
+
+
 @register_voice("gemini_tts")
 class GeminiTTSVoicePlugin(VoiceInterface):
-    """Google Gemini text-to-speech plugin with exponential backoff and speech verification."""
+    """Google Gemini text-to-speech plugin with sha256 disk caching, backoff, and quota protection."""
     name = "gemini_tts"
 
     def __init__(
@@ -36,10 +47,14 @@ class GeminiTTSVoicePlugin(VoiceInterface):
         client: Optional[GeminiClientWrapper] = None,
         model: Optional[str] = None,
         allow_noncommercial: bool = False,
+        cache_dir: Optional[Path] = None,
     ):
         self.client_wrapper = client or GeminiClientWrapper()
         self.model_name = model or config.TTS_MODEL_NAME
         self.allow_noncommercial = allow_noncommercial
+        self.cache_dir = cache_dir or config.TTS_CACHE_DIR
+        self.cache_hits: int = 0
+        self.cache_misses: int = 0
 
     def generate_scene_voice(
         self,
@@ -50,20 +65,66 @@ class GeminiTTSVoicePlugin(VoiceInterface):
         pause_seconds: float = 0.35,
     ) -> SceneAudio:
         output_wav = temp_dir / f"scene_{scene_index}_voice.wav"
+        cache_key = compute_tts_cache_key(scene.dialogue_line, voice_name, self.model_name)
+        cached_file = self.cache_dir / f"{cache_key}.wav"
 
-        try:
-            audio_bytes = self.client_wrapper.generate_speech_with_retry(
-                text=scene.dialogue_line,
-                voice_name=voice_name,
-                model=self.model_name,
-            )
-            output_wav.write_bytes(audio_bytes)
-        except Exception as e:
-            logger.error("Gemini TTS synthesis failed for scene %d: %s", scene_index, e)
-            raise VoiceError(f"Gemini TTS generation failed for scene {scene_index}: {e}") from e
+        cache_hit_valid = False
+        if cached_file.is_file() and cached_file.stat().st_size > 0:
+            try:
+                check_speech_audio(cached_file, scene.dialogue_line, target_sample_rate=24000)
+                cache_hit_valid = True
+            except Exception as e:
+                logger.warning(
+                    "Cached audio %s failed speech check (%s). Deleting invalid cache file.",
+                    cached_file.name, e
+                )
+                try:
+                    cached_file.unlink(missing_ok=True)
+                except OSError:
+                    pass
 
-        # Validate speech audio (16-bit WAV, valid duration, non-silent)
-        duration = check_speech_audio(output_wav, scene.dialogue_line, target_sample_rate=24000)
+        if cache_hit_valid:
+            logger.info("Gemini TTS cache HIT for scene %d (key: %s)", scene_index, cache_key)
+            self.cache_hits += 1
+            shutil.copyfile(cached_file, output_wav)
+            duration = check_speech_audio(output_wav, scene.dialogue_line, target_sample_rate=24000)
+        else:
+            logger.info("Gemini TTS cache MISS for scene %d (key: %s) - synthesizing speech", scene_index, cache_key)
+            self.cache_misses += 1
+            if getattr(self.client_wrapper, "is_auto_fallback", False):
+                raise VoiceError(
+                    "GEMINI_API_KEY is missing. Gemini TTS requires a valid GEMINI_API_KEY to synthesize speech and will not fall back silently to mock audio."
+                )
+            try:
+                audio_bytes = self.client_wrapper.generate_speech_with_retry(
+                    text=scene.dialogue_line,
+                    voice_name=voice_name,
+                    model=self.model_name,
+                )
+                if not audio_bytes.startswith(b"RIFF"):
+                    import io, wave
+                    buf = io.BytesIO()
+                    with wave.open(buf, "wb") as wf:
+                        wf.setnchannels(1)
+                        wf.setsampwidth(2)
+                        wf.setframerate(24000)
+                        wf.writeframes(audio_bytes)
+                    audio_bytes = buf.getvalue()
+                
+                output_wav.write_bytes(audio_bytes)
+                # Verify speech before caching
+                duration = check_speech_audio(output_wav, scene.dialogue_line, target_sample_rate=24000)
+
+                # Never cache mock audio in persistent cache; only cache verified real speech
+                if not getattr(self.client_wrapper, "mock", False):
+                    self.cache_dir.mkdir(parents=True, exist_ok=True)
+                    cached_file.write_bytes(audio_bytes)
+            except VoiceError:
+                # Quota or rate limit error: stop immediately and re-raise without retries
+                raise
+            except Exception as e:
+                logger.error("Gemini TTS synthesis failed for scene %d: %s", scene_index, e)
+                raise VoiceError(f"Gemini TTS generation failed for scene {scene_index}: {e}") from e
 
         # Word timing alignment via faster-whisper (falls back to proportional timing with warning)
         word_timings = align_words_with_whisper(output_wav, scene.dialogue_line, duration)
