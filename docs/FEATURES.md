@@ -187,3 +187,15 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Files**: `src/toonshorts/core/character2d.py`, `assets2d/layouts/sheet_03_layout.json`, `tools/build_2d_hoodie_video.py`
 - **Capabilities**: Character registry, modular slots (hair, hat, torso, legs, shoes, hands), forward-kinematic 2D skeletal rotation, audio loudness mouth shape swapping, squash & stretch actions (idle, walk, wave, jump), soft pastel gradient background rendering with ground shadow, and standalone short video generator (`tools/build_2d_hoodie_video.py`) with Piper TTS speech and burned ASS subtitles.
 - **Tests**: `tests/unit/test_character2d.py`
+
+### `boy_b` (2D Full-Body Layered Character Pack)
+- **Description**: Full-body layered character pack with brown hair, round glasses, and blue hoodie. Sourced from 8-face tile sheet and body sheet (front/back views), featuring 22 transparent layers, gapless joint rotation caps (shoulders, elbows, hips, knees, ankles), and full FK skeletal compatibility.
+- **Files**: `assets2d/characters/boy_b/manifest.json`, `assets2d/characters/boy_b/character.json`, `assets2d/characters/boy_b/layers/`, `tools/build_character_packs.py`
+- **Capabilities**: Swappable eye states (`open`, `blink`, `look_left`, `look_right`), mouth states (`closed`, `slightly_open`, `wide_open`, `round_o`, `open_smile`), back-of-head layer from back view, gapless overlap joint caps, manifest and character.json schemas, and test staging previews (`staging/boy_b_preview_sheet.png`).
+- **Tests**: `tests/unit/test_new_character_packs.py`
+
+### `girl_a` (2D Full-Body Layered Character Pack)
+- **Description**: Full-body layered character pack with orange hair, round glasses, freckles, and purple vest. Sourced from 8-face tile sheet and body sheet (front/back views), featuring 22 transparent layers, gapless joint rotation caps (shoulders, elbows, hips, knees, ankles), and full FK skeletal compatibility.
+- **Files**: `assets2d/characters/girl_a/manifest.json`, `assets2d/characters/girl_a/character.json`, `assets2d/characters/girl_a/layers/`, `tools/build_character_packs.py`
+- **Capabilities**: Swappable eye states (`open`, `blink`, `look_left`, `look_right`), mouth states (`closed`, `slightly_open`, `wide_open`, `round_o`, `open_smile`), back-of-head layer from back view, gapless overlap joint caps, manifest and character.json schemas, and test staging previews (`staging/girl_a_preview_sheet.png`).
+- **Tests**: `tests/unit/test_new_character_packs.py`
