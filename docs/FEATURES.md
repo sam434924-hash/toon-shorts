@@ -152,6 +152,16 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 
 ---
 
+## Scene Format v2 & Directing Validator (`core/models`, `core/validator`)
+
+### `Scene Format v2`
+- **Description**: Extended screenplay format supporting `plan.version` (defaults to 1 with transparent v1 adapter), per-scene `layout` ("cards" or "stage"), `cast` assignments, `shots` lists, and `visuals` lists. Enforces strict schema validation, extra field rejection (`extra="forbid"`), text length bounds, and directing skill limits.
+- **Files**: `src/toonshorts/core/models.py`, `src/toonshorts/core/validator.py`
+- **Capabilities**: Backwards compatible v1 adapter, maximum 2 characters per scene, 180-degree rule enforcement, shot zoom limit (<= 1.35x), ease times (0.4 to 0.6s), minimum hold (>= 1.2s), zoom frequency limits (at most one zoom per 5s), target in cast check, non-overlapping shots, and scene length bounding.
+- **Tests**: `tests/unit/test_v2_validation.py`, `tests/unit/test_validation.py`
+
+---
+
 ## 2D Layered Character System (`core/character2d`, `core/character_pack`)
 
 ### `presenter` (Whiteboard Presenter Character Pack)

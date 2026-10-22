@@ -17,6 +17,7 @@
 
 - 2026-10-22: Completed safe cleanup: sanitized secrets in .env.example, removed hardcoded script intercept in gemini plugin with fallback error, deleted obsolete root styles and assets, simplified blender3d plugin to robot-only, and synchronized documentation.
 - 2026-10-22: Redesigned whiteboard short style with progressive stroke-by-stroke SVG drawing synced to Whisper word timings, 7-layer character head architecture, physically attached hands/arms with smooth easing, and 100% constant studio set with fixed camera across scenes.
+- 2026-10-22: Added Scene Format v2 with versioning adapter, directing validator enforcing camera rules (zoom <= 1.35, ease 0.4-0.6s, hold >= 1.2s, max 1 zoom per 5s, target in cast, inside scene length), and strict extra-field rejection.
 - 2026-10-21: Polished whiteboard visual composition with gradient background, board glow, vignette, warm presenter side-light, dynamic Rough.js sketch annotations (title underline, number circles, inter-card arrows), safe area gesture boundaries, and enhanced subtitles.
 
 - 2026-10-21: Fixed anime.js audio padding and scene video duration alignment to prevent subtitle drift, enforced WAV container wrapping for raw PCM Gemini speech, added relative-path Playwright URI support, and added corrupt cache recovery tests.

@@ -3,17 +3,25 @@ Purpose: Data schemas for screenplay direction, audio timing, and review.
 Inputs: Raw dictionary definitions or keyword arguments.
 Outputs: Validated Pydantic models, enums, dataclasses, and safe filenames.
 Depends on: dataclasses, enum, pathlib, pydantic, re, typing
-Used by: core, core.assembler, core.client, core.cost, core.pipeline, core.registry, core.schemas, core.subtitles, models, plugins.llm.fake, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.motion.static, plugins.render.animejs.annotations, plugins.render.animejs.cast, plugins.render.animejs.html_builder, plugins.render.animejs.plugin, plugins.render.blender3d, plugins.render.cairo, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.fake, plugins.voice.gemini_tts, plugins.voice.piper, plugins.voice.windows_sapi, voice, voice_utils
+Used by: core, core.assembler, core.client, core.cost, core.pipeline, core.registry, core.schemas, core.subtitles, core.validator, models, plugins.llm.fake, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.motion.static, plugins.render.animejs.annotations, plugins.render.animejs.cast, plugins.render.animejs.html_builder, plugins.render.animejs.plugin, plugins.render.blender3d, plugins.render.cairo, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.fake, plugins.voice.gemini_tts, plugins.voice.piper, plugins.voice.windows_sapi, voice, voice_utils
 Config keys: None
-Tests: tests/unit/test_sanitizing.py, tests/unit/test_validation.py
+Tests: tests/unit/test_sanitizing.py, tests/unit/test_validation.py, tests/unit/test_v2_validation.py
 """
 
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import List, Optional
+from typing import Any, Dict, List, Literal, Optional
 import re
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+
+
+class PlanValidationError(ValueError):
+    """Raised when a ScriptPlan breaks v1 or v2 validation or directing rules."""
+    def __init__(self, message: str, scene_number: Optional[int] = None, field: Optional[str] = None):
+        super().__init__(message)
+        self.scene_number = scene_number
+        self.field = field
 
 
 class CameraMove(str, Enum):
@@ -41,6 +49,8 @@ class Pose(str, Enum):
 
 
 class Character(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     name: str = Field(..., min_length=1, max_length=30)
     visual_description: str = Field(..., min_length=5, max_length=200)
     voice_id: str = Field(default="voice_default", min_length=1, max_length=40)
@@ -54,7 +64,29 @@ class Character(BaseModel):
         return clean
 
 
+class Shot(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    start: float = Field(..., ge=0.0)
+    end: float = Field(..., gt=0.0)
+    type: Literal["wide", "close_up"] = Field(...)
+    target: Optional[str] = Field(default=None, max_length=30)
+    zoom: float = Field(default=1.0)
+    ease_in: float = Field(default=0.5)
+    ease_out: float = Field(default=0.5)
+
+
+class Visual(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    type: str = Field(..., min_length=1, max_length=30)
+    trigger_word: str = Field(..., min_length=1, max_length=30)
+    params: Dict[str, Any] = Field(default_factory=dict)
+
+
 class Scene(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     scene_number: int = Field(..., ge=1, le=20)
     speaker: str = Field(..., min_length=1, max_length=30)
     dialogue_line: str = Field(..., min_length=1, max_length=250)
@@ -63,7 +95,11 @@ class Scene(BaseModel):
     camera_move: CameraMove = Field(default=CameraMove.STATIC)
     transition: Transition = Field(default=Transition.CUT)
     is_punchline: bool = Field(default=False)
-    gesture: Optional[str] = Field(default=None)
+    gesture: Optional[str] = Field(default=None, max_length=30)
+    cast: Optional[List[str]] = Field(default=None)
+    layout: Optional[str] = Field(default="cards", max_length=10)
+    shots: Optional[List[Shot]] = Field(default=None)
+    visuals: Optional[List[Visual]] = Field(default=None)
 
     @field_validator("gesture")
     @classmethod
@@ -76,13 +112,32 @@ class Scene(BaseModel):
             raise ValueError(f"Invalid gesture '{v}'. Allowed gestures: {sorted(list(allowed))}")
         return clean
 
+    @field_validator("layout")
+    @classmethod
+    def validate_layout_value(cls, v: Optional[str]) -> str:
+        val = (v or "cards").lower().strip()
+        if val not in ("cards", "stage"):
+            raise ValueError(f"layout must be 'cards' or 'stage' (got '{v}')")
+        return val
+
 
 class ScriptPlan(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    version: int = Field(default=1, ge=1, le=2)
     title: str = Field(..., min_length=1, max_length=80)
     art_style: str = Field(..., min_length=1, max_length=50)
     emotional_arc: str = Field(..., min_length=5, max_length=200)
     characters: List[Character] = Field(..., min_length=2, max_length=3)
     scenes: List[Scene] = Field(..., min_length=4, max_length=10)
+
+    @model_validator(mode="before")
+    @classmethod
+    def adapt_before(cls, data: Any) -> Any:
+        if isinstance(data, dict):
+            if "version" not in data:
+                data["version"] = 1
+        return data
 
     @model_validator(mode="after")
     def validate_characters_and_speakers(self) -> "ScriptPlan":

@@ -19,6 +19,9 @@ from .models import (
     WordTiming,
     SceneAudio,
     sanitize_filename,
+    Shot,
+    Visual,
+    PlanValidationError,
 )
 
 __all__ = [
@@ -32,4 +35,7 @@ __all__ = [
     "WordTiming",
     "SceneAudio",
     "sanitize_filename",
+    "Shot",
+    "Visual",
+    "PlanValidationError",
 ]
