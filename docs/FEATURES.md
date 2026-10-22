@@ -7,8 +7,8 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 ### `make`
 - **Description**: Generates an end-to-end 9:16 vertical short animated video.
 - **Files**: `src/toonshorts/cli.py`, `src/toonshorts/core/pipeline.py`
-- **Config Flags / Options**: `--style`, `--topic`, `--yes`, `--mock`, `--llm`, `--voice`, `--voice-engine`, `--allow-noncommercial`, `--renderer`, `--motion`, `--output-dir`, `--keep-temp`
-- **Tests**: `tests/smoke/test_smoke_pipeline.py`
+- **Config Flags / Options**: `--style`, `--topic`, `--yes`, `--mock`, `--fast`, `--llm`, `--voice`, `--voice-engine`, `--allow-noncommercial`, `--renderer`, `--motion`, `--output-dir`, `--keep-temp`
+- **Tests**: `tests/smoke/test_smoke_pipeline.py`, `tests/unit/test_fast_preview.py`
 
 ---
 

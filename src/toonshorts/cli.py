@@ -56,6 +56,7 @@ def make_command(args: argparse.Namespace) -> int:
             keep_temp=args.keep_temp,
             mock=args.mock,
             allow_noncommercial=args.allow_noncommercial,
+            fast=getattr(args, "fast", False),
         )
         if final_video:
             print("\n=======================================================")
@@ -81,6 +82,12 @@ def main():
     make_parser.add_argument("--topic", required=True, help="Story topic or comedy premise")
     make_parser.add_argument("--yes", "-y", action="store_true", help="Skip cost confirmation prompt")
     make_parser.add_argument("--mock", action="store_true", help="Run with offline mock generator for testing")
+    make_parser.add_argument(
+        "--fast",
+        action="store_true",
+        default=False,
+        help="Fast preview mode: first 6 seconds, half resolution (540x960), 15 fps, saved to output/fast/",
+    )
     make_parser.add_argument("--llm", default=None, help="LLM plugin to use (gemini, fake)")
     make_parser.add_argument(
         "--voice-engine",

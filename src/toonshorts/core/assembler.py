@@ -63,13 +63,20 @@ def assemble_final_video(
     temp_dir: Path,
     output_dir: Path,
     motion_plugin: Optional[Any] = None,
+    fast: bool = False,
 ) -> Path:
     """Renders scenes, burns in ASS subtitles, and outputs finished vertical MP4."""
     check_ffmpeg_subtitles_support()
     temp_dir.mkdir(parents=True, exist_ok=True)
+    if fast:
+        output_dir = config.OUTPUT_DIR / "fast"
     output_dir.mkdir(parents=True, exist_ok=True)
     safe_title = sanitize_filename(plan.title)
-    final_output_path = output_dir / f"{safe_title}.mp4"
+    final_output_path = output_dir / (f"{safe_title}_fast.mp4" if fast else f"{safe_title}.mp4")
+
+    target_fps = 15 if fast else config.VIDEO_FPS
+    target_width = 540 if fast else config.VIDEO_WIDTH
+    target_height = 960 if fast else config.VIDEO_HEIGHT
 
     # 1. Prepare sound effects
     sfx_map = prepare_sound_effects(temp_dir)
@@ -82,6 +89,20 @@ def assemble_final_video(
 
         # Check if scene was directly rendered as an animated video clip
         if img_path.suffix.lower() == ".mp4":
+            if fast:
+                scaled_clip = temp_dir / f"fast_scaled_clip_{i}.mp4"
+                scale_cmd = [
+                    "ffmpeg", "-y",
+                    "-i", str(img_path),
+                    "-vf", f"scale={target_width}:{target_height}",
+                    "-r", str(target_fps),
+                    "-c:v", "libx264", "-preset", "ultrafast",
+                    "-c:a", "copy",
+                    str(scaled_clip)
+                ]
+                subprocess.run(scale_cmd, capture_output=True, check=True, stdin=subprocess.DEVNULL)
+                img_path = scaled_clip
+
             has_punchline = scene.is_punchline
             if has_punchline and default_sfx:
                 chosen_sfx = sfx_map.get(default_sfx[0], sfx_map.get("boing"))
@@ -109,10 +130,10 @@ def assemble_final_video(
             scene_clips.append(clip_path)
             continue
 
-        if motion_plugin and hasattr(motion_plugin, "get_filter_chain"):
+        if motion_plugin and hasattr(motion_plugin, "get_filter_chain") and not fast:
             motion_filter = motion_plugin.get_filter_chain(scene.camera_move, audio.scene_total_duration)
         else:
-            motion_filter = "scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2"
+            motion_filter = f"scale={target_width}:{target_height}:force_original_aspect_ratio=decrease,pad={target_width}:{target_height}:(ow-iw)/2:(oh-ih)/2"
 
         # Mix punchline sfx if flagged
         has_punchline = scene.is_punchline
@@ -143,7 +164,7 @@ def assemble_final_video(
             "-vf", motion_filter,
             "-c:v", "libx264", "-preset", "ultrafast", "-pix_fmt", "yuv420p",
             "-c:a", "aac", "-b:a", "128k", "-ac", "2",
-            "-r", str(config.VIDEO_FPS),
+            "-r", str(target_fps),
             str(clip_path)
         ]
 
@@ -182,10 +203,14 @@ def assemble_final_video(
         "ffmpeg", "-y",
         "-i", str(unsubbed_video.name),
         "-vf", f"subtitles={ass_path.name}",
-        "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p",
+        "-c:v", "libx264", "-preset", "ultrafast" if fast else "medium", "-crf", "18", "-pix_fmt", "yuv420p",
         "-c:a", "aac", "-b:a", "192k",
-        str(final_output_path.resolve())
+        "-r", str(target_fps),
     ]
+    if fast:
+        final_burn_cmd.extend(["-t", "6.000"])
+    final_burn_cmd.append(str(final_output_path.resolve()))
+
     logger.info("Burning in ASS word-level captions to final video...")
     res = subprocess.run(final_burn_cmd, cwd=temp_dir, capture_output=True, text=True, stdin=subprocess.DEVNULL)
     if res.returncode != 0:

@@ -92,6 +92,8 @@ class AnimeJSRenderPlugin(RenderInterface):
         scene_number: int = 1,
         annotations: Optional[List[Dict[str, Any]]] = None,
         characters_data: Optional[List[Dict[str, Any]]] = None,
+        width: int = config.VIDEO_WIDTH,
+        height: int = config.VIDEO_HEIGHT,
     ) -> Path:
         """
         Renders a fully animated MP4 video with easing transitions synced to an audio clip.
@@ -111,8 +113,8 @@ class AnimeJSRenderPlugin(RenderInterface):
             scene_number=scene_number,
             annotations=annotations,
             characters_data=characters_data,
-            width=config.VIDEO_WIDTH,
-            height=config.VIDEO_HEIGHT,
+            width=width,
+            height=height,
         )
 
     def render_all_scenes(
@@ -122,6 +124,7 @@ class AnimeJSRenderPlugin(RenderInterface):
         temp_dir: Path,
         character_refs: Optional[Dict[str, Path]] = None,
         scene_audios: Optional[List[SceneAudio]] = None,
+        fast: bool = False,
     ) -> List[Path]:
         """
         Renders scenes for the screenplay plan.
@@ -130,6 +133,9 @@ class AnimeJSRenderPlugin(RenderInterface):
         """
         temp_dir.mkdir(parents=True, exist_ok=True)
         results = []
+        fps = 15 if fast else config.VIDEO_FPS
+        width = 540 if fast else config.VIDEO_WIDTH
+        height = 960 if fast else config.VIDEO_HEIGHT
 
         if scene_audios and len(scene_audios) == len(plan.scenes):
             for i, (scene, audio) in enumerate(zip(plan.scenes, scene_audios)):
@@ -151,11 +157,13 @@ class AnimeJSRenderPlugin(RenderInterface):
                     output_path=clip_path,
                     duration_sec=audio.scene_total_duration,
                     gesture=scene_gesture,
-                    fps=config.VIDEO_FPS,
+                    fps=fps,
                     temp_dir=temp_dir / f"scene_{scene.scene_number}_tmp",
                     scene_number=scene.scene_number,
                     annotations=annotations,
                     characters_data=characters_data,
+                    width=width,
+                    height=height,
                 )
                 results.append(clip_path)
         else:

@@ -89,6 +89,10 @@ class GeminiTTSVoicePlugin(VoiceInterface):
             shutil.copyfile(cached_file, output_wav)
             duration = check_speech_audio(output_wav, scene.dialogue_line, target_sample_rate=24000)
         else:
+            if getattr(self, "cache_only", False):
+                raise VoiceError(
+                    f"Fast preview mode requires cached audio but found cache miss for dialogue: '{scene.dialogue_line}'. Live Gemini API calls are forbidden in fast mode."
+                )
             logger.info("Gemini TTS cache MISS for scene %d (key: %s) - synthesizing speech", scene_index, cache_key)
             self.cache_misses += 1
             if getattr(self.client_wrapper, "is_auto_fallback", False):

@@ -2,7 +2,7 @@
 Purpose: Pipeline runner orchestrating LLM, voice, render, and motion.
 Inputs: Video production topic, style name, flags, and plugin selections.
 Outputs: Path to finalized vertical animation MP4 short.
-Depends on: core.assembler, core.config, core.cost, core.errors, core.models, core.registry, json, logging, pathlib, shutil, typing
+Depends on: core.assembler, core.config, core.cost, core.errors, core.models, core.registry, json, logging, pathlib, shutil, subprocess, typing
 Used by: cli, core
 Config keys: DEFAULT_LLM, DEFAULT_MOTION, DEFAULT_RENDERER, DEFAULT_VOICE, OUTPUT_DIR, STYLES_DIR, TEMP_DIR
 Tests: tests/smoke/test_smoke_pipeline.py
@@ -10,12 +10,13 @@ Tests: tests/smoke/test_smoke_pipeline.py
 
 import json
 import logging
-import shutil
 from pathlib import Path
+import shutil
+import subprocess
 from typing import Dict, Any, Optional
 
 from . import config
-from .models import ScriptPlan
+from .models import ScriptPlan, SceneAudio
 from .cost import estimate_costs, confirm_cost_gate
 from .assembler import assemble_final_video, check_ffmpeg_subtitles_support
 from .registry import get_llm, get_voice, get_renderer, get_motion
@@ -59,6 +60,7 @@ def run_pipeline(
     keep_temp: bool = False,
     mock: bool = False,
     allow_noncommercial: bool = False,
+    fast: bool = False,
 ) -> Optional[Path]:
     """Executes the full modular video generation pipeline."""
     config.check_cloud_sync_warning()
@@ -76,8 +78,15 @@ def run_pipeline(
         elif resolved_voice == "sapi":
             resolved_voice = "windows_sapi"
 
-    # Resolve plugin selections (mock overrides to fake for fast offline test)
-    llm_plugin_name = "fake" if mock else (llm_name or config.DEFAULT_LLM)
+    # Fast mode enforces offline cached/mock generation, zero Gemini calls, and auto-confirm
+    if fast:
+        llm_plugin_name = "fake"
+        auto_confirm = True
+        dest_output_dir = config.OUTPUT_DIR / "fast"
+    else:
+        llm_plugin_name = "fake" if mock else (llm_name or config.DEFAULT_LLM)
+        dest_output_dir = output_dir or config.OUTPUT_DIR
+
     voice_plugin_name = "fake" if mock else (resolved_voice or preset.get("voice") or config.DEFAULT_VOICE)
     motion_plugin_name = motion_name or config.DEFAULT_MOTION
 
@@ -102,6 +111,10 @@ def run_pipeline(
     except TypeError:
         voice = get_voice(voice_plugin_name)
 
+    if fast:
+        # Forbid live network API calls in fast mode
+        setattr(voice, "cache_only", True)
+
     renderer = get_renderer(render_plugin_name)
     motion = get_motion(motion_plugin_name)
 
@@ -109,8 +122,6 @@ def run_pipeline(
     if temp_dir.exists():
         shutil.rmtree(temp_dir, ignore_errors=True)
     temp_dir.mkdir(parents=True, exist_ok=True)
-
-    dest_output_dir = output_dir or config.OUTPUT_DIR
     dest_output_dir.mkdir(parents=True, exist_ok=True)
 
     try:
@@ -132,12 +143,52 @@ def run_pipeline(
         logger.info("[3/6] Generating voice track via %s...", voice.name)
         scene_audios = voice.generate_all_voices(refined_plan, temp_dir)
 
+        # Fast preview mode trims total duration to <= 6.0 seconds
+        if fast:
+            fast_scenes = []
+            fast_audios = []
+            accum_dur = 0.0
+            for sc, sa in zip(refined_plan.scenes, scene_audios):
+                if accum_dur >= 6.0:
+                    break
+                rem = 6.0 - accum_dur
+                if sa.scene_total_duration > rem:
+                    trimmed_wav = temp_dir / f"fast_trimmed_sc{sc.scene_number}.wav"
+                    subprocess.run([
+                        "ffmpeg", "-y",
+                        "-i", str(sa.audio_path),
+                        "-t", f"{rem:.3f}",
+                        "-c", "copy",
+                        str(trimmed_wav)
+                    ], capture_output=True, check=True, stdin=subprocess.DEVNULL)
+                    fast_audios.append(SceneAudio(
+                        scene_index=sa.scene_index,
+                        audio_path=trimmed_wav,
+                        duration_seconds=rem,
+                        scene_total_duration=rem,
+                        word_timings=[w for w in sa.word_timings if w.start_time < rem],
+                    ))
+                    fast_scenes.append(sc)
+                    accum_dur = 6.0
+                    break
+                else:
+                    fast_scenes.append(sc)
+                    fast_audios.append(sa)
+                    accum_dur += sa.scene_total_duration
+            refined_plan.scenes = fast_scenes
+            scene_audios = fast_audios
+
         # 5. Scene Rendering
         logger.info("[4/6] Rendering scene images via %s...", renderer.name)
         try:
-            scene_images = renderer.render_all_scenes(refined_plan, preset, temp_dir, scene_audios=scene_audios)
+            scene_images = renderer.render_all_scenes(
+                refined_plan, preset, temp_dir, scene_audios=scene_audios, fast=fast
+            )
         except TypeError:
-            scene_images = renderer.render_all_scenes(refined_plan, preset, temp_dir)
+            try:
+                scene_images = renderer.render_all_scenes(refined_plan, preset, temp_dir, scene_audios=scene_audios)
+            except TypeError:
+                scene_images = renderer.render_all_scenes(refined_plan, preset, temp_dir)
 
         # 6. Assembly & Motion
         logger.info("[5/6] Assembling video using %s motion...", motion.name)
@@ -149,6 +200,7 @@ def run_pipeline(
             temp_dir=temp_dir,
             output_dir=dest_output_dir,
             motion_plugin=motion,
+            fast=fast,
         )
 
         logger.info("Pipeline completed successfully: %s", final_video)
