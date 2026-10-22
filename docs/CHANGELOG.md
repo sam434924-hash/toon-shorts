@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-22: Refined character packs: unified Presenter hairline into smooth continuous silhouette clearing eyebrows with seamless temple sideburns and golden rim sidelight; realigned Boy A ears upward (~55px) to natural eye/nose height with tight head base anchoring and synchronized hair-back framing.
 - 2026-10-22: Integrated 2D character packs into whiteboard renderer with left/right slots, mirrored right placement, speech-driven mouth sync for active speaker, idle blinks/glances for listeners, and gesture resolution with warnings.
 - 2026-10-22: Extracted whiteboard presenter into modular character pack with swappable arm rigs, 4 mouth states, and eye look/blink states.
 - 2026-10-22: Standardized character pack manifest schema (anchors, safe_bounding_box, default_slot, scale, allowed_gestures) and upgraded SVG security to element allowlist with strict URI/event safety.

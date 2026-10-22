@@ -64,17 +64,17 @@
     <path d="M 252 410 C 265 414, 295 414, 308 410 C 298 415, 262 415, 252 410 Z" fill="#e6a389"/>
   </g>
 
-  <!-- 6. EARS (Left & Right with 2-Tone Inner Shadows) -->
+  <!-- 6. EARS (Left & Right with 2-Tone Inner Shadows, anatomically aligned) -->
   <g id="layer-ears">
     <g id="ear-left">
-      <path d="M 152 272 C 100 268, 76 295, 84 326 C 92 355, 132 352, 150 336 Z" fill="#f8cba8" stroke="#22120b" stroke-width="3.8" stroke-linejoin="round"/>
-      <path d="M 142 284 C 108 282, 94 304, 102 324 C 110 336, 128 332, 140 320 Z" fill="#e6a389"/>
-      <path d="M 112 300 C 122 306, 126 316, 118 325" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M 149 217 C 98 213, 76 240, 84 271 C 92 298, 128 296, 146 281 Z" fill="#f8cba8" stroke="#22120b" stroke-width="3.8" stroke-linejoin="round"/>
+      <path d="M 141 229 C 108 227, 94 249, 102 269 C 110 281, 128 277, 139 265 Z" fill="#e6a389"/>
+      <path d="M 112 245 C 122 251, 126 261, 118 270" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
     </g>
     <g id="ear-right">
-      <path d="M 408 272 C 460 268, 484 295, 476 326 C 468 355, 428 352, 410 336 Z" fill="#f8cba8" stroke="#22120b" stroke-width="3.8" stroke-linejoin="round"/>
-      <path d="M 418 284 C 452 282, 466 304, 458 324 C 450 336, 432 332, 420 320 Z" fill="#e6a389"/>
-      <path d="M 448 300 C 438 306, 434 316, 442 325" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M 411 217 C 462 213, 484 240, 476 271 C 468 298, 432 296, 414 281 Z" fill="#f8cba8" stroke="#22120b" stroke-width="3.8" stroke-linejoin="round"/>
+      <path d="M 419 229 C 452 227, 466 249, 458 269 C 450 281, 432 277, 421 265 Z" fill="#e6a389"/>
+      <path d="M 448 245 C 438 251, 434 261, 442 270" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
     </g>
   </g>
 

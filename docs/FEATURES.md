@@ -155,13 +155,13 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 ## 2D Layered Character System (`core/character2d`, `core/character_pack`)
 
 ### `presenter` (Whiteboard Presenter Character Pack)
-- **Description**: Modular 2D layered SVG character pack extracted from whiteboard inline markup. Features swappable arm rigs (`idle`, `wave`, `point`, `explain`, `thumbs_up`, `shrug`), 4 mouth states (`closed`, `slightly_open`, `wide_open`, `round_o` with legacy `open` alias), and eye states (`open`, `blink`, `screen_left`, `screen_right`).
+- **Description**: Modular 2D layered SVG character pack extracted from whiteboard inline markup. Features a continuous unified hairline with elegant side-swept bangs clearing eyebrows, seamless sideburns, aligned golden rim sidelight, swappable arm rigs (`idle`, `wave`, `point`, `explain`, `thumbs_up`, `shrug`), 4 mouth states (`closed`, `slightly_open`, `wide_open`, `round_o` with legacy `open` alias), and eye states (`open`, `blink`, `screen_left`, `screen_right`).
 - **Files**: `src/toonshorts/core/character_pack.py`, `src/toonshorts/core/character2d.py`, `assets2d/characters/presenter/character.svg`, `assets2d/characters/presenter/manifest.json`
 - **Capabilities**: Full manifest compliance, 0 validation errors, swappable arm gesture rigs, eye blinking, speech-synced lip sync, and left/right slot rendering.
 - **Tests**: `tests/unit/test_character_pack.py`, `tests/unit/test_animejs.py`
 
 ### `boy_a` (2D Layered SVG Character Pack)
-- **Description**: Modular 2D layered SVG character pack with swappable eye states (`open`, `blink`, `screen_left`, `screen_right`) and mouth states (`closed`, `slightly_open`, `wide_open`, `round_o`) preserving identical head, hair (merged 2-tone facets), and eyebrows geometry. Includes simple neck and plain hoodie shoulders.
+- **Description**: Modular 2D layered SVG character pack with anatomically and stylistically aligned ears ($y=215\dots288$), anchored head base, synchronized hair-back framing, swappable eye states (`open`, `blink`, `screen_left`, `screen_right`), and mouth states (`closed`, `slightly_open`, `wide_open`, `round_o`) preserving identical head, hair (merged 2-tone facets), and eyebrows geometry. Includes simple neck and plain hoodie shoulders.
 - **Files**: `src/toonshorts/core/character_pack.py`, `src/toonshorts/core/character2d.py`, `assets2d/characters/boy_a/character.svg`, `assets2d/characters/boy_a/manifest.json`
 - **Capabilities**: Safe loading, path traversal prevention, strict XML/SVG safety checks (forbids `<script>`, event handlers, external entities, and gradients), file size <= 200 KB, state-switching SVG generation, PNG rendering via Playwright, and test staging workbench (`staging/index.html` and 4x2 contact sheet).
 - **Tests**: `tests/unit/test_character_pack.py`, `tests/unit/test_character2d.py`
