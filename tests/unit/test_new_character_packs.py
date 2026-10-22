@@ -1,6 +1,6 @@
 """
 Purpose: Unit tests for new 2D full-body layered character packs (boy_b and girl_a).
-Inputs: Assets in assets/sources/ and assets2d/characters/<id>/
+Inputs: Assets in assets/sources/ and assets/2d/characters/<id>/
 Outputs: Test assertions for layer integrity, manifest schema, and preview sheet rendering.
 Depends on: json, numpy, pathlib, pytest, PIL, core.config, core.paths, core.character_pack, core.character2d
 Used by: Test suite
