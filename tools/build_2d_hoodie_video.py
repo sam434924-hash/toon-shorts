@@ -1,6 +1,6 @@
 """
 Purpose: End-to-end 2D animated comedy short video generator for the layered hoodie character.
-Inputs: Character reference sheet (assets2d/incoming/sheet_03.png), layout JSON, Piper voice model.
+Inputs: Character reference sheet (assets/sources/incoming/sheet_03.png), layout JSON, Piper voice model.
 Outputs: output/renders2d/hoodie_comedy_short.mp4, stills, and audio master.
 Depends on: core.character2d, core.audio_effects, core.config, core.subtitles, numpy, wave, subprocess
 Used by: User verification, 2D pipeline
@@ -85,7 +85,7 @@ BEATS = [
 
 def ensure_character():
     """Slices or retrieves the stick_hoodie character from the reference sheet."""
-    sheet_path = PROJECT_ROOT / "assets2d" / "incoming" / "sheet_03.png"
+    sheet_path = PROJECT_ROOT / "assets" / "sources" / "incoming" / "sheet_03.png"
     layout_path = PROJECT_ROOT / "assets2d" / "layouts" / "sheet_03_layout.json"
 
     print("Checking character in registry...")

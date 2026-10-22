@@ -2,7 +2,7 @@
 Purpose: 2D layered character system with registry, FK skeleton, character packs, and actions.
 Inputs: Layout JSON, character sheet images, action parameters, audio loudness.
 Outputs: Cut transparent character layers, character registry JSON, rendered frames.
-Depends on: json, math, os, pathlib, re, time, typing, PIL, numpy, core.character_pack, core.config
+Depends on: json, math, os, pathlib, re, time, typing, PIL, numpy, core.character_pack, core.config, core.paths
 Used by: plugins.render.animejs.cast
 Config keys: None
 Tests: tests/unit/test_character2d.py
@@ -22,6 +22,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageOps
 
+from toonshorts.core import paths
 from toonshorts.core.config import PROJECT_ROOT
 from toonshorts.core.character_pack import (
     CharacterPack,
@@ -34,7 +35,7 @@ from toonshorts.core.character_pack import (
 ASSETS2D_DIR = PROJECT_ROOT / "assets2d"
 CHARACTERS2D_DIR = ASSETS2D_DIR / "characters"
 LAYOUTS2D_DIR = ASSETS2D_DIR / "layouts"
-INCOMING2D_DIR = ASSETS2D_DIR / "incoming"
+INCOMING2D_DIR = paths.ASSETS_SOURCES_INCOMING_DIR
 
 # Strict character name regex: letters, digits, dash, underscore, max 32 chars
 CHARACTER_NAME_REGEX = re.compile(r"^[a-zA-Z0-9_-]{1,32}$")

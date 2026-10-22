@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-22: Batch 1 asset migration: consolidated incoming sources to assets/sources/incoming/, pruned boy_a debug staging crops, and removed duplicate reference_card.
+
 - 2026-10-22: Built and refined two new full-body layered character packs (boy_b and girl_a) with 22 transparent layers each, clean antialiased eye/mouth diffing, torso/limb crops free of head artifacts, gapless rotation caps, manifest schemas, and preview sheets.
 - 2026-10-22: Completed Scene Format v2 testing, XSS plain text verification, golden baseline comparisons, and full test suite validation with fast and full-size renders.
 

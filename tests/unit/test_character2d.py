@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 from PIL import Image
 
+from toonshorts.core import paths
 from toonshorts.core.character2d import (
     CHARACTER_SLOTS,
     Character2D,
@@ -26,7 +27,7 @@ from toonshorts.core.character2d import (
 
 @pytest.fixture
 def test_dirs(tmp_path):
-    sheet_src = PROJECT_ROOT / "assets2d" / "incoming" / "sheet_03.png"
+    sheet_src = paths.ASSETS_SOURCES_INCOMING_DIR / "sheet_03.png"
     layout_src = PROJECT_ROOT / "assets2d" / "layouts" / "sheet_03_layout.json"
     return {
         "sheet": sheet_src,
