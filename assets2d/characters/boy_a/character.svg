@@ -1,0 +1,259 @@
+<svg id="character-boy_a" viewBox="0 0 560 630" width="560" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .eye-state { display: none; }
+      .mouth-state { display: none; }
+      #eyes-open { display: inline; }
+      #mouth-closed { display: inline; }
+    </style>
+    <!-- Clip paths for eyes -->
+    <clipPath id="clip-sclera-left">
+      <path d="M 166 256 C 168 232, 190 226, 215 228 C 235 230, 244 246, 240 262 C 236 278, 215 284, 190 282 C 172 280, 165 272, 166 256 Z" />
+    </clipPath>
+    <clipPath id="clip-sclera-right">
+      <path d="M 394 256 C 392 232, 370 226, 345 228 C 325 230, 316 246, 320 262 C 324 278, 345 284, 370 282 C 388 280, 395 272, 394 256 Z" />
+    </clipPath>
+    <!-- Clip paths for mouths -->
+    <clipPath id="clip-mouth-slight">
+      <path d="M 254 338 C 254 338, 280 334, 306 338 C 304 354, 290 358, 280 358 C 270 358, 256 354, 254 338 Z" />
+    </clipPath>
+    <clipPath id="clip-mouth-wide">
+      <path d="M 242 334 C 260 338, 300 338, 318 334 C 316 368, 304 382, 280 382 C 256 382, 244 368, 242 334 Z" />
+    </clipPath>
+  </defs>
+
+  <!-- 1. HOODIE BACK / INTERIOR HOOD -->
+  <g id="layer-hoodie-back">
+    <path d="M 180 435 C 180 380, 380 380, 380 435 L 410 520 L 150 520 Z" fill="#1e293b" />
+  </g>
+
+  <!-- 2. HAIR BACK (Silhouette behind Head & Ears) -->
+  <g id="layer-hair-back">
+    <path d="M 85 240 L 72 205 L 88 175 L 75 140 L 98 105 L 88 75 L 125 50 L 140 25 L 185 30 L 210 12 L 255 35 L 280 10 L 315 35 L 355 12 L 380 30 L 420 25 L 435 50 L 472 75 L 462 105 L 485 140 L 472 175 L 488 205 L 475 240 L 460 270 L 470 295 L 445 320 L 420 325 L 400 360 L 350 375 L 210 375 L 160 360 L 140 325 L 115 320 L 90 295 L 100 270 Z" fill="#3d2119" stroke="#22120b" stroke-width="4" stroke-linejoin="round"/>
+    <polygon points="125,50 140,25 185,30 160,65" fill="#5c382a"/>
+    <polygon points="210,12 255,35 235,60 185,30" fill="#5c382a"/>
+    <polygon points="280,10 315,35 295,62 255,35" fill="#5c382a"/>
+    <polygon points="355,12 380,30 355,65 315,35" fill="#5c382a"/>
+    <polygon points="380,30 420,25 400,65 355,65" fill="#5c382a"/>
+    <polygon points="75,140 98,105 120,135 90,165" fill="#5c382a"/>
+    <polygon points="485,140 462,105 440,135 470,165" fill="#5c382a"/>
+  </g>
+
+  <!-- 3. NECK & SHADOW -->
+  <g id="layer-neck">
+    <path d="M 224 375 L 220 455 C 255 468, 305 468, 340 455 L 336 375 Z" fill="#f8cba8" stroke="#22120b" stroke-width="3.5" stroke-linejoin="round"/>
+    <path d="M 224 375 C 240 420, 320 420, 336 375 L 338 410 C 310 432, 250 432, 222 410 Z" fill="#e6a389"/>
+  </g>
+
+  <!-- 4. PLAIN HOODIE FRONT (Shoulders, Collar & Drawstrings) -->
+  <g id="layer-hoodie-front">
+    <path d="M 175 445 C 130 465, 70 515, 30 630 L 530 630 C 490 515, 430 465, 385 445 C 340 478, 220 478, 175 445 Z" fill="#334155" stroke="#22120b" stroke-width="4.5" stroke-linejoin="round"/>
+    <path d="M 30 630 C 65 525, 120 480, 165 460 L 160 630 Z" fill="#243345" opacity="0.6"/>
+    <path d="M 530 630 C 495 525, 440 480, 395 460 L 400 630 Z" fill="#243345" opacity="0.6"/>
+    <path d="M 170 440 C 215 480, 345 480, 390 440 C 365 500, 195 500, 170 440 Z" fill="#334155" stroke="#22120b" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M 188 446 C 225 474, 335 474, 372 446 C 352 485, 208 485, 188 446 Z" fill="#1e293b"/>
+    <path d="M 248 480 Q 244 515 246 550" fill="none" stroke="#e2e8f0" stroke-width="3.5" stroke-linecap="round"/>
+    <rect x="244" y="548" width="4" height="10" rx="1.5" fill="#94a3b8"/>
+    <path d="M 312 480 Q 316 515 314 550" fill="none" stroke="#e2e8f0" stroke-width="3.5" stroke-linecap="round"/>
+    <rect x="312" y="548" width="4" height="10" rx="1.5" fill="#94a3b8"/>
+  </g>
+
+  <!-- 5. HEAD BASE (Skin Jaw & Cranium) -->
+  <g id="layer-head-base">
+    <path d="M 148 240 C 142 285, 145 325, 175 358 C 205 390, 240 415, 280 415 C 320 415, 355 390, 385 358 C 415 325, 418 285, 412 240 C 408 175, 370 120, 280 120 C 190 120, 152 175, 148 240 Z" fill="#f8cba8" stroke="#22120b" stroke-width="4.5" stroke-linejoin="round"/>
+    <path d="M 252 410 C 265 414, 295 414, 308 410 C 298 415, 262 415, 252 410 Z" fill="#e6a389"/>
+  </g>
+
+  <!-- 6. EARS (Left & Right with 2-Tone Inner Shadows) -->
+  <g id="layer-ears">
+    <g id="ear-left">
+      <path d="M 152 272 C 100 268, 76 295, 84 326 C 92 355, 132 352, 150 336 Z" fill="#f8cba8" stroke="#22120b" stroke-width="3.8" stroke-linejoin="round"/>
+      <path d="M 142 284 C 108 282, 94 304, 102 324 C 110 336, 128 332, 140 320 Z" fill="#e6a389"/>
+      <path d="M 112 300 C 122 306, 126 316, 118 325" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+    <g id="ear-right">
+      <path d="M 408 272 C 460 268, 484 295, 476 326 C 468 355, 428 352, 410 336 Z" fill="#f8cba8" stroke="#22120b" stroke-width="3.8" stroke-linejoin="round"/>
+      <path d="M 418 284 C 452 282, 466 304, 458 324 C 450 336, 432 332, 420 320 Z" fill="#e6a389"/>
+      <path d="M 448 300 C 438 306, 434 316, 442 325" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- 7. FACE DETAILS (Blush & Nose) -->
+  <g id="layer-face-details">
+    <ellipse cx="182" cy="318" rx="22" ry="11" fill="#f4978e" opacity="0.45" />
+    <ellipse cx="378" cy="318" rx="22" ry="11" fill="#f4978e" opacity="0.45" />
+    <path d="M 276 302 L 280 308 L 284 302 Z" fill="#e6a389" stroke="#22120b" stroke-width="2.5" stroke-linejoin="round"/>
+  </g>
+
+  <!-- 8. EYEBROWS (Identical across all states, completely unobstructed) -->
+  <g id="layer-eyebrows">
+    <!-- Left Eyebrow (top at Y=198) -->
+    <path d="M 242 226 C 220 206, 185 206, 158 226 C 170 216, 205 198, 242 216 Z" fill="#26130d" stroke="#26130d" stroke-width="1.5" stroke-linejoin="round"/>
+    <!-- Right Eyebrow (top at Y=198) -->
+    <path d="M 318 226 C 340 206, 375 206, 402 226 C 390 216, 355 198, 318 216 Z" fill="#26130d" stroke="#26130d" stroke-width="1.5" stroke-linejoin="round"/>
+  </g>
+
+  <!-- 9. SWAPPABLE EYE STATES -->
+  <g id="layer-eyes">
+    <!-- 9A: EYES OPEN (Neutral default) -->
+    <g id="eyes-open" class="eye-state" data-eye="open">
+      <g id="eye-left-open">
+        <path d="M 166 256 C 168 232, 190 226, 215 228 C 235 230, 244 246, 240 262 C 236 278, 215 284, 190 282 C 172 280, 165 272, 166 256 Z" fill="#ffffff" stroke="#22120b" stroke-width="4.5" stroke-linejoin="round"/>
+        <g clip-path="url(#clip-sclera-left)">
+          <path d="M 166 230 L 240 230 L 240 240 L 166 240 Z" fill="#e2e8f0" opacity="0.6"/>
+          <circle cx="202" cy="256" r="22" fill="#3d2119" stroke="#22120b" stroke-width="2.5"/>
+          <circle cx="202" cy="256" r="13" fill="#150a06"/>
+          <circle cx="194" cy="248" r="7" fill="#ffffff"/>
+          <circle cx="210" cy="266" r="3.5" fill="#ffffff"/>
+        </g>
+        <path d="M 162 254 C 172 228, 208 222, 245 236" fill="none" stroke="#22120b" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M 180 286 C 195 289, 220 288, 230 284" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+      <g id="eye-right-open">
+        <path d="M 394 256 C 392 232, 370 226, 345 228 C 325 230, 316 246, 320 262 C 324 278, 345 284, 370 282 C 388 280, 395 272, 394 256 Z" fill="#ffffff" stroke="#22120b" stroke-width="4.5" stroke-linejoin="round"/>
+        <g clip-path="url(#clip-sclera-right)">
+          <path d="M 320 230 L 394 230 L 394 240 L 320 240 Z" fill="#e2e8f0" opacity="0.6"/>
+          <circle cx="358" cy="256" r="22" fill="#3d2119" stroke="#22120b" stroke-width="2.5"/>
+          <circle cx="358" cy="256" r="13" fill="#150a06"/>
+          <circle cx="350" cy="248" r="7" fill="#ffffff"/>
+          <circle cx="366" cy="266" r="3.5" fill="#ffffff"/>
+        </g>
+        <path d="M 398 254 C 388 228, 352 222, 315 236" fill="none" stroke="#22120b" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M 380 286 C 365 289, 340 288, 330 284" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+    </g>
+
+    <!-- 9B: EYES BLINK (Closed smiling arcs) -->
+    <g id="eyes-blink" class="eye-state" data-eye="blink">
+      <path d="M 165 258 C 182 242, 218 242, 238 258" fill="none" stroke="#22120b" stroke-width="7" stroke-linecap="round"/>
+      <path d="M 235 258 L 244 254" fill="none" stroke="#22120b" stroke-width="4.5" stroke-linecap="round"/>
+      <path d="M 322 258 C 342 242, 378 242, 395 258" fill="none" stroke="#22120b" stroke-width="7" stroke-linecap="round"/>
+      <path d="M 395 258 L 404 254" fill="none" stroke="#22120b" stroke-width="4.5" stroke-linecap="round"/>
+    </g>
+
+    <!-- 9C: EYES LOOKING LEFT (Pupils shifted screen left) -->
+    <g id="eyes-screen_left" class="eye-state" data-eye="screen_left">
+      <g id="eye-left-screen-left">
+        <path d="M 166 256 C 168 232, 190 226, 215 228 C 235 230, 244 246, 240 262 C 236 278, 215 284, 190 282 C 172 280, 165 272, 166 256 Z" fill="#ffffff" stroke="#22120b" stroke-width="4.5" stroke-linejoin="round"/>
+        <g clip-path="url(#clip-sclera-left)">
+          <path d="M 166 230 L 240 230 L 240 240 L 166 240 Z" fill="#e2e8f0" opacity="0.6"/>
+          <circle cx="186" cy="256" r="22" fill="#3d2119" stroke="#22120b" stroke-width="2.5"/>
+          <circle cx="186" cy="256" r="13" fill="#150a06"/>
+          <circle cx="178" cy="248" r="7" fill="#ffffff"/>
+          <circle cx="194" cy="266" r="3.5" fill="#ffffff"/>
+        </g>
+        <path d="M 162 254 C 172 228, 208 222, 245 236" fill="none" stroke="#22120b" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M 180 286 C 195 289, 220 288, 230 284" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+      <g id="eye-right-screen-left">
+        <path d="M 394 256 C 392 232, 370 226, 345 228 C 325 230, 316 246, 320 262 C 324 278, 345 284, 370 282 C 388 280, 395 272, 394 256 Z" fill="#ffffff" stroke="#22120b" stroke-width="4.5" stroke-linejoin="round"/>
+        <g clip-path="url(#clip-sclera-right)">
+          <path d="M 320 230 L 394 230 L 394 240 L 320 240 Z" fill="#e2e8f0" opacity="0.6"/>
+          <circle cx="342" cy="256" r="22" fill="#3d2119" stroke="#22120b" stroke-width="2.5"/>
+          <circle cx="342" cy="256" r="13" fill="#150a06"/>
+          <circle cx="334" cy="248" r="7" fill="#ffffff"/>
+          <circle cx="350" cy="266" r="3.5" fill="#ffffff"/>
+        </g>
+        <path d="M 398 254 C 388 228, 352 222, 315 236" fill="none" stroke="#22120b" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M 380 286 C 365 289, 340 288, 330 284" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+    </g>
+
+    <!-- 9D: EYES LOOKING RIGHT (Pupils shifted screen right) -->
+    <g id="eyes-screen_right" class="eye-state" data-eye="screen_right">
+      <g id="eye-left-screen-right">
+        <path d="M 166 256 C 168 232, 190 226, 215 228 C 235 230, 244 246, 240 262 C 236 278, 215 284, 190 282 C 172 280, 165 272, 166 256 Z" fill="#ffffff" stroke="#22120b" stroke-width="4.5" stroke-linejoin="round"/>
+        <g clip-path="url(#clip-sclera-left)">
+          <path d="M 166 230 L 240 230 L 240 240 L 166 240 Z" fill="#e2e8f0" opacity="0.6"/>
+          <circle cx="218" cy="256" r="22" fill="#3d2119" stroke="#22120b" stroke-width="2.5"/>
+          <circle cx="218" cy="256" r="13" fill="#150a06"/>
+          <circle cx="210" cy="248" r="7" fill="#ffffff"/>
+          <circle cx="226" cy="266" r="3.5" fill="#ffffff"/>
+        </g>
+        <path d="M 162 254 C 172 228, 208 222, 245 236" fill="none" stroke="#22120b" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M 180 286 C 195 289, 220 288, 230 284" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+      <g id="eye-right-screen-right">
+        <path d="M 394 256 C 392 232, 370 226, 345 228 C 325 230, 316 246, 320 262 C 324 278, 345 284, 370 282 C 388 280, 395 272, 394 256 Z" fill="#ffffff" stroke="#22120b" stroke-width="4.5" stroke-linejoin="round"/>
+        <g clip-path="url(#clip-sclera-right)">
+          <path d="M 320 230 L 394 230 L 394 240 L 320 240 Z" fill="#e2e8f0" opacity="0.6"/>
+          <circle cx="374" cy="256" r="22" fill="#3d2119" stroke="#22120b" stroke-width="2.5"/>
+          <circle cx="374" cy="256" r="13" fill="#150a06"/>
+          <circle cx="366" cy="248" r="7" fill="#ffffff"/>
+          <circle cx="382" cy="266" r="3.5" fill="#ffffff"/>
+        </g>
+        <path d="M 398 254 C 388 228, 352 222, 315 236" fill="none" stroke="#22120b" stroke-width="6.5" stroke-linecap="round"/>
+        <path d="M 380 286 C 365 289, 340 288, 330 284" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- 10. SWAPPABLE MOUTH STATES -->
+  <g id="layer-mouths">
+    <!-- 10A: MOUTH CLOSED -->
+    <g id="mouth-closed" class="mouth-state" data-mouth="closed">
+      <path d="M 248 340 Q 280 354 312 340" fill="none" stroke="#22120b" stroke-width="4.5" stroke-linecap="round"/>
+      <path d="M 272 360 Q 280 363 288 360" fill="none" stroke="#e6a389" stroke-width="3" stroke-linecap="round"/>
+    </g>
+
+    <!-- 10B: MOUTH SLIGHTLY OPEN -->
+    <g id="mouth-slightly_open" class="mouth-state" data-mouth="slightly_open">
+      <path d="M 254 338 C 254 338, 280 334, 306 338 C 304 354, 290 358, 280 358 C 270 358, 256 354, 254 338 Z" fill="#4d1616" stroke="#22120b" stroke-width="4" stroke-linejoin="round"/>
+      <g clip-path="url(#clip-mouth-slight)">
+        <path d="M 252 334 L 308 334 L 306 345 L 254 345 Z" fill="#ffffff"/>
+      </g>
+      <path d="M 272 368 Q 280 371 288 368" fill="none" stroke="#e6a389" stroke-width="3" stroke-linecap="round"/>
+    </g>
+
+    <!-- 10C: MOUTH WIDE OPEN -->
+    <g id="mouth-wide_open" class="mouth-state" data-mouth="wide_open">
+      <path d="M 242 334 C 260 338, 300 338, 318 334 C 316 368, 304 382, 280 382 C 256 382, 244 368, 242 334 Z" fill="#581616" stroke="#22120b" stroke-width="4.5" stroke-linejoin="round"/>
+      <g clip-path="url(#clip-mouth-wide)">
+        <path d="M 240 330 L 320 330 L 316 346 C 298 348, 262 348, 244 346 Z" fill="#ffffff"/>
+        <path d="M 256 382 C 260 366, 272 362, 280 362 C 288 362, 300 366, 304 382 Z" fill="#df6666"/>
+      </g>
+      <path d="M 270 392 Q 280 395 290 392" fill="none" stroke="#e6a389" stroke-width="3" stroke-linecap="round"/>
+    </g>
+
+    <!-- 10D: MOUTH ROUND 'O' -->
+    <g id="mouth-round_o" class="mouth-state" data-mouth="round_o">
+      <ellipse cx="280" cy="348" rx="14" ry="18" fill="#481515" stroke="#22120b" stroke-width="4"/>
+      <ellipse cx="280" cy="346" rx="9" ry="12" fill="#240a0a"/>
+      <path d="M 272 374 Q 280 377 288 374" fill="none" stroke="#e6a389" stroke-width="3" stroke-linecap="round"/>
+    </g>
+  </g>
+
+  <!-- 11. HAIR FRONT (Seamless Single Unified Silhouette with Integrated Bangs & Internal Facets) -->
+  <g id="layer-hair-front">
+    <!-- Continuous, Unified Front Hair Mass: Spikes around Crown down into Zigzag Bangs across Forehead -->
+    <path d="M 126 215 L 138 170 L 118 130 L 132 120 L 122 85 L 152 70 L 142 35 L 192 48 L 218 20 L 262 42 L 280 16 L 310 40 L 350 20 L 370 48 L 420 35 L 410 70 L 440 85 L 430 120 L 445 130 L 424 170 L 434 215 L 412 150 L 384 168 L 364 142 L 340 170 L 316 142 L 288 170 L 268 144 L 240 170 L 216 142 L 192 170 L 170 142 L 150 168 L 136 150 Z" fill="#3d2119" stroke="#22120b" stroke-width="4" stroke-linejoin="round"/>
+    
+    <!-- Seamless Top Crown Highlight Facets -->
+    <polygon points="142,35 192,48 172,75 132,55" fill="#5c382a"/>
+    <polygon points="218,20 262,42 242,72 192,48" fill="#5c382a"/>
+    <polygon points="280,16 310,40 290,75 262,42" fill="#5c382a"/>
+    <polygon points="350,20 370,48 335,75 310,40" fill="#5c382a"/>
+    <polygon points="370,48 420,35 395,78 355,75" fill="#5c382a"/>
+
+    <!-- Integrated Bang Highlight Facets (Completely inside the perimeter, zero floating edges) -->
+    <polygon points="126,215 138,170 134,160 128,190" fill="#5c382a"/>
+    <polygon points="150,168 160,146 170,142" fill="#5c382a"/>
+    <polygon points="192,170 204,146 216,142" fill="#5c382a"/>
+    <polygon points="240,170 254,148 268,144" fill="#5c382a"/>
+    <polygon points="288,170 302,146 316,142" fill="#5c382a"/>
+    <polygon points="340,170 352,146 364,142" fill="#5c382a"/>
+    <polygon points="384,168 396,146 412,150" fill="#5c382a"/>
+    <polygon points="434,215 424,170 420,160 428,190" fill="#5c382a"/>
+
+    <!-- Mid-Crown Structural Crease Lines (Connecting fringe notches up into crown for authentic cel-shaded facets) -->
+    <path d="M 170 142 L 180 105" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 216 142 L 225 100" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 268 144 L 272 95" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 316 142 L 320 100" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 364 142 L 358 105" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 192 48 L 210 85" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 262 42 L 255 80" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 310 40 L 305 80" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M 370 48 L 350 85" fill="none" stroke="#22120b" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+</svg>

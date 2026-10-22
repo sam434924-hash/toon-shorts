@@ -1,8 +1,8 @@
 """
-Purpose: 2D layered character system with registry, FK skeleton, and actions.
+Purpose: 2D layered character system with registry, FK skeleton, character packs, and actions.
 Inputs: Layout JSON, character sheet images, action parameters, audio loudness.
 Outputs: Cut transparent character layers, character registry JSON, rendered frames.
-Depends on: json, math, os, pathlib, re, time, typing, PIL, numpy, core.config
+Depends on: json, math, os, pathlib, re, time, typing, PIL, numpy, core.character_pack, core.config
 Used by: None
 Config keys: None
 Tests: tests/unit/test_character2d.py
@@ -23,6 +23,12 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageOps
 
 from toonshorts.core.config import PROJECT_ROOT
+from toonshorts.core.character_pack import (
+    CharacterPack,
+    load_character_pack,
+    create_character_staging,
+    validate_pack_name,
+)
 
 # Directory paths
 ASSETS2D_DIR = PROJECT_ROOT / "assets2d"
@@ -266,8 +272,10 @@ class Character2D:
         return char
 
 
-def get_character(name: str, base_dir: Optional[Path] = None) -> Union[Character2D, Dict[str, Any]]:
-    """Returns saved character from registry if it exists, otherwise reports 'missing'."""
+def get_character(
+    name: str, base_dir: Optional[Path] = None
+) -> Union[Character2D, CharacterPack, Dict[str, Any]]:
+    """Returns saved character from registry (either Character2D or CharacterPack) if it exists, otherwise reports 'missing'."""
     try:
         validate_character_name(name)
     except ValueError as e:
@@ -276,19 +284,34 @@ def get_character(name: str, base_dir: Optional[Path] = None) -> Union[Character
     characters_root = base_dir or CHARACTERS2D_DIR
     char_folder = characters_root / name
     char_json = char_folder / "character.json"
+    manifest_json = char_folder / "manifest.json"
 
-    if not char_folder.is_dir() or not char_json.is_file():
+    if not char_folder.is_dir():
         return {
             "status": "missing",
             "name": name,
             "message": f"Character '{name}' not found in registry",
         }
 
-    try:
-        # Validate that all paths in character.json stay inside character folder
-        return Character2D.from_json(char_json)
-    except Exception as e:
-        return {"status": "error", "name": name, "message": f"Failed to load character '{name}': {e}"}
+    # 1. Check for SVG Character Pack (manifest.json)
+    if manifest_json.is_file():
+        try:
+            return load_character_pack(name, base_dir=characters_root)
+        except Exception as e:
+            return {"status": "error", "name": name, "message": f"Failed to load character pack '{name}': {e}"}
+
+    # 2. Check for skeletal Character2D (character.json)
+    if char_json.is_file():
+        try:
+            return Character2D.from_json(char_json)
+        except Exception as e:
+            return {"status": "error", "name": name, "message": f"Failed to load character '{name}': {e}"}
+
+    return {
+        "status": "missing",
+        "name": name,
+        "message": f"Character '{name}' not found in registry (no manifest.json or character.json)",
+    }
 
 
 def slice_character_sheet(

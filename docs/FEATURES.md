@@ -152,7 +152,13 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 
 ---
 
-## 2D Layered Character System (`core/character2d`)
+## 2D Layered Character System (`core/character2d`, `core/character_pack`)
+
+### `boy_a` (2D Layered SVG Character Pack)
+- **Description**: Modular 2D layered SVG character pack with swappable eye states (`open`, `blink`, `screen_left`, `screen_right`) and mouth states (`closed`, `slightly_open`, `wide_open`, `round_o`) preserving identical head, hair (merged 2-tone facets), and eyebrows geometry. Includes simple neck and plain hoodie shoulders.
+- **Files**: `src/toonshorts/core/character_pack.py`, `src/toonshorts/core/character2d.py`, `assets2d/characters/boy_a/character.svg`, `assets2d/characters/boy_a/manifest.json`
+- **Capabilities**: Safe loading, path traversal prevention, strict XML/SVG safety checks (forbids `<script>`, event handlers, external entities, and gradients), file size <= 200 KB, state-switching SVG generation, PNG rendering via Playwright, and test staging workbench (`staging/index.html` and 4x2 contact sheet).
+- **Tests**: `tests/unit/test_character_pack.py`, `tests/unit/test_character2d.py`
 
 ### `stick_hoodie`
 - **Description**: 2D layered character system sliced from coordinate layout sheets with transparent layers (head, 8 expressions, hoodie torso, articulated stick limbs, mirrored hands and shoes). Reusable asset pack (not yet connected to the main CLI pipeline).

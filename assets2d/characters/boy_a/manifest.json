@@ -1,0 +1,57 @@
+{
+  "id": "boy_a",
+  "name": "Boy A",
+  "kind": "vector",
+  "type": "layered_svg",
+  "svg_file": "character.svg",
+  "viewBox": "0 0 560 630",
+  "default_eyes": "open",
+  "default_mouth": "closed",
+  "default_slot": "right",
+  "scale": 1.0,
+  "allowed_gestures": [
+    "idle"
+  ],
+  "eye_states": [
+    "open",
+    "blink",
+    "screen_left",
+    "screen_right"
+  ],
+  "mouth_states": [
+    "closed",
+    "slightly_open",
+    "wide_open",
+    "round_o"
+  ],
+  "anchors": {
+    "head": [280, 260],
+    "mouth": [280, 350],
+    "eyes": [280, 256],
+    "desk": [280, 600]
+  },
+  "safe_bounding_box": {
+    "min_x": 30,
+    "min_y": 10,
+    "max_x": 530,
+    "max_y": 630
+  },
+  "layers": [
+    "layer-hoodie-back",
+    "layer-hair-back",
+    "layer-neck",
+    "layer-hoodie-front",
+    "layer-head-base",
+    "layer-ears",
+    "layer-face-details",
+    "layer-eyebrows",
+    "layer-eyes",
+    "layer-mouths",
+    "layer-hair-front"
+  ],
+  "rules": {
+    "max_tones_per_area": 2,
+    "gradients_allowed": false,
+    "max_file_size_kb": 200
+  }
+}

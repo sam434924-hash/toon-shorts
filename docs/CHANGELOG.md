@@ -1,5 +1,9 @@
 # Changelog
 
+- 2026-10-22: Standardized character pack manifest schema (anchors, safe_bounding_box, default_slot, scale, allowed_gestures) and upgraded SVG security to element allowlist with strict URI/event safety.
+- 2026-10-22: Unified boy_a SVG front hair into single continuous closed path eliminating seams and gaps between crown and forehead bangs while keeping eyebrows clear.
+- 2026-10-22: Built 2D character pack system with boy_a reference sheet vectorization, layered SVG code (<20 KB, flat 2-tone look, no gradients, clean hair-eyebrow clearance), safe loading with XXE/script defense, swappable eye/mouth states, and interactive test staging.
+
 - 2026-10-22: Completed safe cleanup: sanitized secrets in .env.example, removed hardcoded script intercept in gemini plugin with fallback error, deleted obsolete root styles and assets, simplified blender3d plugin to robot-only, and synchronized documentation.
 - 2026-10-22: Redesigned whiteboard short style with progressive stroke-by-stroke SVG drawing synced to Whisper word timings, 7-layer character head architecture, physically attached hands/arms with smooth easing, and 100% constant studio set with fixed camera across scenes.
 - 2026-10-21: Polished whiteboard visual composition with gradient background, board glow, vignette, warm presenter side-light, dynamic Rough.js sketch annotations (title underline, number circles, inter-card arrows), safe area gesture boundaries, and enhanced subtitles.
