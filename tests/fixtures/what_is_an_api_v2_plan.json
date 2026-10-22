@@ -1,0 +1,187 @@
+{
+  "version": 2,
+  "title": "What_is_an_API",
+  "art_style": "whiteboard",
+  "emotional_arc": "Clear informative revelation through a fun restaurant metaphor",
+  "characters": [
+    {
+      "name": "Host",
+      "visual_description": "Friendly tech presenter sitting at a modern desk next to a whiteboard",
+      "voice_id": "Kore"
+    },
+    {
+      "name": "Zack",
+      "visual_description": "Curious coder sitting at the studio desk listening to the lesson",
+      "voice_id": "Puck"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_number": 1,
+      "speaker": "Host",
+      "dialogue_line": "Ever wonder what an API actually is? Imagine you are sitting at a restaurant.",
+      "action": "What is an API?: Application, Programming, Interface",
+      "pose": "idle",
+      "gesture": "wave",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "cast": ["Host", "Zack"],
+      "layout": "cards",
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ]
+    },
+    {
+      "scene_number": 2,
+      "speaker": "Host",
+      "dialogue_line": "You are the customer, and the kitchen is a massive database full of delicious food.",
+      "action": "The Restaurant Setup: Customer as Client, Kitchen as Server, Menu as Endpoints",
+      "pose": "idle",
+      "gesture": "explain",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "cast": ["Host", "Zack"],
+      "layout": "cards",
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ]
+    },
+    {
+      "scene_number": 3,
+      "speaker": "Host",
+      "dialogue_line": "The API is your friendly waiter! It takes your request directly to the chef.",
+      "action": "The Waiter in Action: Sends Order, Connects Systems, Fetches Results",
+      "pose": "waving",
+      "gesture": "point",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "cast": ["Host", "Zack"],
+      "layout": "stage",
+      "visuals": [
+        {
+          "type": "flow",
+          "trigger_word": "API",
+          "params": {
+            "nodes": ["Client", "API", "Server"],
+            "color": "blue"
+          }
+        }
+      ],
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 4.5,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ]
+    },
+    {
+      "scene_number": 4,
+      "speaker": "Host",
+      "dialogue_line": "Weather forecasts, ride sharing apps, and credit card payments all talk through APIs.",
+      "action": "Everyday Examples: Weather Apps, Ride Sharing, Payment Gateways",
+      "pose": "idle",
+      "gesture": "explain",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "cast": ["Host", "Zack"],
+      "layout": "cards",
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ]
+    },
+    {
+      "scene_number": 5,
+      "speaker": "Host",
+      "dialogue_line": "They exchange structured JSON data packets in milliseconds back and forth.",
+      "action": "Fast Data Exchange: JSON Payloads, REST Endpoints, Instant Response",
+      "pose": "idle",
+      "gesture": "point",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "cast": ["Host", "Zack"],
+      "layout": "stage",
+      "visuals": [
+        {
+          "type": "request_response",
+          "trigger_word": "packets",
+          "params": {
+            "client_label": "Client",
+            "server_label": "Server",
+            "request_label": "Request",
+            "response_label": "Response",
+            "color": "default"
+          }
+        }
+      ],
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 4.5,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ]
+    },
+    {
+      "scene_number": 6,
+      "speaker": "Host",
+      "dialogue_line": "So without APIs, the modern connected internet would just be screaming in the dark!",
+      "action": "The Connected World: Automation, Web Integration, Seamless Tech",
+      "pose": "laughing",
+      "gesture": "thumbs_up",
+      "camera_move": "static",
+      "transition": "fade",
+      "is_punchline": true,
+      "cast": ["Host", "Zack"],
+      "layout": "cards",
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 5.0,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ]
+    }
+  ]
+}

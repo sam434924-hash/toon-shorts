@@ -3,7 +3,7 @@ Purpose: Visual template schemas, parameter validators, stage safe-area bounds, 
 Inputs: Visual definitions, template parameters, and scene layout declarations.
 Outputs: Validated visual parameters, dimensions, and sanitized HTML/SVG structures.
 Depends on: html, re, typing
-Used by: core.validator
+Used by: core.validator, plugins.render.animejs.visual_renderer
 Config keys: None
 Tests: tests/unit/test_visual_templates.py, tests/unit/test_v2_validation.py
 """

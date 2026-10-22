@@ -2,7 +2,7 @@
 Purpose: Gemini LLM plugin for screenplay writing and critic reviews.
 Inputs: Story topic, style presets, and script plans.
 Outputs: Generated ScriptPlan screenplays and CriticReview scores.
-Depends on: core.client, core.config, core.models, core.registry, json, logging, typing
+Depends on: core.client, core.config, core.models, core.registry, core.validator, json, logging, typing
 Used by: None
 Config keys: CRITIC_MODEL_NAME, GEMINI_API_KEY, MAX_CRITIC_REWRITES, TEXT_MODEL_NAME
 Tests: tests/contract/test_llm_contract.py
@@ -15,6 +15,7 @@ from pydantic import ValidationError
 
 from toonshorts.core import config
 from toonshorts.core.models import ScriptPlan, CriticReview, Character, Scene, Pose, CameraMove, Transition
+from toonshorts.core.validator import validate_plan, PlanValidationError
 from toonshorts.core.client import GeminiClientWrapper
 from toonshorts.core.registry import LLMInterface, register_llm
 
@@ -32,7 +33,28 @@ RULES:
    - Scene 5-6: Rapid punchline payoff and hilarious tag.
 4. CHARACTERS: 2 or 3 recurring characters. Give each a clear, simple distinguishing visual feature (e.g. 'wearing round red glasses', 'wearing a tall blue top hat', 'bright yellow bowtie').
 5. DIALOGUE: Snappy, short punchy lines (under 18 words per line).
-6. FORMAT: Respond ONLY with valid JSON conforming to the ScriptPlan schema. No markdown formatting outside JSON.
+6. VERSION & SCENE FORMAT V2:
+   - Output version = 2.
+   - Each scene must declare "cast": list of 1-2 character names present in the scene (must match names declared in characters; speaker must be in cast). Maintain 180-degree rule: character order in cast must not swap left/right positions.
+   - Each scene must declare "layout": "cards" (list of action bullet cards, default) or "stage" (visual graphics safe area).
+   - "shots" (optional list of camera shots):
+     - start, end: relative time in seconds within scene duration.
+     - type: "wide" or "close_up".
+     - target: character name from cast or null.
+     - zoom: float between 1.0 and 1.35.
+     - ease_in, ease_out: float between 0.4 and 0.6 seconds.
+     - Directing rules: hold duration (end - start) must be at least 1.2s. At most one zoom per 5 seconds. Shots must not overlap and must fit within scene duration.
+   - "visuals" (optional, up to 3 visuals per scene, used primarily with layout="stage"):
+     Allowed template types:
+     * flow: params: nodes (list of 2-4 strings, max 14 chars each), optional direction ("right" or "down", default "right"), optional color ("default", "blue", "green", "purple", "orange", "red", "teal", "yellow").
+     * request_response: params: client_label (max 14 chars), server_label (max 14 chars), request_label (max 14 chars), response_label (max 14 chars), optional color.
+     * typed_code: params: lines (list of 1-6 strings, max 40 chars each), optional language (max 14 chars), optional color.
+     * step_ladder: params: steps (list of 2-4 strings, max 14 chars each), optional color.
+     * check_cross: params: items (list of 1-4 objects with 'label' (max 14 chars) and 'status' ('check' or 'cross')), optional color.
+     * counter: params: start (int), end (int), optional prefix (max 6 chars), optional suffix (max 6 chars), optional label (max 14 chars), optional color.
+     - trigger_word: A word from the scene dialogue_line where the visual should appear.
+     - NEVER supply raw HTML, CSS, JavaScript, URLs, or SVG. Only use the allowed template types and params.
+7. FORMAT: Respond ONLY with valid JSON conforming to the ScriptPlan schema (version 2). No markdown outside JSON.
 """
 
 CRITIC_SYSTEM_PROMPT = """
@@ -88,13 +110,18 @@ Make sure each scene includes:
 - camera_move (one of: zoom_in, zoom_out, pan_left, pan_right, shake, static)
 - transition (one of: cut, fade, wipe, none)
 - is_punchline (boolean flag for punchline/twist scenes)
+- cast (list of 1-2 character names present in the scene)
+- layout ("cards" or "stage")
+- shots (optional camera shot directives)
+- visuals (optional board visual templates from the allowed list: flow, request_response, typed_code, step_ladder, check_cross, counter)
 """
         max_attempts = 2
         last_error = None
 
         for attempt in range(max_attempts):
+            prompt = user_prompt if attempt == 0 else f"{user_prompt}\n\nPREVIOUS ATTEMPT FAILED WITH VALIDATION ERROR:\n{last_error}\nPlease fix the JSON according to the schema and directing rules."
             raw_text = self.client.generate_text_with_retry(
-                prompt=user_prompt if attempt == 0 else f"{user_prompt}\n\nFIX VALIDATION ERROR: {last_error}",
+                prompt=prompt,
                 system_instruction=PLANNER_SYSTEM_PROMPT,
                 model=config.TEXT_MODEL_NAME,
                 response_schema=ScriptPlan,
@@ -109,9 +136,11 @@ Make sure each scene includes:
                     cleaned = cleaned[:-3]
                 parsed = json.loads(cleaned.strip())
                 parsed["art_style"] = style_name
-                return ScriptPlan.model_validate(parsed)
-            except (json.JSONDecodeError, ValidationError) as e:
+                plan = ScriptPlan.model_validate(parsed)
+                return validate_plan(plan)
+            except (json.JSONDecodeError, ValidationError, PlanValidationError, ValueError) as e:
                 last_error = e
+                logger.warning("Plan validation failed (attempt %d/%d): %s", attempt + 1, max_attempts, e)
 
         raise ValueError(f"Failed to generate valid ScriptPlan after {max_attempts} attempts: {last_error}")
 

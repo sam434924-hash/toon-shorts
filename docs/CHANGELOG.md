@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-22: Updated Gemini planner prompt and validation retry logic for scene format v2 and board visuals, and updated fake LLM with v2 What is an API fixture.
+
 - 2026-10-22: Fixed listener eye glance direction in mirrored right character slot so pupils always point toward speaker on screen, and added unit tests for both slot configurations.
 
 - 2026-10-22: Configured pytest slow marker for end-to-end and browser renders, enabling fast daily test execution via -m 'not slow'.
