@@ -14,7 +14,7 @@ from typing import Dict, Any, Tuple
 from pydantic import ValidationError
 
 from toonshorts.core import config
-from toonshorts.core.models import ScriptPlan, CriticReview
+from toonshorts.core.models import ScriptPlan, CriticReview, Character, Scene, Pose, CameraMove, Transition
 from toonshorts.core.client import GeminiClientWrapper
 from toonshorts.core.registry import LLMInterface, register_llm
 
@@ -57,12 +57,22 @@ class GeminiLLMPlugin(LLMInterface):
         # Reads key strictly from config; never prints or logs it
         self.client = client or GeminiClientWrapper()
 
+    def _ensure_available(self):
+        """Ensures Gemini API credentials are valid and active; prevents silent fallback."""
+        api_key = getattr(self.client, "api_key", None)
+        if getattr(self.client, "is_auto_fallback", False) or not api_key or api_key in ("your-key-here", "your_gemini_api_key_here"):
+            raise RuntimeError(
+                "GEMINI_API_KEY is missing or invalid. Gemini LLM requires a valid GEMINI_API_KEY and will not fall back silently."
+            )
+
     def generate_plan(
         self,
         topic: str,
         style_name: str,
         style_preset: Dict[str, Any],
     ) -> ScriptPlan:
+        self._ensure_available()
+
         pacing = style_preset.get("pacing", "fast")
         user_prompt = f"""
 Create a hilarious short animation script about: "{topic}".
@@ -74,6 +84,7 @@ Make sure each scene includes:
 - dialogue_line (funny, sharp, quick)
 - action (visual physical comedy)
 - pose (one of: idle, waving, jumping, shocked, laughing)
+- gesture (one of: idle, wave, point, explain, thumbs_up, shrug)
 - camera_move (one of: zoom_in, zoom_out, pan_left, pan_right, shake, static)
 - transition (one of: cut, fade, wipe, none)
 - is_punchline (boolean flag for punchline/twist scenes)
@@ -105,6 +116,7 @@ Make sure each scene includes:
         raise ValueError(f"Failed to generate valid ScriptPlan after {max_attempts} attempts: {last_error}")
 
     def evaluate_script(self, plan: ScriptPlan) -> CriticReview:
+        self._ensure_available()
         prompt = f"Review this script plan:\n\n{json.dumps(plan.model_dump(), indent=2)}"
         raw_text = self.client.generate_text_with_retry(
             prompt=prompt,
@@ -121,14 +133,16 @@ Make sure each scene includes:
             cleaned = cleaned[:-3]
         try:
             return CriticReview.model_validate(json.loads(cleaned.strip()))
-        except (json.JSONDecodeError, ValidationError):
-            return CriticReview(score=7.5, hook_strength=7.5, joke_quality=7.5, pacing=7.5, variety=7.5)
+        except (json.JSONDecodeError, ValidationError) as e:
+            raise RuntimeError(f"Failed to parse Gemini CriticReview response: {e}")
 
     def review_and_refine(
         self,
         plan: ScriptPlan,
         style_preset: Dict[str, Any],
     ) -> Tuple[ScriptPlan, CriticReview]:
+        self._ensure_available()
+
         best_plan = plan
         best_review = self.evaluate_script(plan)
 

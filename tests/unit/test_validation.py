@@ -128,3 +128,34 @@ def test_critic_review_bounds():
 
     with pytest.raises(ValidationError):
         CriticReview(score=15.0, hook_strength=10, joke_quality=10, pacing=10, variety=10)
+
+
+def test_gemini_llm_plugin_no_silent_fallback():
+    """Verify Gemini LLM plugin raises RuntimeError if API credentials are missing/invalid and never falls back silently."""
+    from toonshorts.plugins.llm.gemini import GeminiLLMPlugin
+    from toonshorts.core.client import GeminiClientWrapper
+
+    # When client has no valid key
+    client = GeminiClientWrapper(api_key="your-key-here")
+    plugin = GeminiLLMPlugin(client=client)
+    with pytest.raises(RuntimeError, match="GEMINI_API_KEY is missing or invalid"):
+        plugin.generate_plan("what is an api", "whiteboard", {})
+
+
+def test_fake_llm_fixture_what_is_an_api():
+    """Verify fake LLM plugin handles 'what is an api' and matches fixture schema."""
+    from toonshorts.plugins.llm.fake import FakeLLMPlugin
+    from pathlib import Path
+    import json
+
+    fake = FakeLLMPlugin()
+    plan = fake.generate_plan("what is an api", "whiteboard", {})
+    assert plan.title == "What_is_an_API"
+    assert len(plan.scenes) == 6
+
+    fixture_file = Path(__file__).resolve().parent.parent / "fixtures" / "what_is_an_api_plan.json"
+    assert fixture_file.is_file()
+    data = json.loads(fixture_file.read_text(encoding="utf-8"))
+    assert data["title"] == "What_is_an_API"
+    assert len(data["scenes"]) == 6
+

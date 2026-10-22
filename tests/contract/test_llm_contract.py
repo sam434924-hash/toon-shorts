@@ -17,7 +17,13 @@ def test_llm_contract(plugin_name):
     topic = "The Semicolon Mystery"
 
     # Test screenplay generation
-    plan = llm.generate_plan(topic, "stickman", preset)
+    if plugin_name == "gemini":
+        try:
+            plan = llm.generate_plan(topic, "stickman", preset)
+        except RuntimeError as e:
+            pytest.skip(f"Live Gemini LLM is unavailable: {e}")
+    else:
+        plan = llm.generate_plan(topic, "stickman", preset)
     assert isinstance(plan, ScriptPlan)
     assert len(plan.characters) >= 2
     assert len(plan.scenes) >= 4
