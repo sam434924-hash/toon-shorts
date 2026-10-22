@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-22: Added video intake step, dynamic inventory command (toonshorts.inventory), brief validation and serialization (briefs/<video-name>.json), key scene stills rendering, and directing skill intake rules.
 - 2026-10-22: Fixed front SVG assembly z-ordering (tucking neck and upper arm caps under torso) to prevent sleeve overlap on girl_a's vest, continuous dark crew-neck t-shirt underlay without exposed waistband/button, and reconstructed authentic raster back views for boy_b and girl_a.
 - 2026-10-22: Refined girl_a torso garment structure with crew-neck collar, curved sleeveless waistcoat lapels, and denim waistband/fly, and reconstructed full back view vector layers (torso_back, shoe_back_left/right, leg_upper_back_left/right) across 27 SVG layers for boy_b and girl_a character packs.
 - 2026-10-22: Fixed hair facet holes and white spot transparency in boy_b and girl_a vector character packs with solid silhouette underlays, and upgraded shoes to authentic 3/4 perspective faceted sneakers with contoured soles and laces matching reference artwork.

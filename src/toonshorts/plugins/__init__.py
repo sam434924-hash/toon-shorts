@@ -3,7 +3,7 @@ Purpose: Automatic discovery and loading for all swappable plugin modules.
 Inputs: File system paths of plugins directory.
 Outputs: Executed module registrations in core registries.
 Depends on: importlib, inspect, os, pathlib, pkgutil
-Used by: None
+Used by: inventory
 Config keys: None
 Tests: tests/unit/test_registry.py
 """

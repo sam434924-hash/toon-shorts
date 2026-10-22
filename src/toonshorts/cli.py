@@ -1,17 +1,18 @@
 """
 Purpose: Command-line interface entry points for ToonShorts video pipeline.
-Inputs: CLI arguments for story topic, style preset, and plugin overrides.
+Inputs: CLI arguments for story topic, style preset, brief, and plugin overrides.
 Outputs: Executed pipeline runs and exit status codes.
-Depends on: argparse, core.config, core.pipeline, logging, pathlib, plugins, sys
+Depends on: argparse, brief, core.config, core.pipeline, inventory, logging, pathlib, plugins, sys
 Used by: __main__
 Config keys: None
 Tests: tests/smoke/test_smoke_pipeline.py
 """
 
 import argparse
-import sys
+import json
 import logging
 from pathlib import Path
+import sys
 
 # Support running directly via python src/toonshorts/cli.py
 if __name__ == "__main__" and not __package__:
@@ -20,8 +21,10 @@ if __name__ == "__main__" and not __package__:
         sys.path.insert(0, src_path)
 
 from toonshorts.core import config
-from toonshorts.core.pipeline import run_pipeline, load_style_preset
+from toonshorts.core.pipeline import run_pipeline, run_pipeline_from_brief, load_style_preset
 from toonshorts import plugins
+from toonshorts.inventory import format_inventory_display, get_inventory
+from toonshorts.brief import load_brief
 
 logging.basicConfig(
     level=logging.INFO,
@@ -32,13 +35,50 @@ logger = logging.getLogger("toonshorts.cli")
 
 
 def make_command(args: argparse.Namespace) -> int:
-    """Executes video generation through the modular pipeline runner."""
-    topic = args.topic.strip()
+    """Executes video generation through the modular pipeline runner or validated brief."""
+    output_dir = Path(args.output_dir) if args.output_dir else None
+
+    # Brief mode execution
+    if getattr(args, "brief", None):
+        try:
+            brief = load_brief(args.brief)
+            result = run_pipeline_from_brief(
+                brief_source=brief,
+                output_dir=output_dir,
+                stills_only=getattr(args, "stills_only", False),
+                auto_confirm=args.yes,
+                mock=args.mock,
+                keep_temp=args.keep_temp,
+            )
+            if getattr(args, "stills_only", False):
+                print("\n=======================================================")
+                print(f"  KEY SCENE STILLS READY FOR APPROVAL:")
+                for st in result.get("stills", []):
+                    print(f"   - {st}")
+                print(f"  Scene file: {result.get('scene_file')}")
+                print("=======================================================\n")
+                return 0
+
+            final_video = result.get("video")
+            if final_video:
+                print("\n=======================================================")
+                print(f"  SUCCESS! Video created at: {final_video}")
+                print("=======================================================\n")
+                return 0
+            return 0
+        except Exception as e:
+            logger.exception("Brief pipeline failed with error: %s", e)
+            sys.stderr.write(f"\nPipeline Error: {e}\n")
+            return 1
+
+    topic = (args.topic or "").strip()
     if not topic:
-        sys.stderr.write("Error: --topic cannot be empty.\n")
+        sys.stderr.write("Error: --topic or --brief is required.\n")
         return 1
 
-    output_dir = Path(args.output_dir) if args.output_dir else None
+    if not args.style:
+        sys.stderr.write("Error: --style is required when not using --brief.\n")
+        return 1
 
     # Support both --voice-engine and deprecated --voice
     voice_choice = args.voice_engine or args.voice
@@ -70,6 +110,15 @@ def make_command(args: argparse.Namespace) -> int:
         return 1
 
 
+def inventory_command(args: argparse.Namespace) -> int:
+    """Prints installed asset and plugin inventory."""
+    if getattr(args, "json", False):
+        print(json.dumps(get_inventory(), indent=2))
+    else:
+        print(format_inventory_display())
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="toonshorts",
@@ -78,8 +127,10 @@ def main():
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     make_parser = subparsers.add_parser("make", help="Create a finished vertical animation video")
-    make_parser.add_argument("--style", required=True, help="Art style (stickman, crayon, paper_cutout, pixel_art, chalkboard, whiteboard)")
-    make_parser.add_argument("--topic", required=True, help="Story topic or comedy premise")
+    make_parser.add_argument("--style", default=None, help="Art style (stickman, crayon, paper_cutout, pixel_art, chalkboard, whiteboard)")
+    make_parser.add_argument("--topic", default=None, help="Story topic or comedy premise")
+    make_parser.add_argument("--brief", default=None, help="Path or name of brief JSON file to build")
+    make_parser.add_argument("--stills-only", action="store_true", help="Render key scene stills for approval first")
     make_parser.add_argument("--yes", "-y", action="store_true", help="Skip cost confirmation prompt")
     make_parser.add_argument("--mock", action="store_true", help="Run with offline mock generator for testing")
     make_parser.add_argument(
@@ -107,9 +158,14 @@ def main():
     make_parser.add_argument("--output-dir", default=None, help="Custom output directory")
     make_parser.add_argument("--keep-temp", action="store_true", help="Retain intermediate render assets")
 
+    inv_parser = subparsers.add_parser("inventory", help="Inspect installed characters, styles, voices, and animations")
+    inv_parser.add_argument("--json", action="store_true", help="Output inventory as structured JSON")
+
     args = parser.parse_args()
     if args.command == "make":
         sys.exit(make_command(args))
+    elif args.command == "inventory":
+        sys.exit(inventory_command(args))
 
 
 if __name__ == "__main__":
