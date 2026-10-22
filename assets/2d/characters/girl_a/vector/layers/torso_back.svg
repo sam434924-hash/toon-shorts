@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_torso_back">
+    <!-- Neck skin base connection under collar -->
+    <path fill="#fedbc3" stroke="none" d="M465 500 L465 522 Q500 538 535 522 L535 500 Z" />
+
+    <!-- Dark under-shirt body back -->
+    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M412 518 L360 670 L366 885 L634 885 L640 670 L588 518 Z" />
+
+    <!-- Crew-neck back collar band -->
+    <path fill="#221622" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M455 515 Q500 536 545 515 L542 530 Q500 546 458 530 Z" />
+
+    <!-- Solid Purple Vest Back (single solid back panel across dark shirt and short sleeves) -->
+    <path fill="#6f3477" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M408 522 L372 670 C366 730 364 800 366 860 L368 900 C375 940 435 956 500 956 C565 956 625 940 632 900 L634 860 C636 800 634 730 628 670 L592 522 Q500 536 408 522 Z" />
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M414 525 L378 670 C372 730 370 800 372 860 L374 895 C380 932 438 948 500 948 C562 948 620 932 626 895 L628 860 C630 800 628 730 622 670 L586 525 Q500 536 414 525 Z" />
+
+    <!-- Center vertical vest back stitch -->
+    <path fill="none" stroke="#7b3a82" stroke-width="3" stroke-linecap="round" d="M500 538 L500 946" />
+  </g>
+</svg>

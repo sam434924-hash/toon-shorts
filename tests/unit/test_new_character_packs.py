@@ -265,16 +265,21 @@ def test_vector_character_pack_layers_and_security(char_id):
         "mouth_round_o.svg",
         "mouth_open_smile.svg",
         "torso.svg",
+        "torso_back.svg",
         "arm_upper_left.svg",
         "arm_lower_left.svg",
         "arm_upper_right.svg",
         "arm_lower_right.svg",
         "leg_upper_left.svg",
+        "leg_upper_back_left.svg",
         "leg_lower_left.svg",
         "shoe_left.svg",
+        "shoe_back_left.svg",
         "leg_upper_right.svg",
+        "leg_upper_back_right.svg",
         "leg_lower_right.svg",
         "shoe_right.svg",
+        "shoe_back_right.svg",
     ]
 
     for layer_name in expected_layers:
@@ -376,7 +381,7 @@ def test_vector_shoe_coordinates_within_viewbox(char_id):
     """Verifies shoe SVGs do not exceed y=1495, preventing canvas bottom clipping in 1000x1500 viewBox."""
     import re
     vector_dir = paths.CHARACTERS_2D_DIR / char_id / "vector" / "layers"
-    for sname in ["shoe_left.svg", "shoe_right.svg"]:
+    for sname in ["shoe_left.svg", "shoe_right.svg", "shoe_back_left.svg", "shoe_back_right.svg"]:
         svg_content = (vector_dir / sname).read_text(encoding="utf-8")
         # Extract content inside <g id="layer_shoe_...">
         g_start = svg_content.find("<g id=")

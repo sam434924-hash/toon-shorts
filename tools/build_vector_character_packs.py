@@ -513,6 +513,119 @@ def get_boy_b_layers() -> Dict[str, str]:
   </g>
 </svg>"""
 
+    # 23. torso_back (hoodie back, draped hood with center seam, waistband, NO front zipper/pocket)
+    layers["torso_back"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_torso_back">
+    <!-- Interior hood opening shadow -->
+    <path fill="{HOODIE_INNER}" d="M440 480 C460 460 540 460 560 480 C540 500 460 500 440 480 Z" />
+    
+    <!-- Torso main body back -->
+    <path fill="{HOODIE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M395 520 L370 805 L630 805 L605 520 Z" />
+    <path fill="{HOODIE_BASE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M405 515 C440 528 560 528 595 515 L622 805 L378 805 Z" />
+    
+    <!-- Side seam accents matching boy_b_right.png -->
+    <line x1="420" y1="640" x2="400" y2="800" stroke="{STROKE_SUBTLE}" stroke-width="3.5" stroke-linecap="round" />
+    <line x1="580" y1="640" x2="600" y2="800" stroke="{STROKE_SUBTLE}" stroke-width="3.5" stroke-linecap="round" />
+    
+    <!-- Ribbed Waistband / hem -->
+    <rect x="370" y="805" width="260" height="68" rx="6" fill="{HOODIE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" />
+    <rect x="375" y="805" width="250" height="62" rx="4" fill="{HOODIE_BASE}" stroke="{STROKE_THIN}" stroke-width="4" />
+    <line x1="375" y1="836" x2="625" y2="836" stroke="{HOODIE_SHADOW}" stroke-width="3" stroke-linecap="round" />
+    
+    <!-- Draped Hood down over upper back (curved draped hood with center seam, NO front zipper/pocket) -->
+    <path fill="{HOODIE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M435 480 C395 520 400 635 500 670 C600 635 605 520 565 480 C540 465 460 465 435 480 Z" />
+    <path fill="{HOODIE_BASE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M440 484 C408 522 412 625 500 660 C588 625 592 522 560 484 C538 472 462 472 440 484 Z" />
+    
+    <!-- Inner fold depth of draped hood -->
+    <path fill="{HOODIE_SHADOW}" d="M455 490 C430 525 435 595 500 635 C565 595 570 525 545 490 C560 520 555 580 500 615 C445 580 440 520 455 490 Z" />
+    
+    <!-- Hood center back seam -->
+    <path fill="none" stroke="{STROKE_THICK}" stroke-width="4.5" stroke-linecap="round" d="M500 472 L500 660" />
+  </g>
+</svg>"""
+
+    # 24. shoe_back_left (rear view of left sneaker: heel counter, purple pull tab, white sole)
+    layers["shoe_back_left"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_shoe_back_left">
+    <!-- Ankle joint cap tucks under jeans cuff at (420, 1345) -->
+    <circle cx="420" cy="1345" r="36" fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" />
+    <!-- White sock band under cuff -->
+    <rect x="390" y="1335" width="60" height="25" rx="3" fill="{SOCK_WHITE}" stroke="{STROKE_THICK}" stroke-width="4.5" />
+    
+    <!-- Heel counter (purple canvas rear cup) -->
+    <path fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M372 1358 L468 1358 L476 1445 L364 1445 Z" />
+    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THIN}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M380 1360 L460 1360 L470 1443 L370 1443 Z" />
+    
+    <!-- Vertical Purple Heel Pull Tab -->
+    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THICK}" stroke-width="3.5" stroke-linecap="round" d="M413 1355 Q420 1342 427 1355" />
+    <rect x="413" y="1350" width="14" height="85" rx="3" fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="3" />
+    <rect x="415" y="1352" width="10" height="81" rx="2" fill="{SHOE_PURPLE}" />
+    
+    <!-- White Rubber Sole (continuous wrapped heel sole) -->
+    <path fill="{SHOE_SOLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M360 1445 L480 1445 L480 1466 L360 1466 Z" />
+    <rect x="360" y="1460" width="120" height="6" fill="{SHOE_SOLE_SHADOW}" />
+  </g>
+</svg>"""
+
+    # 25. shoe_back_right (rear view of right sneaker: heel counter, purple pull tab, white sole)
+    layers["shoe_back_right"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_shoe_back_right">
+    <!-- Ankle joint cap tucks under jeans cuff at (580, 1345) -->
+    <circle cx="580" cy="1345" r="36" fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" />
+    <!-- White sock band under cuff -->
+    <rect x="550" y="1335" width="60" height="25" rx="3" fill="{SOCK_WHITE}" stroke="{STROKE_THICK}" stroke-width="4.5" />
+    
+    <!-- Heel counter (purple canvas rear cup) -->
+    <path fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M532 1358 L628 1358 L636 1445 L524 1445 Z" />
+    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THIN}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M540 1360 L620 1360 L630 1443 L530 1443 Z" />
+    
+    <!-- Vertical Purple Heel Pull Tab -->
+    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THICK}" stroke-width="3.5" stroke-linecap="round" d="M573 1355 Q580 1342 587 1355" />
+    <rect x="573" y="1350" width="14" height="85" rx="3" fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="3" />
+    <rect x="575" y="1352" width="10" height="81" rx="2" fill="{SHOE_PURPLE}" />
+    
+    <!-- White Rubber Sole (continuous wrapped heel sole) -->
+    <path fill="{SHOE_SOLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M520 1445 L640 1445 L640 1466 L520 1466 Z" />
+    <rect x="520" y="1460" width="120" height="6" fill="{SHOE_SOLE_SHADOW}" />
+  </g>
+</svg>"""
+
+    # 26. leg_upper_back_left (left thigh back with rear pocket and yoke seam)
+    layers["leg_upper_back_left"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_leg_upper_back_left">
+    <circle cx="435" cy="870" r="48" fill="{JEANS_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" />
+    <path fill="{JEANS_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M390 870 L380 1100 L480 1100 L495 870 Z" />
+    <path fill="{JEANS_BASE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M400 870 L390 1100 L475 1100 L493 870 Z" />
+    <!-- Rear horizontal yoke seam -->
+    <line x1="395" y1="895" x2="495" y2="915" stroke="{STROKE_THICK}" stroke-width="4" stroke-linecap="round" />
+    <!-- Rear pocket left -->
+    <polygon points="410,915 470,915 465,978 440,992 415,978" fill="{JEANS_SHADOW}" stroke="{STROKE_THICK}" stroke-width="4" stroke-linejoin="round" />
+    <path fill="none" stroke="{STROKE_SUBTLE}" stroke-width="2.5" d="M420 940 Q440 958 460 940" />
+    <!-- Center back seam line -->
+    <line x1="495" y1="915" x2="480" y2="1100" stroke="{STROKE_THICK}" stroke-width="4" stroke-linecap="round" />
+    <!-- Knee hem -->
+    <path fill="{JEANS_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" d="M375 1095 Q430 1108 485 1095" />
+  </g>
+</svg>"""
+
+    # 27. leg_upper_back_right (right thigh back with rear pocket and yoke seam)
+    layers["leg_upper_back_right"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_leg_upper_back_right">
+    <circle cx="565" cy="870" r="48" fill="{JEANS_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" />
+    <path fill="{JEANS_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M505 870 L520 1100 L620 1100 L610 870 Z" />
+    <path fill="{JEANS_BASE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M507 870 L525 1100 L613 1100 L600 870 Z" />
+    <!-- Rear horizontal yoke seam -->
+    <line x1="505" y1="915" x2="605" y2="895" stroke="{STROKE_THICK}" stroke-width="4" stroke-linecap="round" />
+    <!-- Rear pocket right -->
+    <polygon points="530,915 590,915 585,978 560,992 535,978" fill="{JEANS_SHADOW}" stroke="{STROKE_THICK}" stroke-width="4" stroke-linejoin="round" />
+    <path fill="none" stroke="{STROKE_SUBTLE}" stroke-width="2.5" d="M540 940 Q560 958 580 940" />
+    <!-- Center back seam line -->
+    <line x1="505" y1="915" x2="520" y2="1100" stroke="{STROKE_THICK}" stroke-width="4" stroke-linecap="round" />
+    <!-- Knee hem -->
+    <path fill="{JEANS_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" d="M515 1095 Q570 1108 625 1095" />
+  </g>
+</svg>"""
+
     return layers
 
 
@@ -577,8 +690,12 @@ def get_girl_a_layers() -> Dict[str, str]:
     layers["head_base"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_head_base">
     <!-- Neck extending under collar -->
-    <path fill="{SKIN_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M460 450 L460 560 L540 560 L540 450 Z" />
-    <path fill="{SKIN_BASE}" stroke="{STROKE_INNER}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M468 450 L468 545 C468 555 532 555 532 545 L532 450 Z" />
+    <path fill="{SKIN_SHADOW}" d="M460 450 L460 550 L540 550 L540 450 Z" />
+    <line x1="460" y1="450" x2="460" y2="520" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" />
+    <line x1="540" y1="450" x2="540" y2="520" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" />
+    <path fill="{SKIN_BASE}" d="M468 450 L468 545 C468 552 532 552 532 545 L532 450 Z" />
+    <line x1="468" y1="450" x2="468" y2="520" stroke="{STROKE_INNER}" stroke-width="4" stroke-linecap="round" />
+    <line x1="532" y1="450" x2="532" y2="520" stroke="{STROKE_INNER}" stroke-width="4" stroke-linecap="round" />
     <!-- Ears -->
     <path fill="{SKIN_BASE}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M370 340 C310 340 310 420 370 430 Z" />
     <path fill="none" stroke="{SKIN_SHADOW}" stroke-width="4" stroke-linecap="round" d="M360 365 C340 370 340 395 360 405" />
@@ -772,20 +889,45 @@ def get_girl_a_layers() -> Dict[str, str]:
   </g>
 </svg>"""
 
-    # 12. torso (shirt, collar, vest base, vest shadow, vest hem)
-    # Hip joints at (435, 930) and (565, 930), Vest hem extends to y=950
+    # 12. torso (crew-neck collar, dark t-shirt underlay, curved waistcoat vest panels, jeans waistband with fly)
+    # Hip joints at (435, 930) and (565, 930), Vest hem extends to y=948
     layers["torso"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_torso">
-    <!-- Dark under-shirt -->
-    <path fill="{SHIRT_DARK}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M410 520 L370 940 L630 940 L590 520 Z" />
-    <!-- Chest skin at collar -->
-    <path fill="{SKIN_BASE}" stroke="{STROKE_MAIN}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M465 520 C475 550 525 550 535 520 Z" />
-    <!-- Vest shadow -->
-    <path fill="{VEST_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M360 620 L370 940 L630 940 L640 620 Z" />
-    <!-- Vest Left Lapel / Hem -->
-    <path fill="{VEST_BASE}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M420 520 L345 660 L360 950 L485 950 L485 710 L445 520 Z" />
-    <!-- Vest Right Lapel / Hem -->
-    <path fill="{VEST_BASE}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M580 520 L655 660 L640 950 L515 950 L515 710 L555 520 Z" />
+    <!-- Neck skin base connection under collar -->
+    <path fill="{SKIN_BASE}" stroke="none" d="M465 500 L465 524 Q500 545 535 524 L535 500 Z" />
+    
+    <!-- Dark under-shirt body -->
+    <path fill="{SHIRT_DARK}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M412 522 L360 670 L366 885 L634 885 L640 670 L588 522 Z" />
+    
+    <!-- Crew-neck ribbed collar band -->
+    <path fill="#221622" stroke="{STROKE_MAIN}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M455 516 Q500 552 545 516 C548 532 542 544 538 549 Q500 568 462 549 C458 544 452 532 455 516 Z" />
+    <!-- Collar inner rim shadow -->
+    <path fill="none" stroke="#180f19" stroke-width="2.5" stroke-linecap="round" d="M459 524 Q500 556 541 524" />
+    
+    <!-- Jeans Waistband & Pelvis Area (covers leg joints, shows between vest panels) -->
+    <path fill="{PANTS_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M366 880 L362 945 L638 945 L634 880 Z" />
+    <path fill="{PANTS_BASE}" stroke="none" d="M368 883 L364 942 L636 942 L632 883 Z" />
+    <!-- Jeans Fly / J-stitch -->
+    <path fill="none" stroke="{STROKE_MAIN}" stroke-width="4.5" stroke-linecap="round" d="M500 882 L500 928 C500 938 492 944 482 944" />
+    <!-- Rivet / Waistband Button -->
+    <circle cx="500" cy="894" r="5" fill="#d29a4a" stroke="{STROKE_MAIN}" stroke-width="2.5" />
+    <!-- Curved Pocket Openings on sides -->
+    <path fill="none" stroke="{STROKE_MAIN}" stroke-width="4" stroke-linecap="round" d="M395 905 Q415 918 425 942" />
+    <path fill="none" stroke="{STROKE_MAIN}" stroke-width="4" stroke-linecap="round" d="M605 905 Q585 918 575 942" />
+
+    <!-- Vest Shadow on Flanks -->
+    <path fill="{VEST_SHADOW}" d="M412 522 L368 670 C364 730 362 800 365 860 L368 915 C372 935 380 948 398 948 L460 942 C470 938 474 928 472 915 C468 850 464 760 458 680 L442 522 Z" />
+    <path fill="{VEST_SHADOW}" d="M588 522 L632 670 C636 730 638 800 635 860 L632 915 C628 935 620 948 602 948 L540 942 C530 938 526 928 528 915 C532 850 536 760 542 680 L558 522 Z" />
+
+    <!-- Left Vest Panel (Tailored sleeveless waistcoat with curved lapel, clean armhole, rounded hem) -->
+    <path fill="{VEST_BASE}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M442 522 L408 528 C418 572 405 624 372 670 C366 730 364 800 366 860 L370 915 C372 935 382 948 398 948 C420 948 445 946 460 942 C470 938 474 926 472 915 C468 850 464 760 458 680 C454 620 448 565 442 522 Z" />
+    <!-- Left Lapel facing accent line -->
+    <path fill="none" stroke="#7b3a82" stroke-width="3" stroke-linecap="round" d="M445 535 C451 615 456 715 460 815 C462 855 463 895 464 925" />
+
+    <!-- Right Vest Panel (Tailored sleeveless waistcoat with curved lapel, clean armhole, rounded hem) -->
+    <path fill="{VEST_BASE}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M558 522 L592 528 C582 572 595 624 628 670 C634 730 636 800 634 860 L630 915 C628 935 618 948 602 948 C580 948 555 946 540 942 C530 938 526 926 528 915 C532 850 536 760 542 680 C546 620 552 565 558 522 Z" />
+    <!-- Right Lapel facing accent line -->
+    <path fill="none" stroke="#7b3a82" stroke-width="3" stroke-linecap="round" d="M555 535 C549 615 544 715 540 815 C538 855 537 895 536 925" />
   </g>
 </svg>"""
 
@@ -997,6 +1139,99 @@ def get_girl_a_layers() -> Dict[str, str]:
   </g>
 </svg>"""
 
+    # 23. torso_back (single solid purple back panel across dark t-shirt back and short sleeves, crew collar)
+    layers["torso_back"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_torso_back">
+    <!-- Neck skin base connection under collar -->
+    <path fill="{SKIN_BASE}" stroke="none" d="M465 500 L465 522 Q500 538 535 522 L535 500 Z" />
+
+    <!-- Dark under-shirt body back -->
+    <path fill="{SHIRT_DARK}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M412 518 L360 670 L366 885 L634 885 L640 670 L588 518 Z" />
+
+    <!-- Crew-neck back collar band -->
+    <path fill="#221622" stroke="{STROKE_MAIN}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M455 515 Q500 536 545 515 L542 530 Q500 546 458 530 Z" />
+
+    <!-- Solid Purple Vest Back (single solid back panel across dark shirt and short sleeves) -->
+    <path fill="{VEST_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M408 522 L372 670 C366 730 364 800 366 860 L368 900 C375 940 435 956 500 956 C565 956 625 940 632 900 L634 860 C636 800 634 730 628 670 L592 522 Q500 536 408 522 Z" />
+    <path fill="{VEST_BASE}" stroke="{STROKE_INNER}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M414 525 L378 670 C372 730 370 800 372 860 L374 895 C380 932 438 948 500 948 C562 948 620 932 626 895 L628 860 C630 800 628 730 622 670 L586 525 Q500 536 414 525 Z" />
+
+    <!-- Center vertical vest back stitch -->
+    <path fill="none" stroke="#7b3a82" stroke-width="3" stroke-linecap="round" d="M500 538 L500 946" />
+  </g>
+</svg>"""
+
+    # 24. shoe_back_left (rear view of left sneaker: heel counter, purple pull tab, rubber sole)
+    layers["shoe_back_left"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_shoe_back_left">
+    <!-- Ankle joint cap tucks under jeans cuff at (400, 1380) -->
+    <circle cx="400" cy="1380" r="34" fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5" />
+    <!-- Heel counter (purple canvas rear cup) -->
+    <path fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M356 1395 L444 1395 L452 1450 L348 1450 Z" />
+    <path fill="{SHOE_BASE}" stroke="{STROKE_INNER}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M362 1397 L438 1397 L446 1448 L354 1448 Z" />
+    
+    <!-- Vertical Purple Heel Pull Tab -->
+    <path fill="{SHOE_BASE}" stroke="{STROKE_MAIN}" stroke-width="3.5" stroke-linecap="round" d="M394 1390 Q400 1378 406 1390" />
+    <rect x="394" y="1388" width="12" height="60" rx="3" fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="3" />
+    <rect x="396" y="1390" width="8" height="56" rx="2" fill="{SHOE_BASE}" />
+    
+    <!-- White / Lilac Rubber Sole -->
+    <path fill="{SHOE_SOLE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M345 1450 L455 1450 L455 1468 L345 1468 Z" />
+    <rect x="345" y="1462" width="110" height="6" fill="{SHOE_SOLE_SHADOW}" />
+  </g>
+</svg>"""
+
+    # 25. shoe_back_right (rear view of right sneaker: heel counter, purple pull tab, rubber sole)
+    layers["shoe_back_right"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_shoe_back_right">
+    <!-- Ankle joint cap tucks under jeans cuff at (600, 1380) -->
+    <circle cx="600" cy="1380" r="34" fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5" />
+    <!-- Heel counter (purple canvas rear cup) -->
+    <path fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M556 1395 L644 1395 L652 1450 L548 1450 Z" />
+    <path fill="{SHOE_BASE}" stroke="{STROKE_INNER}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M562 1397 L638 1397 L646 1448 L554 1448 Z" />
+    
+    <!-- Vertical Purple Heel Pull Tab -->
+    <path fill="{SHOE_BASE}" stroke="{STROKE_MAIN}" stroke-width="3.5" stroke-linecap="round" d="M594 1390 Q600 1378 606 1390" />
+    <rect x="594" y="1388" width="12" height="60" rx="3" fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="3" />
+    <rect x="596" y="1390" width="8" height="56" rx="2" fill="{SHOE_BASE}" />
+    
+    <!-- White / Lilac Rubber Sole -->
+    <path fill="{SHOE_SOLE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M545 1450 L655 1450 L655 1468 L545 1468 Z" />
+    <rect x="545" y="1462" width="110" height="6" fill="{SHOE_SOLE_SHADOW}" />
+  </g>
+</svg>"""
+
+    # 26. leg_upper_back_left (left thigh back with rear pocket and seam)
+    layers["leg_upper_back_left"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_leg_upper_back_left">
+    <circle cx="435" cy="930" r="46" fill="{PANTS_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="6" />
+    <path fill="{PANTS_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M390 930 L370 1160 L465 1160 L485 930 Z" />
+    <path fill="{PANTS_BASE}" stroke="{STROKE_INNER}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M400 930 L380 1160 L460 1160 L480 930 Z" />
+    <!-- Rear pocket left -->
+    <polygon points="405,960 460,960 455,1015 432,1028 410,1015" fill="{PANTS_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="4" stroke-linejoin="round" />
+    <path fill="none" stroke="#253549" stroke-width="2.5" d="M414 980 Q432 995 450 980" />
+    <!-- Inseam -->
+    <line x1="485" y1="930" x2="465" y2="1160" stroke="{STROKE_MAIN}" stroke-width="4" stroke-linecap="round" />
+    <!-- Knee hem -->
+    <path fill="{PANTS_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5" stroke-linecap="round" d="M365 1155 Q420 1168 470 1155" />
+  </g>
+</svg>"""
+
+    # 27. leg_upper_back_right (right thigh back with rear pocket and seam)
+    layers["leg_upper_back_right"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_leg_upper_back_right">
+    <circle cx="565" cy="930" r="46" fill="{PANTS_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="6" />
+    <path fill="{PANTS_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M515 930 L535 1160 L630 1160 L610 930 Z" />
+    <path fill="{PANTS_BASE}" stroke="{STROKE_INNER}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M520 930 L540 1160 L620 1160 L600 930 Z" />
+    <!-- Rear pocket right -->
+    <polygon points="540,960 595,960 590,1015 568,1028 545,1015" fill="{PANTS_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="4" stroke-linejoin="round" />
+    <path fill="none" stroke="#253549" stroke-width="2.5" d="M550 980 Q568 995 586 980" />
+    <!-- Inseam -->
+    <line x1="515" y1="930" x2="535" y2="1160" stroke="{STROKE_MAIN}" stroke-width="4" stroke-linecap="round" />
+    <!-- Knee hem -->
+    <path fill="{PANTS_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5" stroke-linecap="round" d="M530 1155 Q580 1168 635 1155" />
+  </g>
+</svg>"""
+
     return layers
 
 
@@ -1050,14 +1285,19 @@ def build_manifest_and_character_json(char_id: str) -> Tuple[Dict[str, Any], Dic
         "layers": [
             "head_back",
             "shoe_right",
+            "shoe_back_right",
             "leg_lower_right",
             "leg_upper_right",
+            "leg_upper_back_right",
             "arm_lower_right",
             "arm_upper_right",
             "shoe_left",
+            "shoe_back_left",
             "leg_lower_left",
             "leg_upper_left",
+            "leg_upper_back_left",
             "torso",
+            "torso_back",
             "head_base",
             "arm_upper_left",
             "arm_lower_left",
@@ -1076,14 +1316,19 @@ def build_manifest_and_character_json(char_id: str) -> Tuple[Dict[str, Any], Dic
             for lname in [
                 "head_back",
                 "shoe_right",
+                "shoe_back_right",
                 "leg_lower_right",
                 "leg_upper_right",
+                "leg_upper_back_right",
                 "arm_lower_right",
                 "arm_upper_right",
                 "shoe_left",
+                "shoe_back_left",
                 "leg_lower_left",
                 "leg_upper_left",
+                "leg_upper_back_left",
                 "torso",
+                "torso_back",
                 "head_base",
                 "arm_upper_left",
                 "arm_lower_left",
@@ -1103,14 +1348,19 @@ def build_manifest_and_character_json(char_id: str) -> Tuple[Dict[str, Any], Dic
             for lname in [
                 "head_back",
                 "shoe_right",
+                "shoe_back_right",
                 "leg_lower_right",
                 "leg_upper_right",
+                "leg_upper_back_right",
                 "arm_lower_right",
                 "arm_upper_right",
                 "shoe_left",
+                "shoe_back_left",
                 "leg_lower_left",
                 "leg_upper_left",
+                "leg_upper_back_left",
                 "torso",
+                "torso_back",
                 "head_base",
                 "arm_upper_left",
                 "arm_lower_left",
@@ -1128,14 +1378,19 @@ def build_manifest_and_character_json(char_id: str) -> Tuple[Dict[str, Any], Dic
         "z_order": {
             "head_back": 0,
             "shoe_right": 1,
+            "shoe_back_right": 1,
             "leg_lower_right": 1,
             "leg_upper_right": 1,
+            "leg_upper_back_right": 1,
             "arm_lower_right": 3,
             "arm_upper_right": 3,
             "shoe_left": 2,
+            "shoe_back_left": 2,
             "leg_lower_left": 2,
             "leg_upper_left": 2,
+            "leg_upper_back_left": 2,
             "torso": 4,
+            "torso_back": 4,
             "head_base": 5,
             "arm_upper_left": 6,
             "arm_lower_left": 6,
@@ -1314,6 +1569,71 @@ def build_manifest_and_character_json(char_id: str) -> Tuple[Dict[str, Any], Dic
                     "hair": [500, 60],
                 },
             },
+            "torso_back": {
+                "name": "torso_back",
+                "image": "layers/torso_back.svg",
+                "pivot": pivots["hip_left"],
+                "parent": None,
+                "parent_joint": None,
+                "slot": None,
+                "z_index": 4,
+                "base_rotation": 0.0,
+                "joints": {
+                    "neck": pivots["neck"],
+                    "shoulder_left": pivots["shoulder_left"],
+                    "shoulder_right": pivots["shoulder_right"],
+                    "hip_left": pivots["hip_left"],
+                    "hip_right": pivots["hip_right"],
+                },
+            },
+            "leg_upper_back_left": {
+                "name": "leg_upper_back_left",
+                "image": "layers/leg_upper_back_left.svg",
+                "pivot": pivots["hip_left"],
+                "parent": "torso",
+                "parent_joint": "hip_left",
+                "slot": None,
+                "z_index": 2,
+                "base_rotation": 0.0,
+                "joints": {
+                    "knee": pivots["knee_left"],
+                },
+            },
+            "shoe_back_left": {
+                "name": "shoe_back_left",
+                "image": "layers/shoe_back_left.svg",
+                "pivot": pivots["ankle_left"],
+                "parent": "leg_lower_left",
+                "parent_joint": "ankle",
+                "slot": None,
+                "z_index": 2,
+                "base_rotation": 0.0,
+                "joints": {},
+            },
+            "leg_upper_back_right": {
+                "name": "leg_upper_back_right",
+                "image": "layers/leg_upper_back_right.svg",
+                "pivot": pivots["hip_right"],
+                "parent": "torso",
+                "parent_joint": "hip_right",
+                "slot": None,
+                "z_index": 1,
+                "base_rotation": 0.0,
+                "joints": {
+                    "knee": pivots["knee_right"],
+                },
+            },
+            "shoe_back_right": {
+                "name": "shoe_back_right",
+                "image": "layers/shoe_back_right.svg",
+                "pivot": pivots["ankle_right"],
+                "parent": "leg_lower_right",
+                "parent_joint": "ankle",
+                "slot": None,
+                "z_index": 1,
+                "base_rotation": 0.0,
+                "joints": {},
+            },
         },
         "expressions": {
             "neutral": "layers/head_base.svg",
@@ -1375,6 +1695,7 @@ def assemble_svg_pose(
     inner_head_back = extract_svg_inner(layers["head_back"])
     inner_head_base = extract_svg_inner(layers["head_base"])
     inner_torso = extract_svg_inner(layers["torso"])
+    inner_torso_back = extract_svg_inner(layers.get("torso_back", layers["torso"]))
 
     inner_ua_l = extract_svg_inner(layers["arm_upper_left"])
     inner_la_l = extract_svg_inner(layers["arm_lower_left"])
@@ -1382,12 +1703,16 @@ def assemble_svg_pose(
     inner_la_r = extract_svg_inner(layers["arm_lower_right"])
 
     inner_ul_l = extract_svg_inner(layers["leg_upper_left"])
+    inner_ul_l_back = extract_svg_inner(layers.get("leg_upper_back_left", layers["leg_upper_left"]))
     inner_ll_l = extract_svg_inner(layers["leg_lower_left"])
     inner_sh_l = extract_svg_inner(layers["shoe_left"])
+    inner_sh_l_back = extract_svg_inner(layers.get("shoe_back_left", layers["shoe_left"]))
 
     inner_ul_r = extract_svg_inner(layers["leg_upper_right"])
+    inner_ul_r_back = extract_svg_inner(layers.get("leg_upper_back_right", layers["leg_upper_right"]))
     inner_ll_r = extract_svg_inner(layers["leg_lower_right"])
     inner_sh_r = extract_svg_inner(layers["shoe_right"])
+    inner_sh_r_back = extract_svg_inner(layers.get("shoe_back_right", layers["shoe_right"]))
 
     eye_layer_key = f"eyes_{eye_state}"
     inner_eyes = extract_svg_inner(layers.get(eye_layer_key, layers["eyes_open"]))
@@ -1402,24 +1727,24 @@ def assemble_svg_pose(
     ]
 
     if is_back_view:
-        # z=0: legs & shoes
+        # z=0: legs & shoes (using dedicated rear layers: heel counters, tabs, back jeans pockets/seams)
         # Right leg FK hierarchy
         svg_parts.append(f'    <g id="fk_leg_r" transform="rotate({ang_hip_r}, {hip_r[0]}, {hip_r[1]})">')
-        svg_parts.append(f'      {inner_ul_r}')
+        svg_parts.append(f'      {inner_ul_r_back}')
         svg_parts.append(f'      <g id="fk_leg_lower_r" transform="rotate({ang_kn_r}, {kn_r[0]}, {kn_r[1]})">')
         svg_parts.append(f'        {inner_ll_r}')
         svg_parts.append(f'        <g id="fk_shoe_r" transform="rotate({ang_ak_r}, {ak_r[0]}, {ak_r[1]})">')
-        svg_parts.append(f'          {inner_sh_r}')
+        svg_parts.append(f'          {inner_sh_r_back}')
         svg_parts.append('        </g>')
         svg_parts.append('      </g>')
         svg_parts.append('    </g>')
         # Left leg FK hierarchy
         svg_parts.append(f'    <g id="fk_leg_l" transform="rotate({ang_hip_l}, {hip_l[0]}, {hip_l[1]})">')
-        svg_parts.append(f'      {inner_ul_l}')
+        svg_parts.append(f'      {inner_ul_l_back}')
         svg_parts.append(f'      <g id="fk_leg_lower_l" transform="rotate({ang_kn_l}, {kn_l[0]}, {kn_l[1]})">')
         svg_parts.append(f'        {inner_ll_l}')
         svg_parts.append(f'        <g id="fk_shoe_l" transform="rotate({ang_ak_l}, {ak_l[0]}, {ak_l[1]})">')
-        svg_parts.append(f'          {inner_sh_l}')
+        svg_parts.append(f'          {inner_sh_l_back}')
         svg_parts.append('        </g>')
         svg_parts.append('      </g>')
         svg_parts.append('    </g>')
@@ -1436,8 +1761,8 @@ def assemble_svg_pose(
         svg_parts.append(f'        {inner_la_l}')
         svg_parts.append('      </g>')
         svg_parts.append('    </g>')
-        # Torso
-        svg_parts.append(f'    {inner_torso}')
+        # Dedicated Torso Back (draped hood / solid back vest)
+        svg_parts.append(f'    {inner_torso_back}')
         # Head back covers the whole back of head
         svg_parts.append(f'    <g id="fk_head" transform="rotate({ang_neck}, {neck[0]}, {neck[1]})">')
         svg_parts.append(f'      {inner_head_back}')
@@ -1540,7 +1865,7 @@ def build_and_verify_character(char_id: str):
     # 1. Generate Layers
     layers = get_boy_b_layers() if char_id == "boy_b" else get_girl_a_layers()
 
-    print(f"1. Validating and writing 22 SVG layers...")
+    print(f"1. Validating and writing {len(layers)} SVG layers...")
     for lname, svg_data in layers.items():
         # Security validation
         sec_errors = validate_svg_security(svg_data)
@@ -1549,7 +1874,7 @@ def build_and_verify_character(char_id: str):
         layer_file = layers_dir / f"{lname}.svg"
         layer_file.write_text(svg_data, encoding="utf-8")
 
-    print(f"   Successfully wrote 22 SVG layers to {layers_dir.relative_to(paths.PROJECT_ROOT)}")
+    print(f"   Successfully wrote {len(layers)} SVG layers to {layers_dir.relative_to(paths.PROJECT_ROOT)}")
 
     # 2. Manifest and character.json
     print(f"2. Validating and writing manifest.json & character.json...")

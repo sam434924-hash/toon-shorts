@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_leg_upper_back_right">
+    <circle cx="565" cy="870" r="48" fill="#3a4c5c" stroke="#1b1516" stroke-width="6" />
+    <path fill="#3a4c5c" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M505 870 L520 1100 L620 1100 L610 870 Z" />
+    <path fill="#4d6276" stroke="#1b1516" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M507 870 L525 1100 L613 1100 L600 870 Z" />
+    <!-- Rear horizontal yoke seam -->
+    <line x1="505" y1="915" x2="605" y2="895" stroke="#1b1516" stroke-width="4" stroke-linecap="round" />
+    <!-- Rear pocket right -->
+    <polygon points="530,915 590,915 585,978 560,992 535,978" fill="#3a4c5c" stroke="#1b1516" stroke-width="4" stroke-linejoin="round" />
+    <path fill="none" stroke="#2b1d1f" stroke-width="2.5" d="M540 940 Q560 958 580 940" />
+    <!-- Center back seam line -->
+    <line x1="505" y1="915" x2="520" y2="1100" stroke="#1b1516" stroke-width="4" stroke-linecap="round" />
+    <!-- Knee hem -->
+    <path fill="#3a4c5c" stroke="#1b1516" stroke-width="5" stroke-linecap="round" d="M515 1095 Q570 1108 625 1095" />
+  </g>
+</svg>

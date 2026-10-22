@@ -239,6 +239,107 @@
           60
         ]
       }
+    },
+    "torso_back": {
+      "name": "torso_back",
+      "image": "layers/torso_back.svg",
+      "pivot": [
+        435,
+        930
+      ],
+      "parent": null,
+      "parent_joint": null,
+      "slot": null,
+      "z_index": 4,
+      "base_rotation": 0.0,
+      "joints": {
+        "neck": [
+          500,
+          520
+        ],
+        "shoulder_left": [
+          415,
+          525
+        ],
+        "shoulder_right": [
+          585,
+          525
+        ],
+        "hip_left": [
+          435,
+          930
+        ],
+        "hip_right": [
+          565,
+          930
+        ]
+      }
+    },
+    "leg_upper_back_left": {
+      "name": "leg_upper_back_left",
+      "image": "layers/leg_upper_back_left.svg",
+      "pivot": [
+        435,
+        930
+      ],
+      "parent": "torso",
+      "parent_joint": "hip_left",
+      "slot": null,
+      "z_index": 2,
+      "base_rotation": 0.0,
+      "joints": {
+        "knee": [
+          415,
+          1150
+        ]
+      }
+    },
+    "shoe_back_left": {
+      "name": "shoe_back_left",
+      "image": "layers/shoe_back_left.svg",
+      "pivot": [
+        400,
+        1380
+      ],
+      "parent": "leg_lower_left",
+      "parent_joint": "ankle",
+      "slot": null,
+      "z_index": 2,
+      "base_rotation": 0.0,
+      "joints": {}
+    },
+    "leg_upper_back_right": {
+      "name": "leg_upper_back_right",
+      "image": "layers/leg_upper_back_right.svg",
+      "pivot": [
+        565,
+        930
+      ],
+      "parent": "torso",
+      "parent_joint": "hip_right",
+      "slot": null,
+      "z_index": 1,
+      "base_rotation": 0.0,
+      "joints": {
+        "knee": [
+          585,
+          1150
+        ]
+      }
+    },
+    "shoe_back_right": {
+      "name": "shoe_back_right",
+      "image": "layers/shoe_back_right.svg",
+      "pivot": [
+        600,
+        1380
+      ],
+      "parent": "leg_lower_right",
+      "parent_joint": "ankle",
+      "slot": null,
+      "z_index": 1,
+      "base_rotation": 0.0,
+      "joints": {}
     }
   },
   "expressions": {

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_shoe_back_right">
+    <!-- Ankle joint cap tucks under jeans cuff at (580, 1345) -->
+    <circle cx="580" cy="1345" r="36" fill="#432247" stroke="#1b1516" stroke-width="5" />
+    <!-- White sock band under cuff -->
+    <rect x="550" y="1335" width="60" height="25" rx="3" fill="#edf0f5" stroke="#1b1516" stroke-width="4.5" />
+    
+    <!-- Heel counter (purple canvas rear cup) -->
+    <path fill="#432247" stroke="#1b1516" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M532 1358 L628 1358 L636 1445 L524 1445 Z" />
+    <path fill="#5e3364" stroke="#1b1516" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M540 1360 L620 1360 L630 1443 L530 1443 Z" />
+    
+    <!-- Vertical Purple Heel Pull Tab -->
+    <path fill="#5e3364" stroke="#1b1516" stroke-width="3.5" stroke-linecap="round" d="M573 1355 Q580 1342 587 1355" />
+    <rect x="573" y="1350" width="14" height="85" rx="3" fill="#432247" stroke="#1b1516" stroke-width="3" />
+    <rect x="575" y="1352" width="10" height="81" rx="2" fill="#5e3364" />
+    
+    <!-- White Rubber Sole (continuous wrapped heel sole) -->
+    <path fill="#f4f6f9" stroke="#1b1516" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M520 1445 L640 1445 L640 1466 L520 1466 Z" />
+    <rect x="520" y="1460" width="120" height="6" fill="#e0e4e9" />
+  </g>
+</svg>

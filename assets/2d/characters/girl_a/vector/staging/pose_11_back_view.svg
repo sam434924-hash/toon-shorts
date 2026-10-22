@@ -2,14 +2,17 @@
   <rect width="1000" height="1500" fill="none" />
   <g id="character_root">
     <g id="fk_leg_r" transform="rotate(0.0, 565, 930)">
-      <g id="layer_leg_upper_right">
-    <!-- Hip overlap cap (tucks under vest hem) -->
-    <circle cx="565" cy="930" r="48" fill="#293f59" stroke="#2a1523" stroke-width="6" />
-    <!-- Thigh body -->
-    <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M515 920 L530 1150 L642 1150 L625 920 Z" />
-    <path fill="#395779" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M518 920 L535 1150 L630 1150 L612 920 Z" />
-    <!-- Knee hem covering lower leg cap -->
-    <path fill="#293f59" stroke="#2a1523" stroke-width="5" stroke-linecap="round" d="M525 1145 Q585 1158 645 1145" />
+      <g id="layer_leg_upper_back_right">
+    <circle cx="565" cy="930" r="46" fill="#293f59" stroke="#2a1523" stroke-width="6" />
+    <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M515 930 L535 1160 L630 1160 L610 930 Z" />
+    <path fill="#395779" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M520 930 L540 1160 L620 1160 L600 930 Z" />
+    <!-- Rear pocket right -->
+    <polygon points="540,960 595,960 590,1015 568,1028 545,1015" fill="#293f59" stroke="#2a1523" stroke-width="4" stroke-linejoin="round" />
+    <path fill="none" stroke="#253549" stroke-width="2.5" d="M550 980 Q568 995 586 980" />
+    <!-- Inseam -->
+    <line x1="515" y1="930" x2="535" y2="1160" stroke="#2a1523" stroke-width="4" stroke-linecap="round" />
+    <!-- Knee hem -->
+    <path fill="#293f59" stroke="#2a1523" stroke-width="5" stroke-linecap="round" d="M530 1155 Q580 1168 635 1155" />
   </g>
       <g id="fk_leg_lower_r" transform="rotate(0.0, 585, 1150)">
         <g id="layer_leg_lower_right">
@@ -22,51 +25,37 @@
     <rect x="530" y="1360" width="135" height="52" rx="8" fill="#4d7199" stroke="#2a1523" stroke-width="6" />
   </g>
         <g id="fk_shoe_r" transform="rotate(0.0, 600, 1380)">
-          <g id="layer_shoe_right">
-    <!-- Ankle joint cap (tucks under pants cuff at (600, 1370)) -->
-    <circle cx="600" cy="1370" r="36" fill="#6f3477" stroke="#2a1523" stroke-width="5" />
+          <g id="layer_shoe_back_right">
+    <!-- Ankle joint cap tucks under jeans cuff at (600, 1380) -->
+    <circle cx="600" cy="1380" r="34" fill="#6f3477" stroke="#2a1523" stroke-width="5" />
+    <!-- Heel counter (purple canvas rear cup) -->
+    <path fill="#6f3477" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M556 1395 L644 1395 L652 1450 L548 1450 Z" />
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M562 1397 L638 1397 L646 1448 L554 1448 Z" />
     
-    <!-- Bare skin on medial side (inner ankle) -->
-    <path fill="#fedbc3" stroke="#2a1523" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" d="M582 1406 L556 1406 L556 1426 L582 1426 Z" />
+    <!-- Vertical Purple Heel Pull Tab -->
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="3.5" stroke-linecap="round" d="M594 1390 Q600 1378 606 1390" />
+    <rect x="594" y="1388" width="12" height="60" rx="3" fill="#6f3477" stroke="#2a1523" stroke-width="3" />
+    <rect x="596" y="1390" width="8" height="56" rx="2" fill="#934c9c" />
     
-    <!-- Sneaker Tongue (purple rounded top sticking out above collar) -->
-    <path fill="#934c9c" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M634 1410 C626 1402 590 1402 582 1410 L582 1426 L634 1426 Z" />
-    
-    <!-- Throat / Instep Underlay (dark purple canvas) -->
-    <path fill="#6f3477" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M634 1426 L582 1426 L606 1474 L658 1456 Z" />
-    
-    <!-- 3 White Laces Bars across instep -->
-    <path fill="#ffffff" stroke="#2a1523" stroke-width="2.5" stroke-linejoin="round" d="M635 1429 C620 1432 600 1432 586 1429 L589 1437 C603 1440 622 1440 638 1437 Z" />
-    <path fill="#ffffff" stroke="#2a1523" stroke-width="2.5" stroke-linejoin="round" d="M645 1441 C629 1445 609 1445 595 1441 L598 1449 C612 1453 632 1453 648 1449 Z" />
-    <path fill="#ffffff" stroke="#2a1523" stroke-width="2.5" stroke-linejoin="round" d="M654 1453 C638 1457 618 1457 604 1453 L607 1461 C621 1465 641 1465 657 1461 Z" />
-
-    <!-- Lateral purple canvas quarter (heel counter) -->
-    <path fill="#934c9c" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M582 1424 L554 1432 C546 1446 544 1460 546 1471 L606 1475 L582 1424 Z" />
-    <!-- Heel shadow accent -->
-    <path fill="#6f3477" d="M562 1431 C554 1445 550 1458 550 1471 L560 1472 C560 1458 566 1444 574 1432 Z" />
-
-    <!-- Rubber Toe Cap (Rounded 3D dome matching girl_a_body.png) -->
-    <path fill="#ffffff" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M658 1456 C676 1460 688 1466 688 1474 C688 1478 678 1481 650 1479 L606 1475 L606 1466 Z" />
-    <!-- Toe highlight -->
-    <path fill="#fbf8fc" d="M660 1459 C674 1463 684 1468 684 1474 L652 1473 L610 1470 L612 1464 Z" />
-
-    <!-- Thick Rubber Sole (continuous, max y = 1490, NO CLIPPING) -->
-    <path fill="#f0e8f2" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M688 1474 C689 1480 682 1488 652 1490 L552 1487 C545 1484 544 1476 546 1471 L606 1475 C640 1478 674 1478 688 1474 Z" />
-    <!-- Sole shadow contour -->
-    <path fill="#ded4e0" stroke="#2a1523" stroke-width="2" stroke-linejoin="round" d="M686 1480 C672 1483 642 1484 602 1482 L548 1478 L550 1483 C556 1486 585 1488 642 1488 C672 1488 684 1484 686 1480 Z" />
+    <!-- White / Lilac Rubber Sole -->
+    <path fill="#f0e8f2" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M545 1450 L655 1450 L655 1468 L545 1468 Z" />
+    <rect x="545" y="1462" width="110" height="6" fill="#ded4e0" />
   </g>
         </g>
       </g>
     </g>
     <g id="fk_leg_l" transform="rotate(0.0, 435, 930)">
-      <g id="layer_leg_upper_left">
-    <!-- Hip overlap cap (tucks under vest hem) -->
-    <circle cx="435" cy="930" r="48" fill="#293f59" stroke="#2a1523" stroke-width="6" />
-    <!-- Thigh body -->
-    <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M375 920 L358 1150 L470 1150 L485 920 Z" />
-    <path fill="#395779" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M388 920 L370 1150 L465 1150 L482 920 Z" />
-    <!-- Knee hem covering lower leg cap -->
-    <path fill="#293f59" stroke="#2a1523" stroke-width="5" stroke-linecap="round" d="M355 1145 Q415 1158 475 1145" />
+      <g id="layer_leg_upper_back_left">
+    <circle cx="435" cy="930" r="46" fill="#293f59" stroke="#2a1523" stroke-width="6" />
+    <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M390 930 L370 1160 L465 1160 L485 930 Z" />
+    <path fill="#395779" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M400 930 L380 1160 L460 1160 L480 930 Z" />
+    <!-- Rear pocket left -->
+    <polygon points="405,960 460,960 455,1015 432,1028 410,1015" fill="#293f59" stroke="#2a1523" stroke-width="4" stroke-linejoin="round" />
+    <path fill="none" stroke="#253549" stroke-width="2.5" d="M414 980 Q432 995 450 980" />
+    <!-- Inseam -->
+    <line x1="485" y1="930" x2="465" y2="1160" stroke="#2a1523" stroke-width="4" stroke-linecap="round" />
+    <!-- Knee hem -->
+    <path fill="#293f59" stroke="#2a1523" stroke-width="5" stroke-linecap="round" d="M365 1155 Q420 1168 470 1155" />
   </g>
       <g id="fk_leg_lower_l" transform="rotate(0.0, 415, 1150)">
         <g id="layer_leg_lower_left">
@@ -79,38 +68,21 @@
     <rect x="335" y="1360" width="135" height="52" rx="8" fill="#4d7199" stroke="#2a1523" stroke-width="6" />
   </g>
         <g id="fk_shoe_l" transform="rotate(0.0, 400, 1380)">
-          <g id="layer_shoe_left">
-    <!-- Ankle joint cap (tucks under pants cuff at (400, 1370)) -->
-    <circle cx="400" cy="1370" r="36" fill="#6f3477" stroke="#2a1523" stroke-width="5" />
+          <g id="layer_shoe_back_left">
+    <!-- Ankle joint cap tucks under jeans cuff at (400, 1380) -->
+    <circle cx="400" cy="1380" r="34" fill="#6f3477" stroke="#2a1523" stroke-width="5" />
+    <!-- Heel counter (purple canvas rear cup) -->
+    <path fill="#6f3477" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M356 1395 L444 1395 L452 1450 L348 1450 Z" />
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M362 1397 L438 1397 L446 1448 L354 1448 Z" />
     
-    <!-- Bare skin on medial side (inner ankle) -->
-    <path fill="#fedbc3" stroke="#2a1523" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" d="M418 1406 L444 1406 L444 1426 L418 1426 Z" />
+    <!-- Vertical Purple Heel Pull Tab -->
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="3.5" stroke-linecap="round" d="M394 1390 Q400 1378 406 1390" />
+    <rect x="394" y="1388" width="12" height="60" rx="3" fill="#6f3477" stroke="#2a1523" stroke-width="3" />
+    <rect x="396" y="1390" width="8" height="56" rx="2" fill="#934c9c" />
     
-    <!-- Sneaker Tongue (purple rounded top sticking out above collar) -->
-    <path fill="#934c9c" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M366 1410 C374 1402 410 1402 418 1410 L418 1426 L366 1426 Z" />
-    
-    <!-- Throat / Instep Underlay (dark purple canvas) -->
-    <path fill="#6f3477" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M366 1426 L418 1426 L394 1474 L342 1456 Z" />
-    
-    <!-- 3 White Laces Bars across instep -->
-    <path fill="#ffffff" stroke="#2a1523" stroke-width="2.5" stroke-linejoin="round" d="M365 1429 C380 1432 400 1432 414 1429 L411 1437 C397 1440 378 1440 362 1437 Z" />
-    <path fill="#ffffff" stroke="#2a1523" stroke-width="2.5" stroke-linejoin="round" d="M355 1441 C371 1445 391 1445 405 1441 L402 1449 C388 1453 368 1453 352 1449 Z" />
-    <path fill="#ffffff" stroke="#2a1523" stroke-width="2.5" stroke-linejoin="round" d="M346 1453 C362 1457 382 1457 396 1453 L393 1461 C379 1465 359 1465 343 1461 Z" />
-
-    <!-- Lateral purple canvas quarter (heel counter) -->
-    <path fill="#934c9c" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M418 1424 L446 1432 C454 1446 456 1460 454 1471 L394 1475 L418 1424 Z" />
-    <!-- Heel shadow accent -->
-    <path fill="#6f3477" d="M438 1431 C446 1445 450 1458 450 1471 L440 1472 C440 1458 434 1444 426 1432 Z" />
-
-    <!-- Rubber Toe Cap (Rounded 3D dome matching girl_a_body.png) -->
-    <path fill="#ffffff" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M342 1456 C324 1460 312 1466 312 1474 C312 1478 322 1481 350 1479 L394 1475 L394 1466 Z" />
-    <!-- Toe highlight -->
-    <path fill="#fbf8fc" d="M340 1459 C326 1463 316 1468 316 1474 L348 1473 L390 1470 L388 1464 Z" />
-
-    <!-- Thick Rubber Sole (continuous, max y = 1490, NO CLIPPING) -->
-    <path fill="#f0e8f2" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M312 1474 C311 1480 318 1488 348 1490 L448 1487 C455 1484 456 1476 454 1471 L394 1475 C360 1478 326 1478 312 1474 Z" />
-    <!-- Sole shadow contour -->
-    <path fill="#ded4e0" stroke="#2a1523" stroke-width="2" stroke-linejoin="round" d="M314 1480 C328 1483 358 1484 398 1482 L452 1478 L450 1483 C444 1486 415 1488 358 1488 C328 1488 316 1484 314 1480 Z" />
+    <!-- White / Lilac Rubber Sole -->
+    <path fill="#f0e8f2" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M345 1450 L455 1450 L455 1468 L345 1468 Z" />
+    <rect x="345" y="1462" width="110" height="6" fill="#ded4e0" />
   </g>
         </g>
       </g>
@@ -179,17 +151,22 @@
   </g>
       </g>
     </g>
-    <g id="layer_torso">
-    <!-- Dark under-shirt -->
-    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M410 520 L370 940 L630 940 L590 520 Z" />
-    <!-- Chest skin at collar -->
-    <path fill="#fedbc3" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M465 520 C475 550 525 550 535 520 Z" />
-    <!-- Vest shadow -->
-    <path fill="#6f3477" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M360 620 L370 940 L630 940 L640 620 Z" />
-    <!-- Vest Left Lapel / Hem -->
-    <path fill="#934c9c" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M420 520 L345 660 L360 950 L485 950 L485 710 L445 520 Z" />
-    <!-- Vest Right Lapel / Hem -->
-    <path fill="#934c9c" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M580 520 L655 660 L640 950 L515 950 L515 710 L555 520 Z" />
+    <g id="layer_torso_back">
+    <!-- Neck skin base connection under collar -->
+    <path fill="#fedbc3" stroke="none" d="M465 500 L465 522 Q500 538 535 522 L535 500 Z" />
+
+    <!-- Dark under-shirt body back -->
+    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M412 518 L360 670 L366 885 L634 885 L640 670 L588 518 Z" />
+
+    <!-- Crew-neck back collar band -->
+    <path fill="#221622" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M455 515 Q500 536 545 515 L542 530 Q500 546 458 530 Z" />
+
+    <!-- Solid Purple Vest Back (single solid back panel across dark shirt and short sleeves) -->
+    <path fill="#6f3477" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M408 522 L372 670 C366 730 364 800 366 860 L368 900 C375 940 435 956 500 956 C565 956 625 940 632 900 L634 860 C636 800 634 730 628 670 L592 522 Q500 536 408 522 Z" />
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M414 525 L378 670 C372 730 370 800 372 860 L374 895 C380 932 438 948 500 948 C562 948 620 932 626 895 L628 860 C630 800 628 730 622 670 L586 525 Q500 536 414 525 Z" />
+
+    <!-- Center vertical vest back stitch -->
+    <path fill="none" stroke="#7b3a82" stroke-width="3" stroke-linecap="round" d="M500 538 L500 946" />
   </g>
     <g id="fk_head" transform="rotate(0.0, 500, 520)">
       <g id="layer_head_back">

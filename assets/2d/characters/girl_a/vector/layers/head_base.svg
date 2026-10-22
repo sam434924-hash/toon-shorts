@@ -1,8 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_head_base">
     <!-- Neck extending under collar -->
-    <path fill="#f1b799" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M460 450 L460 560 L540 560 L540 450 Z" />
-    <path fill="#fedbc3" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M468 450 L468 545 C468 555 532 555 532 545 L532 450 Z" />
+    <path fill="#f1b799" d="M460 450 L460 550 L540 550 L540 450 Z" />
+    <line x1="460" y1="450" x2="460" y2="520" stroke="#2a1523" stroke-width="6" stroke-linecap="round" />
+    <line x1="540" y1="450" x2="540" y2="520" stroke="#2a1523" stroke-width="6" stroke-linecap="round" />
+    <path fill="#fedbc3" d="M468 450 L468 545 C468 552 532 552 532 545 L532 450 Z" />
+    <line x1="468" y1="450" x2="468" y2="520" stroke="#2a1523" stroke-width="4" stroke-linecap="round" />
+    <line x1="532" y1="450" x2="532" y2="520" stroke="#2a1523" stroke-width="4" stroke-linecap="round" />
     <!-- Ears -->
     <path fill="#fedbc3" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M370 340 C310 340 310 420 370 430 Z" />
     <path fill="none" stroke="#f1b799" stroke-width="4" stroke-linecap="round" d="M360 365 C340 370 340 395 360 405" />

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_leg_upper_back_right">
+    <circle cx="565" cy="930" r="46" fill="#293f59" stroke="#2a1523" stroke-width="6" />
+    <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M515 930 L535 1160 L630 1160 L610 930 Z" />
+    <path fill="#395779" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M520 930 L540 1160 L620 1160 L600 930 Z" />
+    <!-- Rear pocket right -->
+    <polygon points="540,960 595,960 590,1015 568,1028 545,1015" fill="#293f59" stroke="#2a1523" stroke-width="4" stroke-linejoin="round" />
+    <path fill="none" stroke="#253549" stroke-width="2.5" d="M550 980 Q568 995 586 980" />
+    <!-- Inseam -->
+    <line x1="515" y1="930" x2="535" y2="1160" stroke="#2a1523" stroke-width="4" stroke-linecap="round" />
+    <!-- Knee hem -->
+    <path fill="#293f59" stroke="#2a1523" stroke-width="5" stroke-linecap="round" d="M530 1155 Q580 1168 635 1155" />
+  </g>
+</svg>

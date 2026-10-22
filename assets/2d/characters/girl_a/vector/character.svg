@@ -168,22 +168,51 @@
       </g>
     </g>
     <g id="layer_torso">
-    <!-- Dark under-shirt -->
-    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M410 520 L370 940 L630 940 L590 520 Z" />
-    <!-- Chest skin at collar -->
-    <path fill="#fedbc3" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M465 520 C475 550 525 550 535 520 Z" />
-    <!-- Vest shadow -->
-    <path fill="#6f3477" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M360 620 L370 940 L630 940 L640 620 Z" />
-    <!-- Vest Left Lapel / Hem -->
-    <path fill="#934c9c" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M420 520 L345 660 L360 950 L485 950 L485 710 L445 520 Z" />
-    <!-- Vest Right Lapel / Hem -->
-    <path fill="#934c9c" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M580 520 L655 660 L640 950 L515 950 L515 710 L555 520 Z" />
+    <!-- Neck skin base connection under collar -->
+    <path fill="#fedbc3" stroke="none" d="M465 500 L465 524 Q500 545 535 524 L535 500 Z" />
+    
+    <!-- Dark under-shirt body -->
+    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M412 522 L360 670 L366 885 L634 885 L640 670 L588 522 Z" />
+    
+    <!-- Crew-neck ribbed collar band -->
+    <path fill="#221622" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M455 516 Q500 552 545 516 C548 532 542 544 538 549 Q500 568 462 549 C458 544 452 532 455 516 Z" />
+    <!-- Collar inner rim shadow -->
+    <path fill="none" stroke="#180f19" stroke-width="2.5" stroke-linecap="round" d="M459 524 Q500 556 541 524" />
+    
+    <!-- Jeans Waistband & Pelvis Area (covers leg joints, shows between vest panels) -->
+    <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M366 880 L362 945 L638 945 L634 880 Z" />
+    <path fill="#395779" stroke="none" d="M368 883 L364 942 L636 942 L632 883 Z" />
+    <!-- Jeans Fly / J-stitch -->
+    <path fill="none" stroke="#2a1523" stroke-width="4.5" stroke-linecap="round" d="M500 882 L500 928 C500 938 492 944 482 944" />
+    <!-- Rivet / Waistband Button -->
+    <circle cx="500" cy="894" r="5" fill="#d29a4a" stroke="#2a1523" stroke-width="2.5" />
+    <!-- Curved Pocket Openings on sides -->
+    <path fill="none" stroke="#2a1523" stroke-width="4" stroke-linecap="round" d="M395 905 Q415 918 425 942" />
+    <path fill="none" stroke="#2a1523" stroke-width="4" stroke-linecap="round" d="M605 905 Q585 918 575 942" />
+
+    <!-- Vest Shadow on Flanks -->
+    <path fill="#6f3477" d="M412 522 L368 670 C364 730 362 800 365 860 L368 915 C372 935 380 948 398 948 L460 942 C470 938 474 928 472 915 C468 850 464 760 458 680 L442 522 Z" />
+    <path fill="#6f3477" d="M588 522 L632 670 C636 730 638 800 635 860 L632 915 C628 935 620 948 602 948 L540 942 C530 938 526 928 528 915 C532 850 536 760 542 680 L558 522 Z" />
+
+    <!-- Left Vest Panel (Tailored sleeveless waistcoat with curved lapel, clean armhole, rounded hem) -->
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M442 522 L408 528 C418 572 405 624 372 670 C366 730 364 800 366 860 L370 915 C372 935 382 948 398 948 C420 948 445 946 460 942 C470 938 474 926 472 915 C468 850 464 760 458 680 C454 620 448 565 442 522 Z" />
+    <!-- Left Lapel facing accent line -->
+    <path fill="none" stroke="#7b3a82" stroke-width="3" stroke-linecap="round" d="M445 535 C451 615 456 715 460 815 C462 855 463 895 464 925" />
+
+    <!-- Right Vest Panel (Tailored sleeveless waistcoat with curved lapel, clean armhole, rounded hem) -->
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M558 522 L592 528 C582 572 595 624 628 670 C634 730 636 800 634 860 L630 915 C628 935 618 948 602 948 C580 948 555 946 540 942 C530 938 526 926 528 915 C532 850 536 760 542 680 C546 620 552 565 558 522 Z" />
+    <!-- Right Lapel facing accent line -->
+    <path fill="none" stroke="#7b3a82" stroke-width="3" stroke-linecap="round" d="M555 535 C549 615 544 715 540 815 C538 855 537 895 536 925" />
   </g>
     <g id="fk_head_base" transform="rotate(0.0, 500, 520)">
       <g id="layer_head_base">
     <!-- Neck extending under collar -->
-    <path fill="#f1b799" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M460 450 L460 560 L540 560 L540 450 Z" />
-    <path fill="#fedbc3" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M468 450 L468 545 C468 555 532 555 532 545 L532 450 Z" />
+    <path fill="#f1b799" d="M460 450 L460 550 L540 550 L540 450 Z" />
+    <line x1="460" y1="450" x2="460" y2="520" stroke="#2a1523" stroke-width="6" stroke-linecap="round" />
+    <line x1="540" y1="450" x2="540" y2="520" stroke="#2a1523" stroke-width="6" stroke-linecap="round" />
+    <path fill="#fedbc3" d="M468 450 L468 545 C468 552 532 552 532 545 L532 450 Z" />
+    <line x1="468" y1="450" x2="468" y2="520" stroke="#2a1523" stroke-width="4" stroke-linecap="round" />
+    <line x1="532" y1="450" x2="532" y2="520" stroke="#2a1523" stroke-width="4" stroke-linecap="round" />
     <!-- Ears -->
     <path fill="#fedbc3" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M370 340 C310 340 310 420 370 430 Z" />
     <path fill="none" stroke="#f1b799" stroke-width="4" stroke-linecap="round" d="M360 365 C340 370 340 395 360 405" />

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_torso_back">
+    <!-- Interior hood opening shadow -->
+    <path fill="#274567" d="M440 480 C460 460 540 460 560 480 C540 500 460 500 440 480 Z" />
+    
+    <!-- Torso main body back -->
+    <path fill="#3b689a" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M395 520 L370 805 L630 805 L605 520 Z" />
+    <path fill="#4f82ba" stroke="#1b1516" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M405 515 C440 528 560 528 595 515 L622 805 L378 805 Z" />
+    
+    <!-- Side seam accents matching boy_b_right.png -->
+    <line x1="420" y1="640" x2="400" y2="800" stroke="#2b1d1f" stroke-width="3.5" stroke-linecap="round" />
+    <line x1="580" y1="640" x2="600" y2="800" stroke="#2b1d1f" stroke-width="3.5" stroke-linecap="round" />
+    
+    <!-- Ribbed Waistband / hem -->
+    <rect x="370" y="805" width="260" height="68" rx="6" fill="#3b689a" stroke="#1b1516" stroke-width="6" />
+    <rect x="375" y="805" width="250" height="62" rx="4" fill="#4f82ba" stroke="#1b1516" stroke-width="4" />
+    <line x1="375" y1="836" x2="625" y2="836" stroke="#3b689a" stroke-width="3" stroke-linecap="round" />
+    
+    <!-- Draped Hood down over upper back (curved draped hood with center seam, NO front zipper/pocket) -->
+    <path fill="#3b689a" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M435 480 C395 520 400 635 500 670 C600 635 605 520 565 480 C540 465 460 465 435 480 Z" />
+    <path fill="#4f82ba" stroke="#1b1516" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M440 484 C408 522 412 625 500 660 C588 625 592 522 560 484 C538 472 462 472 440 484 Z" />
+    
+    <!-- Inner fold depth of draped hood -->
+    <path fill="#3b689a" d="M455 490 C430 525 435 595 500 635 C565 595 570 525 545 490 C560 520 555 580 500 615 C445 580 440 520 455 490 Z" />
+    
+    <!-- Hood center back seam -->
+    <path fill="none" stroke="#1b1516" stroke-width="4.5" stroke-linecap="round" d="M500 472 L500 660" />
+  </g>
+</svg>
