@@ -8,8 +8,8 @@
     <path fill="none" stroke="#2b1d1f" stroke-width="3.5" stroke-linecap="round" d="M370 342 C350 348 350 372 370 378" />
     <path fill="#f3be9b" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M620 320 C670 320 670 390 620 400 Z" />
     <path fill="none" stroke="#2b1d1f" stroke-width="3.5" stroke-linecap="round" d="M630 342 C650 348 650 372 630 378" />
-    <!-- Head Jaw and Cranium -->
-    <path fill="#f3be9b" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M375 300 C375 220 625 220 625 300 C625 395 580 465 500 465 C420 465 375 395 375 300 Z" />
+    <!-- Head Jaw and Cranium (full dome prevents hair gap bleed) -->
+    <path fill="#f3be9b" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M360 300 C360 100 640 100 640 300 C625 395 580 465 500 465 C420 465 375 395 375 300 Z" />
     <!-- Chin Shadow -->
     <path fill="#db9c79" d="M480 442 C440 442 410 412 400 385 C420 422 460 438 500 438 C540 438 580 422 600 385 C590 412 560 442 520 442 Z" />
     <!-- Eyebrows -->

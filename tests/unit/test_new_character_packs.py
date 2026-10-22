@@ -371,3 +371,36 @@ def test_vector_manifest_layer_paths_and_pivots(char_id):
     assert char_svg.is_file(), f"Missing character.svg in {vector_dir}"
 
 
+@pytest.mark.parametrize("char_id", ["boy_b", "girl_a"])
+def test_vector_shoe_coordinates_within_viewbox(char_id):
+    """Verifies shoe SVGs do not exceed y=1495, preventing canvas bottom clipping in 1000x1500 viewBox."""
+    import re
+    vector_dir = paths.CHARACTERS_2D_DIR / char_id / "vector" / "layers"
+    for sname in ["shoe_left.svg", "shoe_right.svg"]:
+        svg_content = (vector_dir / sname).read_text(encoding="utf-8")
+        # Extract content inside <g id="layer_shoe_...">
+        g_start = svg_content.find("<g id=")
+        g_end = svg_content.rfind("</g>")
+        inner_content = svg_content[g_start:g_end]
+        # Extract all numeric values in path d, points, cx, cy, etc.
+        numbers = [float(n) for n in re.findall(r"(?<![a-zA-Z\d#])(\d+(?:\.\d+)?)", inner_content)]
+        y_coords = [n for n in numbers if 1200 <= n <= 1600]
+        assert y_coords, f"No y-coordinates found in {sname}"
+        max_y = max(y_coords)
+        assert max_y <= 1495, f"{char_id} {sname} exceeds viewBox height (max_y={max_y} > 1495)!"
+
+
+@pytest.mark.parametrize("char_id", ["boy_b", "girl_a"])
+def test_vector_standing_render_no_bottom_clipping(char_id):
+    """Verifies rendered standing 2x image has zero non-zero pixels in bottom rows (y=1495..1499)."""
+    staging_dir = paths.CHARACTERS_2D_DIR / char_id / "vector" / "staging"
+    img_path = staging_dir / f"{char_id}_standing_2x.png"
+    assert img_path.is_file()
+    img = Image.open(img_path).convert("RGBA")
+    arr = np.array(img)
+    # Bottom 5 rows (1495 to 1499 in 1500-height image)
+    bottom_alpha = arr[1495:1500, :, 3]
+    assert np.all(bottom_alpha == 0), f"Bottom edge clipping detected in {img_path.name}!"
+
+
+

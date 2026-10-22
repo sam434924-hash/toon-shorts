@@ -1,27 +1,36 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_shoe_left">
-    <!-- Ankle overlap cap (tucks under jeans cuff at (420, 1345)) -->
-    <circle cx="420" cy="1345" r="32" fill="#4a244f" stroke="#1b1516" stroke-width="5" />
-    <!-- Sock sliver on medial side under cuff -->
-    <path fill="#edf0f5" stroke="#1b1516" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M443 1345 L463 1345 L463 1365 L443 1365 Z" />
-    <!-- Sneaker Tongue (purple rounded top sticking out above laces) -->
-    <path fill="#6e3a75" stroke="#1b1516" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M390 1353 C400 1345 435 1345 443 1353 L443 1372 L386 1372 Z" />
-    <!-- Purple Canvas Quarter / Heel counter (lateral/medial side panel) -->
-    <path fill="#6e3a75" stroke="#1b1516" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M443 1367 L471 1372 L475 1429 L416 1437 L416 1423 Z" />
-    <path fill="#4a244f" d="M462 1371 L471 1372 L475 1429 L463 1432 Z" />
-    <!-- Throat / Laces Underlay (dark purple canvas) -->
-    <path fill="#4a244f" stroke="#1b1516" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M390 1372 L443 1372 L416 1423 L365 1404 Z" />
-    <!-- 4 White Laces Bars -->
-    <path fill="#ffffff" stroke="#1b1516" stroke-width="2.5" stroke-linejoin="round" d="M385 1375 Q412 1379 440 1375 L437 1383 Q411 1387 382 1383 Z" />
-    <path fill="#ffffff" stroke="#1b1516" stroke-width="2.5" stroke-linejoin="round" d="M378 1386 Q406 1390 432 1387 L429 1395 Q405 1398 375 1394 Z" />
-    <path fill="#ffffff" stroke="#1b1516" stroke-width="2.5" stroke-linejoin="round" d="M371 1395 Q400 1400 426 1397 L423 1405 Q399 1409 368 1404 Z" />
-    <path fill="#ffffff" stroke="#1b1516" stroke-width="2.5" stroke-linejoin="round" d="M364 1405 Q392 1411 418 1409 L415 1417 Q391 1419 361 1413 Z" />
-    <!-- White Rubber Toe Cap (Solid 3D volume matching source) -->
-    <path fill="#ffffff" stroke="#1b1516" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M365 1404 L416 1423 L373 1429 C349 1425 339 1418 336 1414 Z" />
-    <path fill="#eef2f6" stroke="#1b1516" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M336 1414 C339 1418 349 1425 373 1429 L416 1423 L416 1437 L373 1444 C349 1440 338 1433 335 1429 Z" />
-    <!-- Thick Rubber Sole with 3D contour -->
-    <path fill="#eef1f5" stroke="#1b1516" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M335 1429 C338 1433 349 1440 373 1444 L416 1437 L416 1461 L365 1468 C346 1465 336 1455 335 1443 Z" />
-    <path fill="#e6eaef" stroke="#1b1516" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M416 1437 L475 1429 L474 1441 L430 1465 L416 1461 Z" />
-    <line x1="416" y1="1437" x2="416" y2="1461" stroke="#1b1516" stroke-width="4.5" stroke-linecap="round" />
+    <!-- Ankle joint cap (tucks under jeans cuff at (420, 1345)) -->
+    <circle cx="420" cy="1345" r="36" fill="#432247" stroke="#1b1516" stroke-width="5" />
+    <!-- White sock sliver on medial side -->
+    <path fill="#edf0f5" stroke="#1b1516" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" d="M442 1338 L468 1338 L468 1368 L442 1368 Z" />
+    
+    <!-- Purple tongue (flat/angled top sticking out under cuff) -->
+    <path fill="#5e3364" stroke="#1b1516" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M384 1338 L442 1338 L440 1364 L386 1364 Z" />
+    
+    <!-- Throat / Instep Underlay (dark purple canvas behind laces) -->
+    <path fill="#432247" stroke="#1b1516" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M386 1364 L440 1364 L404 1442 L346 1420 Z" />
+    
+    <!-- 4 White Laces Bars across instep -->
+    <path fill="#ffffff" stroke="#1b1516" stroke-width="2.5" stroke-linejoin="round" d="M383 1368 L436 1369 L431 1378 L378 1377 Z" />
+    <path fill="#ffffff" stroke="#1b1516" stroke-width="2.5" stroke-linejoin="round" d="M373 1382 L426 1384 L421 1393 L368 1391 Z" />
+    <path fill="#ffffff" stroke="#1b1516" stroke-width="2.5" stroke-linejoin="round" d="M363 1396 L416 1399 L411 1408 L358 1405 Z" />
+    <path fill="#ffffff" stroke="#1b1516" stroke-width="2.5" stroke-linejoin="round" d="M353 1410 L407 1414 L402 1423 L348 1419 Z" />
+
+    <!-- Lateral purple canvas quarter (heel counter / side panel) -->
+    <path fill="#5e3364" stroke="#1b1516" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M440 1362 L468 1372 L472 1436 L404 1444 L440 1362 Z" />
+    <!-- Heel shadow/contour accent -->
+    <path fill="#432247" d="M455 1370 L468 1372 L472 1436 L458 1438 Z" />
+
+    <!-- White rubber toe cap (Solid 3D volume matching source) -->
+    <!-- Top slope facet -->
+    <path fill="#ffffff" stroke="#1b1516" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M346 1420 L404 1424 L404 1444 L345 1448 L308 1436 Z" />
+    <!-- Front vertical face facet -->
+    <path fill="#f0f3f6" stroke="#1b1516" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M308 1436 L345 1448 L404 1444 L396 1453 L338 1457 L305 1446 Z" />
+
+    <!-- Thick Rubber Sole (continuous, clean, solid outline) -->
+    <path fill="#f4f6f9" stroke="#1b1516" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M305 1446 L338 1457 L404 1444 L472 1436 L474 1455 L465 1466 L340 1468 L305 1458 Z" />
+    <!-- Sole groove / bottom contour shadow -->
+    <path fill="#e0e4e9" stroke="#1b1516" stroke-width="2" stroke-linejoin="round" d="M307 1453 L340 1463 L466 1461 L465 1466 L340 1468 L305 1458 Z" />
   </g>
 </svg>

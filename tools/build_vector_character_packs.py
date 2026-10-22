@@ -44,10 +44,12 @@ def get_boy_b_layers() -> Dict[str, str]:
     JEANS_BASE = "#4d6276"
     JEANS_SHADOW = "#3a4c5c"
     JEANS_CUFF = "#5c7489"
-    SHOE_PURPLE = "#6e3a75"
-    SHOE_SHADOW = "#4a244f"
+    SHOE_PURPLE = "#5e3364"
+    SHOE_SHADOW = "#432247"
     SHOE_WHITE = "#ffffff"
-    SHOE_SOLE = "#eef1f5"
+    SHOE_SOLE = "#f4f6f9"
+    SHOE_SOLE_SHADOW = "#e0e4e9"
+    SOCK_WHITE = "#edf0f5"
     MOUTH_DARK = "#2a1814"
     MOUTH_TONGUE = "#e27a7a"
     MOUTH_TEETH = "#ffffff"
@@ -85,8 +87,8 @@ def get_boy_b_layers() -> Dict[str, str]:
     <path fill="none" stroke="{STROKE_SUBTLE}" stroke-width="3.5" stroke-linecap="round" d="M370 342 C350 348 350 372 370 378" />
     <path fill="{SKIN_BASE}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M620 320 C670 320 670 390 620 400 Z" />
     <path fill="none" stroke="{STROKE_SUBTLE}" stroke-width="3.5" stroke-linecap="round" d="M630 342 C650 348 650 372 630 378" />
-    <!-- Head Jaw and Cranium -->
-    <path fill="{SKIN_BASE}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M375 300 C375 220 625 220 625 300 C625 395 580 465 500 465 C420 465 375 395 375 300 Z" />
+    <!-- Head Jaw and Cranium (full dome prevents hair gap bleed) -->
+    <path fill="{SKIN_BASE}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M360 300 C360 100 640 100 640 300 C625 395 580 465 500 465 C420 465 375 395 375 300 Z" />
     <!-- Chin Shadow -->
     <path fill="{SKIN_SHADOW}" d="M480 442 C440 442 410 412 400 385 C420 422 460 438 500 438 C540 438 580 422 600 385 C590 412 560 442 520 442 Z" />
     <!-- Eyebrows -->
@@ -409,29 +411,38 @@ def get_boy_b_layers() -> Dict[str, str]:
     # Ankle pivot at (420, 1345)
     layers["shoe_left"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_shoe_left">
-    <!-- Ankle overlap cap (tucks under jeans cuff at (420, 1345)) -->
-    <circle cx="420" cy="1345" r="32" fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" />
-    <!-- Sock sliver on medial side under cuff -->
-    <path fill="#edf0f5" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M443 1345 L463 1345 L463 1365 L443 1365 Z" />
-    <!-- Sneaker Tongue (purple rounded top sticking out above laces) -->
-    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M390 1353 C400 1345 435 1345 443 1353 L443 1372 L386 1372 Z" />
-    <!-- Purple Canvas Quarter / Heel counter (lateral/medial side panel) -->
-    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M443 1367 L471 1372 L475 1429 L416 1437 L416 1423 Z" />
-    <path fill="{SHOE_SHADOW}" d="M462 1371 L471 1372 L475 1429 L463 1432 Z" />
-    <!-- Throat / Laces Underlay (dark purple canvas) -->
-    <path fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M390 1372 L443 1372 L416 1423 L365 1404 Z" />
-    <!-- 4 White Laces Bars -->
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M385 1375 Q412 1379 440 1375 L437 1383 Q411 1387 382 1383 Z" />
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M378 1386 Q406 1390 432 1387 L429 1395 Q405 1398 375 1394 Z" />
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M371 1395 Q400 1400 426 1397 L423 1405 Q399 1409 368 1404 Z" />
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M364 1405 Q392 1411 418 1409 L415 1417 Q391 1419 361 1413 Z" />
-    <!-- White Rubber Toe Cap (Solid 3D volume matching source) -->
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M365 1404 L416 1423 L373 1429 C349 1425 339 1418 336 1414 Z" />
-    <path fill="#eef2f6" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M336 1414 C339 1418 349 1425 373 1429 L416 1423 L416 1437 L373 1444 C349 1440 338 1433 335 1429 Z" />
-    <!-- Thick Rubber Sole with 3D contour -->
-    <path fill="{SHOE_SOLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M335 1429 C338 1433 349 1440 373 1444 L416 1437 L416 1461 L365 1468 C346 1465 336 1455 335 1443 Z" />
-    <path fill="#e6eaef" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M416 1437 L475 1429 L474 1441 L430 1465 L416 1461 Z" />
-    <line x1="416" y1="1437" x2="416" y2="1461" stroke="{STROKE_THICK}" stroke-width="4.5" stroke-linecap="round" />
+    <!-- Ankle joint cap (tucks under jeans cuff at (420, 1345)) -->
+    <circle cx="420" cy="1345" r="36" fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" />
+    <!-- White sock sliver on medial side -->
+    <path fill="{SOCK_WHITE}" stroke="{STROKE_THICK}" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" d="M442 1338 L468 1338 L468 1368 L442 1368 Z" />
+    
+    <!-- Purple tongue (flat/angled top sticking out under cuff) -->
+    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M384 1338 L442 1338 L440 1364 L386 1364 Z" />
+    
+    <!-- Throat / Instep Underlay (dark purple canvas behind laces) -->
+    <path fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M386 1364 L440 1364 L404 1442 L346 1420 Z" />
+    
+    <!-- 4 White Laces Bars across instep -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M383 1368 L436 1369 L431 1378 L378 1377 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M373 1382 L426 1384 L421 1393 L368 1391 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M363 1396 L416 1399 L411 1408 L358 1405 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M353 1410 L407 1414 L402 1423 L348 1419 Z" />
+
+    <!-- Lateral purple canvas quarter (heel counter / side panel) -->
+    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M440 1362 L468 1372 L472 1436 L404 1444 L440 1362 Z" />
+    <!-- Heel shadow/contour accent -->
+    <path fill="{SHOE_SHADOW}" d="M455 1370 L468 1372 L472 1436 L458 1438 Z" />
+
+    <!-- White rubber toe cap (Solid 3D volume matching source) -->
+    <!-- Top slope facet -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M346 1420 L404 1424 L404 1444 L345 1448 L308 1436 Z" />
+    <!-- Front vertical face facet -->
+    <path fill="#f0f3f6" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M308 1436 L345 1448 L404 1444 L396 1453 L338 1457 L305 1446 Z" />
+
+    <!-- Thick Rubber Sole (continuous, clean, solid outline) -->
+    <path fill="{SHOE_SOLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M305 1446 L338 1457 L404 1444 L472 1436 L474 1455 L465 1466 L340 1468 L305 1458 Z" />
+    <!-- Sole groove / bottom contour shadow -->
+    <path fill="{SHOE_SOLE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="2" stroke-linejoin="round" d="M307 1453 L340 1463 L466 1461 L465 1466 L340 1468 L305 1458 Z" />
   </g>
 </svg>"""
 
@@ -467,29 +478,38 @@ def get_boy_b_layers() -> Dict[str, str]:
     # Ankle pivot at (580, 1345)
     layers["shoe_right"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_shoe_right">
-    <!-- Ankle overlap cap (tucks under jeans cuff at (580, 1345)) -->
-    <circle cx="580" cy="1345" r="32" fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" />
-    <!-- Sock sliver on medial side under cuff -->
-    <path fill="#edf0f5" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M557 1345 L537 1345 L537 1365 L557 1365 Z" />
-    <!-- Sneaker Tongue (purple rounded top sticking out above laces) -->
-    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M610 1353 C600 1345 565 1345 557 1353 L557 1372 L614 1372 Z" />
-    <!-- Purple Canvas Quarter / Heel counter (lateral/medial side panel) -->
-    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M557 1367 L529 1372 L525 1429 L584 1437 L584 1423 Z" />
-    <path fill="{SHOE_SHADOW}" d="M538 1371 L529 1372 L525 1429 L537 1432 Z" />
-    <!-- Throat / Laces Underlay (dark purple canvas) -->
-    <path fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M610 1372 L557 1372 L584 1423 L635 1404 Z" />
-    <!-- 4 White Laces Bars -->
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M615 1375 Q588 1379 560 1375 L563 1383 Q589 1387 618 1383 Z" />
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M622 1386 Q594 1390 568 1387 L571 1395 Q595 1398 625 1394 Z" />
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M629 1395 Q600 1400 574 1397 L577 1405 Q601 1409 632 1404 Z" />
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M636 1405 Q608 1411 582 1409 L585 1417 Q609 1419 639 1413 Z" />
-    <!-- White Rubber Toe Cap (Solid 3D volume matching source) -->
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M635 1404 L584 1423 L627 1429 C651 1425 661 1418 664 1414 Z" />
-    <path fill="#eef2f6" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M664 1414 C661 1418 651 1425 627 1429 L584 1423 L584 1437 L627 1444 C651 1440 662 1433 665 1429 Z" />
-    <!-- Thick Rubber Sole with 3D contour -->
-    <path fill="{SHOE_SOLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M665 1429 C662 1433 651 1440 627 1444 L584 1437 L584 1461 L635 1468 C654 1465 664 1455 665 1443 Z" />
-    <path fill="#e6eaef" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M584 1437 L525 1429 L526 1441 L570 1465 L584 1461 Z" />
-    <line x1="584" y1="1437" x2="584" y2="1461" stroke="{STROKE_THICK}" stroke-width="4.5" stroke-linecap="round" />
+    <!-- Ankle joint cap (tucks under jeans cuff at (580, 1345)) -->
+    <circle cx="580" cy="1345" r="36" fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" />
+    <!-- White sock sliver on medial side -->
+    <path fill="{SOCK_WHITE}" stroke="{STROKE_THICK}" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" d="M558 1338 L532 1338 L532 1368 L558 1368 Z" />
+    
+    <!-- Purple tongue (flat/angled top sticking out under cuff) -->
+    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M616 1338 L558 1338 L560 1364 L614 1364 Z" />
+    
+    <!-- Throat / Instep Underlay (dark purple canvas behind laces) -->
+    <path fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M614 1364 L560 1364 L596 1442 L654 1420 Z" />
+    
+    <!-- 4 White Laces Bars across instep -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M617 1368 L564 1369 L569 1378 L622 1377 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M627 1382 L574 1384 L579 1393 L632 1391 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M637 1396 L584 1399 L589 1408 L642 1405 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M647 1410 L593 1414 L598 1423 L652 1419 Z" />
+
+    <!-- Lateral purple canvas quarter (heel counter / side panel) -->
+    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M560 1362 L532 1372 L528 1436 L596 1444 L560 1362 Z" />
+    <!-- Heel shadow/contour accent -->
+    <path fill="{SHOE_SHADOW}" d="M545 1370 L532 1372 L528 1436 L542 1438 Z" />
+
+    <!-- White rubber toe cap (Solid 3D volume matching source) -->
+    <!-- Top slope facet -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M654 1420 L596 1424 L596 1444 L655 1448 L692 1436 Z" />
+    <!-- Front vertical face facet -->
+    <path fill="#f0f3f6" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M692 1436 L655 1448 L596 1444 L604 1453 L662 1457 L695 1446 Z" />
+
+    <!-- Thick Rubber Sole (continuous, clean, solid outline) -->
+    <path fill="{SHOE_SOLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M695 1446 L662 1457 L596 1444 L528 1436 L526 1455 L535 1466 L660 1468 L695 1458 Z" />
+    <!-- Sole groove / bottom contour shadow -->
+    <path fill="{SHOE_SOLE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="2" stroke-linejoin="round" d="M693 1453 L660 1463 L534 1461 L535 1466 L660 1468 L695 1458 Z" />
   </g>
 </svg>"""
 
@@ -527,6 +547,7 @@ def get_girl_a_layers() -> Dict[str, str]:
     SHOE_SHADOW = "#6f3477"
     SHOE_WHITE = "#ffffff"
     SHOE_SOLE = "#f0e8f2"
+    SHOE_SOLE_SHADOW = "#ded4e0"
 
     layers = {}
 
@@ -563,8 +584,8 @@ def get_girl_a_layers() -> Dict[str, str]:
     <path fill="none" stroke="{SKIN_SHADOW}" stroke-width="4" stroke-linecap="round" d="M360 365 C340 370 340 395 360 405" />
     <path fill="{SKIN_BASE}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M630 340 C690 340 690 420 630 430 Z" />
     <path fill="none" stroke="{SKIN_SHADOW}" stroke-width="4" stroke-linecap="round" d="M640 365 C660 370 660 395 640 405" />
-    <!-- Face Jaw and Cranium -->
-    <path fill="{SKIN_BASE}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M360 310 C360 210 640 210 640 310 C640 420 590 485 500 485 C410 485 360 420 360 310 Z" />
+    <!-- Face Jaw and Cranium (full dome prevents hair gap bleed) -->
+    <path fill="{SKIN_BASE}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M350 310 C350 100 650 100 650 310 C640 420 590 485 500 485 C410 485 360 420 360 310 Z" />
     <path fill="{SKIN_SHADOW}" d="M470 460 C430 460 395 435 385 400 C410 440 450 455 500 455 C550 455 590 440 615 400 C605 435 570 460 530 460 Z" />
     <!-- Eyebrows -->
     <path fill="{HAIR_DARK}" stroke="{STROKE_MAIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M390 295 Q435 278 475 296 L468 312 Q435 298 395 310 Z" />
@@ -876,29 +897,37 @@ def get_girl_a_layers() -> Dict[str, str]:
     # Ankle at (400, 1370), Cuff ends at 1412
     layers["shoe_left"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_shoe_left">
-    <!-- Ankle overlap cap (tucks under pant cuff at (400, 1370)) -->
-    <circle cx="400" cy="1370" r="34" fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5" />
-    <!-- Skin sliver on medial side under cuff -->
-    <path fill="{SKIN_BASE}" stroke="{STROKE_MAIN}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M422 1412 L444 1412 L444 1432 L422 1432 Z" />
-    <!-- Sneaker Tongue (purple rounded top sticking out above laces) -->
-    <path fill="{SHOE_BASE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M370 1418 C380 1410 415 1410 423 1418 L423 1437 L366 1437 Z" />
-    <!-- Purple Canvas Quarter / Heel counter (lateral/medial side panel) -->
-    <path fill="{SHOE_BASE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M423 1432 L451 1437 L455 1494 L396 1502 L396 1488 Z" />
-    <path fill="{SHOE_SHADOW}" d="M442 1436 L451 1437 L455 1494 L443 1497 Z" />
-    <!-- Throat / Laces Underlay (dark purple canvas) -->
-    <path fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M370 1437 L423 1437 L396 1488 L345 1469 Z" />
-    <!-- 4 White Laces Bars -->
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M365 1440 Q392 1444 420 1440 L417 1448 Q391 1452 362 1448 Z" />
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M358 1451 Q386 1455 412 1452 L409 1460 Q385 1463 355 1459 Z" />
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M351 1460 Q380 1465 406 1462 L403 1470 Q379 1474 348 1469 Z" />
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M344 1470 Q372 1476 398 1474 L395 1482 Q371 1484 341 1478 Z" />
-    <!-- White Rubber Toe Cap (Solid 3D volume matching source) -->
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M345 1469 L396 1488 L353 1494 C329 1490 319 1483 316 1479 Z" />
-    <path fill="#eef2f6" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M316 1479 C319 1483 329 1490 353 1494 L396 1488 L396 1502 L353 1509 C329 1505 318 1498 315 1494 Z" />
-    <!-- Thick Rubber Sole with 3D contour -->
-    <path fill="{SHOE_SOLE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M315 1494 C318 1498 329 1505 353 1509 L396 1502 L396 1526 L345 1533 C326 1530 316 1520 315 1508 Z" />
-    <path fill="#e6eaef" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M396 1502 L455 1494 L454 1506 L410 1530 L396 1526 Z" />
-    <line x1="396" y1="1502" x2="396" y2="1526" stroke="{STROKE_MAIN}" stroke-width="4.5" stroke-linecap="round" />
+    <!-- Ankle joint cap (tucks under pants cuff at (400, 1370)) -->
+    <circle cx="400" cy="1370" r="36" fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5" />
+    
+    <!-- Bare skin on medial side (inner ankle) -->
+    <path fill="{SKIN_BASE}" stroke="{STROKE_MAIN}" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" d="M418 1406 L444 1406 L444 1426 L418 1426 Z" />
+    
+    <!-- Sneaker Tongue (purple rounded top sticking out above collar) -->
+    <path fill="{SHOE_BASE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M366 1410 C374 1402 410 1402 418 1410 L418 1426 L366 1426 Z" />
+    
+    <!-- Throat / Instep Underlay (dark purple canvas) -->
+    <path fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M366 1426 L418 1426 L394 1474 L342 1456 Z" />
+    
+    <!-- 3 White Laces Bars across instep -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M365 1429 C380 1432 400 1432 414 1429 L411 1437 C397 1440 378 1440 362 1437 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M355 1441 C371 1445 391 1445 405 1441 L402 1449 C388 1453 368 1453 352 1449 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M346 1453 C362 1457 382 1457 396 1453 L393 1461 C379 1465 359 1465 343 1461 Z" />
+
+    <!-- Lateral purple canvas quarter (heel counter) -->
+    <path fill="{SHOE_BASE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M418 1424 L446 1432 C454 1446 456 1460 454 1471 L394 1475 L418 1424 Z" />
+    <!-- Heel shadow accent -->
+    <path fill="{SHOE_SHADOW}" d="M438 1431 C446 1445 450 1458 450 1471 L440 1472 C440 1458 434 1444 426 1432 Z" />
+
+    <!-- Rubber Toe Cap (Rounded 3D dome matching girl_a_body.png) -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M342 1456 C324 1460 312 1466 312 1474 C312 1478 322 1481 350 1479 L394 1475 L394 1466 Z" />
+    <!-- Toe highlight -->
+    <path fill="#fbf8fc" d="M340 1459 C326 1463 316 1468 316 1474 L348 1473 L390 1470 L388 1464 Z" />
+
+    <!-- Thick Rubber Sole (continuous, max y = 1490, NO CLIPPING) -->
+    <path fill="{SHOE_SOLE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M312 1474 C311 1480 318 1488 348 1490 L448 1487 C455 1484 456 1476 454 1471 L394 1475 C360 1478 326 1478 312 1474 Z" />
+    <!-- Sole shadow contour -->
+    <path fill="{SHOE_SOLE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="2" stroke-linejoin="round" d="M314 1480 C328 1483 358 1484 398 1482 L452 1478 L450 1483 C444 1486 415 1488 358 1488 C328 1488 316 1484 314 1480 Z" />
   </g>
 </svg>"""
 
@@ -934,29 +963,37 @@ def get_girl_a_layers() -> Dict[str, str]:
     # Ankle at (600, 1370), Cuff ends at 1412
     layers["shoe_right"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_shoe_right">
-    <!-- Ankle overlap cap (tucks under pant cuff at (600, 1370)) -->
-    <circle cx="600" cy="1370" r="34" fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5" />
-    <!-- Skin sliver on medial side under cuff -->
-    <path fill="{SKIN_BASE}" stroke="{STROKE_MAIN}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M578 1412 L556 1412 L556 1432 L578 1432 Z" />
-    <!-- Sneaker Tongue (purple rounded top sticking out above laces) -->
-    <path fill="{SHOE_BASE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M630 1418 C620 1410 585 1410 577 1418 L577 1437 L634 1437 Z" />
-    <!-- Purple Canvas Quarter / Heel counter (lateral/medial side panel) -->
-    <path fill="{SHOE_BASE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M577 1432 L549 1437 L545 1494 L604 1502 L604 1488 Z" />
-    <path fill="{SHOE_SHADOW}" d="M558 1436 L549 1437 L545 1494 L557 1497 Z" />
-    <!-- Throat / Laces Underlay (dark purple canvas) -->
-    <path fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M630 1437 L577 1437 L604 1488 L655 1469 Z" />
-    <!-- 4 White Laces Bars -->
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M635 1440 Q608 1444 580 1440 L583 1448 Q609 1452 638 1448 Z" />
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M642 1451 Q614 1455 588 1452 L591 1460 Q615 1463 645 1459 Z" />
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M649 1460 Q620 1465 594 1462 L597 1470 Q621 1474 652 1469 Z" />
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M656 1470 Q628 1476 602 1474 L605 1482 Q629 1484 659 1478 Z" />
-    <!-- White Rubber Toe Cap (Solid 3D volume matching source) -->
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M655 1469 L604 1488 L647 1494 C671 1490 681 1483 684 1479 Z" />
-    <path fill="#eef2f6" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M684 1479 C681 1483 671 1490 647 1494 L604 1488 L604 1502 L647 1509 C671 1505 682 1498 685 1494 Z" />
-    <!-- Thick Rubber Sole with 3D contour -->
-    <path fill="{SHOE_SOLE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M685 1494 C682 1498 671 1505 647 1509 L604 1502 L604 1526 L655 1533 C674 1530 684 1520 685 1508 Z" />
-    <path fill="#e6eaef" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M604 1502 L545 1494 L546 1506 L590 1530 L604 1526 Z" />
-    <line x1="604" y1="1502" x2="604" y2="1526" stroke="{STROKE_MAIN}" stroke-width="4.5" stroke-linecap="round" />
+    <!-- Ankle joint cap (tucks under pants cuff at (600, 1370)) -->
+    <circle cx="600" cy="1370" r="36" fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5" />
+    
+    <!-- Bare skin on medial side (inner ankle) -->
+    <path fill="{SKIN_BASE}" stroke="{STROKE_MAIN}" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" d="M582 1406 L556 1406 L556 1426 L582 1426 Z" />
+    
+    <!-- Sneaker Tongue (purple rounded top sticking out above collar) -->
+    <path fill="{SHOE_BASE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M634 1410 C626 1402 590 1402 582 1410 L582 1426 L634 1426 Z" />
+    
+    <!-- Throat / Instep Underlay (dark purple canvas) -->
+    <path fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M634 1426 L582 1426 L606 1474 L658 1456 Z" />
+    
+    <!-- 3 White Laces Bars across instep -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M635 1429 C620 1432 600 1432 586 1429 L589 1437 C603 1440 622 1440 638 1437 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M645 1441 C629 1445 609 1445 595 1441 L598 1449 C612 1453 632 1453 648 1449 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M654 1453 C638 1457 618 1457 604 1453 L607 1461 C621 1465 641 1465 657 1461 Z" />
+
+    <!-- Lateral purple canvas quarter (heel counter) -->
+    <path fill="{SHOE_BASE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M582 1424 L554 1432 C546 1446 544 1460 546 1471 L606 1475 L582 1424 Z" />
+    <!-- Heel shadow accent -->
+    <path fill="{SHOE_SHADOW}" d="M562 1431 C554 1445 550 1458 550 1471 L560 1472 C560 1458 566 1444 574 1432 Z" />
+
+    <!-- Rubber Toe Cap (Rounded 3D dome matching girl_a_body.png) -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M658 1456 C676 1460 688 1466 688 1474 C688 1478 678 1481 650 1479 L606 1475 L606 1466 Z" />
+    <!-- Toe highlight -->
+    <path fill="#fbf8fc" d="M660 1459 C674 1463 684 1468 684 1474 L652 1473 L610 1470 L612 1464 Z" />
+
+    <!-- Thick Rubber Sole (continuous, max y = 1490, NO CLIPPING) -->
+    <path fill="{SHOE_SOLE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M688 1474 C689 1480 682 1488 652 1490 L552 1487 C545 1484 544 1476 546 1471 L606 1475 C640 1478 674 1478 688 1474 Z" />
+    <!-- Sole shadow contour -->
+    <path fill="{SHOE_SOLE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="2" stroke-linejoin="round" d="M686 1480 C672 1483 642 1484 602 1482 L548 1478 L550 1483 C556 1486 585 1488 642 1488 C672 1488 684 1484 686 1480 Z" />
   </g>
 </svg>"""
 
