@@ -162,9 +162,9 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 
 ### `Visual Templates (Allowlist)`
 - **Description**: Safe, deterministic animated visual components rendered inside the whiteboard in 'stage' layout. Supports 6 template types: `flow`, `request_response`, `typed_code`, `step_ladder`, `check_cross`, and `counter`.
-- **Files**: `src/toonshorts/core/visuals.py`
-- **Capabilities**: Strict whitelist validation for types and parameters, named color palette restriction (no free CSS), script/SVG injection prevention, maximum 14 characters per label, and board safe area layout overflow checking.
-- **Tests**: `tests/unit/test_visual_templates.py`
+- **Files**: `src/toonshorts/core/visuals.py`, `src/toonshorts/plugins/render/animejs/visual_renderer.py`
+- **Capabilities**: Strict whitelist validation for types and parameters, named color palette restriction (no free CSS), script/SVG injection prevention, maximum 14 characters per label, Whisper trigger word time synchronization, progressive stroke reveal, eased packet animation along connecting arrows, and board safe area layout overflow checking.
+- **Tests**: `tests/unit/test_visual_templates.py`, `tests/unit/test_animejs.py`
 
 ---
 

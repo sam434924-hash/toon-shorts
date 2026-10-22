@@ -94,34 +94,169 @@ function initRoughSketches() {
   }
 
   // Prepare progressive drawing stroke-dasharray & stroke-dashoffset for each annotation
-  window.__annotations.forEach(ann => {
-    const node = document.getElementById(ann.id);
-    if (!node) return;
-    const paths = node.querySelectorAll("path");
-    const pathData = [];
-    paths.forEach(p => {
-      const len = p.getTotalLength();
-      p.style.strokeDasharray = len;
-      p.style.strokeDashoffset = len;
-      pathData.push({ el: p, len: len });
+  if (window.__annotations) {
+    window.__annotations.forEach(ann => {
+      const node = document.getElementById(ann.id);
+      if (!node) return;
+      const paths = node.querySelectorAll("path");
+      const pathData = [];
+      paths.forEach(p => {
+        const len = p.getTotalLength();
+        p.style.strokeDasharray = len;
+        p.style.strokeDashoffset = len;
+        pathData.push({ el: p, len: len });
+      });
+      node.style.opacity = "0";
+      window.__annotationDrawers.push({
+        id: ann.id,
+        node: node,
+        type: ann.type,
+        start_ms: ann.start_ms,
+        duration_ms: ann.duration_ms,
+        paths: pathData,
+      });
     });
-    node.style.opacity = "0";
-    window.__annotationDrawers.push({
-      id: ann.id,
-      node: node,
-      type: ann.type,
-      start_ms: ann.start_ms,
-      duration_ms: ann.duration_ms,
-      paths: pathData,
-    });
+  }
+
+  // Initialize stage visual SVG paths for progressive stroke reveal
+  document.querySelectorAll(".flow-arrow-svg path, .rr-arrow-svg path, .cc-icon-svg path").forEach(p => {
+    const len = p.getTotalLength() || 60;
+    p.style.strokeDasharray = String(len);
+    p.style.strokeDashoffset = String(len);
   });
 }
 
 // Call sketch initialization on page load
 initRoughSketches();
 
+// Deterministic update of stage visuals at timestamp ms
+window.updateStageVisuals = function(ms) {
+  if (!window.__stageVisuals || window.__stageVisuals.length === 0) return;
+
+  window.__stageVisuals.forEach(vis => {
+    const el = document.getElementById(vis.dom_id);
+    if (!el) return;
+
+    if (ms < vis.start_ms) {
+      el.style.opacity = "0";
+      const packetEl = document.getElementById(vis.dom_id + "-packet");
+      if (packetEl) packetEl.style.opacity = "0";
+      return;
+    }
+
+    el.style.opacity = "1";
+    const p = Math.min(1.0, Math.max(0.0, (ms - vis.start_ms) / vis.duration_ms));
+
+    if (vis.type === "flow") {
+      const pArrow = Math.min(1.0, p / 0.7);
+      const arrowPaths = el.querySelectorAll(".flow-arrow-svg path");
+      arrowPaths.forEach(pEl => {
+        const len = pEl.getTotalLength() || 60;
+        pEl.style.strokeDashoffset = String(len * (1 - pArrow));
+      });
+      const nodeBadges = el.querySelectorAll(".flow-node-badge");
+      nodeBadges.forEach((badge, nIdx) => {
+        const bob = Math.sin((ms - vis.start_ms) * 0.003 + nIdx * 1.5) * 3;
+        badge.style.transform = `translateY(${bob}px)`;
+      });
+    } else if (vis.type === "request_response") {
+      const arrowPaths = el.querySelectorAll(".rr-arrow-svg path");
+      arrowPaths.forEach(pEl => {
+        const len = pEl.getTotalLength() || 320;
+        pEl.style.strokeDashoffset = String(len * (1 - Math.min(1.0, p / 0.5)));
+      });
+      const boxBob = Math.sin((ms - vis.start_ms) * 0.003) * 2;
+      const cIcon = el.querySelector(".rr-client .rr-box-icon");
+      const sIcon = el.querySelector(".rr-server .rr-box-icon");
+      if (cIcon) cIcon.style.transform = `translateY(${boxBob}px)`;
+      if (sIcon) sIcon.style.transform = `translateY(${-boxBob}px)`;
+
+      const packetEl = document.getElementById(vis.dom_id + "-packet");
+      if (packetEl) {
+        if (p < 0.15) {
+          packetEl.style.opacity = "0";
+        } else if (p >= 0.15 && p < 0.55) {
+          packetEl.style.opacity = "1";
+          const t = (p - 0.15) / 0.40;
+          const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+          const px = 20 + eased * 270;
+          const py = 6 + Math.sin((ms - vis.start_ms) * 0.015) * 3;
+          packetEl.style.transform = `translate(${px}px, ${py}px)`;
+        } else if (p >= 0.55 && p < 0.65) {
+          packetEl.style.opacity = "1";
+          const py = 6 + Math.sin((ms - vis.start_ms) * 0.015) * 3;
+          packetEl.style.transform = `translate(290px, ${py}px)`;
+        } else if (p >= 0.65 && p <= 1.0) {
+          packetEl.style.opacity = "1";
+          const t = (p - 0.65) / 0.35;
+          const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+          const px = 290 - eased * 270;
+          const py = 58 + Math.sin((ms - vis.start_ms) * 0.015) * 3;
+          packetEl.style.transform = `translate(${px}px, ${py}px)`;
+        }
+      }
+    } else if (vis.type === "typed_code") {
+      const codeEl = document.getElementById(vis.dom_id + "-code");
+      const cursorEl = document.getElementById(vis.dom_id + "-cursor");
+      const full = vis.full_text || "";
+      const charCount = Math.floor(p * full.length);
+      if (codeEl) codeEl.textContent = full.substring(0, charCount);
+      const blink = (ms % 600) < 300;
+      if (cursorEl) cursorEl.style.opacity = blink ? "1" : "0";
+    } else if (vis.type === "step_ladder") {
+      const stepEls = el.querySelectorAll(".ladder-step");
+      const count = stepEls.length || 1;
+      stepEls.forEach((sEl, sIdx) => {
+        const sStart = sIdx * (1.0 / count);
+        if (p >= sStart) {
+          sEl.style.opacity = "1";
+          const sP = Math.min(1.0, (p - sStart) / (1.0 / count));
+          sEl.style.transform = `translateX(${(1 - sP) * -30}px)`;
+          const badge = sEl.querySelector(".ladder-num-badge");
+          if (badge) {
+            const bob = Math.sin((ms - vis.start_ms) * 0.003 + sIdx) * 3;
+            badge.style.transform = `translateY(${bob}px)`;
+          }
+        } else {
+          sEl.style.opacity = "0";
+        }
+      });
+    } else if (vis.type === "check_cross") {
+      const stroke1 = el.querySelector(".cc-stroke-1");
+      const stroke2 = el.querySelector(".cc-stroke-2");
+      const p1 = Math.min(1.0, p / 0.5);
+      const p2 = Math.max(0.0, (p - 0.5) / 0.5);
+      if (stroke1) {
+        const l1 = stroke1.getTotalLength() || 40;
+        stroke1.style.strokeDashoffset = String(l1 * (1 - p1));
+      }
+      if (stroke2) {
+        const l2 = stroke2.getTotalLength() || 40;
+        stroke2.style.strokeDashoffset = String(l2 * (1 - p2));
+      }
+      const iconBadge = el.querySelector(".cc-icon-badge");
+      if (iconBadge) {
+        const bob = Math.sin((ms - vis.start_ms) * 0.003) * 3;
+        iconBadge.style.transform = `translateY(${bob}px)`;
+      }
+    } else if (vis.type === "counter") {
+      const valEl = document.getElementById(vis.dom_id + "-val");
+      const badge = document.getElementById(vis.dom_id + "-badge");
+      const eased = 1 - Math.pow(1 - p, 3);
+      const cur = Math.round(vis.from_val + eased * (vis.to_val - vis.from_val));
+      if (valEl) valEl.textContent = (vis.prefix || "") + cur + (vis.suffix || "");
+      if (badge) {
+        const bob = Math.sin((ms - vis.start_ms) * 0.003) * 3;
+        badge.style.transform = `translateY(${bob}px)`;
+      }
+    }
+  });
+};
+
 window.seekAnimation = function(ms) {
-  window.__timeline.seek(ms);
+  if (window.__timeline) {
+    window.__timeline.seek(ms);
+  }
 
   // 1. Loudness-driven mouth sync for speaker
   const frameIdx = Math.floor((ms / 1000.0) * fps);
@@ -134,8 +269,8 @@ window.seekAnimation = function(ms) {
       mClosed.style.display = isOpen ? "none" : "inline";
       mOpen.style.display = isOpen ? "inline" : "none";
     }
-    // Speaker natural periodic blink
-    const sBlink = (ms % 3800) < 140;
+
+    const sBlink = ((ms + 400) % 3600) < 140;
     const seBlink = speakerEl.querySelector("#eyes-blink");
     const seOpen = speakerEl.querySelector("#eyes-open");
     if (seBlink && seOpen) {
@@ -144,39 +279,35 @@ window.seekAnimation = function(ms) {
     }
   }
 
-  // 2. Non-speaking listener character blinks and glances toward speaker, mouth stays closed
-  if (window.__listenerSlotId) {
-    const listenerEl = document.getElementById(window.__listenerSlotId);
-    if (listenerEl) {
-      const lmClosed = listenerEl.querySelector("#mouth-closed");
-      if (lmClosed) lmClosed.style.display = "inline";
-      const otherMouths = listenerEl.querySelectorAll(".mouth-state:not(#mouth-closed)");
-      otherMouths.forEach(el => el.style.display = "none");
+  // 2. Listener glance toward speaker & independent blinking
+  const listenerEl = document.getElementById(window.__listenerSlotId);
+  if (listenerEl) {
+    const lmClosed = listenerEl.querySelector("#mouth-closed");
+    if (lmClosed) lmClosed.style.display = "inline";
+    const otherMouths = listenerEl.querySelectorAll(".mouth-state:not(#mouth-closed)");
+    otherMouths.forEach(el => el.style.display = "none");
 
-      const lBlink = ((ms + 1600) % 3200) < 140;
-      const lGlance = ((ms + 800) % 4500) < 2200;
+    const lBlink = ((ms + 1600) % 3200) < 140;
+    const lGlance = ((ms + 800) % 4500) < 2200;
 
-      // Choose eye state so pupils look towards the speaker on screen.
-      // Right slot is flipped with scaleX(-1), which inverts local coordinates horizontally.
-      const isListenerRight = window.__listenerSlotId === "character-rig-right" || listenerEl.classList.contains("char-slot-right");
-      const isSpeakerRight = (window.__speakerSlotId || "character-rig") === "character-rig-right";
-      const speakerOnRight = isSpeakerRight && !isListenerRight;
-      const screenDir = speakerOnRight ? "right" : "left";
-      const targetEye = isListenerRight
-        ? (screenDir === "left" ? "eyes-screen_right" : "eyes-screen_left")
-        : (screenDir === "right" ? "eyes-screen_right" : "eyes-screen_left");
-      const fallbackEye = (targetEye === "eyes-screen_right") ? "eyes-screen_left" : "eyes-screen_right";
+    const isListenerRight = window.__listenerSlotId === "character-rig-right" || listenerEl.classList.contains("char-slot-right");
+    const isSpeakerRight = (window.__speakerSlotId || "character-rig") === "character-rig-right";
+    const speakerOnRight = isSpeakerRight && !isListenerRight;
+    const screenDir = speakerOnRight ? "right" : "left";
+    const targetEye = isListenerRight
+      ? (screenDir === "left" ? "eyes-screen_right" : "eyes-screen_left")
+      : (screenDir === "right" ? "eyes-screen_right" : "eyes-screen_left");
+    const fallbackEye = (targetEye === "eyes-screen_right") ? "eyes-screen_left" : "eyes-screen_right";
 
-      const leGlance = listenerEl.querySelector(`#${targetEye}`) || listenerEl.querySelector(`#${fallbackEye}`);
-      const leBlink = listenerEl.querySelector("#eyes-blink");
-      const leOpen = listenerEl.querySelector("#eyes-open");
-      const activeEye = (lBlink && leBlink) ? leBlink : ((lGlance && leGlance) ? leGlance : leOpen);
+    const leGlance = listenerEl.querySelector(`#${targetEye}`) || listenerEl.querySelector(`#${fallbackEye}`);
+    const leBlink = listenerEl.querySelector("#eyes-blink");
+    const leOpen = listenerEl.querySelector("#eyes-open");
+    const activeEye = (lBlink && leBlink) ? leBlink : ((lGlance && leGlance) ? leGlance : leOpen);
 
-      if (activeEye) {
-        listenerEl.querySelectorAll(".eye-state").forEach(el => {
-          el.style.display = (el === activeEye) ? "inline" : "none";
-        });
-      }
+    if (activeEye) {
+      listenerEl.querySelectorAll(".eye-state").forEach(el => {
+        el.style.display = (el === activeEye) ? "inline" : "none";
+      });
     }
   }
 
@@ -219,7 +350,6 @@ window.seekAnimation = function(ms) {
       gestArm.style.transform = `rotate(${restDeg}deg)`;
     } else if (ms < trigMs + raiseDur) {
       const t = (ms - trigMs) / raiseDur;
-      // easeOutCubic
       const p = 1 - Math.pow(1 - t, 3);
       const curDeg = restDeg * (1 - p);
       gestArm.style.transform = `rotate(${curDeg.toFixed(2)}deg)`;
@@ -232,7 +362,6 @@ window.seekAnimation = function(ms) {
       }
     } else if (ms < animEnd) {
       const t = (ms - holdEnd) / lowerDur;
-      // easeInOutQuad
       const p = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
       const curDeg = restDeg * p;
       gestArm.style.transform = `rotate(${curDeg.toFixed(2)}deg)`;
@@ -294,4 +423,11 @@ window.seekAnimation = function(ms) {
       }
     });
   }
+
+  // 7. Progressive animation for stage visuals (template-based)
+  if (window.updateStageVisuals) {
+    window.updateStageVisuals(ms);
+  }
 };
+
+window.seekTo = window.seekAnimation;

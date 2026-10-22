@@ -225,3 +225,33 @@ def test_stage_layout_plan_validation():
     ]
     with pytest.raises(PlanValidationError, match="visuals overflow board safe area"):
         validate_plan(plan_dict)
+
+
+def test_resolve_visual_timings_matched_and_fallback(caplog):
+    import logging
+    from toonshorts.core.models import Visual, WordTiming
+    from toonshorts.plugins.render.animejs.visual_renderer import resolve_visual_timings
+
+    word_timings = [
+        WordTiming(word="Imagine", start_time=0.45, end_time=0.85),
+        WordTiming(word="you", start_time=0.90, end_time=1.10),
+        WordTiming(word="call", start_time=1.20, end_time=1.45),
+        WordTiming(word="the", start_time=1.50, end_time=1.60),
+        WordTiming(word="api", start_time=1.65, end_time=2.10),
+    ]
+
+    visuals = [
+        Visual(type="flow", trigger_word="api", params={"nodes": ["A", "B"]}),
+        Visual(type="counter", trigger_word="nonexistentword", params={"from_val": 0, "to_val": 10}),
+    ]
+
+    with caplog.at_level(logging.WARNING):
+        resolved = resolve_visual_timings(visuals, word_timings, duration_sec=5.0, scene_number=2)
+
+    # First visual matched "api" at 1.65s -> 1650ms
+    assert resolved[0]["start_ms"] == 1650
+    assert resolved[0]["trigger_word"] == "api"
+
+    # Second visual missed -> logged warning and even spacing
+    assert any("Trigger word 'nonexistentword' not found in word timings" in record.message for record in caplog.records)
+    assert resolved[1]["start_ms"] > 1650

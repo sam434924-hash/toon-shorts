@@ -1,7 +1,7 @@
 """
 Purpose: HTML5 / Anime.js whiteboard rendering plugin conforming to RenderInterface.
-Inputs: Screenplay plans, character manifests, audio tracks, and style configurations.
-Outputs: Generated scene video clips and still images.
+Inputs: Scene screenplay models, audio timing tracks, voice loudness cues, and style presets.
+Outputs: Rendered MP4 video clips or PNG preview stills with synchronized mouth flapping.
 Depends on: core.config, core.models, core.registry, logging, pathlib, plugins.render.animejs.annotations, plugins.render.animejs.capture, plugins.render.animejs.cast, plugins.render.animejs.html_builder, typing
 Used by: plugins.render.animejs
 Config keys: VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from toonshorts.core import config
-from toonshorts.core.models import Character, Scene, ScriptPlan, SceneAudio
+from toonshorts.core.models import Character, Scene, SceneAudio, ScriptPlan
 from toonshorts.core.registry import RenderInterface, register_renderer
 from toonshorts.plugins.render.animejs.annotations import extract_whiteboard_content_and_annotations
 from toonshorts.plugins.render.animejs.capture import capture_still_frame, render_whiteboard_video
@@ -55,6 +55,9 @@ class AnimeJSRenderPlugin(RenderInterface):
             style_preset=style_preset,
         )
 
+        layout = getattr(scene, "layout", "cards") or "cards"
+        visuals = getattr(scene, "visuals", None)
+
         html_str = generate_whiteboard_html(
             title=title,
             words=words_data,
@@ -66,9 +69,11 @@ class AnimeJSRenderPlugin(RenderInterface):
             scene_number=scene.scene_number,
             annotations=annotations,
             characters_data=characters_data,
+            layout=layout,
+            visuals=visuals,
         )
 
-        html_file = (temp_dir / f"animejs_scene_{scene.scene_number}.html").resolve()
+        html_file = temp_dir / f"scene_{scene.scene_number}_still.html"
         html_file.write_text(html_str, encoding="utf-8")
 
         return capture_still_frame(
@@ -94,6 +99,9 @@ class AnimeJSRenderPlugin(RenderInterface):
         characters_data: Optional[List[Dict[str, Any]]] = None,
         width: int = config.VIDEO_WIDTH,
         height: int = config.VIDEO_HEIGHT,
+        layout: str = "cards",
+        visuals: Optional[List[Any]] = None,
+        word_timings: Optional[List[Any]] = None,
     ) -> Path:
         """
         Renders a fully animated MP4 video with easing transitions synced to an audio clip.
@@ -115,6 +123,9 @@ class AnimeJSRenderPlugin(RenderInterface):
             characters_data=characters_data,
             width=width,
             height=height,
+            layout=layout,
+            visuals=visuals,
+            word_timings=word_timings,
         )
 
     def render_all_scenes(
@@ -150,6 +161,8 @@ class AnimeJSRenderPlugin(RenderInterface):
                     scene=scene,
                     style_preset=style_preset,
                 )
+                layout = getattr(scene, "layout", "cards") or "cards"
+                visuals = getattr(scene, "visuals", None)
                 self.render_whiteboard_video(
                     title=title,
                     words=words,
@@ -164,6 +177,9 @@ class AnimeJSRenderPlugin(RenderInterface):
                     characters_data=characters_data,
                     width=width,
                     height=height,
+                    layout=layout,
+                    visuals=visuals,
+                    word_timings=audio.word_timings,
                 )
                 results.append(clip_path)
         else:

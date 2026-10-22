@@ -1,11 +1,11 @@
 """
 Purpose: Playwright headless browser frame stepping and FFmpeg pipe video capture.
-Inputs: HTML documents, timing durations, audio tracks, and output file destinations.
-Outputs: Rendered PNG still frames and stitched MP4 video files.
+Inputs: Compiled whiteboard HTML, audio files, animation durations, and target FPS.
+Outputs: Generated MP4 scene clips and still preview PNG frames.
 Depends on: core.config, logging, pathlib, playwright, plugins.render.animejs.audio_sync, plugins.render.animejs.html_builder, subprocess, typing
 Used by: plugins.render.animejs, plugins.render.animejs.plugin
 Config keys: VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
-Tests: tests/contract/test_render_contract.py, tests/unit/test_animejs.py
+Tests: tests/unit/test_animejs.py
 """
 
 import logging
@@ -34,7 +34,7 @@ def capture_still_frame(
         browser = p.chromium.launch(headless=True)
         page = browser.new_page(viewport={"width": width, "height": height})
         page.goto(html_file.resolve().as_uri())
-        page.evaluate(f"window.seekAnimation({int(duration_sec * 1000)})")
+        page.evaluate(f"window.seekTo({int(duration_sec * 1000)})")
         page.screenshot(path=str(output_path), type="png")
         browser.close()
     return output_path
@@ -54,6 +54,9 @@ def render_whiteboard_video(
     characters_data: Optional[List[Dict[str, Any]]] = None,
     width: int = config.VIDEO_WIDTH,
     height: int = config.VIDEO_HEIGHT,
+    layout: str = "cards",
+    visuals: Optional[List[Any]] = None,
+    word_timings: Optional[List[Any]] = None,
 ) -> Path:
     """
     Renders a fully animated MP4 video with easing transitions synced to an audio clip.
@@ -79,6 +82,9 @@ def render_whiteboard_video(
         scene_number=scene_number,
         annotations=annotations,
         characters_data=characters_data,
+        layout=layout,
+        visuals=visuals,
+        word_timings=word_timings,
     )
 
     html_file = (work_dir / "whiteboard_scene.html").resolve()
@@ -128,22 +134,17 @@ def render_whiteboard_video(
             try:
                 for frame_idx in range(total_frames):
                     t_ms = (frame_idx / fps) * 1000.0
-                    page.evaluate(f"window.seekAnimation({t_ms})")
-                    png_bytes = page.screenshot(type="png")
-                    proc.stdin.write(png_bytes)
-            except (BrokenPipeError, OSError) as e:
-                logger.error("FFmpeg stdin pipe closed prematurely: %s", e)
-
-            browser.close()
-
-        try:
-            proc.stdin.close()
-        except Exception:
-            pass
-        proc.wait()
+                    page.evaluate(f"window.seekTo({t_ms})")
+                    buf = page.screenshot(type="png")
+                    proc.stdin.write(buf)
+            finally:
+                if proc.stdin:
+                    proc.stdin.close()
+                proc.wait()
+                browser.close()
 
     if proc.returncode != 0:
-        err_msg = log_file.read_text(encoding="utf-8", errors="ignore") if log_file.exists() else "Unknown error"
-        raise RuntimeError(f"FFmpeg animejs video render failed: {err_msg}")
+        log_text = log_file.read_text(encoding="utf-8", errors="replace") if log_file.exists() else "No log"
+        raise RuntimeError(f"FFmpeg pipeline failed with return code {proc.returncode}:\n{log_text}")
 
     return output_path

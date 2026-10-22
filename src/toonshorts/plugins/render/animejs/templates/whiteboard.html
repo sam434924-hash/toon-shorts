@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width={{WIDTH}}, height={{HEIGHT}}">
-  <title>{{TITLE}}</title>
+  <meta charset="UTF-8">
+  <title>ToonShorts Whiteboard Studio</title>
   <style>
 {{STYLE_CSS}}
 
-    /* Dynamic character arm gesture display rules */
 {{DYNAMIC_CSS}}
   </style>
   <script>
-{{ANIME_JS}}
 {{ROUGH_JS}}
+  </script>
+  <script>
+{{ANIME_JS}}
   </script>
 </head>
 <body>
+  <!-- Edge Vignette Filter -->
   <div class="vignette-overlay"></div>
 
   <!-- Studio Room Wall Details (Constant Set Across All Scenes) -->
@@ -25,9 +26,7 @@
   <div class="whiteboard-outer">
     <svg id="rough-canvas" width="880" height="560"></svg>
     <div class="title-badge" id="wb-title">{{TITLE}}</div>
-    <div class="word-list">
-{{CARDS_MARKUP}}
-    </div>
+{{BOARD_CONTENT}}
     <div class="marker-tray">
       <div class="marker black"></div>
       <div class="marker blue"></div>
@@ -55,9 +54,11 @@
 
   <script>
     const fps = {{FPS}};
+    window.__fps = fps;
     window.__mouthCues = {{MOUTH_CUES_JSON}};
     window.__cardTimings = {{CARD_TIMING_JSON}};
     window.__annotations = {{ANNOTATIONS_JSON}};
+    window.__stageVisuals = {{STAGE_VISUALS_JSON}};
     window.__gestureTriggerMs = {{GESTURE_TRIGGER_MS}};
     window.__gestureType = "{{SPEAKER_GESTURE}}";
     window.__speakerSlotId = "{{SPEAKER_SLOT_ID}}";
@@ -67,11 +68,17 @@
       autoplay: false,
       duration: {{TOTAL_DURATION_MS}}
     });
+    window.__mainTimeline = window.__timeline;
 
     window.__timeline
 {{TIMELINE_CHAIN}};
 
 {{SCRIPT_JS}}
+
+    window.addEventListener("DOMContentLoaded", () => {
+      initRoughSketches();
+      window.seekTo(0);
+    });
   </script>
 </body>
 </html>

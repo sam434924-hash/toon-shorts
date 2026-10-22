@@ -1,8 +1,8 @@
 """
 Purpose: Template assembly and HTML document generation for whiteboard scenes.
-Inputs: Scene metadata, character SVG rigs, timing cues, and annotations.
+Inputs: Scene metadata, character SVG rigs, timing cues, annotations, and stage visuals.
 Outputs: Self-contained HTML5 string embedding local script engines and CSS.
-Depends on: core.config, core.models, html, json, pathlib, plugins.render.animejs.cast, plugins.render.animejs.gestures, plugins.render.animejs.layout, typing
+Depends on: core.config, core.models, html, json, pathlib, plugins.render.animejs.cast, plugins.render.animejs.gestures, plugins.render.animejs.layout, plugins.render.animejs.visual_renderer, typing
 Used by: plugins.render.animejs, plugins.render.animejs.capture, plugins.render.animejs.plugin
 Config keys: ANIME_JS_PATH, ROUGH_JS_PATH, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
 Tests: tests/unit/test_animejs.py
@@ -18,6 +18,10 @@ from toonshorts.core.models import Scene
 from toonshorts.plugins.render.animejs.cast import build_characters_data
 from toonshorts.plugins.render.animejs.gestures import sanitize_gesture
 from toonshorts.plugins.render.animejs.layout import generate_scene_decorations
+from toonshorts.plugins.render.animejs.visual_renderer import (
+    build_stage_elements,
+    resolve_visual_timings,
+)
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
 
@@ -34,6 +38,9 @@ def generate_whiteboard_html(
     scene_number: int = 1,
     annotations: Optional[List[Dict[str, Any]]] = None,
     characters_data: Optional[List[Dict[str, Any]]] = None,
+    layout: str = "cards",
+    visuals: Optional[List[Any]] = None,
+    word_timings: Optional[List[Any]] = None,
 ) -> str:
     """
     Generates a high-contrast HTML5/SVG composition with Anime.js whiteboard animation,
@@ -160,6 +167,18 @@ def generate_whiteboard_html(
         })
     annotations_json = json.dumps(serializable_annotations)
 
+    # Determine layout mode content (cards vs stage)
+    stage_visuals_json = "[]"
+    extra_stage_css = ""
+    if layout == "stage" and visuals:
+        resolved_vis = resolve_visual_timings(visuals, word_timings or [], duration_sec, scene_number)
+        stage_markup, stage_css, stage_descriptors = build_stage_elements(resolved_vis, scene_number)
+        board_content = stage_markup
+        stage_visuals_json = json.dumps(stage_descriptors)
+        extra_stage_css = stage_css
+    else:
+        board_content = f'    <div class="word-list">\n{cards_markup}\n    </div>'
+
     # Determine meaningful gesture trigger moment
     if clean_gesture == "wave":
         gesture_trigger_ms = 350
@@ -206,6 +225,8 @@ def generate_whiteboard_html(
 
     characters_html = "\n".join(chars_html_list)
     characters_dynamic_css = "\n".join(chars_css_rules)
+    if extra_stage_css:
+        characters_dynamic_css = characters_dynamic_css + "\n" + extra_stage_css
 
     timeline_chain = "\n".join(timeline_steps)
     mouth_cues_json = json.dumps(mouth_cues or [])
@@ -229,6 +250,7 @@ def generate_whiteboard_html(
     result = result.replace("{{ANIME_JS}}", anime_js)
     result = result.replace("{{ROUGH_JS}}", rough_js)
     result = result.replace("{{SHELF_DECOR}}", shelf_decor_html)
+    result = result.replace("{{BOARD_CONTENT}}", board_content)
     result = result.replace("{{CARDS_MARKUP}}", cards_markup)
     result = result.replace("{{CHARACTERS_HTML}}", characters_html)
     result = result.replace("{{DESK_PROPS}}", desk_props_html)
@@ -236,6 +258,7 @@ def generate_whiteboard_html(
     result = result.replace("{{MOUTH_CUES_JSON}}", mouth_cues_json)
     result = result.replace("{{CARD_TIMING_JSON}}", card_timing_json)
     result = result.replace("{{ANNOTATIONS_JSON}}", annotations_json)
+    result = result.replace("{{STAGE_VISUALS_JSON}}", stage_visuals_json)
     result = result.replace("{{GESTURE_TRIGGER_MS}}", str(gesture_trigger_ms))
     result = result.replace("{{SPEAKER_GESTURE}}", speaker_gesture)
     result = result.replace("{{SPEAKER_SLOT_ID}}", speaker_slot_id)

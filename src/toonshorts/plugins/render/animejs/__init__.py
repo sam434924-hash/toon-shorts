@@ -2,7 +2,7 @@
 Purpose: HTML/SVG whiteboard animation rendering package using Anime.js, Rough.js, and Playwright.
 Inputs: Scene plans, characters, style presets, voice timing cues, and whiteboard text elements.
 Outputs: Rendered 9:16 PNG image frames and animated MP4 video sequences.
-Depends on: plugins.render.animejs.annotations, plugins.render.animejs.audio_sync, plugins.render.animejs.capture, plugins.render.animejs.cast, plugins.render.animejs.gestures, plugins.render.animejs.html_builder, plugins.render.animejs.layout, plugins.render.animejs.plugin
+Depends on: plugins.render.animejs.annotations, plugins.render.animejs.audio_sync, plugins.render.animejs.capture, plugins.render.animejs.cast, plugins.render.animejs.gestures, plugins.render.animejs.html_builder, plugins.render.animejs.layout, plugins.render.animejs.plugin, plugins.render.animejs.visual_renderer
 Used by: None
 Config keys: ANIME_JS_PATH, ROUGH_JS_PATH, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
 Tests: tests/contract/test_render_contract.py, tests/unit/test_animejs.py
@@ -35,6 +35,10 @@ from toonshorts.plugins.render.animejs.layout import (
     resolve_listener_glance_eye,
 )
 from toonshorts.plugins.render.animejs.plugin import AnimeJSRenderPlugin
+from toonshorts.plugins.render.animejs.visual_renderer import (
+    build_stage_elements,
+    resolve_visual_timings,
+)
 
 __all__ = [
     "AnimeJSRenderPlugin",
@@ -54,4 +58,6 @@ __all__ = [
     "CHAR_RIG_LAYOUT",
     "ALLOWED_GESTURES",
     "resolve_listener_glance_eye",
+    "resolve_visual_timings",
+    "build_stage_elements",
 ]
