@@ -2,10 +2,10 @@
 Purpose: Screenplay v1/v2 schema validation, directing rules enforcement, and plan adaptation.
 Inputs: ScriptPlan objects or raw dictionary representations of script plans.
 Outputs: Validated ScriptPlan instances or descriptive one-line validation errors.
-Depends on: core.models, re, typing
+Depends on: core.models, core.visuals, re, typing
 Used by: None
 Config keys: None
-Tests: tests/unit/test_validation.py, tests/unit/test_v2_validation.py
+Tests: tests/unit/test_validation.py, tests/unit/test_v2_validation.py, tests/unit/test_visual_templates.py
 """
 
 import math
@@ -19,6 +19,10 @@ from toonshorts.core.models import (
     ScriptPlan,
     Shot,
     Visual,
+)
+from toonshorts.core.visuals import (
+    check_stage_layout_overflow,
+    validate_visual_item,
 )
 
 
@@ -121,7 +125,6 @@ def validate_shots(
             )
 
         # 5. Minimum hold 1.2 s
-        # Hold is the static hold duration at zoomed scale
         hold_time = (shot.end - shot.start) - (shot.ease_in + shot.ease_out)
         if shot.type == "close_up" or shot.zoom > 1.0 + 1e-4:
             if hold_time < 1.2 - 1e-4:
@@ -129,7 +132,6 @@ def validate_shots(
                     f"Scene {scene_number}: shots: minimum hold must be at least 1.2 s (got {hold_time:.2f}s)"
                 )
         else:
-            # Wide shot
             duration = shot.end - shot.start
             if duration < 1.2 - 1e-4:
                 errors.append(
@@ -173,10 +175,8 @@ def validate_plan(
         try:
             plan = ScriptPlan.model_validate(adapted_data)
         except Exception as exc:
-            # Format pydantic error into clean one-line message
             msg = str(exc)
             first_err = msg.split("\n")[0]
-            # Try to extract scene number if present
             sc_match = re.search(r"scenes\.(\d+)\.(\w+)", msg)
             if sc_match:
                 sc_idx = int(sc_match.group(1)) + 1
@@ -238,7 +238,6 @@ def validate_plan(
                             f"Scene {sc.scene_number}: cast: 180-degree rule violation: characters swapped sides from {canonical_cast_order} to {cleaned_cast}"
                         )
         else:
-            # Fall back to speaker & presenter / declared characters
             scene_cast = [sc.speaker]
 
         # Layout validation
@@ -247,16 +246,31 @@ def validate_plan(
                 f"Scene {sc.scene_number}: layout: must be 'cards' or 'stage' (got '{sc.layout}')"
             )
 
-        # Visuals validation (Part 1 base limit: at most 3 per scene)
+        # Visuals validation
         if sc.visuals:
             if len(sc.visuals) > 3:
                 all_errors.append(
                     f"Scene {sc.scene_number}: visuals: at most 3 visuals allowed per scene (got {len(sc.visuals)})"
                 )
+            for v_idx, vis in enumerate(sc.visuals):
+                v_type = vis.type if hasattr(vis, "type") else vis.get("type", "")
+                t_word = vis.trigger_word if hasattr(vis, "trigger_word") else vis.get("trigger_word", "")
+                params = vis.params if hasattr(vis, "params") else vis.get("params", {})
+                v_errs = validate_visual_item(
+                    v_type=v_type,
+                    trigger_word=t_word,
+                    params=params,
+                    scene_number=sc.scene_number,
+                    visual_index=v_idx,
+                )
+                all_errors.extend(v_errs)
+
+            if sc.layout == "stage":
+                layout_errs = check_stage_layout_overflow(sc.visuals, sc.scene_number)
+                all_errors.extend(layout_errs)
 
         # Shots validation
         if sc.shots:
-            # Compute previous zoom relative to scene start
             prev_zoom_rel = None
             if last_zoom_global_time is not None:
                 prev_zoom_rel = last_zoom_global_time - accumulated_time
@@ -275,7 +289,6 @@ def validate_plan(
         accumulated_time += sc_len
 
     if all_errors:
-        # Raise first error or joined error with one short line per error
         raise PlanValidationError(all_errors[0])
 
     return plan

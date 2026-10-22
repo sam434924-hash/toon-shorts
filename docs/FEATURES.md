@@ -156,9 +156,15 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 
 ### `Scene Format v2`
 - **Description**: Extended screenplay format supporting `plan.version` (defaults to 1 with transparent v1 adapter), per-scene `layout` ("cards" or "stage"), `cast` assignments, `shots` lists, and `visuals` lists. Enforces strict schema validation, extra field rejection (`extra="forbid"`), text length bounds, and directing skill limits.
-- **Files**: `src/toonshorts/core/models.py`, `src/toonshorts/core/validator.py`
+- **Files**: `src/toonshorts/core/models.py`, `src/toonshorts/core/validator.py`, `src/toonshorts/core/visuals.py`
 - **Capabilities**: Backwards compatible v1 adapter, maximum 2 characters per scene, 180-degree rule enforcement, shot zoom limit (<= 1.35x), ease times (0.4 to 0.6s), minimum hold (>= 1.2s), zoom frequency limits (at most one zoom per 5s), target in cast check, non-overlapping shots, and scene length bounding.
 - **Tests**: `tests/unit/test_v2_validation.py`, `tests/unit/test_validation.py`
+
+### `Visual Templates (Allowlist)`
+- **Description**: Safe, deterministic animated visual components rendered inside the whiteboard in 'stage' layout. Supports 6 template types: `flow`, `request_response`, `typed_code`, `step_ladder`, `check_cross`, and `counter`.
+- **Files**: `src/toonshorts/core/visuals.py`
+- **Capabilities**: Strict whitelist validation for types and parameters, named color palette restriction (no free CSS), script/SVG injection prevention, maximum 14 characters per label, and board safe area layout overflow checking.
+- **Tests**: `tests/unit/test_visual_templates.py`
 
 ---
 
