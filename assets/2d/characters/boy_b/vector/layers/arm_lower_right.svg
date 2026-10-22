@@ -1,21 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_arm_lower_right">
-    <!-- Elbow overlap cap extending into upper sleeve cuff -->
-    <circle cx="655" cy="785" r="26" fill="#db9c79" stroke="#1b1516" stroke-width="5" />
-    <!-- Forearm wrist link -->
-    <path fill="#db9c79" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M670 805 L685 870 L640 885 L632 815 Z" />
-    <path fill="#f3be9b" stroke="#1b1516" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M666 810 L678 868 L645 880 L636 820 Z" />
+    <!-- Elbow overlap cap extending into upper sleeve -->
+    <circle cx="610" cy="660" r="28" fill="#3b689a" stroke="#1b1516" stroke-width="6" />
+    <!-- Lower arm sleeve body -->
+    <path fill="#3b689a" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M638 655 L685 775 L628 795 L582 665 Z" />
+    <path fill="#4f82ba" stroke="#1b1516" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M632 655 L675 775 L632 792 L588 665 Z" />
+    <!-- Wrist hoodie cuff (covers hand joint cap) -->
+    <g transform="rotate(-20, 655, 785)">
+      <rect x="618" y="768" width="76" height="34" rx="7" fill="#3b689a" stroke="#1b1516" stroke-width="6" />
+      <rect x="621" y="771" width="70" height="28" rx="5" fill="#4f82ba" stroke="#1b1516" stroke-width="3" />
+    </g>
     <!-- Redrawn Hand matching hands sheet -->
     <g id="boy_hand_r">
+      <!-- Wrist link under cuff -->
+      <path fill="#db9c79" stroke="#1b1516" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M670 795 L682 840 L642 852 L635 802 Z" />
       <!-- Palm Base -->
-      <path fill="#db9c79" stroke="#1b1516" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M680 865 C692 895 692 920 682 945 C674 958 656 958 646 946 C634 932 632 898 638 865 Z" />
-      <path fill="#f3be9b" stroke="#1b1516" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" d="M676 870 C686 895 686 918 678 940 C672 950 658 950 650 940 C640 928 638 898 644 870 Z" />
+      <path fill="#db9c79" stroke="#1b1516" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M680 835 C692 860 692 880 682 900 C674 910 656 910 646 900 C634 888 632 860 638 835 Z" />
+      <path fill="#f3be9b" stroke="#1b1516" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" d="M676 840 C686 860 686 878 678 895 C672 902 658 902 650 895 C640 885 638 860 644 840 Z" />
       <!-- Inward Thumb -->
-      <path fill="#f3be9b" stroke="#1b1516" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M648 870 C634 880 626 896 630 912 C636 922 646 918 652 905 Z" />
+      <path fill="#f3be9b" stroke="#1b1516" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M648 840 C634 850 626 865 630 877 C636 885 646 881 652 870 Z" />
       <!-- Subtle Finger Crease Strokes -->
-      <line x1="670" y1="946" x2="670" y2="910" stroke="#2b1d1f" stroke-width="3" stroke-linecap="round" />
-      <line x1="661" y1="948" x2="661" y2="905" stroke="#2b1d1f" stroke-width="3" stroke-linecap="round" />
-      <line x1="653" y1="944" x2="653" y2="908" stroke="#2b1d1f" stroke-width="3" stroke-linecap="round" />
+      <line x1="670" y1="901" x2="670" y2="870" stroke="#2b1d1f" stroke-width="3" stroke-linecap="round" />
+      <line x1="661" y1="903" x2="661" y2="865" stroke="#2b1d1f" stroke-width="3" stroke-linecap="round" />
+      <line x1="653" y1="899" x2="653" y2="868" stroke="#2b1d1f" stroke-width="3" stroke-linecap="round" />
     </g>
   </g>
 </svg>

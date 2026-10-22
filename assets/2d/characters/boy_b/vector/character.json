@@ -61,8 +61,8 @@
       "base_rotation": 0.0,
       "joints": {
         "elbow": [
-          345,
-          785
+          390,
+          660
         ]
       }
     },
@@ -70,8 +70,8 @@
       "name": "arm_lower_left",
       "image": "layers/arm_lower_left.svg",
       "pivot": [
-        345,
-        785
+        390,
+        660
       ],
       "parent": "arm_upper_left",
       "parent_joint": "elbow",
@@ -94,8 +94,8 @@
       "base_rotation": 0.0,
       "joints": {
         "elbow": [
-          655,
-          785
+          610,
+          660
         ]
       }
     },
@@ -103,8 +103,8 @@
       "name": "arm_lower_right",
       "image": "layers/arm_lower_right.svg",
       "pivot": [
-        655,
-        785
+        610,
+        660
       ],
       "parent": "arm_upper_right",
       "parent_joint": "elbow",

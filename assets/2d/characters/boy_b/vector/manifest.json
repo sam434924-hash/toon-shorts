@@ -3,6 +3,7 @@
   "name": "Boy B",
   "kind": "vector",
   "type": "layered",
+  "svg_file": "character.svg",
   "viewBox": "0 0 1000 1500",
   "default_eyes": "open",
   "default_mouth": "closed",
@@ -30,12 +31,12 @@
       525
     ],
     "elbow_left": [
-      345,
-      785
+      390,
+      660
     ],
     "elbow_right": [
-      655,
-      785
+      610,
+      660
     ],
     "hip_left": [
       435,
@@ -114,6 +115,54 @@
     "mouth_round_o",
     "mouth_open_smile"
   ],
+  "layer_paths": {
+    "head_back": "layers/head_back.svg",
+    "shoe_right": "layers/shoe_right.svg",
+    "leg_lower_right": "layers/leg_lower_right.svg",
+    "leg_upper_right": "layers/leg_upper_right.svg",
+    "arm_lower_right": "layers/arm_lower_right.svg",
+    "arm_upper_right": "layers/arm_upper_right.svg",
+    "shoe_left": "layers/shoe_left.svg",
+    "leg_lower_left": "layers/leg_lower_left.svg",
+    "leg_upper_left": "layers/leg_upper_left.svg",
+    "torso": "layers/torso.svg",
+    "head_base": "layers/head_base.svg",
+    "arm_upper_left": "layers/arm_upper_left.svg",
+    "arm_lower_left": "layers/arm_lower_left.svg",
+    "eyes_open": "layers/eyes_open.svg",
+    "eyes_blink": "layers/eyes_blink.svg",
+    "eyes_look_left": "layers/eyes_look_left.svg",
+    "eyes_look_right": "layers/eyes_look_right.svg",
+    "mouth_closed": "layers/mouth_closed.svg",
+    "mouth_slightly_open": "layers/mouth_slightly_open.svg",
+    "mouth_wide_open": "layers/mouth_wide_open.svg",
+    "mouth_round_o": "layers/mouth_round_o.svg",
+    "mouth_open_smile": "layers/mouth_open_smile.svg"
+  },
+  "layer_files": {
+    "head_back": "layers/head_back.svg",
+    "shoe_right": "layers/shoe_right.svg",
+    "leg_lower_right": "layers/leg_lower_right.svg",
+    "leg_upper_right": "layers/leg_upper_right.svg",
+    "arm_lower_right": "layers/arm_lower_right.svg",
+    "arm_upper_right": "layers/arm_upper_right.svg",
+    "shoe_left": "layers/shoe_left.svg",
+    "leg_lower_left": "layers/leg_lower_left.svg",
+    "leg_upper_left": "layers/leg_upper_left.svg",
+    "torso": "layers/torso.svg",
+    "head_base": "layers/head_base.svg",
+    "arm_upper_left": "layers/arm_upper_left.svg",
+    "arm_lower_left": "layers/arm_lower_left.svg",
+    "eyes_open": "layers/eyes_open.svg",
+    "eyes_blink": "layers/eyes_blink.svg",
+    "eyes_look_left": "layers/eyes_look_left.svg",
+    "eyes_look_right": "layers/eyes_look_right.svg",
+    "mouth_closed": "layers/mouth_closed.svg",
+    "mouth_slightly_open": "layers/mouth_slightly_open.svg",
+    "mouth_wide_open": "layers/mouth_wide_open.svg",
+    "mouth_round_o": "layers/mouth_round_o.svg",
+    "mouth_open_smile": "layers/mouth_open_smile.svg"
+  },
   "z_order": {
     "head_back": 0,
     "shoe_right": 1,

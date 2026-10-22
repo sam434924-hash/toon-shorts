@@ -127,7 +127,7 @@
       "base_rotation": 0.0,
       "joints": {
         "knee": [
-          425,
+          415,
           1150
         ]
       }
@@ -136,7 +136,7 @@
       "name": "leg_lower_left",
       "image": "layers/leg_lower_left.svg",
       "pivot": [
-        425,
+        415,
         1150
       ],
       "parent": "leg_upper_left",
@@ -146,7 +146,7 @@
       "base_rotation": 0.0,
       "joints": {
         "ankle": [
-          420,
+          400,
           1380
         ]
       }
@@ -155,7 +155,7 @@
       "name": "shoe_left",
       "image": "layers/shoe_left.svg",
       "pivot": [
-        420,
+        400,
         1380
       ],
       "parent": "leg_lower_left",
@@ -179,7 +179,7 @@
       "base_rotation": 0.0,
       "joints": {
         "knee": [
-          575,
+          585,
           1150
         ]
       }
@@ -188,7 +188,7 @@
       "name": "leg_lower_right",
       "image": "layers/leg_lower_right.svg",
       "pivot": [
-        575,
+        585,
         1150
       ],
       "parent": "leg_upper_right",
@@ -198,7 +198,7 @@
       "base_rotation": 0.0,
       "joints": {
         "ankle": [
-          580,
+          600,
           1380
         ]
       }
@@ -207,7 +207,7 @@
       "name": "shoe_right",
       "image": "layers/shoe_right.svg",
       "pivot": [
-        580,
+        600,
         1380
       ],
       "parent": "leg_lower_right",

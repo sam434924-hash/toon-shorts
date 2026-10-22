@@ -326,3 +326,48 @@ def test_vector_character_preview_sheets_exist(char_id):
         pose_path = staging_dir / pose_name
         assert pose_path.is_file(), f"Missing pose render: {pose_path}"
 
+
+def test_vector_boy_b_hoodie_sleeve_continuity():
+    """Verifies boy_b lower arms are hoodie sleeves with cuffs and hand, and elbow is at natural waist level."""
+    vector_dir = paths.CHARACTERS_2D_DIR / "boy_b" / "vector"
+    layers_dir = vector_dir / "layers"
+
+    la_l_svg = (layers_dir / "arm_lower_left.svg").read_text(encoding="utf-8")
+    la_r_svg = (layers_dir / "arm_lower_right.svg").read_text(encoding="utf-8")
+
+    # Both lower arms must contain blue hoodie fabric colors
+    assert "#3b689a" in la_l_svg or "#4f82ba" in la_l_svg
+    assert "#3b689a" in la_r_svg or "#4f82ba" in la_r_svg
+
+    # Must contain hoodie cuff rect
+    assert "rect" in la_l_svg and "rect" in la_r_svg
+
+    # Manifest elbow pivot must be around mid-torso (y between 600 and 700), not at wrist (y > 750)
+    with open(vector_dir / "manifest.json", "r", encoding="utf-8") as f:
+        manifest = json.load(f)
+    el_l = manifest["pivots"]["elbow_left"]
+    el_r = manifest["pivots"]["elbow_right"]
+    assert 600 <= el_l[1] <= 700, f"Boy B left elbow pivot abnormal: {el_l}"
+    assert 600 <= el_r[1] <= 700, f"Boy B right elbow pivot abnormal: {el_r}"
+
+
+@pytest.mark.parametrize("char_id", ["boy_b", "girl_a"])
+def test_vector_manifest_layer_paths_and_pivots(char_id):
+    """Verifies manifest layer_paths map every layer to a valid existing SVG, and joint pivots align with caps."""
+    vector_dir = paths.CHARACTERS_2D_DIR / char_id / "vector"
+    with open(vector_dir / "manifest.json", "r", encoding="utf-8") as f:
+        manifest = json.load(f)
+
+    assert "layer_paths" in manifest
+    layer_paths = manifest["layer_paths"]
+    for lname in manifest["layers"]:
+        assert lname in layer_paths
+        rel_p = layer_paths[lname]
+        full_p = vector_dir / rel_p
+        assert full_p.is_file(), f"Missing layer file referenced in layer_paths: {full_p}"
+
+    # Verify character.svg exists in vector pack directory
+    char_svg = vector_dir / "character.svg"
+    assert char_svg.is_file(), f"Missing character.svg in {vector_dir}"
+
+

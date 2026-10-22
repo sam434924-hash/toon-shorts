@@ -273,84 +273,92 @@ def get_boy_b_layers() -> Dict[str, str]:
   </g>
 </svg>"""
 
-    # 13. arm_upper_left (shoulder to elbow, with rounded shoulder cap and sleeve cuff)
-    # Shoulder pivot at (415, 525), Elbow at (345, 785)
+    # 13. arm_upper_left (shoulder to elbow, blue hoodie sleeve with shoulder cap and elbow hem)
+    # Shoulder pivot at (415, 525), Elbow at (390, 660)
     layers["arm_upper_left"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_arm_upper_left">
     <!-- Shoulder overlap cap (hidden under torso shoulder) -->
     <circle cx="415" cy="525" r="32" fill="{HOODIE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" />
     <!-- Upper arm sleeve body -->
-    <path fill="{HOODIE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M410 520 L315 775 L372 795 L445 545 Z" />
-    <path fill="{HOODIE_BASE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M412 520 L325 775 L378 792 L440 555 Z" />
-    <!-- Elbow sleeve cuff (covers lower arm joint cap) -->
+    <path fill="{HOODIE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M410 520 L360 655 L420 670 L445 545 Z" />
+    <path fill="{HOODIE_BASE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M412 520 L368 655 L415 668 L440 555 Z" />
+    <!-- Elbow sleeve hem (covers lower arm joint cap) -->
+    <path fill="{HOODIE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" d="M355 650 Q390 665 425 665" />
+  </g>
+</svg>"""
+
+    # 14. arm_lower_left (forearm sleeve and hand left, with rounded elbow cap and wrist cuff)
+    # Elbow pivot at (390, 660), Wrist at (345, 785), Hand to 895
+    layers["arm_lower_left"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_arm_lower_left">
+    <!-- Elbow overlap cap extending into upper sleeve -->
+    <circle cx="390" cy="660" r="28" fill="{HOODIE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" />
+    <!-- Lower arm sleeve body -->
+    <path fill="{HOODIE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M362 655 L315 775 L372 795 L418 665 Z" />
+    <path fill="{HOODIE_BASE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M368 655 L325 775 L368 792 L412 665 Z" />
+    <!-- Wrist hoodie cuff (covers hand joint cap) -->
     <g transform="rotate(20, 345, 785)">
       <rect x="306" y="768" width="76" height="34" rx="7" fill="{HOODIE_CUFF}" stroke="{STROKE_THICK}" stroke-width="6" />
       <rect x="309" y="771" width="70" height="28" rx="5" fill="{HOODIE_BASE}" stroke="{STROKE_THIN}" stroke-width="3" />
     </g>
-  </g>
-</svg>"""
-
-    # 14. arm_lower_left (forearm and hand left, with rounded elbow cap)
-    # Elbow pivot at (345, 785), Wrist at (345, 875), Hand to 955
-    layers["arm_lower_left"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
-  <g id="layer_arm_lower_left">
-    <!-- Elbow overlap cap extending into upper sleeve cuff -->
-    <circle cx="345" cy="785" r="26" fill="{SKIN_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" />
-    <!-- Forearm wrist link -->
-    <path fill="{SKIN_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M330 805 L315 870 L360 885 L368 815 Z" />
-    <path fill="{SKIN_BASE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M334 810 L322 868 L355 880 L364 820 Z" />
     <!-- Redrawn Hand matching hands sheet -->
     <g id="boy_hand_l">
+      <!-- Wrist link under cuff -->
+      <path fill="{SKIN_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M330 795 L318 840 L358 852 L365 802 Z" />
       <!-- Palm Base -->
-      <path fill="{SKIN_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M320 865 C308 895 308 920 318 945 C326 958 344 958 354 946 C366 932 368 898 362 865 Z" />
-      <path fill="{SKIN_BASE}" stroke="{STROKE_THIN}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" d="M324 870 C314 895 314 918 322 940 C328 950 342 950 350 940 C360 928 362 898 356 870 Z" />
+      <path fill="{SKIN_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M320 835 C308 860 308 880 318 900 C326 910 344 910 354 900 C366 888 368 860 362 835 Z" />
+      <path fill="{SKIN_BASE}" stroke="{STROKE_THIN}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" d="M324 840 C314 860 314 878 322 895 C328 902 342 902 350 895 C360 885 362 860 356 840 Z" />
       <!-- Inward Thumb -->
-      <path fill="{SKIN_BASE}" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M352 870 C366 880 374 896 370 912 C364 922 354 918 348 905 Z" />
+      <path fill="{SKIN_BASE}" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M352 840 C366 850 374 865 370 877 C364 885 354 881 348 870 Z" />
       <!-- Subtle Finger Crease Strokes -->
-      <line x1="330" y1="946" x2="330" y2="910" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linecap="round" />
-      <line x1="339" y1="948" x2="339" y2="905" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linecap="round" />
-      <line x1="347" y1="944" x2="347" y2="908" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linecap="round" />
+      <line x1="330" y1="901" x2="330" y2="870" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linecap="round" />
+      <line x1="339" y1="903" x2="339" y2="865" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linecap="round" />
+      <line x1="347" y1="899" x2="347" y2="868" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linecap="round" />
     </g>
   </g>
 </svg>"""
 
-    # 15. arm_upper_right (shoulder to elbow, with rounded shoulder cap and sleeve cuff)
-    # Shoulder pivot at (585, 525), Elbow at (655, 785)
+    # 15. arm_upper_right (shoulder to elbow, blue hoodie sleeve with shoulder cap and elbow hem)
+    # Shoulder pivot at (585, 525), Elbow at (610, 660)
     layers["arm_upper_right"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_arm_upper_right">
     <!-- Shoulder overlap cap (hidden under torso shoulder) -->
     <circle cx="585" cy="525" r="32" fill="{HOODIE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" />
     <!-- Upper arm sleeve body -->
-    <path fill="{HOODIE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M590 520 L685 775 L628 795 L555 545 Z" />
-    <path fill="{HOODIE_BASE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M588 520 L675 775 L622 792 L560 555 Z" />
-    <!-- Elbow sleeve cuff (covers lower arm joint cap) -->
+    <path fill="{HOODIE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M590 520 L640 655 L580 670 L555 545 Z" />
+    <path fill="{HOODIE_BASE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M588 520 L632 655 L585 668 L560 555 Z" />
+    <!-- Elbow sleeve hem (covers lower arm joint cap) -->
+    <path fill="{HOODIE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" d="M645 650 Q610 665 575 665" />
+  </g>
+</svg>"""
+
+    # 16. arm_lower_right (forearm sleeve and hand right, with rounded elbow cap and wrist cuff)
+    # Elbow pivot at (610, 660), Wrist at (655, 785), Hand to 895
+    layers["arm_lower_right"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_arm_lower_right">
+    <!-- Elbow overlap cap extending into upper sleeve -->
+    <circle cx="610" cy="660" r="28" fill="{HOODIE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" />
+    <!-- Lower arm sleeve body -->
+    <path fill="{HOODIE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M638 655 L685 775 L628 795 L582 665 Z" />
+    <path fill="{HOODIE_BASE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M632 655 L675 775 L632 792 L588 665 Z" />
+    <!-- Wrist hoodie cuff (covers hand joint cap) -->
     <g transform="rotate(-20, 655, 785)">
       <rect x="618" y="768" width="76" height="34" rx="7" fill="{HOODIE_CUFF}" stroke="{STROKE_THICK}" stroke-width="6" />
       <rect x="621" y="771" width="70" height="28" rx="5" fill="{HOODIE_BASE}" stroke="{STROKE_THIN}" stroke-width="3" />
     </g>
-  </g>
-</svg>"""
-
-    # 16. arm_lower_right (forearm and hand right, with rounded elbow cap)
-    # Elbow pivot at (655, 785), Wrist at (655, 875), Hand to 955
-    layers["arm_lower_right"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
-  <g id="layer_arm_lower_right">
-    <!-- Elbow overlap cap extending into upper sleeve cuff -->
-    <circle cx="655" cy="785" r="26" fill="{SKIN_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" />
-    <!-- Forearm wrist link -->
-    <path fill="{SKIN_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M670 805 L685 870 L640 885 L632 815 Z" />
-    <path fill="{SKIN_BASE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M666 810 L678 868 L645 880 L636 820 Z" />
     <!-- Redrawn Hand matching hands sheet -->
     <g id="boy_hand_r">
+      <!-- Wrist link under cuff -->
+      <path fill="{SKIN_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M670 795 L682 840 L642 852 L635 802 Z" />
       <!-- Palm Base -->
-      <path fill="{SKIN_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M680 865 C692 895 692 920 682 945 C674 958 656 958 646 946 C634 932 632 898 638 865 Z" />
-      <path fill="{SKIN_BASE}" stroke="{STROKE_THIN}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" d="M676 870 C686 895 686 918 678 940 C672 950 658 950 650 940 C640 928 638 898 644 870 Z" />
+      <path fill="{SKIN_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M680 835 C692 860 692 880 682 900 C674 910 656 910 646 900 C634 888 632 860 638 835 Z" />
+      <path fill="{SKIN_BASE}" stroke="{STROKE_THIN}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" d="M676 840 C686 860 686 878 678 895 C672 902 658 902 650 895 C640 885 638 860 644 840 Z" />
       <!-- Inward Thumb -->
-      <path fill="{SKIN_BASE}" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M648 870 C634 880 626 896 630 912 C636 922 646 918 652 905 Z" />
+      <path fill="{SKIN_BASE}" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M648 840 C634 850 626 865 630 877 C636 885 646 881 652 870 Z" />
       <!-- Subtle Finger Crease Strokes -->
-      <line x1="670" y1="946" x2="670" y2="910" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linecap="round" />
-      <line x1="661" y1="948" x2="661" y2="905" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linecap="round" />
-      <line x1="653" y1="944" x2="653" y2="908" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linecap="round" />
+      <line x1="670" y1="901" x2="670" y2="870" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linecap="round" />
+      <line x1="661" y1="903" x2="661" y2="865" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linecap="round" />
+      <line x1="653" y1="899" x2="653" y2="868" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linecap="round" />
     </g>
   </g>
 </svg>"""
@@ -898,14 +906,14 @@ def build_manifest_and_character_json(char_id: str) -> Tuple[Dict[str, Any], Dic
         "head": [500, 500 if is_boy else 520],
         "shoulder_left": [415, 525],
         "shoulder_right": [585, 525],
-        "elbow_left": [345, 785 if is_boy else 705],
-        "elbow_right": [655, 785 if is_boy else 705],
+        "elbow_left": [390, 660] if is_boy else [345, 705],
+        "elbow_right": [610, 660] if is_boy else [655, 705],
         "hip_left": [435, 870 if is_boy else 930],
         "hip_right": [565, 870 if is_boy else 930],
-        "knee_left": [425, 1100 if is_boy else 1150],
-        "knee_right": [575, 1100 if is_boy else 1150],
-        "ankle_left": [420, 1345 if is_boy else 1380],
-        "ankle_right": [580, 1345 if is_boy else 1380],
+        "knee_left": [425, 1100] if is_boy else [415, 1150],
+        "knee_right": [575, 1100] if is_boy else [585, 1150],
+        "ankle_left": [420, 1345] if is_boy else [400, 1380],
+        "ankle_right": [580, 1345] if is_boy else [600, 1380],
     }
 
     manifest = {
@@ -913,6 +921,7 @@ def build_manifest_and_character_json(char_id: str) -> Tuple[Dict[str, Any], Dic
         "name": name,
         "kind": "vector",
         "type": "layered",
+        "svg_file": "character.svg",
         "viewBox": "0 0 1000 1500",
         "default_eyes": "open",
         "default_mouth": "closed",
@@ -957,6 +966,60 @@ def build_manifest_and_character_json(char_id: str) -> Tuple[Dict[str, Any], Dic
             "mouth_round_o",
             "mouth_open_smile",
         ],
+        "layer_paths": {
+            lname: f"layers/{lname}.svg"
+            for lname in [
+                "head_back",
+                "shoe_right",
+                "leg_lower_right",
+                "leg_upper_right",
+                "arm_lower_right",
+                "arm_upper_right",
+                "shoe_left",
+                "leg_lower_left",
+                "leg_upper_left",
+                "torso",
+                "head_base",
+                "arm_upper_left",
+                "arm_lower_left",
+                "eyes_open",
+                "eyes_blink",
+                "eyes_look_left",
+                "eyes_look_right",
+                "mouth_closed",
+                "mouth_slightly_open",
+                "mouth_wide_open",
+                "mouth_round_o",
+                "mouth_open_smile",
+            ]
+        },
+        "layer_files": {
+            lname: f"layers/{lname}.svg"
+            for lname in [
+                "head_back",
+                "shoe_right",
+                "leg_lower_right",
+                "leg_upper_right",
+                "arm_lower_right",
+                "arm_upper_right",
+                "shoe_left",
+                "leg_lower_left",
+                "leg_upper_left",
+                "torso",
+                "head_base",
+                "arm_upper_left",
+                "arm_lower_left",
+                "eyes_open",
+                "eyes_blink",
+                "eyes_look_left",
+                "eyes_look_right",
+                "mouth_closed",
+                "mouth_slightly_open",
+                "mouth_wide_open",
+                "mouth_round_o",
+                "mouth_open_smile",
+            ]
+        },
         "z_order": {
             "head_back": 0,
             "shoe_right": 1,
@@ -1443,6 +1506,8 @@ def build_and_verify_character(char_id: str):
             )
             # Save SVG pose
             (staging_dir / f"{pname}.svg").write_text(pose_svg, encoding="utf-8")
+            if pname == "pose_01_front_standing":
+                (vector_dir / "character.svg").write_text(pose_svg, encoding="utf-8")
             # Render PNG at 1000x1500
             pose_img = render_svg_to_image(page, pose_svg, width=1000, height=1500)
             pose_img.save(staging_dir / f"{pname}.png")
