@@ -1,0 +1,56 @@
+{
+  "id": "presenter",
+  "name": "Presenter",
+  "kind": "vector",
+  "type": "layered_svg",
+  "svg_file": "character.svg",
+  "viewBox": "0 0 560 630",
+  "default_eyes": "open",
+  "default_mouth": "closed",
+  "default_slot": "left",
+  "scale": 1.0,
+  "allowed_gestures": [
+    "idle",
+    "wave",
+    "point",
+    "explain",
+    "thumbs_up",
+    "shrug"
+  ],
+  "eye_states": [
+    "open",
+    "blink",
+    "screen_left",
+    "screen_right"
+  ],
+  "mouth_states": [
+    "closed",
+    "slightly_open",
+    "wide_open",
+    "round_o"
+  ],
+  "anchors": {
+    "head": [260, 200],
+    "mouth": [260, 260],
+    "eyes": [260, 204],
+    "desk": [280, 600]
+  },
+  "safe_bounding_box": {
+    "min_x": 80,
+    "min_y": 35,
+    "max_x": 520,
+    "max_y": 630
+  },
+  "layers": [
+    "layer-chair",
+    "layer-body",
+    "layer-arms",
+    "layer-1-hair-back",
+    "layer-2-neck",
+    "layer-3-head",
+    "layer-4-ears",
+    "layer-5-face",
+    "layer-6-glasses",
+    "layer-7-hair-front"
+  ]
+}

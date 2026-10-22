@@ -1,0 +1,219 @@
+<svg id="character-presenter" viewBox="0 0 560 630" width="560" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Warm Side Light Gradient from the Right -->
+    <linearGradient id="warm-sidelight" x1="1" y1="0" x2="0" y2="0">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.65"/>
+      <stop offset="35%" stop-color="#f59e0b" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </linearGradient>
+    <style>
+      .eye-state { display: none; }
+      .mouth-state { display: none; }
+      .arm-gesture { display: none; }
+      #eyes-open { display: inline; }
+      #mouth-closed { display: inline; }
+      #arm-gesture-idle { display: inline; }
+    </style>
+  </defs>
+
+  <!-- Ergonomic Chair -->
+  <g id="layer-chair">
+    <rect x="130" y="190" width="260" height="370" rx="46" fill="#1e293b"/>
+  </g>
+
+  <!-- Body & Royal Blue Sweater (Raised shoulders for natural neck height) -->
+  <g id="layer-body">
+    <path d="M 115 365 Q 260 320 405 365 L 440 630 L 80 630 Z" fill="#1e40af"/>
+    <!-- Warm Side Light on Right Shoulder of Sweater -->
+    <path d="M 320 335 Q 370 355 405 365 L 440 630 L 380 630 Z" fill="url(#warm-sidelight)"/>
+    <!-- Shirt Collar (Crisp White V-Neck, nicely seated) -->
+    <path d="M 224 320 L 260 375 L 296 320 Z" fill="#ffffff"/>
+    <path d="M 240 320 L 260 355 L 280 320 Z" fill="#0f172a" opacity="0.15"/>
+  </g>
+
+  <!-- ARM MARKUP (Left resting, Right rest & swappable gesture groups) -->
+  <g id="layer-arms">
+    <!-- Left Arm (Resting on Desk) -->
+    <g id="arm-left">
+      <path d="M 155 375 Q 120 450 145 540" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
+      <ellipse cx="148" cy="552" rx="28" ry="20" fill="#fed7aa"/>
+    </g>
+
+    <!-- Right Arm Swappable Gesture Rigs -->
+    <!-- 1. Idle Rest -->
+    <g class="arm-gesture" id="arm-gesture-idle" style="transform-origin: 370px 375px;">
+      <path d="M 370 375 Q 400 450 375 540" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
+      <ellipse cx="372" cy="552" rx="28" ry="20" fill="#fed7aa"/>
+    </g>
+
+    <!-- 2. Wave Rig -->
+    <g class="arm-gesture" id="arm-gesture-wave" style="transform-origin: 370px 375px;">
+      <path d="M 370 375 Q 425 290 450 210" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
+      <circle cx="452" cy="198" r="22" fill="#fed7aa"/>
+      <path d="M 440 184 L 436 160 M 450 180 L 450 154 M 460 182 L 463 158 M 468 188 L 476 166" stroke="#fed7aa" stroke-width="7" stroke-linecap="round"/>
+      <path d="M 438 200 L 426 195" stroke="#fed7aa" stroke-width="7" stroke-linecap="round"/>
+    </g>
+
+    <!-- 3. Point Rig -->
+    <g class="arm-gesture" id="arm-gesture-point" style="transform-origin: 370px 375px;">
+      <path d="M 370 375 Q 430 300 460 220" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
+      <circle cx="460" cy="216" r="22" fill="#fed7aa"/>
+      <path d="M 465 210 L 510 160" stroke="#fed7aa" stroke-width="14" stroke-linecap="round"/>
+      <path d="M 450 216 Q 456 206 464 212" stroke="#fed7aa" stroke-width="10" stroke-linecap="round"/>
+      <path d="M 452 226 Q 462 232 472 224" stroke="#fba785" stroke-width="3" fill="none"/>
+    </g>
+
+    <!-- 4. Explain Rig -->
+    <g class="arm-gesture" id="arm-gesture-explain" style="transform-origin: 370px 375px;">
+      <path d="M 370 375 Q 425 410 460 360" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
+      <ellipse cx="468" cy="354" rx="22" ry="16" fill="#fed7aa"/>
+      <path d="M 480 348 L 506 340 M 482 355 L 510 352 M 480 363 L 506 365 M 474 370 L 498 376" stroke="#fed7aa" stroke-width="6.5" stroke-linecap="round"/>
+      <path d="M 460 346 L 454 334" stroke="#fed7aa" stroke-width="7" stroke-linecap="round"/>
+    </g>
+
+    <!-- 5. Thumbs Up Rig -->
+    <g class="arm-gesture" id="arm-gesture-thumbs_up" style="transform-origin: 370px 375px;">
+      <path d="M 370 375 Q 425 390 450 320" stroke="#1e40af" stroke-width="44" stroke-linecap="round" fill="none"/>
+      <circle cx="450" cy="312" r="20" fill="#fed7aa"/>
+      <path d="M 450 312 L 450 270" stroke="#fed7aa" stroke-width="14" stroke-linecap="round"/>
+    </g>
+
+    <!-- 6. Shrug Rig -->
+    <g class="arm-gesture" id="arm-gesture-shrug" style="transform-origin: 370px 375px;">
+      <path d="M 370 375 Q 405 400 420 375" stroke="#1e40af" stroke-width="42" stroke-linecap="round" fill="none"/>
+      <ellipse cx="425" cy="365" rx="20" ry="16" fill="#fed7aa"/>
+    </g>
+  </g>
+
+  <!-- 1. Hair Back -->
+  <g id="layer-1-hair-back">
+    <path d="M 145 250 C 125 140, 165 45, 260 42 C 355 45, 395 140, 375 250 C 360 275, 345 240, 345 200 C 345 115, 310 85, 260 85 C 210 85, 175 115, 175 200 C 175 240, 160 275, 145 250 Z" fill="#0f172a"/>
+    <path d="M 260 42 C 355 45, 395 140, 375 250 C 360 275, 345 240, 345 200 C 345 115, 310 85, 260 85 Z" fill="url(#warm-sidelight)" opacity="0.35"/>
+  </g>
+
+  <!-- 2. Neck -->
+  <g id="layer-2-neck">
+    <rect x="222" y="275" width="76" height="55" rx="8" fill="#fed7aa"/>
+    <path d="M 222 280 Q 260 304 298 280 L 298 296 Q 260 316 222 296 Z" fill="#d97706" opacity="0.25"/>
+    <rect x="264" y="275" width="34" height="55" rx="4" fill="url(#warm-sidelight)" opacity="0.7"/>
+  </g>
+
+  <!-- 3. Head Base -->
+  <g id="layer-3-head">
+    <path d="M 172 185 C 170 105, 210 75, 260 75 C 310 75, 350 105, 348 185 C 348 245, 326 302, 260 302 C 194 302, 172 245, 172 185 Z" fill="#fed7aa"/>
+    <path d="M 285 80 C 330 100, 350 145, 348 205 C 346 255, 322 298, 260 302 C 295 296, 336 260, 336 200 C 336 145, 305 105, 285 80 Z" fill="url(#warm-sidelight)" opacity="0.85"/>
+  </g>
+
+  <!-- 4. Ears -->
+  <g id="layer-4-ears">
+    <!-- Left Ear -->
+    <ellipse cx="168" cy="206" rx="14" ry="18" fill="#fed7aa"/>
+    <path d="M 172 198 Q 161 206 170 214" stroke="#fba785" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- Right Ear -->
+    <ellipse cx="352" cy="206" rx="14" ry="18" fill="#fed7aa"/>
+    <path d="M 348 198 Q 359 206 350 214" stroke="#fba785" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <ellipse cx="352" cy="206" rx="14" ry="18" fill="url(#warm-sidelight)" opacity="0.6"/>
+  </g>
+
+  <!-- 5. Face Features -->
+  <g id="layer-5-face">
+    <!-- Cheeks Blush -->
+    <ellipse cx="196" cy="236" rx="14" ry="8" fill="#fb7185" opacity="0.38"/>
+    <ellipse cx="324" cy="236" rx="14" ry="8" fill="#fb7185" opacity="0.45"/>
+
+    <!-- Eyebrows (Smart, expressive arch) -->
+    <path d="M 194 172 Q 215 160 235 170" stroke="#0f172a" stroke-width="4.8" stroke-linecap="round" fill="none"/>
+    <path d="M 285 170 Q 305 160 326 172" stroke="#0f172a" stroke-width="4.8" stroke-linecap="round" fill="none"/>
+
+    <!-- Nose -->
+    <path d="M 258 218 Q 264 232 257 236" stroke="#d97706" stroke-width="2.6" stroke-linecap="round" fill="none" opacity="0.75"/>
+
+    <!-- SWAPPABLE EYE STATES -->
+    <g id="layer-eyes">
+      <!-- Eyes Open (Neutral Default) -->
+      <g id="eyes-open" class="eye-state" data-eye="open">
+        <circle cx="215" cy="204" r="14" fill="#0f172a"/>
+        <circle cx="219" cy="199" r="4.5" fill="#ffffff"/>
+        <circle cx="212" cy="207" r="2" fill="#ffffff" opacity="0.6"/>
+        <circle cx="305" cy="204" r="14" fill="#0f172a"/>
+        <circle cx="309" cy="199" r="4.5" fill="#ffffff"/>
+        <circle cx="302" cy="207" r="2" fill="#ffffff" opacity="0.6"/>
+      </g>
+      <!-- Eyes Blink (Closed happy arcs) -->
+      <g id="eyes-blink" class="eye-state" data-eye="blink">
+        <path d="M 201 206 Q 215 214 229 206" stroke="#0f172a" stroke-width="4.8" stroke-linecap="round" fill="none"/>
+        <path d="M 291 206 Q 305 214 319 206" stroke="#0f172a" stroke-width="4.8" stroke-linecap="round" fill="none"/>
+      </g>
+      <!-- Eyes Looking Screen Left -->
+      <g id="eyes-screen_left" class="eye-state" data-eye="screen_left">
+        <circle cx="211" cy="204" r="14" fill="#0f172a"/>
+        <circle cx="215" cy="199" r="4.5" fill="#ffffff"/>
+        <circle cx="208" cy="207" r="2" fill="#ffffff" opacity="0.6"/>
+        <circle cx="301" cy="204" r="14" fill="#0f172a"/>
+        <circle cx="305" cy="199" r="4.5" fill="#ffffff"/>
+        <circle cx="298" cy="207" r="2" fill="#ffffff" opacity="0.6"/>
+      </g>
+      <!-- Eyes Looking Screen Right -->
+      <g id="eyes-screen_right" class="eye-state" data-eye="screen_right">
+        <circle cx="219" cy="204" r="14" fill="#0f172a"/>
+        <circle cx="223" cy="199" r="4.5" fill="#ffffff"/>
+        <circle cx="216" cy="207" r="2" fill="#ffffff" opacity="0.6"/>
+        <circle cx="309" cy="204" r="14" fill="#0f172a"/>
+        <circle cx="313" cy="199" r="4.5" fill="#ffffff"/>
+        <circle cx="306" cy="207" r="2" fill="#ffffff" opacity="0.6"/>
+      </g>
+    </g>
+
+    <!-- SWAPPABLE MOUTH STATES -->
+    <g id="layer-mouths">
+      <!-- Mouth Closed (Friendly Smile) -->
+      <g id="mouth-closed" class="mouth-state" data-mouth="closed">
+        <path d="M 242 260 Q 260 274 278 260" stroke="#0f172a" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+      </g>
+      <!-- Mouth Slightly Open (Talking Viseme) -->
+      <g id="mouth-slightly_open" class="mouth-state" data-mouth="slightly_open">
+        <path d="M 244 258 Q 260 252 276 258 Q 274 270 260 272 Q 246 270 244 258 Z" fill="#881337" stroke="#0f172a" stroke-width="3.5"/>
+        <path d="M 248 258 Q 260 262 272 258" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      </g>
+      <!-- Mouth Wide Open (Speaking Viseme) -->
+      <g id="mouth-wide_open" class="mouth-state" data-mouth="wide_open">
+        <path d="M 240 254 Q 260 248 280 254 Q 278 278 260 280 Q 242 278 240 254 Z" fill="#881337" stroke="#0f172a" stroke-width="3.5"/>
+        <path d="M 245 254 Q 260 260 275 254" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <ellipse cx="260" cy="272" rx="8" ry="4" fill="#f43f5e"/>
+      </g>
+      <!-- Backwards compatibility alias for old mouth-open -->
+      <g id="mouth-open" class="mouth-state" data-mouth="open" style="display: none;">
+        <path d="M 240 254 Q 260 248 280 254 Q 278 278 260 280 Q 242 278 240 254 Z" fill="#881337" stroke="#0f172a" stroke-width="3.5"/>
+        <path d="M 245 254 Q 260 260 275 254" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <ellipse cx="260" cy="272" rx="8" ry="4" fill="#f43f5e"/>
+      </g>
+      <!-- Mouth Round 'O' -->
+      <g id="mouth-round_o" class="mouth-state" data-mouth="round_o">
+        <ellipse cx="260" cy="265" rx="11" ry="14" fill="#881337" stroke="#0f172a" stroke-width="3.5"/>
+        <ellipse cx="260" cy="265" rx="6.5" ry="9" fill="#4c0519"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- 6. Designer Glasses -->
+  <g id="layer-6-glasses">
+    <rect x="186" y="178" width="58" height="52" rx="16" stroke="#1e293b" stroke-width="4.8" fill="rgba(255,255,255,0.18)"/>
+    <rect x="276" y="178" width="58" height="52" rx="16" stroke="#1e293b" stroke-width="4.8" fill="rgba(255,255,255,0.18)"/>
+    <path d="M 244 200 Q 260 192 276 200" stroke="#1e293b" stroke-width="4.8" fill="none" stroke-linecap="round"/>
+    <path d="M 186 200 L 169 204" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M 334 200 L 351 204" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round"/>
+    <line x1="194" y1="186" x2="208" y2="186" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+    <line x1="284" y1="186" x2="298" y2="186" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+  </g>
+
+  <!-- 7. Hair Front (Volume, Hairline, Fringe & Sideburns framing face) -->
+  <g id="layer-7-hair-front">
+    <path d="M 158 175 C 150 75, 198 35, 260 35 C 322 35, 370 75, 362 175 C 348 135, 305 110, 260 110 C 215 110, 172 135, 158 175 Z" fill="#0f172a"/>
+    <path d="M 162 170 C 158 100, 200 60, 260 60 C 320 60, 362 100, 358 170 C 340 135, 305 122, 260 122 C 215 122, 180 135, 162 170 Z" fill="#0f172a"/>
+    <path d="M 162 165 C 175 132, 215 125, 260 125 C 310 125, 345 138, 360 165 C 340 144, 305 136, 260 136 C 215 136, 180 146, 162 165 Z" fill="#1e293b"/>
+    <path d="M 235 126 C 275 126, 320 136, 350 162 C 328 146, 288 142, 252 142 C 225 142, 200 148, 182 156 C 200 138, 220 126, 235 126 Z" fill="#0f172a"/>
+    <path d="M 168 165 C 166 186, 168 205, 174 212 C 176 204, 177 186, 174 165 Z" fill="#0f172a"/>
+    <path d="M 352 165 C 354 186, 352 205, 346 212 C 344 204, 343 186, 346 165 Z" fill="#0f172a"/>
+    <path d="M 260 35 C 322 35, 370 75, 362 175 C 348 115, 310 80, 260 80 Z" fill="url(#warm-sidelight)" opacity="0.35"/>
+  </g>
+</svg>

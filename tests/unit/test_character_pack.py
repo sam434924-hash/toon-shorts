@@ -76,10 +76,42 @@ def test_load_boy_a_character_pack(boy_a_pack):
 
 
 def test_get_character_loads_character_pack():
-    """Verifies get_character resolves boy_a as a CharacterPack from central registry."""
+    """Verifies get_character resolves boy_a and presenter as CharacterPacks from central registry."""
     loaded = get_character("boy_a")
     assert isinstance(loaded, CharacterPack)
     assert loaded.pack_id == "boy_a"
+
+    loaded_presenter = get_character("presenter")
+    assert isinstance(loaded_presenter, CharacterPack)
+    assert loaded_presenter.pack_id == "presenter"
+
+
+def test_load_presenter_character_pack():
+    """Verifies presenter pack extracted from animejs matches schema, swappable arms, and eye/mouth states."""
+    pack = load_character_pack("presenter")
+    assert pack.pack_id == "presenter"
+    assert pack.name == "Presenter"
+    assert pack.kind == "vector"
+    assert pack.default_slot == "left"
+    assert pack.scale == 1.0
+
+    expected_gestures = ["idle", "wave", "point", "explain", "thumbs_up", "shrug"]
+    assert pack.allowed_gestures == expected_gestures
+
+    for gesture in expected_gestures:
+        assert f'id="arm-gesture-{gesture}"' in pack.raw_svg
+
+    expected_eyes = ["open", "blink", "screen_left", "screen_right"]
+    assert pack.eye_states == expected_eyes
+
+    expected_mouths = ["closed", "slightly_open", "wide_open", "round_o"]
+    assert pack.mouth_states == expected_mouths
+    # Verify backward compatible mouth-open exists in SVG
+    assert 'id="mouth-open"' in pack.raw_svg
+
+    # Must pass validation with zero errors
+    errors = pack.validate()
+    assert errors == []
 
 
 def test_svg_size_under_limit(boy_a_pack):
