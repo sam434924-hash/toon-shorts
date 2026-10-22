@@ -36,6 +36,7 @@ def get_video_metadata(video_path: Path):
     return width, height, fps, duration
 
 
+@pytest.mark.slow
 def test_fast_preview_mode_pipeline(monkeypatch):
     """Verifies fast preview generates <= 6s video at 540x960 @ 15fps in output/fast/."""
     # Ensure no Gemini calls occur by sabotaging API client if invoked

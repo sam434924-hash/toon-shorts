@@ -144,6 +144,7 @@ def test_whiteboard_content_extraction():
     assert words1[0]["start_ms"] < words1[1]["start_ms"] < words1[2]["start_ms"]
 
 
+@pytest.mark.slow
 def test_render_scene_still(tmp_path):
     """Verify render_scene produces a valid 1080x1920 PNG frame."""
     renderer = get_renderer("animejs")
@@ -180,6 +181,7 @@ def test_mouth_cues_empty_and_missing_audio(tmp_path):
     assert compute_mouth_cues_from_audio(empty) == []
 
 
+@pytest.mark.slow
 def test_render_scene_relative_path(tmp_path, monkeypatch):
     """Verify render_scene works seamlessly when relative paths are supplied."""
     monkeypatch.chdir(tmp_path)

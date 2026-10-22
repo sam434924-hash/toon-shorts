@@ -30,3 +30,6 @@ where = ["src"]
 pythonpath = ["src"]
 testpaths = ["tests"]
 addopts = "-ra -s"
+markers = [
+    "slow: marks tests as slow (full renders, end-to-end, Playwright)",
+]

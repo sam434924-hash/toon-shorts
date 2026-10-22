@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-22: Configured pytest slow marker for end-to-end and browser renders, enabling fast daily test execution via -m 'not slow'.
+
 - 2026-10-22: Added --fast preview mode limiting video to 6s, half resolution (540x960), 15 fps, saved to output/fast/ with cached audio and zero Gemini API calls.
 
 - 2026-10-22: Refactored whiteboard animejs renderer into small modular package (<300 lines each) with external CSS, JS, and HTML templates, verified against golden baseline renders.

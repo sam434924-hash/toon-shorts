@@ -2,9 +2,11 @@
 
 import time
 from pathlib import Path
+import pytest
 from toonshorts.core.pipeline import run_pipeline
 
 
+@pytest.mark.slow
 def test_full_pipeline_smoke(tmp_path):
     """Executes the entire ToonShorts pipeline without network or API calls."""
     start_time = time.time()

@@ -26,7 +26,17 @@ def sample_plan():
     )
 
 
-@pytest.mark.parametrize("plugin_name", list_renderers())
+def _get_render_params():
+    params = []
+    for r in list_renderers():
+        if r in ("animejs", "blender3d"):
+            params.append(pytest.param(r, marks=pytest.mark.slow))
+        else:
+            params.append(r)
+    return params
+
+
+@pytest.mark.parametrize("plugin_name", _get_render_params())
 def test_render_contract(plugin_name, sample_plan, tmp_path):
     """Every Render plugin must fulfill the RenderInterface contract."""
     renderer = get_renderer(plugin_name)
