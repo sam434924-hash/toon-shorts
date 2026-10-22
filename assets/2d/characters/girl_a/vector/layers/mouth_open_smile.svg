@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_mouth_open_smile">
+    <path fill="#2a1523" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M458 418 Q500 408 542 418 C537 455 520 462 500 462 C480 462 463 455 458 418 Z" />
+    <path fill="#ffffff" stroke="#2a1523" stroke-width="2" d="M465 418 Q500 410 535 418 C530 428 470 428 465 418 Z" />
+    <path fill="#e27a7a" d="M478 458 C484 444 516 444 522 458 C512 461 488 461 478 458 Z" />
+    <path fill="#f1b799" d="M488 466 Q500 470 512 466 Z" />
+  </g>
+</svg>

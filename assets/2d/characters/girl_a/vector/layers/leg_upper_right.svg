@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_leg_upper_right">
+    <!-- Hip overlap cap (tucks under vest hem) -->
+    <circle cx="565" cy="930" r="48" fill="#293f59" stroke="#2a1523" stroke-width="6" />
+    <!-- Thigh body -->
+    <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M515 920 L530 1150 L642 1150 L625 920 Z" />
+    <path fill="#395779" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M518 920 L535 1150 L630 1150 L612 920 Z" />
+    <!-- Knee hem covering lower leg cap -->
+    <path fill="#293f59" stroke="#2a1523" stroke-width="5" stroke-linecap="round" d="M525 1145 Q585 1158 645 1145" />
+  </g>
+</svg>

@@ -1,0 +1,258 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <rect width="1000" height="1500" fill="none" />
+  <g id="character_root">
+    <g id="fk_head_back" transform="rotate(0.0, 500, 520)">
+      <g id="layer_head_back">
+    <path fill="#9e3108" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M330 240 L240 310 L275 345 L220 415 L280 435 L225 510 L300 500 L285 570 L360 520 L370 580 L440 510 L500 540 L560 510 L630 580 L640 520 L715 570 L700 500 L775 510 L720 435 L780 415 L725 345 L760 310 L670 240 Z" />
+    <polygon points="240,310 275,345 320,290" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="275,345 220,415 300,380" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="220,415 280,435 295,455" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="280,435 225,510 300,480" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="760,310 725,345 680,290" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="725,345 780,415 700,380" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="780,415 720,435 705,455" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="720,435 775,510 700,480" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+  </g>
+    </g>
+    <g id="fk_leg_r" transform="rotate(0.0, 565, 930)">
+      <g id="layer_leg_upper_right">
+    <!-- Hip overlap cap (tucks under vest hem) -->
+    <circle cx="565" cy="930" r="48" fill="#293f59" stroke="#2a1523" stroke-width="6" />
+    <!-- Thigh body -->
+    <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M515 920 L530 1150 L642 1150 L625 920 Z" />
+    <path fill="#395779" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M518 920 L535 1150 L630 1150 L612 920 Z" />
+    <!-- Knee hem covering lower leg cap -->
+    <path fill="#293f59" stroke="#2a1523" stroke-width="5" stroke-linecap="round" d="M525 1145 Q585 1158 645 1145" />
+  </g>
+      <g id="fk_leg_lower_r" transform="rotate(0.0, 575, 1150)">
+        <g id="layer_leg_lower_right">
+    <!-- Knee overlap cap (tucks under thigh hem) -->
+    <circle cx="585" cy="1150" r="44" fill="#293f59" stroke="#2a1523" stroke-width="6" />
+    <!-- Calf body -->
+    <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M530 1150 L535 1370 L655 1370 L642 1150 Z" />
+    <path fill="#395779" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M535 1150 L538 1370 L640 1370 L630 1150 Z" />
+    <!-- Pants cuff at ankle (covers shoe joint cap) -->
+    <rect x="530" y="1360" width="135" height="52" rx="8" fill="#4d7199" stroke="#2a1523" stroke-width="6" />
+  </g>
+        <g id="fk_shoe_r" transform="rotate(0.0, 580, 1380)">
+          <g id="layer_shoe_right">
+    <!-- Ankle overlap cap (tucks under pant cuff) -->
+    <circle cx="600" cy="1380" r="36" fill="#6f3477" stroke="#2a1523" stroke-width="6" />
+    <!-- Shoe Upper Body -->
+    <path fill="#6f3477" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M665 1415 L625 1380 L535 1380 L530 1445 L555 1515 L680 1515 Z" />
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M655 1415 L615 1380 L540 1380 L535 1440 L560 1510 L670 1510 Z" />
+    <!-- White Curved Rubber Toe Cap -->
+    <path fill="#ffffff" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M675 1515 L675 1475 C675 1440 640 1425 605 1425 L572 1515 Z" />
+    <!-- Laces -->
+    <line x1="615" y1="1435" x2="575" y2="1440" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+    <line x1="622" y1="1460" x2="580" y2="1465" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+    <line x1="632" y1="1485" x2="585" y2="1490" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+    <!-- Thick Rubber Sole -->
+    <path fill="#f0e8f2" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M685 1510 L555 1510 C545 1510 540 1525 545 1545 L685 1545 C695 1545 695 1510 685 1510 Z" />
+  </g>
+        </g>
+      </g>
+    </g>
+    <g id="fk_leg_l" transform="rotate(0.0, 435, 930)">
+      <g id="layer_leg_upper_left">
+    <!-- Hip overlap cap (tucks under vest hem) -->
+    <circle cx="435" cy="930" r="48" fill="#293f59" stroke="#2a1523" stroke-width="6" />
+    <!-- Thigh body -->
+    <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M375 920 L358 1150 L470 1150 L485 920 Z" />
+    <path fill="#395779" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M388 920 L370 1150 L465 1150 L482 920 Z" />
+    <!-- Knee hem covering lower leg cap -->
+    <path fill="#293f59" stroke="#2a1523" stroke-width="5" stroke-linecap="round" d="M355 1145 Q415 1158 475 1145" />
+  </g>
+      <g id="fk_leg_lower_l" transform="rotate(0.0, 425, 1150)">
+        <g id="layer_leg_lower_left">
+    <!-- Knee overlap cap (tucks under thigh hem) -->
+    <circle cx="415" cy="1150" r="44" fill="#293f59" stroke="#2a1523" stroke-width="6" />
+    <!-- Calf body -->
+    <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M358 1150 L345 1370 L465 1370 L470 1150 Z" />
+    <path fill="#395779" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M370 1150 L360 1370 L462 1370 L465 1150 Z" />
+    <!-- Pants cuff at ankle (covers shoe joint cap) -->
+    <rect x="335" y="1360" width="135" height="52" rx="8" fill="#4d7199" stroke="#2a1523" stroke-width="6" />
+  </g>
+        <g id="fk_shoe_l" transform="rotate(0.0, 420, 1380)">
+          <g id="layer_shoe_left">
+    <!-- Ankle overlap cap (tucks under pant cuff) -->
+    <circle cx="400" cy="1380" r="36" fill="#6f3477" stroke="#2a1523" stroke-width="6" />
+    <!-- Shoe Upper Body -->
+    <path fill="#6f3477" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M335 1415 L375 1380 L465 1380 L470 1445 L445 1515 L320 1515 Z" />
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M345 1415 L385 1380 L460 1380 L465 1440 L440 1510 L330 1510 Z" />
+    <!-- White Curved Rubber Toe Cap -->
+    <path fill="#ffffff" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M325 1515 L325 1475 C325 1440 360 1425 395 1425 L428 1515 Z" />
+    <!-- Laces -->
+    <line x1="385" y1="1435" x2="425" y2="1440" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+    <line x1="378" y1="1460" x2="420" y2="1465" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+    <line x1="368" y1="1485" x2="415" y2="1490" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+    <!-- Thick Rubber Sole -->
+    <path fill="#f0e8f2" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M315 1510 L445 1510 C455 1510 460 1525 455 1545 L315 1545 C305 1545 305 1510 315 1510 Z" />
+  </g>
+        </g>
+      </g>
+    </g>
+    <g id="fk_arm_r" transform="rotate(0.0, 585, 525)">
+      <g id="layer_arm_upper_right">
+    <!-- Shoulder overlap cap (tucks under torso shoulder) -->
+    <circle cx="585" cy="525" r="32" fill="#2b1f2b" stroke="#2a1523" stroke-width="6" />
+    <!-- Sleeve Body -->
+    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M585 525 L690 680 L615 715 L565 550 Z" />
+    <!-- Sleeve Cuff (covers forearm joint cap) -->
+    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M695 675 L612 718" />
+  </g>
+      <g id="fk_arm_lower_r" transform="rotate(0.0, 655, 705)">
+        <g id="layer_arm_lower_right">
+    <!-- Elbow overlap cap extending into sleeve cuff -->
+    <circle cx="655" cy="705" r="28" fill="#f1b799" stroke="#2a1523" stroke-width="5" />
+    <!-- Forearm skin -->
+    <path fill="#f1b799" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M665 695 L730 940 L660 950 L625 710 Z" />
+    <path fill="#fedbc3" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M660 695 L722 940 L662 950 L630 710 Z" />
+    <!-- Redrawn Hand matching hands sheet -->
+    <g id="girl_hand_r">
+      <!-- Wrist link -->
+      <path fill="#f1b799" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M720 940 L740 1010 L680 1025 L665 945 Z" />
+      <!-- Palm -->
+      <path fill="#fedbc3" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M728 970 C752 1005 756 1040 746 1068 C736 1088 716 1088 702 1074 C682 1054 674 1020 678 975 Z" />
+      <!-- Inward Thumb -->
+      <path fill="#fedbc3" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M695 985 C675 1005 666 1028 672 1045 C680 1056 690 1050 698 1035 Z" />
+      <!-- Fingers Crease Lines -->
+      <line x1="730" y1="1075" x2="730" y2="1032" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
+      <line x1="718" y1="1078" x2="718" y2="1028" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
+      <line x1="706" y1="1072" x2="706" y2="1028" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
+    </g>
+  </g>
+      </g>
+    </g>
+    <g id="layer_torso">
+    <!-- Dark under-shirt -->
+    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M410 520 L370 940 L630 940 L590 520 Z" />
+    <!-- Chest skin at collar -->
+    <path fill="#fedbc3" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M465 520 C475 550 525 550 535 520 Z" />
+    <!-- Vest shadow -->
+    <path fill="#6f3477" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M360 620 L370 940 L630 940 L640 620 Z" />
+    <!-- Vest Left Lapel / Hem -->
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M420 520 L345 660 L360 950 L485 950 L485 710 L445 520 Z" />
+    <!-- Vest Right Lapel / Hem -->
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M580 520 L655 660 L640 950 L515 950 L515 710 L555 520 Z" />
+  </g>
+    <g id="fk_head_base" transform="rotate(0.0, 500, 520)">
+      <g id="layer_head_base">
+    <!-- Neck extending under collar -->
+    <path fill="#f1b799" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M460 450 L460 560 L540 560 L540 450 Z" />
+    <path fill="#fedbc3" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M468 450 L468 545 C468 555 532 555 532 545 L532 450 Z" />
+    <!-- Ears -->
+    <path fill="#fedbc3" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M370 340 C310 340 310 420 370 430 Z" />
+    <path fill="none" stroke="#f1b799" stroke-width="4" stroke-linecap="round" d="M360 365 C340 370 340 395 360 405" />
+    <path fill="#fedbc3" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M630 340 C690 340 690 420 630 430 Z" />
+    <path fill="none" stroke="#f1b799" stroke-width="4" stroke-linecap="round" d="M640 365 C660 370 660 395 640 405" />
+    <!-- Face Jaw and Cranium -->
+    <path fill="#fedbc3" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M360 310 C360 210 640 210 640 310 C640 420 590 485 500 485 C410 485 360 420 360 310 Z" />
+    <path fill="#f1b799" d="M470 460 C430 460 395 435 385 400 C410 440 450 455 500 455 C550 455 590 440 615 400 C605 435 570 460 530 460 Z" />
+    <!-- Eyebrows -->
+    <path fill="#9e3108" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M390 295 Q435 278 475 296 L468 312 Q435 298 395 310 Z" />
+    <path fill="#9e3108" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M610 295 Q565 278 525 296 L532 312 Q565 298 605 310 Z" />
+    <!-- Round Thick Purple Glasses Frames -->
+    <circle cx="440" cy="360" r="54" fill="none" stroke="#5b285f" stroke-width="12" stroke-linecap="round" />
+    <circle cx="440" cy="360" r="48" fill="none" stroke="#7b3880" stroke-width="4" />
+    <circle cx="560" cy="360" r="54" fill="none" stroke="#5b285f" stroke-width="12" stroke-linecap="round" />
+    <circle cx="560" cy="360" r="48" fill="none" stroke="#7b3880" stroke-width="4" />
+    <path fill="none" stroke="#5b285f" stroke-width="10" stroke-linecap="round" d="M494 360 Q500 348 506 360" />
+    <line x1="386" y1="358" x2="340" y2="350" stroke="#5b285f" stroke-width="9" stroke-linecap="round" />
+    <line x1="614" y1="358" x2="660" y2="350" stroke="#5b285f" stroke-width="9" stroke-linecap="round" />
+    <!-- Freckles -->
+    <circle cx="395" cy="410" r="3" fill="#d5896a" />
+    <circle cx="410" cy="418" r="3.5" fill="#d5896a" />
+    <circle cx="425" cy="412" r="3" fill="#d5896a" />
+    <circle cx="405" cy="426" r="2.5" fill="#d5896a" />
+    <circle cx="605" cy="410" r="3" fill="#d5896a" />
+    <circle cx="590" cy="418" r="3.5" fill="#d5896a" />
+    <circle cx="575" cy="412" r="3" fill="#d5896a" />
+    <circle cx="595" cy="426" r="2.5" fill="#d5896a" />
+    <!-- Nose -->
+    <path fill="#f1b799" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M492 390 Q500 402 508 390 Z" />
+    <!-- Hair Front Facets -->
+    <polygon points="500,45 440,90 500,115" fill="#f8782a" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="500,45 500,115 560,90" fill="#eb5e1b" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="440,90 375,125 435,145" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="440,90 435,145 500,115" fill="#eb5e1b" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="560,90 500,115 565,145" fill="#f8782a" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="560,90 625,125 565,145" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="435,145 390,205 445,215" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="435,145 445,215 480,175" fill="#eb5e1b" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="500,115 435,145 480,175" fill="#f8782a" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="500,115 480,175 520,175" fill="#f8782a" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="500,115 520,175 565,145" fill="#eb5e1b" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="565,145 520,175 555,215" fill="#f8782a" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="565,145 555,215 610,205" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="480,175 445,215 485,250" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="480,175 485,250 500,205" fill="#eb5e1b" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="520,175 500,205 515,250" fill="#f8782a" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="520,175 515,250 555,215" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="375,125 320,170 355,220" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="375,125 355,220 390,205" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="355,220 295,245 345,280" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="355,220 345,280 390,250" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="625,125 610,205 645,220" fill="#f8782a" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="625,125 645,220 680,170" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="645,220 610,250 655,280" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="645,220 655,280 705,245" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <path fill="none" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 45 L440 90 L375 125 L320 170 L295 245 L345 280 L375 250 L390 205 L445 215 L485 250 L500 205 L515 250 L555 215 L610 205 L625 250 L655 280 L705 245 L680 170 L625 125 L560 90 Z" />
+  </g>
+      <g id="layer_eyes_look_left">
+    <!-- Left Eye: Look Left -->
+    <ellipse cx="440" cy="360" rx="42" ry="44" fill="#ffffff" stroke="#2a1523" stroke-width="5" />
+    <ellipse cx="428" cy="360" rx="26" ry="30" fill="#135537" />
+    <ellipse cx="428" cy="362" rx="22" ry="26" fill="#208759" />
+    <ellipse cx="428" cy="368" rx="16" ry="16" fill="#51ba86" />
+    <ellipse cx="428" cy="360" rx="13" ry="16" fill="#162319" />
+    <circle cx="420" cy="350" r="8" fill="#ffffff" />
+    <circle cx="440" cy="370" r="4" fill="#ffffff" />
+    <!-- Right Eye: Look Left -->
+    <ellipse cx="560" cy="360" rx="42" ry="44" fill="#ffffff" stroke="#2a1523" stroke-width="5" />
+    <ellipse cx="546" cy="360" rx="26" ry="30" fill="#135537" />
+    <ellipse cx="546" cy="362" rx="22" ry="26" fill="#208759" />
+    <ellipse cx="546" cy="368" rx="16" ry="16" fill="#51ba86" />
+    <ellipse cx="546" cy="360" rx="13" ry="16" fill="#162319" />
+    <circle cx="538" cy="350" r="8" fill="#ffffff" />
+    <circle cx="558" cy="370" r="4" fill="#ffffff" />
+  </g>
+      <g id="layer_mouth_closed">
+    <path fill="none" stroke="#2a1523" stroke-width="5" stroke-linecap="round" d="M465 425 Q500 440 535 425" />
+    <path fill="#f1b799" d="M490 440 Q500 445 510 440 Z" />
+  </g>
+    </g>
+    <g id="fk_arm_l" transform="rotate(0.0, 415, 525)">
+      <g id="layer_arm_upper_left">
+    <!-- Shoulder overlap cap (tucks under torso shoulder) -->
+    <circle cx="415" cy="525" r="32" fill="#2b1f2b" stroke="#2a1523" stroke-width="6" />
+    <!-- Sleeve Body -->
+    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M415 525 L310 680 L385 715 L435 550 Z" />
+    <!-- Sleeve Cuff (covers forearm joint cap) -->
+    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M305 675 L388 718" />
+  </g>
+      <g id="fk_arm_lower_l" transform="rotate(0.0, 345, 705)">
+        <g id="layer_arm_lower_left">
+    <!-- Elbow overlap cap extending into sleeve cuff -->
+    <circle cx="345" cy="705" r="28" fill="#f1b799" stroke="#2a1523" stroke-width="5" />
+    <!-- Forearm skin -->
+    <path fill="#f1b799" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M335 695 L270 940 L340 950 L375 710 Z" />
+    <path fill="#fedbc3" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M340 695 L278 940 L338 950 L370 710 Z" />
+    <!-- Redrawn Hand matching hands sheet -->
+    <g id="girl_hand_l">
+      <!-- Wrist link -->
+      <path fill="#f1b799" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M280 940 L260 1010 L320 1025 L335 945 Z" />
+      <!-- Palm -->
+      <path fill="#fedbc3" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M272 970 C248 1005 244 1040 254 1068 C264 1088 284 1088 298 1074 C318 1054 326 1020 322 975 Z" />
+      <!-- Inward Thumb -->
+      <path fill="#fedbc3" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M305 985 C325 1005 334 1028 328 1045 C320 1056 310 1050 302 1035 Z" />
+      <!-- Fingers Crease Lines -->
+      <line x1="270" y1="1075" x2="270" y2="1032" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
+      <line x1="282" y1="1078" x2="282" y2="1028" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
+      <line x1="294" y1="1072" x2="294" y2="1028" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
+    </g>
+  </g>
+      </g>
+    </g>
+  </g>
+</svg>

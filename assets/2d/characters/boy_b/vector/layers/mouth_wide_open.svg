@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_mouth_wide_open">
+    <path fill="#2a1814" stroke="#1b1516" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M464 398 Q500 392 536 398 C536 432 522 444 500 444 C478 444 464 432 464 398 Z" />
+    <!-- Teeth -->
+    <path fill="#ffffff" d="M472 398 Q500 394 528 398 C526 408 474 408 472 398 Z" />
+    <!-- Tongue -->
+    <path fill="#e27a7a" d="M480 440 C485 425 515 425 520 440 C510 443 490 443 480 440 Z" />
+    <path fill="#db9c79" d="M488 448 Q500 452 512 448 Z" />
+  </g>
+</svg>

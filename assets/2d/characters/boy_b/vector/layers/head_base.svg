@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_head_base">
+    <!-- Neck extending downward under torso collar -->
+    <path fill="#db9c79" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M465 440 L465 545 L535 545 L535 440 Z" />
+    <path fill="#f3be9b" stroke="#1b1516" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M472 440 L472 525 C472 538 528 538 528 525 L528 440 Z" />
+    <!-- Ears -->
+    <path fill="#f3be9b" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M380 320 C330 320 330 390 380 400 Z" />
+    <path fill="none" stroke="#2b1d1f" stroke-width="3.5" stroke-linecap="round" d="M370 342 C350 348 350 372 370 378" />
+    <path fill="#f3be9b" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M620 320 C670 320 670 390 620 400 Z" />
+    <path fill="none" stroke="#2b1d1f" stroke-width="3.5" stroke-linecap="round" d="M630 342 C650 348 650 372 630 378" />
+    <!-- Head Jaw and Cranium -->
+    <path fill="#f3be9b" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M375 300 C375 220 625 220 625 300 C625 395 580 465 500 465 C420 465 375 395 375 300 Z" />
+    <!-- Chin Shadow -->
+    <path fill="#db9c79" d="M480 442 C440 442 410 412 400 385 C420 422 460 438 500 438 C540 438 580 422 600 385 C590 412 560 442 520 442 Z" />
+    <!-- Eyebrows -->
+    <path fill="#2c1813" stroke="#1b1516" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M405 272 Q445 260 478 276 L474 290 Q445 278 410 286 Z" />
+    <path fill="#2c1813" stroke="#1b1516" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M595 272 Q555 260 522 276 L526 290 Q555 278 590 286 Z" />
+    <!-- Nose -->
+    <path fill="#db9c79" stroke="#1b1516" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M492 370 Q500 380 508 370 Z" />
+    <!-- Glasses Frames (Spectacles) -->
+    <circle cx="445" cy="336" r="47" fill="none" stroke="#251a17" stroke-width="11" />
+    <circle cx="555" cy="336" r="47" fill="none" stroke="#251a17" stroke-width="11" />
+    <path fill="none" stroke="#251a17" stroke-width="9" stroke-linecap="round" d="M492 336 Q500 325 508 336" />
+    <line x1="398" y1="336" x2="362" y2="330" stroke="#251a17" stroke-width="7" stroke-linecap="round" />
+    <line x1="602" y1="336" x2="638" y2="330" stroke="#251a17" stroke-width="7" stroke-linecap="round" />
+    <!-- Hair Front Facets -->
+    <polygon points="500,60 445,100 500,120" fill="#5b3429" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="500,60 500,120 555,100" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="445,100 390,130 440,150" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="445,100 440,150 500,120" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="555,100 500,120 560,150" fill="#5b3429" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="555,100 610,130 560,150" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="440,150 400,205 450,215" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="440,150 450,215 480,175" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="500,120 440,150 480,175" fill="#5b3429" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="500,120 480,175 520,175" fill="#5b3429" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="500,120 520,175 560,150" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="560,150 520,175 550,215" fill="#5b3429" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="560,150 550,215 600,205" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="480,175 450,215 485,245" fill="#2c1813" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="480,175 485,245 500,200" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="520,175 500,200 515,245" fill="#5b3429" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="520,175 515,245 550,215" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="390,130 335,175 365,225" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="390,130 365,225 400,205" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="365,225 315,240 355,275" fill="#2c1813" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="365,225 355,275 400,250" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="610,130 595,205 635,225" fill="#5b3429" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="610,130 635,225 665,175" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="635,225 600,250 645,275" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="635,225 645,275 685,240" fill="#2c1813" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <path fill="none" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 60 L445 100 L390 130 L335 175 L315 240 L355 275 L385 245 L400 205 L450 215 L485 245 L500 200 L515 245 L550 215 L600 205 L615 245 L645 275 L685 240 L665 175 L610 130 L555 100 Z" />
+  </g>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_arm_upper_left">
+    <!-- Shoulder overlap cap (tucks under torso shoulder) -->
+    <circle cx="415" cy="525" r="32" fill="#2b1f2b" stroke="#2a1523" stroke-width="6" />
+    <!-- Sleeve Body -->
+    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M415 525 L310 680 L385 715 L435 550 Z" />
+    <!-- Sleeve Cuff (covers forearm joint cap) -->
+    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M305 675 L388 718" />
+  </g>
+</svg>

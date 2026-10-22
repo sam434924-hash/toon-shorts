@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_leg_lower_left">
+    <!-- Knee overlap cap (hidden under upper leg knee hem) -->
+    <circle cx="425" cy="1100" r="42" fill="#3a4c5c" stroke="#1b1516" stroke-width="6" />
+    <!-- Calf body -->
+    <path fill="#3a4c5c" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M380 1100 L375 1310 L475 1310 L480 1100 Z" />
+    <path fill="#4d6276" stroke="#1b1516" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M390 1100 L387 1310 L473 1310 L475 1100 Z" />
+    <!-- Jeans cuff at ankle (covers shoe joint cap) -->
+    <rect x="370" y="1305" width="108" height="40" rx="6" fill="#5c7489" stroke="#1b1516" stroke-width="6" />
+  </g>
+</svg>

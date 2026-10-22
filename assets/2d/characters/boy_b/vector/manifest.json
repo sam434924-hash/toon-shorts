@@ -1,0 +1,154 @@
+{
+  "id": "boy_b",
+  "name": "Boy B",
+  "kind": "vector",
+  "type": "layered",
+  "viewBox": "0 0 1000 1500",
+  "default_eyes": "open",
+  "default_mouth": "closed",
+  "default_slot": "right",
+  "scale": 1.0,
+  "head_position": [
+    500,
+    350
+  ],
+  "pivots": {
+    "neck": [
+      500,
+      500
+    ],
+    "head": [
+      500,
+      500
+    ],
+    "shoulder_left": [
+      415,
+      525
+    ],
+    "shoulder_right": [
+      585,
+      525
+    ],
+    "elbow_left": [
+      345,
+      785
+    ],
+    "elbow_right": [
+      655,
+      785
+    ],
+    "hip_left": [
+      435,
+      870
+    ],
+    "hip_right": [
+      565,
+      870
+    ],
+    "knee_left": [
+      425,
+      1100
+    ],
+    "knee_right": [
+      575,
+      1100
+    ],
+    "ankle_left": [
+      420,
+      1345
+    ],
+    "ankle_right": [
+      580,
+      1345
+    ]
+  },
+  "anchors": {
+    "head": [
+      500,
+      350
+    ],
+    "neck": [
+      500,
+      500
+    ],
+    "mouth": [
+      500,
+      410
+    ],
+    "eyes": [
+      500,
+      336
+    ],
+    "ground": [
+      500,
+      1540
+    ]
+  },
+  "safe_bounding_box": {
+    "min_x": 180,
+    "min_y": 40,
+    "max_x": 820,
+    "max_y": 1550
+  },
+  "layers": [
+    "head_back",
+    "shoe_right",
+    "leg_lower_right",
+    "leg_upper_right",
+    "arm_lower_right",
+    "arm_upper_right",
+    "shoe_left",
+    "leg_lower_left",
+    "leg_upper_left",
+    "torso",
+    "head_base",
+    "arm_upper_left",
+    "arm_lower_left",
+    "eyes_open",
+    "eyes_blink",
+    "eyes_look_left",
+    "eyes_look_right",
+    "mouth_closed",
+    "mouth_slightly_open",
+    "mouth_wide_open",
+    "mouth_round_o",
+    "mouth_open_smile"
+  ],
+  "z_order": {
+    "head_back": 0,
+    "shoe_right": 1,
+    "leg_lower_right": 1,
+    "leg_upper_right": 1,
+    "arm_lower_right": 3,
+    "arm_upper_right": 3,
+    "shoe_left": 2,
+    "leg_lower_left": 2,
+    "leg_upper_left": 2,
+    "torso": 4,
+    "head_base": 5,
+    "arm_upper_left": 6,
+    "arm_lower_left": 6,
+    "eyes": 7,
+    "mouth": 7
+  },
+  "eye_states": [
+    "open",
+    "blink",
+    "look_left",
+    "look_right"
+  ],
+  "mouth_states": [
+    "closed",
+    "slightly_open",
+    "wide_open",
+    "round_o",
+    "open_smile"
+  ],
+  "allowed_gestures": [
+    "idle",
+    "walk",
+    "wave",
+    "point",
+    "explain"
+  ]
+}

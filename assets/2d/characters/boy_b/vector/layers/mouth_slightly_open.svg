@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_mouth_slightly_open">
+    <path fill="#2a1814" stroke="#1b1516" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M472 404 Q500 398 528 404 Q500 422 472 404 Z" />
+    <!-- Upper teeth sliver -->
+    <path fill="#ffffff" d="M480 404 Q500 400 520 404 Q500 409 480 404 Z" />
+    <path fill="#db9c79" d="M490 425 Q500 429 510 425 Z" />
+  </g>
+</svg>

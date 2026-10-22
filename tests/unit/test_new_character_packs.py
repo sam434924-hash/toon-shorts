@@ -195,3 +195,134 @@ def test_sources_preserved():
     for src in expected_sources:
         p = sources_dir / src
         assert p.is_file(), f"Missing source file: {p}"
+
+
+@pytest.mark.parametrize("char_id", ["boy_b", "girl_a"])
+def test_vector_character_pack_structure_and_manifest(char_id):
+    """Verifies that vector character pack exists with a valid manifest and character.json."""
+    vector_dir = paths.CHARACTERS_2D_DIR / char_id / "vector"
+    assert vector_dir.is_dir(), f"Missing vector directory: {vector_dir}"
+
+    manifest_file = vector_dir / "manifest.json"
+    assert manifest_file.is_file(), f"Missing manifest.json in {vector_dir}"
+
+    with open(manifest_file, "r", encoding="utf-8") as f:
+        manifest = json.load(f)
+
+    # 1. Manifest schema validation
+    errors = validate_manifest_schema(manifest)
+    assert errors == [], f"Vector manifest validation errors for {char_id}: {errors}"
+
+    assert manifest["id"] == char_id
+    assert manifest["kind"] == "vector"
+    assert manifest["type"] == "layered"
+    assert manifest["viewBox"] == "0 0 1000 1500"
+
+    # 2. Check required pivots
+    pivots = manifest.get("pivots", {})
+    required_pivots = [
+        "neck", "head",
+        "shoulder_left", "shoulder_right",
+        "elbow_left", "elbow_right",
+        "hip_left", "hip_right",
+        "knee_left", "knee_right",
+        "ankle_left", "ankle_right",
+    ]
+    for p in required_pivots:
+        assert p in pivots, f"Missing pivot '{p}' in vector {char_id} manifest"
+        assert len(pivots[p]) == 2
+
+    # 3. Check z_order and head_position
+    assert "z_order" in manifest
+    assert "head_position" in manifest
+    assert len(manifest["head_position"]) == 2
+
+    # 4. Character2D skeletal loading
+    char_json_file = vector_dir / "character.json"
+    assert char_json_file.is_file()
+    char2d = Character2D.from_json(char_json_file)
+    assert char2d.name == char_id
+    assert len(char2d.parts) >= 11
+
+
+@pytest.mark.parametrize("char_id", ["boy_b", "girl_a"])
+def test_vector_character_pack_layers_and_security(char_id):
+    """Verifies all 22 SVG layers exist, pass strict security validation, and have consistent viewBox."""
+    from toonshorts.core.character_pack import validate_svg_security
+    layers_dir = paths.CHARACTERS_2D_DIR / char_id / "vector" / "layers"
+    assert layers_dir.is_dir()
+
+    expected_layers = [
+        "head_base.svg",
+        "head_back.svg",
+        "eyes_open.svg",
+        "eyes_blink.svg",
+        "eyes_look_left.svg",
+        "eyes_look_right.svg",
+        "mouth_closed.svg",
+        "mouth_slightly_open.svg",
+        "mouth_wide_open.svg",
+        "mouth_round_o.svg",
+        "mouth_open_smile.svg",
+        "torso.svg",
+        "arm_upper_left.svg",
+        "arm_lower_left.svg",
+        "arm_upper_right.svg",
+        "arm_lower_right.svg",
+        "leg_upper_left.svg",
+        "leg_lower_left.svg",
+        "shoe_left.svg",
+        "leg_upper_right.svg",
+        "leg_lower_right.svg",
+        "shoe_right.svg",
+    ]
+
+    for layer_name in expected_layers:
+        layer_path = layers_dir / layer_name
+        assert layer_path.is_file(), f"Missing vector layer: {layer_path}"
+        content = layer_path.read_text(encoding="utf-8")
+
+        # Security check
+        sec_errors = validate_svg_security(content)
+        assert sec_errors == [], f"Security error in {layer_name}: {sec_errors}"
+
+        # Consistent viewBox
+        assert 'viewBox="0 0 1000 1500"' in content
+        # No shared CSS classes / styles
+        assert "<style>" not in content
+        assert "class=" not in content
+
+
+@pytest.mark.parametrize("char_id", ["boy_b", "girl_a"])
+def test_vector_character_preview_sheets_exist(char_id):
+    """Verifies preview sheets, comparison sheets, and multi-resolution renders exist."""
+    staging_dir = paths.CHARACTERS_2D_DIR / char_id / "vector" / "staging"
+    assert staging_dir.is_dir()
+
+    contact_sheet = staging_dir / f"{char_id}_preview_sheet.png"
+    assert contact_sheet.is_file(), f"Missing preview sheet: {contact_sheet}"
+
+    cmp_sheet = staging_dir / f"{char_id}_source_comparison.png"
+    assert cmp_sheet.is_file(), f"Missing source comparison sheet: {cmp_sheet}"
+
+    for res in ["1x", "2x", "4x"]:
+        res_file = staging_dir / f"{char_id}_standing_{res}.png"
+        assert res_file.is_file(), f"Missing {res} render: {res_file}"
+
+    required_poses = [
+        "pose_01_front_standing.png",
+        "pose_02_mouth_slightly_open.png",
+        "pose_03_mouth_wide_open.png",
+        "pose_04_mouth_round_o.png",
+        "pose_05_mouth_open_smile.png",
+        "pose_06_eyes_blink.png",
+        "pose_07_eyes_look_left.png",
+        "pose_08_eyes_look_right.png",
+        "pose_09_arm_raised.png",
+        "pose_10_walking_swing.png",
+        "pose_11_back_view.png",
+    ]
+    for pose_name in required_poses:
+        pose_path = staging_dir / pose_name
+        assert pose_path.is_file(), f"Missing pose render: {pose_path}"
+

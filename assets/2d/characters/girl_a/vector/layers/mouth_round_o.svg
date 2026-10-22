@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_mouth_round_o">
+    <ellipse cx="500" cy="428" rx="18" ry="22" fill="#2a1523" stroke="#2a1523" stroke-width="5" />
+    <ellipse cx="500" cy="436" rx="10" ry="8" fill="#e27a7a" />
+    <path fill="#f1b799" d="M490 454 Q500 458 510 454 Z" />
+  </g>
+</svg>

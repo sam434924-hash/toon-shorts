@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_arm_lower_right">
+    <!-- Elbow overlap cap extending into upper sleeve cuff -->
+    <circle cx="655" cy="785" r="26" fill="#db9c79" stroke="#1b1516" stroke-width="5" />
+    <!-- Forearm wrist link -->
+    <path fill="#db9c79" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M670 805 L685 870 L640 885 L632 815 Z" />
+    <path fill="#f3be9b" stroke="#1b1516" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M666 810 L678 868 L645 880 L636 820 Z" />
+    <!-- Redrawn Hand matching hands sheet -->
+    <g id="boy_hand_r">
+      <!-- Palm Base -->
+      <path fill="#db9c79" stroke="#1b1516" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M680 865 C692 895 692 920 682 945 C674 958 656 958 646 946 C634 932 632 898 638 865 Z" />
+      <path fill="#f3be9b" stroke="#1b1516" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" d="M676 870 C686 895 686 918 678 940 C672 950 658 950 650 940 C640 928 638 898 644 870 Z" />
+      <!-- Inward Thumb -->
+      <path fill="#f3be9b" stroke="#1b1516" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M648 870 C634 880 626 896 630 912 C636 922 646 918 652 905 Z" />
+      <!-- Subtle Finger Crease Strokes -->
+      <line x1="670" y1="946" x2="670" y2="910" stroke="#2b1d1f" stroke-width="3" stroke-linecap="round" />
+      <line x1="661" y1="948" x2="661" y2="905" stroke="#2b1d1f" stroke-width="3" stroke-linecap="round" />
+      <line x1="653" y1="944" x2="653" y2="908" stroke="#2b1d1f" stroke-width="3" stroke-linecap="round" />
+    </g>
+  </g>
+</svg>

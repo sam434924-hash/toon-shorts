@@ -1,0 +1,247 @@
+{
+  "name": "boy_b",
+  "slots": {
+    "hair": null,
+    "hat": null,
+    "torso": "torso",
+    "legs": "leg_upper_left",
+    "shoes": "shoe_left",
+    "hands": null
+  },
+  "active_expression": "neutral",
+  "active_hand_left": "open_palm",
+  "active_hand_right": "open_palm",
+  "parts": {
+    "torso": {
+      "name": "torso",
+      "image": "layers/torso.svg",
+      "pivot": [
+        435,
+        870
+      ],
+      "parent": null,
+      "parent_joint": null,
+      "slot": null,
+      "z_index": 4,
+      "base_rotation": 0.0,
+      "joints": {
+        "neck": [
+          500,
+          500
+        ],
+        "shoulder_left": [
+          415,
+          525
+        ],
+        "shoulder_right": [
+          585,
+          525
+        ],
+        "hip_left": [
+          435,
+          870
+        ],
+        "hip_right": [
+          565,
+          870
+        ]
+      }
+    },
+    "arm_upper_left": {
+      "name": "arm_upper_left",
+      "image": "layers/arm_upper_left.svg",
+      "pivot": [
+        415,
+        525
+      ],
+      "parent": "torso",
+      "parent_joint": "shoulder_left",
+      "slot": null,
+      "z_index": 6,
+      "base_rotation": 0.0,
+      "joints": {
+        "elbow": [
+          345,
+          785
+        ]
+      }
+    },
+    "arm_lower_left": {
+      "name": "arm_lower_left",
+      "image": "layers/arm_lower_left.svg",
+      "pivot": [
+        345,
+        785
+      ],
+      "parent": "arm_upper_left",
+      "parent_joint": "elbow",
+      "slot": null,
+      "z_index": 6,
+      "base_rotation": 0.0,
+      "joints": {}
+    },
+    "arm_upper_right": {
+      "name": "arm_upper_right",
+      "image": "layers/arm_upper_right.svg",
+      "pivot": [
+        585,
+        525
+      ],
+      "parent": "torso",
+      "parent_joint": "shoulder_right",
+      "slot": null,
+      "z_index": 3,
+      "base_rotation": 0.0,
+      "joints": {
+        "elbow": [
+          655,
+          785
+        ]
+      }
+    },
+    "arm_lower_right": {
+      "name": "arm_lower_right",
+      "image": "layers/arm_lower_right.svg",
+      "pivot": [
+        655,
+        785
+      ],
+      "parent": "arm_upper_right",
+      "parent_joint": "elbow",
+      "slot": null,
+      "z_index": 3,
+      "base_rotation": 0.0,
+      "joints": {}
+    },
+    "leg_upper_left": {
+      "name": "leg_upper_left",
+      "image": "layers/leg_upper_left.svg",
+      "pivot": [
+        435,
+        870
+      ],
+      "parent": "torso",
+      "parent_joint": "hip_left",
+      "slot": null,
+      "z_index": 2,
+      "base_rotation": 0.0,
+      "joints": {
+        "knee": [
+          425,
+          1100
+        ]
+      }
+    },
+    "leg_lower_left": {
+      "name": "leg_lower_left",
+      "image": "layers/leg_lower_left.svg",
+      "pivot": [
+        425,
+        1100
+      ],
+      "parent": "leg_upper_left",
+      "parent_joint": "knee",
+      "slot": null,
+      "z_index": 2,
+      "base_rotation": 0.0,
+      "joints": {
+        "ankle": [
+          420,
+          1345
+        ]
+      }
+    },
+    "shoe_left": {
+      "name": "shoe_left",
+      "image": "layers/shoe_left.svg",
+      "pivot": [
+        420,
+        1345
+      ],
+      "parent": "leg_lower_left",
+      "parent_joint": "ankle",
+      "slot": null,
+      "z_index": 2,
+      "base_rotation": 0.0,
+      "joints": {}
+    },
+    "leg_upper_right": {
+      "name": "leg_upper_right",
+      "image": "layers/leg_upper_right.svg",
+      "pivot": [
+        565,
+        870
+      ],
+      "parent": "torso",
+      "parent_joint": "hip_right",
+      "slot": null,
+      "z_index": 1,
+      "base_rotation": 0.0,
+      "joints": {
+        "knee": [
+          575,
+          1100
+        ]
+      }
+    },
+    "leg_lower_right": {
+      "name": "leg_lower_right",
+      "image": "layers/leg_lower_right.svg",
+      "pivot": [
+        575,
+        1100
+      ],
+      "parent": "leg_upper_right",
+      "parent_joint": "knee",
+      "slot": null,
+      "z_index": 1,
+      "base_rotation": 0.0,
+      "joints": {
+        "ankle": [
+          580,
+          1345
+        ]
+      }
+    },
+    "shoe_right": {
+      "name": "shoe_right",
+      "image": "layers/shoe_right.svg",
+      "pivot": [
+        580,
+        1345
+      ],
+      "parent": "leg_lower_right",
+      "parent_joint": "ankle",
+      "slot": null,
+      "z_index": 1,
+      "base_rotation": 0.0,
+      "joints": {}
+    },
+    "head": {
+      "name": "head",
+      "image": "layers/head_base.svg",
+      "pivot": [
+        500,
+        500
+      ],
+      "parent": "torso",
+      "parent_joint": "neck",
+      "slot": null,
+      "z_index": 5,
+      "base_rotation": 0.0,
+      "joints": {
+        "face": [
+          500,
+          360
+        ],
+        "hair": [
+          500,
+          60
+        ]
+      }
+    }
+  },
+  "expressions": {
+    "neutral": "layers/head_base.svg"
+  }
+}

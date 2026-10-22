@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_arm_lower_right">
+    <!-- Elbow overlap cap extending into sleeve cuff -->
+    <circle cx="655" cy="705" r="28" fill="#f1b799" stroke="#2a1523" stroke-width="5" />
+    <!-- Forearm skin -->
+    <path fill="#f1b799" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M665 695 L730 940 L660 950 L625 710 Z" />
+    <path fill="#fedbc3" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M660 695 L722 940 L662 950 L630 710 Z" />
+    <!-- Redrawn Hand matching hands sheet -->
+    <g id="girl_hand_r">
+      <!-- Wrist link -->
+      <path fill="#f1b799" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M720 940 L740 1010 L680 1025 L665 945 Z" />
+      <!-- Palm -->
+      <path fill="#fedbc3" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M728 970 C752 1005 756 1040 746 1068 C736 1088 716 1088 702 1074 C682 1054 674 1020 678 975 Z" />
+      <!-- Inward Thumb -->
+      <path fill="#fedbc3" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M695 985 C675 1005 666 1028 672 1045 C680 1056 690 1050 698 1035 Z" />
+      <!-- Fingers Crease Lines -->
+      <line x1="730" y1="1075" x2="730" y2="1032" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
+      <line x1="718" y1="1078" x2="718" y2="1028" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
+      <line x1="706" y1="1072" x2="706" y2="1028" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
+    </g>
+  </g>
+</svg>

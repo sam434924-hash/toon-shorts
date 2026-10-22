@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_eyes_blink">
+    <!-- Left Eye Blink curve -->
+    <path fill="none" stroke="#1b1516" stroke-width="6" stroke-linecap="round" d="M418 338 Q445 352 472 338" />
+    <path fill="none" stroke="#1b1516" stroke-width="4" stroke-linecap="round" d="M430 345 L425 352" />
+    <path fill="none" stroke="#1b1516" stroke-width="4" stroke-linecap="round" d="M460 345 L465 352" />
+    <!-- Right Eye Blink curve -->
+    <path fill="none" stroke="#1b1516" stroke-width="6" stroke-linecap="round" d="M528 338 Q555 352 582 338" />
+    <path fill="none" stroke="#1b1516" stroke-width="4" stroke-linecap="round" d="M540 345 L535 352" />
+    <path fill="none" stroke="#1b1516" stroke-width="4" stroke-linecap="round" d="M570 345 L575 352" />
+  </g>
+</svg>

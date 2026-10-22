@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_eyes_look_right">
+    <!-- Left Eye: Pupil shifted right -->
+    <ellipse cx="445" cy="336" rx="36" ry="37" fill="#ffffff" stroke="#1b1516" stroke-width="5" />
+    <ellipse cx="459" cy="336" rx="22" ry="25" fill="#2a1814" />
+    <ellipse cx="459" cy="336" rx="13" ry="15" fill="#100806" />
+    <circle cx="453" cy="328" r="7" fill="#ffffff" />
+    <circle cx="467" cy="344" r="3.5" fill="#ffffff" />
+    <!-- Right Eye: Pupil shifted right -->
+    <ellipse cx="555" cy="336" rx="36" ry="37" fill="#ffffff" stroke="#1b1516" stroke-width="5" />
+    <ellipse cx="567" cy="336" rx="22" ry="25" fill="#2a1814" />
+    <ellipse cx="567" cy="336" rx="13" ry="15" fill="#100806" />
+    <circle cx="561" cy="328" r="7" fill="#ffffff" />
+    <circle cx="575" cy="344" r="3.5" fill="#ffffff" />
+  </g>
+</svg>

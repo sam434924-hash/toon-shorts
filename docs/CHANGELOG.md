@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-22: Rebuilt boy_b and girl_a character packs as clean vector (SVG) layers with elbow/knee splits, 22 independent layers each, direct fills/strokes, consistent 1000x1500 viewBox, redrawn shoes/hands/hair, and multi-resolution preview sheets in vector/ subfolders.
+
 - 2026-10-22: Batch 5 asset migration: relocated golden baselines from output/ to tests/fixtures/golden/, updated tools, and cleaned output directory.
 
 - 2026-10-22: Batch 4 asset migration: preserved Piper voice model and fallbacks, pruned redundant scratch and test audio duplicates without invalidating TTS cache.

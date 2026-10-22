@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_mouth_open_smile">
+    <path fill="#2a1814" stroke="#1b1516" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M460 400 Q500 390 540 400 C535 435 518 442 500 442 C480 442 465 435 460 400 Z" />
+    <!-- Full upper teeth band -->
+    <path fill="#ffffff" stroke="#1b1516" stroke-width="2" d="M466 400 Q500 392 534 400 C530 410 470 410 466 400 Z" />
+    <!-- Tongue arc -->
+    <path fill="#e27a7a" d="M478 438 C484 424 516 424 522 438 C512 441 488 441 478 438 Z" />
+    <path fill="#db9c79" d="M488 446 Q500 450 512 446 Z" />
+  </g>
+</svg>

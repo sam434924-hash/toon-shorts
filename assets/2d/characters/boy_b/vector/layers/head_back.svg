@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_head_back">
+    <path fill="#2c1813" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M330 250 L270 310 L295 340 L255 400 L300 420 L260 480 L325 485 L315 530 L375 490 L385 535 L440 480 L500 505 L560 480 L615 535 L625 490 L685 530 L675 485 L740 480 L700 420 L745 400 L705 340 L730 310 L670 250 Z" />
+    <polygon points="330,250 270,310 320,330" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="270,310 295,340 255,400" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="255,400 300,420 260,480" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="670,250 730,310 680,330" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="730,310 705,340 745,400" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="745,400 700,420 740,480" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+  </g>
+</svg>

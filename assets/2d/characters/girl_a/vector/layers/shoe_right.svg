@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_shoe_right">
+    <!-- Ankle overlap cap (tucks under pant cuff) -->
+    <circle cx="600" cy="1380" r="36" fill="#6f3477" stroke="#2a1523" stroke-width="6" />
+    <!-- Shoe Upper Body -->
+    <path fill="#6f3477" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M665 1415 L625 1380 L535 1380 L530 1445 L555 1515 L680 1515 Z" />
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M655 1415 L615 1380 L540 1380 L535 1440 L560 1510 L670 1510 Z" />
+    <!-- White Curved Rubber Toe Cap -->
+    <path fill="#ffffff" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M675 1515 L675 1475 C675 1440 640 1425 605 1425 L572 1515 Z" />
+    <!-- Laces -->
+    <line x1="615" y1="1435" x2="575" y2="1440" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+    <line x1="622" y1="1460" x2="580" y2="1465" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+    <line x1="632" y1="1485" x2="585" y2="1490" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+    <!-- Thick Rubber Sole -->
+    <path fill="#f0e8f2" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M685 1510 L555 1510 C545 1510 540 1525 545 1545 L685 1545 C695 1545 695 1510 685 1510 Z" />
+  </g>
+</svg>

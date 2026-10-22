@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_eyes_look_left">
+    <!-- Left Eye: Look Left -->
+    <ellipse cx="440" cy="360" rx="42" ry="44" fill="#ffffff" stroke="#2a1523" stroke-width="5" />
+    <ellipse cx="428" cy="360" rx="26" ry="30" fill="#135537" />
+    <ellipse cx="428" cy="362" rx="22" ry="26" fill="#208759" />
+    <ellipse cx="428" cy="368" rx="16" ry="16" fill="#51ba86" />
+    <ellipse cx="428" cy="360" rx="13" ry="16" fill="#162319" />
+    <circle cx="420" cy="350" r="8" fill="#ffffff" />
+    <circle cx="440" cy="370" r="4" fill="#ffffff" />
+    <!-- Right Eye: Look Left -->
+    <ellipse cx="560" cy="360" rx="42" ry="44" fill="#ffffff" stroke="#2a1523" stroke-width="5" />
+    <ellipse cx="546" cy="360" rx="26" ry="30" fill="#135537" />
+    <ellipse cx="546" cy="362" rx="22" ry="26" fill="#208759" />
+    <ellipse cx="546" cy="368" rx="16" ry="16" fill="#51ba86" />
+    <ellipse cx="546" cy="360" rx="13" ry="16" fill="#162319" />
+    <circle cx="538" cy="350" r="8" fill="#ffffff" />
+    <circle cx="558" cy="370" r="4" fill="#ffffff" />
+  </g>
+</svg>

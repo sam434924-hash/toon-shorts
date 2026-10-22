@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_arm_upper_right">
+    <!-- Shoulder overlap cap (hidden under torso shoulder) -->
+    <circle cx="585" cy="525" r="32" fill="#3b689a" stroke="#1b1516" stroke-width="6" />
+    <!-- Upper arm sleeve body -->
+    <path fill="#3b689a" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M590 520 L685 775 L628 795 L555 545 Z" />
+    <path fill="#4f82ba" stroke="#1b1516" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M588 520 L675 775 L622 792 L560 555 Z" />
+    <!-- Elbow sleeve cuff (covers lower arm joint cap) -->
+    <g transform="rotate(-20, 655, 785)">
+      <rect x="618" y="768" width="76" height="34" rx="7" fill="#3b689a" stroke="#1b1516" stroke-width="6" />
+      <rect x="621" y="771" width="70" height="28" rx="5" fill="#4f82ba" stroke="#1b1516" stroke-width="3" />
+    </g>
+  </g>
+</svg>

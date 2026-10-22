@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <g id="layer_eyes_open">
+    <!-- Left Eye -->
+    <ellipse cx="440" cy="360" rx="42" ry="44" fill="#ffffff" stroke="#2a1523" stroke-width="5" />
+    <ellipse cx="442" cy="360" rx="28" ry="30" fill="#135537" />
+    <ellipse cx="442" cy="362" rx="24" ry="26" fill="#208759" />
+    <ellipse cx="442" cy="368" rx="18" ry="16" fill="#51ba86" />
+    <ellipse cx="442" cy="360" rx="15" ry="16" fill="#162319" />
+    <circle cx="432" cy="350" r="9" fill="#ffffff" />
+    <circle cx="454" cy="370" r="4.5" fill="#ffffff" />
+    <!-- Right Eye -->
+    <ellipse cx="560" cy="360" rx="42" ry="44" fill="#ffffff" stroke="#2a1523" stroke-width="5" />
+    <ellipse cx="558" cy="360" rx="28" ry="30" fill="#135537" />
+    <ellipse cx="558" cy="362" rx="24" ry="26" fill="#208759" />
+    <ellipse cx="558" cy="368" rx="18" ry="16" fill="#51ba86" />
+    <ellipse cx="558" cy="360" rx="15" ry="16" fill="#162319" />
+    <circle cx="550" cy="350" r="9" fill="#ffffff" />
+    <circle cx="572" cy="370" r="4.5" fill="#ffffff" />
+  </g>
+</svg>
