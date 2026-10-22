@@ -61,8 +61,8 @@ def render_robot_scene(config_path: Path):
     scene.render.image_settings.color_mode = "RGBA"
 
     # 2. Import RobotExpressive.glb
-    project_root = Path(__file__).resolve().parents[2]
-    model_path = project_root / "assets3d" / "models" / "RobotExpressive.glb"
+    project_root = Path(__file__).resolve().parents[3]
+    model_path = project_root / "assets" / "3d" / "models" / "RobotExpressive.glb"
     if not model_path.is_file():
         raise FileNotFoundError(f"Robot model not found at {model_path}")
 

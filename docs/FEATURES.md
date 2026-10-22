@@ -66,7 +66,7 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 
 ### `blender3d`
 - **Description**: Headless Blender 3D robot character renderer for RobotExpressive.glb with validated built-in actions (dance, idle, jump, running, wave, thumbs_up, etc.), clean 3-point lighting, and execution caps.
-- **Files**: `src/toonshorts/plugins/render/blender3d.py`, `assets3d/scripts/blender_render.py`
+- **Files**: `src/toonshorts/plugins/render/blender3d.py`, `assets/3d/scripts/blender_render.py`
 - **Config Flags**: `BLENDER_PATH`, `BLENDER_DRAFT_WIDTH`, `BLENDER_DRAFT_HEIGHT`, `BLENDER_FINAL_WIDTH`, `BLENDER_FINAL_HEIGHT`, `BLENDER_MAX_FRAMES`, `BLENDER_MAX_SECONDS_PER_RUN`, `BLENDER_RENDER_TIMEOUT_SECONDS`
 - **Tests**: `tests/contract/test_render_contract.py`, `tests/unit/test_blender3d.py`
 

@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Literal, Optional, Tuple
 from PIL import Image
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from toonshorts.core import config
+from toonshorts.core import config, paths
 from toonshorts.core.models import Character, Scene, ScriptPlan
 from toonshorts.core.registry import RenderInterface, register_renderer
 
@@ -151,8 +151,8 @@ class Blender3DRenderPlugin(RenderInterface):
 
     def __init__(self, blender_path: Optional[str] = None):
         self.blender_path = blender_path or config.BLENDER_PATH
-        self.script_path = config.PROJECT_ROOT / "assets3d" / "scripts" / "blender_render.py"
-        self.robot_model = config.PROJECT_ROOT / "assets3d" / "models" / "RobotExpressive.glb"
+        self.script_path = paths.SCRIPTS_3D_DIR / "blender_render.py"
+        self.robot_model = paths.MODELS_3D_DIR / "RobotExpressive.glb"
 
     def _verify_blender_installed(self):
         if not self.blender_path or not Path(self.blender_path).is_file():
