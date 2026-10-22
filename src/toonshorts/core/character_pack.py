@@ -3,7 +3,7 @@ Purpose: 2D layered SVG character pack system with security validation and test 
 Inputs: Character pack directory, manifest JSON, layered SVG markup, eye/mouth state requests.
 Outputs: Validated CharacterPack instances, state-swapped SVG code, rendered preview frames.
 Depends on: json, os, pathlib, re, typing, xml.etree.ElementTree, PIL, core.config
-Used by: core.character2d, plugins.render.animejs
+Used by: core.character2d
 Config keys: None
 Tests: tests/unit/test_character_pack.py, tests/unit/test_character2d.py
 """

@@ -3,7 +3,7 @@ Purpose: Data schemas for screenplay direction, audio timing, and review.
 Inputs: Raw dictionary definitions or keyword arguments.
 Outputs: Validated Pydantic models, enums, dataclasses, and safe filenames.
 Depends on: dataclasses, enum, pathlib, pydantic, re, typing
-Used by: core, core.assembler, core.client, core.cost, core.pipeline, core.registry, core.schemas, core.subtitles, models, plugins.llm.fake, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.motion.static, plugins.render.animejs, plugins.render.blender3d, plugins.render.cairo, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.fake, plugins.voice.gemini_tts, plugins.voice.piper, plugins.voice.windows_sapi, voice, voice_utils
+Used by: core, core.assembler, core.client, core.cost, core.pipeline, core.registry, core.schemas, core.subtitles, models, plugins.llm.fake, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.motion.static, plugins.render.animejs.annotations, plugins.render.animejs.cast, plugins.render.animejs.html_builder, plugins.render.animejs.plugin, plugins.render.blender3d, plugins.render.cairo, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.fake, plugins.voice.gemini_tts, plugins.voice.piper, plugins.voice.windows_sapi, voice, voice_utils
 Config keys: None
 Tests: tests/unit/test_sanitizing.py, tests/unit/test_validation.py
 """

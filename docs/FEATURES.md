@@ -60,7 +60,7 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 
 ### `animejs`
 - **Description**: HTML5/SVG code-driven whiteboard animation engine with local Anime.js easing curves, bundled Rough.js progressive stroke-by-stroke drawing synced to Whisper word timings (underlines, keyword circles, inter-card arrows), dynamic 2D character pack loading into left and right slots (with mirrored right placement), loudness-driven mouth sync for active speaker, idle blinking/glancing for non-speaking listener, gesture resolution with style presets and scene overrides, 100% constant studio set and static camera across all scenes, safe area gesture boundaries (wave, point, explain, thumbs_up, shrug), and headless browser frame capture.
-- **Files**: `src/toonshorts/plugins/render/animejs.py`
+- **Files**: `src/toonshorts/plugins/render/animejs/`
 - **Config Flags**: `ANIME_JS_PATH`, `ROUGH_JS_PATH`, `VIDEO_WIDTH`, `VIDEO_HEIGHT`, `VIDEO_FPS`
 - **Tests**: `tests/contract/test_render_contract.py`, `tests/unit/test_animejs.py`
 

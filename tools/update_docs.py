@@ -162,9 +162,13 @@ def discover_registered_plugins() -> dict[str, list[str]]:
         cat_dir = plugins_dir / cat
         plugins = []
         if cat_dir.is_dir():
-            for f in sorted(cat_dir.glob("*.py")):
-                if not f.name.startswith("__"):
-                    plugins.append(f.stem)
+            for item in sorted(cat_dir.iterdir()):
+                if item.name.startswith("__") or item.name.startswith("."):
+                    continue
+                if item.is_file() and item.suffix == ".py":
+                    plugins.append(item.stem)
+                elif item.is_dir() and (item / "__init__.py").exists():
+                    plugins.append(item.name)
         registry[cat] = plugins
     return registry
 

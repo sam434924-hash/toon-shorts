@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width={{WIDTH}}, height={{HEIGHT}}">
+  <title>{{TITLE}}</title>
+  <style>
+{{STYLE_CSS}}
+
+    /* Dynamic character arm gesture display rules */
+{{DYNAMIC_CSS}}
+  </style>
+  <script>
+{{ANIME_JS}}
+{{ROUGH_JS}}
+  </script>
+</head>
+<body>
+  <div class="vignette-overlay"></div>
+
+  <!-- Studio Room Wall Details (Constant Set Across All Scenes) -->
+{{SHELF_DECOR}}
+
+  <!-- Whiteboard on Wall -->
+  <div class="whiteboard-outer">
+    <svg id="rough-canvas" width="880" height="560"></svg>
+    <div class="title-badge" id="wb-title">{{TITLE}}</div>
+    <div class="word-list">
+{{CARDS_MARKUP}}
+    </div>
+    <div class="marker-tray">
+      <div class="marker black"></div>
+      <div class="marker blue"></div>
+      <div class="marker red"></div>
+      <div class="marker eraser"></div>
+    </div>
+  </div>
+
+  <!-- Character Slots (Left and Right) -->
+{{CHARACTERS_HTML}}
+
+  <!-- Foreground Desk Props (Constant Across All Scenes) -->
+  <div class="desk-props">
+    <svg viewBox="0 0 1080 130" width="1080" height="130">
+{{DESK_PROPS}}
+    </svg>
+  </div>
+
+  <!-- Desk Surface -->
+  <div class="desk-container">
+    <div class="desk-bevel"></div>
+    <div class="desk-top"></div>
+    <div class="desk-body"></div>
+  </div>
+
+  <script>
+    const fps = {{FPS}};
+    window.__mouthCues = {{MOUTH_CUES_JSON}};
+    window.__cardTimings = {{CARD_TIMING_JSON}};
+    window.__annotations = {{ANNOTATIONS_JSON}};
+    window.__gestureTriggerMs = {{GESTURE_TRIGGER_MS}};
+    window.__gestureType = "{{SPEAKER_GESTURE}}";
+    window.__speakerSlotId = "{{SPEAKER_SLOT_ID}}";
+    window.__listenerSlotId = "{{LISTENER_SLOT_ID}}";
+
+    window.__timeline = anime.timeline({
+      autoplay: false,
+      duration: {{TOTAL_DURATION_MS}}
+    });
+
+    window.__timeline
+{{TIMELINE_CHAIN}};
+
+{{SCRIPT_JS}}
+  </script>
+</body>
+</html>

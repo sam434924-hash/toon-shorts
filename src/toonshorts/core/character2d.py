@@ -3,7 +3,7 @@ Purpose: 2D layered character system with registry, FK skeleton, character packs
 Inputs: Layout JSON, character sheet images, action parameters, audio loudness.
 Outputs: Cut transparent character layers, character registry JSON, rendered frames.
 Depends on: json, math, os, pathlib, re, time, typing, PIL, numpy, core.character_pack, core.config
-Used by: plugins.render.animejs
+Used by: plugins.render.animejs.cast
 Config keys: None
 Tests: tests/unit/test_character2d.py
 """

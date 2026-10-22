@@ -57,7 +57,7 @@ def check_plugin_rules() -> list[str]:
     for py_file in PLUGINS_DIR.glob("**/*.py"):
         if py_file.name.startswith("__"):
             continue
-        plugin_type = py_file.parent.name  # llm, voice, render, motion
+        plugin_type = py_file.relative_to(PLUGINS_DIR).parts[0]  # llm, voice, render, motion
 
         try:
             tree = ast.parse(py_file.read_text(encoding="utf-8"), filename=str(py_file))

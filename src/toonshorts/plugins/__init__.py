@@ -21,16 +21,23 @@ def discover_plugins():
         sub_path = plugins_dir / sub
         if not sub_path.is_dir():
             continue
-        for file in sub_path.glob("*.py"):
-            if file.name.startswith("__"):
+        for item in sorted(sub_path.iterdir()):
+            if item.name.startswith("__") or item.name.startswith("."):
                 continue
-            module_name = f"toonshorts.plugins.{sub}.{file.stem}"
+            if item.is_file() and item.suffix == ".py":
+                plugin_name = item.stem
+            elif item.is_dir() and (item / "__init__.py").exists():
+                plugin_name = item.name
+            else:
+                continue
+
+            module_name = f"toonshorts.plugins.{sub}.{plugin_name}"
             try:
                 importlib.import_module(module_name)
             except Exception as e:
                 # Fallback relative import if running without top-level package install
                 try:
-                    importlib.import_module(f".{sub}.{file.stem}", package=__name__)
+                    importlib.import_module(f".{sub}.{plugin_name}", package=__name__)
                 except Exception:
                     raise e
 
