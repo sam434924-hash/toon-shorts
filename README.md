@@ -21,7 +21,7 @@ An automated end-to-end Python pipeline for creating short, funny, animated vert
 - **pillow**: Procedural stickman rendering engine implemented in Pillow.
 - **fake**: Rapid offline mock rendering plugin generating valid image frames.
 
-## 2D Layered Character System (`assets2d/characters/stick_hoodie/`)
+## 2D Layered Character System (`assets/2d/characters/stick_hoodie/`)
 - A modular sliced 2D body-parts character pack with transparent layers (hoodie torso, head, expressions, articulated limbs).
 - Managed by `src/toonshorts/core/character2d.py` and demo tool `tools/build_2d_hoodie_video.py`.
 - Reusable asset pack (not yet connected to the main CLI pipeline).

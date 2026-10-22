@@ -172,30 +172,30 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 
 ### `presenter` (Whiteboard Presenter Character Pack)
 - **Description**: Modular 2D layered SVG character pack extracted from whiteboard inline markup. Features a continuous unified hairline with elegant side-swept bangs clearing eyebrows, seamless sideburns, aligned golden rim sidelight, swappable arm rigs (`idle`, `wave`, `point`, `explain`, `thumbs_up`, `shrug`), 4 mouth states (`closed`, `slightly_open`, `wide_open`, `round_o` with legacy `open` alias), and eye states (`open`, `blink`, `screen_left`, `screen_right`).
-- **Files**: `src/toonshorts/core/character_pack.py`, `src/toonshorts/core/character2d.py`, `assets2d/characters/presenter/character.svg`, `assets2d/characters/presenter/manifest.json`
+- **Files**: `src/toonshorts/core/character_pack.py`, `src/toonshorts/core/character2d.py`, `assets/2d/characters/presenter/character.svg`, `assets/2d/characters/presenter/manifest.json`
 - **Capabilities**: Full manifest compliance, 0 validation errors, swappable arm gesture rigs, eye blinking, speech-synced lip sync, and left/right slot rendering.
 - **Tests**: `tests/unit/test_character_pack.py`, `tests/unit/test_animejs.py`
 
 ### `boy_a` (2D Layered SVG Character Pack)
 - **Description**: Modular 2D layered SVG character pack with anatomically and stylistically aligned ears ($y=215\dots288$), anchored head base, synchronized hair-back framing, swappable eye states (`open`, `blink`, `screen_left`, `screen_right`), and mouth states (`closed`, `slightly_open`, `wide_open`, `round_o`) preserving identical head, hair (merged 2-tone facets), and eyebrows geometry. Includes simple neck and plain hoodie shoulders.
-- **Files**: `src/toonshorts/core/character_pack.py`, `src/toonshorts/core/character2d.py`, `assets2d/characters/boy_a/character.svg`, `assets2d/characters/boy_a/manifest.json`
+- **Files**: `src/toonshorts/core/character_pack.py`, `src/toonshorts/core/character2d.py`, `assets/2d/characters/boy_a/character.svg`, `assets/2d/characters/boy_a/manifest.json`
 - **Capabilities**: Safe loading, path traversal prevention, strict XML/SVG safety checks (forbids `<script>`, event handlers, external entities, and gradients), file size <= 200 KB, state-switching SVG generation, PNG rendering via Playwright, and test staging workbench (`staging/index.html` and 4x2 contact sheet).
 - **Tests**: `tests/unit/test_character_pack.py`, `tests/unit/test_character2d.py`
 
 ### `stick_hoodie`
 - **Description**: 2D layered character system sliced from coordinate layout sheets with transparent layers (head, 8 expressions, hoodie torso, articulated stick limbs, mirrored hands and shoes). Reusable asset pack (not yet connected to the main CLI pipeline).
-- **Files**: `src/toonshorts/core/character2d.py`, `assets2d/layouts/sheet_03_layout.json`, `tools/build_2d_hoodie_video.py`
+- **Files**: `src/toonshorts/core/character2d.py`, `assets/2d/layouts/sheet_03_layout.json`, `tools/build_2d_hoodie_video.py`
 - **Capabilities**: Character registry, modular slots (hair, hat, torso, legs, shoes, hands), forward-kinematic 2D skeletal rotation, audio loudness mouth shape swapping, squash & stretch actions (idle, walk, wave, jump), soft pastel gradient background rendering with ground shadow, and standalone short video generator (`tools/build_2d_hoodie_video.py`) with Piper TTS speech and burned ASS subtitles.
 - **Tests**: `tests/unit/test_character2d.py`
 
 ### `boy_b` (2D Full-Body Layered Character Pack)
 - **Description**: Full-body layered character pack with brown hair, round glasses, and blue hoodie. Sourced from 8-face tile sheet and body sheet (front/back views), featuring 22 transparent layers, gapless joint rotation caps (shoulders, elbows, hips, knees, ankles), and full FK skeletal compatibility.
-- **Files**: `assets2d/characters/boy_b/manifest.json`, `assets2d/characters/boy_b/character.json`, `assets2d/characters/boy_b/layers/`, `tools/build_character_packs.py`
+- **Files**: `assets/2d/characters/boy_b/manifest.json`, `assets/2d/characters/boy_b/character.json`, `assets/2d/characters/boy_b/layers/`, `tools/build_character_packs.py`
 - **Capabilities**: Swappable eye states (`open`, `blink`, `look_left`, `look_right`), mouth states (`closed`, `slightly_open`, `wide_open`, `round_o`, `open_smile`), back-of-head layer from back view, gapless overlap joint caps, manifest and character.json schemas, and test staging previews (`staging/boy_b_preview_sheet.png`).
 - **Tests**: `tests/unit/test_new_character_packs.py`
 
 ### `girl_a` (2D Full-Body Layered Character Pack)
 - **Description**: Full-body layered character pack with orange hair, round glasses, freckles, and purple vest. Sourced from 8-face tile sheet and body sheet (front/back views), featuring 22 transparent layers, gapless joint rotation caps (shoulders, elbows, hips, knees, ankles), and full FK skeletal compatibility.
-- **Files**: `assets2d/characters/girl_a/manifest.json`, `assets2d/characters/girl_a/character.json`, `assets2d/characters/girl_a/layers/`, `tools/build_character_packs.py`
+- **Files**: `assets/2d/characters/girl_a/manifest.json`, `assets/2d/characters/girl_a/character.json`, `assets/2d/characters/girl_a/layers/`, `tools/build_character_packs.py`
 - **Capabilities**: Swappable eye states (`open`, `blink`, `look_left`, `look_right`), mouth states (`closed`, `slightly_open`, `wide_open`, `round_o`, `open_smile`), back-of-head layer from back view, gapless overlap joint caps, manifest and character.json schemas, and test staging previews (`staging/girl_a_preview_sheet.png`).
 - **Tests**: `tests/unit/test_new_character_packs.py`

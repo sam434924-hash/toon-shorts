@@ -86,7 +86,7 @@ BEATS = [
 def ensure_character():
     """Slices or retrieves the stick_hoodie character from the reference sheet."""
     sheet_path = PROJECT_ROOT / "assets" / "sources" / "incoming" / "sheet_03.png"
-    layout_path = PROJECT_ROOT / "assets2d" / "layouts" / "sheet_03_layout.json"
+    layout_path = PROJECT_ROOT / "assets" / "2d" / "layouts" / "sheet_03_layout.json"
 
     print("Checking character in registry...")
     char = get_character("stick_hoodie")

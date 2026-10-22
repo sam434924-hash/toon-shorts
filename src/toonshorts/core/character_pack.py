@@ -19,10 +19,11 @@ import xml.etree.ElementTree as ET
 
 from PIL import Image
 
+from toonshorts.core import paths
 from toonshorts.core.config import PROJECT_ROOT
 
 # Standard directory for 2D character assets
-CHARACTERS2D_DIR = PROJECT_ROOT / "assets2d" / "characters"
+CHARACTERS2D_DIR = paths.CHARACTERS_2D_DIR
 
 # Security: strict character name regex: letters, digits, dash, underscore, max 32 chars
 CHARACTER_NAME_REGEX = re.compile(r"^[a-zA-Z0-9_-]{1,32}$")

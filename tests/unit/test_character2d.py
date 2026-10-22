@@ -28,7 +28,7 @@ from toonshorts.core.character2d import (
 @pytest.fixture
 def test_dirs(tmp_path):
     sheet_src = paths.ASSETS_SOURCES_INCOMING_DIR / "sheet_03.png"
-    layout_src = PROJECT_ROOT / "assets2d" / "layouts" / "sheet_03_layout.json"
+    layout_src = paths.LAYOUTS_2D_DIR / "sheet_03_layout.json"
     return {
         "sheet": sheet_src,
         "layout": layout_src,

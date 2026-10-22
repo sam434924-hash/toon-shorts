@@ -1,7 +1,7 @@
 """
 Purpose: Extracts, aligns, and builds full-body layered character packs (boy_b, girl_a) with gapless joints and preview sheets.
 Inputs: Source body and face sheets in assets/sources/
-Outputs: Transparent PNG layers, manifest.json, character.json, and verification preview sheets in assets2d/characters/<id>/
+Outputs: Transparent PNG layers, manifest.json, character.json, and verification preview sheets in assets/2d/characters/<id>/
 Depends on: cv2, numpy, PIL, json, pathlib, math
 Used by: Pipeline character staging, Anime.js character binding, CLI tools
 """
@@ -841,7 +841,7 @@ def rotate_image_around_pivot(
 
 def create_character_pack(char_id: str) -> Dict[str, Any]:
     """Builds complete character pack for char_id ('boy_b' or 'girl_a')."""
-    base_dir = PROJECT_ROOT / "assets2d" / "characters" / char_id
+    base_dir = PROJECT_ROOT / "assets" / "2d" / "characters" / char_id
     layers_dir = base_dir / "layers"
     staging_dir = base_dir / "staging"
     layers_dir.mkdir(parents=True, exist_ok=True)

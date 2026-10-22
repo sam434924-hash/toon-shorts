@@ -32,9 +32,9 @@ from toonshorts.core.character_pack import (
 )
 
 # Directory paths
-ASSETS2D_DIR = PROJECT_ROOT / "assets2d"
-CHARACTERS2D_DIR = ASSETS2D_DIR / "characters"
-LAYOUTS2D_DIR = ASSETS2D_DIR / "layouts"
+ASSETS2D_DIR = paths.ASSETS_2D_DIR
+CHARACTERS2D_DIR = paths.CHARACTERS_2D_DIR
+LAYOUTS2D_DIR = paths.LAYOUTS_2D_DIR
 INCOMING2D_DIR = paths.ASSETS_SOURCES_INCOMING_DIR
 
 # Strict character name regex: letters, digits, dash, underscore, max 32 chars

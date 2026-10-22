@@ -2,7 +2,7 @@
 Purpose: Unit tests for new 2D full-body layered character packs (boy_b and girl_a).
 Inputs: Assets in assets/sources/ and assets2d/characters/<id>/
 Outputs: Test assertions for layer integrity, manifest schema, and preview sheet rendering.
-Depends on: json, numpy, pathlib, pytest, PIL, core.config, core.character_pack, core.character2d
+Depends on: json, numpy, pathlib, pytest, PIL, core.config, core.paths, core.character_pack, core.character2d
 Used by: Test suite
 """
 
@@ -12,6 +12,7 @@ import numpy as np
 import pytest
 from PIL import Image
 
+from toonshorts.core import paths
 from toonshorts.core.config import PROJECT_ROOT
 from toonshorts.core.character_pack import validate_manifest_schema
 from toonshorts.core.character2d import Character2D
@@ -20,7 +21,7 @@ from toonshorts.core.character2d import Character2D
 @pytest.mark.parametrize("char_id", ["boy_b", "girl_a"])
 def test_character_pack_structure_and_manifest(char_id):
     """Verifies that the character pack exists with a valid manifest and character.json."""
-    pack_dir = PROJECT_ROOT / "assets2d" / "characters" / char_id
+    pack_dir = paths.CHARACTERS_2D_DIR / char_id
     assert pack_dir.is_dir(), f"Missing character pack directory: {pack_dir}"
 
     manifest_file = pack_dir / "manifest.json"
@@ -67,7 +68,7 @@ def test_character_pack_structure_and_manifest(char_id):
 @pytest.mark.parametrize("char_id", ["boy_b", "girl_a"])
 def test_character_pack_layers_integrity(char_id):
     """Verifies that all 22 transparent layers exist and are valid RGBA images."""
-    layers_dir = PROJECT_ROOT / "assets2d" / "characters" / char_id / "layers"
+    layers_dir = paths.CHARACTERS_2D_DIR / char_id / "layers"
     assert layers_dir.is_dir()
 
     expected_layers = [
@@ -110,7 +111,7 @@ def test_character_pack_layers_integrity(char_id):
 @pytest.mark.parametrize("char_id", ["boy_b", "girl_a"])
 def test_body_parts_exclude_head_artifacts(char_id):
     """Verifies torso and arms do not erroneously include head hair or chin fragments."""
-    layers_dir = PROJECT_ROOT / "assets2d" / "characters" / char_id / "layers"
+    layers_dir = paths.CHARACTERS_2D_DIR / char_id / "layers"
 
     if char_id == "girl_a":
         # Upper arms and torso must not contain orange hair
@@ -131,7 +132,7 @@ def test_body_parts_exclude_head_artifacts(char_id):
 @pytest.mark.parametrize("char_id", ["boy_b", "girl_a"])
 def test_swappable_face_layers_diff_cleanliness(char_id):
     """Verifies mouth and eye layers are clean feature diffs rather than full-box skin cutouts."""
-    layers_dir = PROJECT_ROOT / "assets2d" / "characters" / char_id / "layers"
+    layers_dir = paths.CHARACTERS_2D_DIR / char_id / "layers"
 
     # 1. Closed mouth layer must be isolated mouth line, not huge 3000+ px skin block
     mc_arr = np.array(Image.open(layers_dir / "mouth_closed.png"))
@@ -153,7 +154,7 @@ def test_swappable_face_layers_diff_cleanliness(char_id):
 @pytest.mark.parametrize("char_id", ["boy_b", "girl_a"])
 def test_character_preview_sheets_exist(char_id):
     """Verifies staging preview poses, comparison sheet, and contact sheets exist for review."""
-    staging_dir = PROJECT_ROOT / "assets2d" / "characters" / char_id / "staging"
+    staging_dir = paths.CHARACTERS_2D_DIR / char_id / "staging"
     assert staging_dir.is_dir()
 
     contact_sheet = staging_dir / f"{char_id}_preview_sheet.png"
