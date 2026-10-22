@@ -208,12 +208,9 @@
 
   <!-- 7. Hair Front (Volume, Hairline, Fringe & Sideburns framing face) -->
   <g id="layer-7-hair-front">
-    <path d="M 158 175 C 150 75, 198 35, 260 35 C 322 35, 370 75, 362 175 C 348 135, 305 110, 260 110 C 215 110, 172 135, 158 175 Z" fill="#0f172a"/>
-    <path d="M 162 170 C 158 100, 200 60, 260 60 C 320 60, 362 100, 358 170 C 340 135, 305 122, 260 122 C 215 122, 180 135, 162 170 Z" fill="#0f172a"/>
-    <path d="M 162 165 C 175 132, 215 125, 260 125 C 310 125, 345 138, 360 165 C 340 144, 305 136, 260 136 C 215 136, 180 146, 162 165 Z" fill="#1e293b"/>
-    <path d="M 235 126 C 275 126, 320 136, 350 162 C 328 146, 288 142, 252 142 C 225 142, 200 148, 182 156 C 200 138, 220 126, 235 126 Z" fill="#0f172a"/>
-    <path d="M 168 165 C 166 186, 168 205, 174 212 C 176 204, 177 186, 174 165 Z" fill="#0f172a"/>
-    <path d="M 352 165 C 354 186, 352 205, 346 212 C 344 204, 343 186, 346 165 Z" fill="#0f172a"/>
-    <path d="M 260 35 C 322 35, 370 75, 362 175 C 348 115, 310 80, 260 80 Z" fill="url(#warm-sidelight)" opacity="0.35"/>
+    <!-- Single harmonious continuous hair silhouette with side-swept bangs and integrated sideburns -->
+    <path d="M 168 215 C 165 195, 160 175, 158 175 C 148 75, 195 35, 260 35 C 325 35, 372 75, 362 175 C 360 175, 355 195, 352 215 C 346 200, 344 180, 346 165 C 330 148, 296 140, 260 140 C 220 140, 188 148, 174 165 C 176 180, 174 200, 168 215 Z" fill="#0f172a"/>
+    <!-- Aligned warm golden rim highlight along right crown and temple -->
+    <path d="M 260 35 C 325 35, 372 75, 362 175 C 360 175, 355 195, 352 215 C 347 200, 345 180, 346 165 C 348 115, 310 75, 260 75 Z" fill="url(#warm-sidelight)" opacity="0.35"/>
   </g>
 </svg>
