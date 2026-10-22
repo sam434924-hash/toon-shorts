@@ -15,51 +15,51 @@
   "pivots": {
     "neck": [
       105,
-      12
+      6
     ],
     "head": [
       142,
-      242
+      240
     ],
     "shoulder_left": [
       25,
-      45
+      30
     ],
     "shoulder_right": [
       185,
-      45
+      30
     ],
     "elbow_left": [
       48,
-      164
+      146
     ],
     "elbow_right": [
       59,
-      164
+      146
     ],
     "hip_left": [
-      70,
-      290
+      68,
+      245
     ],
     "hip_right": [
-      140,
-      290
+      142,
+      245
     ],
     "knee_left": [
       62,
-      179
+      189
     ],
     "knee_right": [
       62,
-      179
+      189
     ],
     "ankle_left": [
       58,
-      185
+      197
     ],
     "ankle_right": [
       58,
-      185
+      197
     ]
   },
   "anchors": {

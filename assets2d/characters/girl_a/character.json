@@ -17,7 +17,7 @@
       "image": "layers/torso.png",
       "pivot": [
         104,
-        260
+        154
       ],
       "parent": null,
       "parent_joint": null,
@@ -27,23 +27,23 @@
       "joints": {
         "neck": [
           104,
-          10
+          6
         ],
         "shoulder_left": [
-          28,
-          40
+          26,
+          25
         ],
         "shoulder_right": [
-          180,
-          40
+          182,
+          25
         ],
         "hip_left": [
           68,
-          260
+          154
         ],
         "hip_right": [
           140,
-          260
+          154
         ]
       }
     },
@@ -62,7 +62,7 @@
       "joints": {
         "elbow": [
           47,
-          146
+          121
         ]
       }
     },
@@ -84,7 +84,7 @@
       "name": "arm_upper_right",
       "image": "layers/arm_upper_right.png",
       "pivot": [
-        53,
+        55,
         31
       ],
       "parent": "torso",
@@ -94,8 +94,8 @@
       "base_rotation": 0.0,
       "joints": {
         "elbow": [
-          55,
-          146
+          57,
+          121
         ]
       }
     },
@@ -103,7 +103,7 @@
       "name": "arm_lower_right",
       "image": "layers/arm_lower_right.png",
       "pivot": [
-        51,
+        53,
         27
       ],
       "parent": "arm_upper_right",
@@ -128,7 +128,7 @@
       "joints": {
         "knee": [
           60,
-          157
+          167
         ]
       }
     },
@@ -147,7 +147,7 @@
       "joints": {
         "ankle": [
           58,
-          158
+          173
         ]
       }
     },
@@ -180,7 +180,7 @@
       "joints": {
         "knee": [
           60,
-          157
+          167
         ]
       }
     },
@@ -199,7 +199,7 @@
       "joints": {
         "ankle": [
           58,
-          158
+          173
         ]
       }
     },
@@ -222,7 +222,7 @@
       "image": "layers/head_base.png",
       "pivot": [
         142,
-        242
+        240
       ],
       "parent": "torso",
       "parent_joint": "neck",

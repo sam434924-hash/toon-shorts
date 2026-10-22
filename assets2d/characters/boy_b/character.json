@@ -17,7 +17,7 @@
       "image": "layers/torso.png",
       "pivot": [
         105,
-        290
+        245
       ],
       "parent": null,
       "parent_joint": null,
@@ -27,23 +27,23 @@
       "joints": {
         "neck": [
           105,
-          12
+          6
         ],
         "shoulder_left": [
           25,
-          45
+          30
         ],
         "shoulder_right": [
           185,
-          45
+          30
         ],
         "hip_left": [
-          70,
-          290
+          68,
+          245
         ],
         "hip_right": [
-          140,
-          290
+          142,
+          245
         ]
       }
     },
@@ -62,7 +62,7 @@
       "joints": {
         "elbow": [
           48,
-          164
+          146
         ]
       }
     },
@@ -71,7 +71,7 @@
       "image": "layers/arm_lower_left.png",
       "pivot": [
         50,
-        28
+        30
       ],
       "parent": "arm_upper_left",
       "parent_joint": "elbow",
@@ -95,7 +95,7 @@
       "joints": {
         "elbow": [
           59,
-          164
+          146
         ]
       }
     },
@@ -104,7 +104,7 @@
       "image": "layers/arm_lower_right.png",
       "pivot": [
         56,
-        28
+        30
       ],
       "parent": "arm_upper_right",
       "parent_joint": "elbow",
@@ -128,7 +128,7 @@
       "joints": {
         "knee": [
           62,
-          179
+          189
         ]
       }
     },
@@ -137,7 +137,7 @@
       "image": "layers/leg_lower_left.png",
       "pivot": [
         58,
-        30
+        32
       ],
       "parent": "leg_upper_left",
       "parent_joint": "knee",
@@ -147,7 +147,7 @@
       "joints": {
         "ankle": [
           58,
-          185
+          197
         ]
       }
     },
@@ -180,7 +180,7 @@
       "joints": {
         "knee": [
           62,
-          179
+          189
         ]
       }
     },
@@ -189,7 +189,7 @@
       "image": "layers/leg_lower_right.png",
       "pivot": [
         58,
-        30
+        32
       ],
       "parent": "leg_upper_right",
       "parent_joint": "knee",
@@ -199,7 +199,7 @@
       "joints": {
         "ankle": [
           58,
-          185
+          197
         ]
       }
     },
@@ -222,7 +222,7 @@
       "image": "layers/head_base.png",
       "pivot": [
         142,
-        242
+        240
       ],
       "parent": "torso",
       "parent_joint": "neck",

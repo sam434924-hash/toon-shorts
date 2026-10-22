@@ -2,12 +2,13 @@
 Purpose: Unit tests for new 2D full-body layered character packs (boy_b and girl_a).
 Inputs: Assets in assets/sources/ and assets2d/characters/<id>/
 Outputs: Test assertions for layer integrity, manifest schema, and preview sheet rendering.
-Depends on: json, pathlib, pytest, PIL, core.config, core.character_pack, core.character2d
+Depends on: json, numpy, pathlib, pytest, PIL, core.config, core.character_pack, core.character2d
 Used by: Test suite
 """
 
 import json
 from pathlib import Path
+import numpy as np
 import pytest
 from PIL import Image
 
@@ -100,7 +101,6 @@ def test_character_pack_layers_integrity(char_id):
 
         with Image.open(layer_path) as img:
             assert img.mode == "RGBA", f"Layer {layer_name} is not RGBA: {img.mode}"
-            # Check transparency (alpha channel exists and is not entirely 0 or 255)
             alpha = img.split()[3]
             extrema = alpha.getextrema()
             assert extrema[0] < 255, f"Layer {layer_name} has no transparency: {extrema}"
@@ -108,13 +108,59 @@ def test_character_pack_layers_integrity(char_id):
 
 
 @pytest.mark.parametrize("char_id", ["boy_b", "girl_a"])
+def test_body_parts_exclude_head_artifacts(char_id):
+    """Verifies torso and arms do not erroneously include head hair or chin fragments."""
+    layers_dir = PROJECT_ROOT / "assets2d" / "characters" / char_id / "layers"
+
+    if char_id == "girl_a":
+        # Upper arms and torso must not contain orange hair
+        for part in ["arm_upper_left.png", "arm_upper_right.png", "torso.png"]:
+            arr = np.array(Image.open(layers_dir / part))
+            alpha = arr[:, :, 3]
+            nz = arr[alpha > 0]
+            orange_hair = (nz[:, 0] > 180) & (nz[:, 1] > 60) & (nz[:, 2] < 50)
+            assert np.sum(orange_hair) == 0, f"Found orange hair fragments in {part}!"
+    else:  # boy_b
+        # Torso collar must be blue hoodie, not head skin
+        arr_t = np.array(Image.open(layers_dir / "torso.png"))
+        top_collar_rgb = np.median(arr_t[:10, 40:170, :3], axis=(0, 1)).astype(int)
+        # Blue hoodie: Blue > Red + 30
+        assert top_collar_rgb[2] > top_collar_rgb[0] + 30, f"Torso collar is not hoodie: {top_collar_rgb}"
+
+
+@pytest.mark.parametrize("char_id", ["boy_b", "girl_a"])
+def test_swappable_face_layers_diff_cleanliness(char_id):
+    """Verifies mouth and eye layers are clean feature diffs rather than full-box skin cutouts."""
+    layers_dir = PROJECT_ROOT / "assets2d" / "characters" / char_id / "layers"
+
+    # 1. Closed mouth layer must be isolated mouth line, not huge 3000+ px skin block
+    mc_arr = np.array(Image.open(layers_dir / "mouth_closed.png"))
+    mc_alpha = mc_arr[:, :, 3]
+    mc_count = np.sum(mc_alpha > 0)
+    assert 100 < mc_count < 1500, f"Mouth closed pixel count abnormal: {mc_count}"
+    # Must have smooth semi-transparent antialiasing
+    assert np.sum((mc_alpha > 0) & (mc_alpha < 255)) > 20
+
+    # 2. Eye layers must have smooth antialiasing and reasonable area
+    for eye_name in ["eyes_open.png", "eyes_blink.png", "eyes_look_left.png", "eyes_look_right.png"]:
+        eye_arr = np.array(Image.open(layers_dir / eye_name))
+        eye_alpha = eye_arr[:, :, 3]
+        eye_count = np.sum(eye_alpha > 0)
+        assert 500 < eye_count < 2200, f"Eye layer {eye_name} pixel count abnormal: {eye_count}"
+        assert np.sum((eye_alpha > 0) & (eye_alpha < 255)) > 50
+
+
+@pytest.mark.parametrize("char_id", ["boy_b", "girl_a"])
 def test_character_preview_sheets_exist(char_id):
-    """Verifies staging preview poses and contact sheets exist for review."""
+    """Verifies staging preview poses, comparison sheet, and contact sheets exist for review."""
     staging_dir = PROJECT_ROOT / "assets2d" / "characters" / char_id / "staging"
     assert staging_dir.is_dir()
 
     contact_sheet = staging_dir / f"{char_id}_preview_sheet.png"
     assert contact_sheet.is_file(), f"Missing preview sheet: {contact_sheet}"
+
+    cmp_sheet = staging_dir / f"{char_id}_source_comparison.png"
+    assert cmp_sheet.is_file(), f"Missing source comparison sheet: {cmp_sheet}"
 
     required_poses = [
         "pose_01_front_standing.png",

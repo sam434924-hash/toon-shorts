@@ -50,7 +50,6 @@ def floodfill_transparent_bg(img: Image.Image, bg_thresh: int = 238) -> Image.Im
             cv2.floodFill(is_bg, flood_mask, (w - 1, y), 128)
 
     visited_bg = flood_mask[1:-1, 1:-1] == 1
-    # Smooth edges slightly to avoid aliased fringing
     arr[visited_bg, 3] = 0
     return Image.fromarray(arr)
 
@@ -62,7 +61,6 @@ def add_overlap_joint_cap(
     fill_color: Tuple[int, int, int, int],
     outline_color: Tuple[int, int, int, int],
     outline_width: int = 2,
-    direction: str = "top",  # 'top' or 'bottom'
 ) -> Tuple[Image.Image, Tuple[int, int]]:
     """
     Extends a part with a rounded circular cap at the pivot to ensure gapless rotation at any angle.
@@ -90,7 +88,7 @@ def add_overlap_joint_cap(
         width=outline_width,
     )
 
-    # Composite original layer over or under cap
+    # Composite original layer over cap
     canvas.alpha_composite(layer, (pad, pad))
     return canvas, (new_px, new_py)
 
@@ -109,7 +107,7 @@ def align_and_extract_face_tiles(
     tile_w = 285
     tile_h = 256
 
-    # Verified grid coordinates
+    # Verified grid coordinates compensating for horizontal column shift dx=-14 and vertical drift dy
     grid_coords = {
         "closed": (0, 0),
         "slightly_open": (271, 0),
@@ -137,75 +135,62 @@ def build_head_layers(
 ) -> Dict[str, Image.Image]:
     """
     Builds head_base and swappable eye and mouth layers from aligned face tiles.
-    1. head_base: hair, ears, skin, brows, glasses frame; eyes and mouth removed and filled with skin tone.
-    2. eye layers: open, blink, look_left, look_right.
-    3. mouth layers: closed, slightly_open, wide_open, round_o, open_smile.
+    1. head_base: hair, ears, skin, brows, glasses frame; eyes and mouth removed via inpainting with skin tone.
+    2. eye layers: open, blink, look_left, look_right derived by diffing tiles against head_base inside glasses.
+    3. mouth layers: closed, slightly_open, wide_open, round_o, open_smile derived by diffing tiles against head_base in mouth area.
     """
     closed_tile = tiles["closed"]
     tile_w, tile_h = closed_tile.size
 
-    # 1. Base transparency
+    # 1. Base transparency for closed tile
     closed_trans = floodfill_transparent_bg(closed_tile, bg_thresh=238)
     closed_arr = np.array(closed_trans)
 
-    # Sample skin tone
-    # Skin area between nose and mouth
-    skin_patch = closed_arr[150:165, 130:155, :3]
-    skin_r, skin_g, skin_b = np.median(skin_patch, axis=(0, 1)).astype(int)
-    skin_color = (int(skin_r), int(skin_g), int(skin_b), 255)
-
-    # Glasses centers
+    # Coordinates of facial features
     if char_id == "boy_b":
         left_eye_center = (92, 116)
         right_eye_center = (192, 110)
-        glasses_r = 23
+        glasses_r = 19
         mouth_center = (144, 186)
-        mouth_w, mouth_h = 26, 14
+        mouth_r = 16
+        skin_color = (248, 198, 168, 255)
     else:  # girl_a
         left_eye_center = (96, 125)
         right_eye_center = (194, 128)
-        glasses_r = 23
+        glasses_r = 19
         mouth_center = (144, 187)
-        mouth_w, mouth_h = 26, 14
+        mouth_r = 16
+        skin_color = (247, 204, 180, 255)
 
     # --- Build Head Base ---
-    head_base_img = closed_trans.copy()
-    hb_draw = ImageDraw.Draw(head_base_img)
+    # Create inpainting masks for eyes and mouth
+    closed_rgb = np.array(closed_tile)
 
-    # Inpaint / fill inside eye lenses with skin color (preserving glasses rim and brows)
-    # Lenses are circle interior with radius r - 3
-    lens_r = glasses_r - 4
-    hb_draw.ellipse(
-        [
-            left_eye_center[0] - lens_r,
-            left_eye_center[1] - lens_r,
-            left_eye_center[0] + lens_r,
-            left_eye_center[1] + lens_r,
-        ],
-        fill=skin_color,
-    )
-    hb_draw.ellipse(
-        [
-            right_eye_center[0] - lens_r,
-            right_eye_center[1] - lens_r,
-            right_eye_center[0] + lens_r,
-            right_eye_center[1] + lens_r,
-        ],
-        fill=skin_color,
-    )
+    mouth_mask = np.zeros((tile_h, tile_w), dtype=np.uint8)
+    cv2.circle(mouth_mask, mouth_center, mouth_r, 255, -1)
 
-    # Inpaint mouth area with skin color
+    eye_mask = np.zeros((tile_h, tile_w), dtype=np.uint8)
+    cv2.circle(eye_mask, left_eye_center, glasses_r, 255, -1)
+    cv2.circle(eye_mask, right_eye_center, glasses_r, 255, -1)
+
+    # Inpaint closed using Navier-Stokes/Telea inpainting to remove eyes and mouth cleanly
+    hb_rgb = cv2.inpaint(closed_rgb, mouth_mask | eye_mask, 5, cv2.INPAINT_TELEA)
+
+    # Make head_base RGBA using transparency mask from closed_trans
+    hb_arr = np.zeros((tile_h, tile_w, 4), dtype=np.uint8)
+    hb_arr[:, :, :3] = hb_rgb
+    hb_arr[:, :, 3] = closed_arr[:, :, 3]
+
+    # Extend rounded neck cap downward below chin (so neck stays securely under collar)
+    hb_img = Image.fromarray(hb_arr)
+    hb_draw = ImageDraw.Draw(hb_img)
+    chin_x = mouth_center[0]
     hb_draw.ellipse(
-        [
-            mouth_center[0] - mouth_w,
-            mouth_center[1] - mouth_h,
-            mouth_center[0] + mouth_w,
-            mouth_center[1] + mouth_h,
-        ],
+        [chin_x - 30, 230, chin_x + 30, 255],
         fill=skin_color,
     )
 
-    # --- Build Eye Layers ---
+    # --- Build Eye Layers by Diffing against Head Base ---
     eye_layers = {}
     eye_states = {
         "open": tiles["closed"],
@@ -214,47 +199,26 @@ def build_head_layers(
         "look_right": tiles["look_right"],
     }
 
+    eye_mask_bool = eye_mask == 255
+
     for state_name, src_tile in eye_states.items():
-        eye_img = Image.new("RGBA", (tile_w, tile_h), (0, 0, 0, 0))
-        src_arr = np.array(src_tile)
+        src_rgb = np.array(src_tile)
+        # Compute color difference against head_base inside glasses lens area
+        diff = np.max(np.abs(src_rgb.astype(float) - hb_rgb.astype(float)), axis=2)
+        diff[~eye_mask_bool] = 0
 
-        # Create mask of inner lens area
-        mask = Image.new("L", (tile_w, tile_h), 0)
-        mdraw = ImageDraw.Draw(mask)
-        mdraw.ellipse(
-            [
-                left_eye_center[0] - lens_r,
-                left_eye_center[1] - lens_r,
-                left_eye_center[0] + lens_r,
-                left_eye_center[1] + lens_r,
-            ],
-            fill=255,
-        )
-        mdraw.ellipse(
-            [
-                right_eye_center[0] - lens_r,
-                right_eye_center[1] - lens_r,
-                right_eye_center[0] + lens_r,
-                right_eye_center[1] + lens_r,
-            ],
-            fill=255,
-        )
+        # Derive smooth antialiased alpha: ramp from 0 at diff=8 to 255 at diff=22
+        alpha = np.clip((diff - 8.0) / (22.0 - 8.0), 0.0, 1.0)
+        # Sclera / pupil pixels with high diff are fully opaque
+        alpha[diff >= 22.0] = 1.0
 
-        mask_arr = np.array(mask) == 255
         out_arr = np.zeros((tile_h, tile_w, 4), dtype=np.uint8)
-        out_arr[mask_arr, :3] = src_arr[mask_arr, :3]
-        out_arr[mask_arr, 3] = 255
-
-        # For blink, extract the curved eyelid line transparently
-        if state_name == "blink":
-            # Mask out skin pixels inside lens so only dark blink line is visible
-            skin_diff = np.max(np.abs(src_arr[:, :, :3] - np.array(skin_color[:3])), axis=2)
-            is_feature = mask_arr & (skin_diff > 25)
-            out_arr[~is_feature, 3] = 0
+        out_arr[:, :, :3] = src_rgb
+        out_arr[:, :, 3] = (alpha * 255).astype(np.uint8)
 
         eye_layers[state_name] = Image.fromarray(out_arr)
 
-    # --- Build Mouth Layers ---
+    # --- Build Mouth Layers by Diffing against Head Base ---
     mouth_layers = {}
     mouth_tiles = {
         "closed": tiles["closed"],
@@ -264,32 +228,27 @@ def build_head_layers(
         "open_smile": tiles["open_smile"],
     }
 
+    mouth_box_mask = np.zeros((tile_h, tile_w), dtype=bool)
+    mx, my = mouth_center
+    mouth_box_mask[my - 22 : my + 22, mx - 32 : mx + 32] = True
+
     for state_name, src_tile in mouth_tiles.items():
-        src_arr = np.array(src_tile)
-        mouth_img = Image.new("RGBA", (tile_w, tile_h), (0, 0, 0, 0))
+        src_rgb = np.array(src_tile)
+        diff = np.max(np.abs(src_rgb.astype(float) - hb_rgb.astype(float)), axis=2)
+        diff[~mouth_box_mask] = 0
 
-        # Bounding box around mouth
-        mx, my = mouth_center
-        mw = mouth_w + 12
-        mh = mouth_h + 12
-
-        # Extract features differing from skin tone
-        skin_diff = np.max(np.abs(src_arr[:, :, :3] - np.array(skin_color[:3])), axis=2)
-        box_mask = np.zeros((tile_h, tile_w), dtype=bool)
-        box_mask[my - mh : my + mh, mx - mw : mx + mw] = True
-
-        mouth_pixels = box_mask & (skin_diff > 18)
-        # Dilate slightly to capture lip antialiasing
-        mouth_pixels = cv2.dilate(mouth_pixels.astype(np.uint8), np.ones((3, 3), np.uint8)).astype(bool)
+        # Derive smooth antialiased alpha: ramp from 0 at diff=8 to 255 at diff=20
+        alpha = np.clip((diff - 8.0) / (20.0 - 8.0), 0.0, 1.0)
+        alpha[diff >= 20.0] = 1.0
 
         out_arr = np.zeros((tile_h, tile_w, 4), dtype=np.uint8)
-        out_arr[mouth_pixels, :3] = src_arr[mouth_pixels, :3]
-        out_arr[mouth_pixels, 3] = 255
+        out_arr[:, :, :3] = src_rgb
+        out_arr[:, :, 3] = (alpha * 255).astype(np.uint8)
 
         mouth_layers[state_name] = Image.fromarray(out_arr)
 
     return {
-        "head_base": head_base_img,
+        "head_base": hb_img,
         **{f"eyes_{k}": v for k, v in eye_layers.items()},
         **{f"mouth_{k}": v for k, v in mouth_layers.items()},
     }
@@ -301,7 +260,7 @@ def build_head_back(
     char_id: str = "boy_b",
 ) -> Image.Image:
     """
-    Extracts back of head from the back view of body sheet,
+    Extracts back of head from the back view of body sheet covering full hair length,
     upscales it, removes background, and centers it to match head_base coordinates.
     """
     body_im = Image.open(body_sheet_path).convert("RGBA")
@@ -309,9 +268,9 @@ def build_head_back(
 
     # Back view is on right half: x in 170..330
     if char_id == "boy_b":
-        head_box = (175, 15, 320, 135)
-    else:
-        head_box = (170, 50, 325, 160)
+        head_box = (175, 15, 320, 150)
+    else:  # girl_a (full hair length down to collar line)
+        head_box = (170, 50, 325, 205)
 
     crop = body_im.crop(head_box)
     trans = floodfill_transparent_bg(crop, bg_thresh=238)
@@ -340,36 +299,38 @@ def extract_body_parts(
     torso, arm_upper_left, arm_lower_left, arm_upper_right, arm_lower_right,
     leg_upper_left, leg_lower_left, shoe_left, leg_upper_right, leg_lower_right, shoe_right.
     Extends overlap and fills hidden regions so rotation never shows gaps.
+    Excludes the smaller head drawn on the body sheet so torso starts cleanly at collar.
     """
     body_im = Image.open(body_sheet_path).convert("RGBA")
     w, h = body_im.size
 
     # Crop front view (left half)
     if char_id == "boy_b":
-        front_box = (20, 15, 170, 508)
+        # Torso collar begins at Y=158 (head is above Y=158)
+        front_box = (20, 155, 170, 506)
         palette = {
-            "hoodie": (64, 112, 160, 255),
-            "hoodie_dark": (35, 60, 90, 255),
-            "pants": (64, 80, 96, 255),
+            "hoodie": (76, 114, 172, 255),
+            "hoodie_dark": (40, 60, 95, 255),
+            "pants": (70, 85, 104, 255),
             "pants_dark": (40, 50, 65, 255),
             "shoe": (224, 224, 224, 255),
             "shoe_dark": (30, 30, 30, 255),
-            "skin": (240, 176, 144, 255),
+            "skin": (248, 198, 168, 255),
         }
     else:  # girl_a
-        front_box = (18, 50, 172, 475)
+        # Torso collar begins at Y=212 (head is above Y=212)
+        front_box = (18, 210, 172, 470)
         palette = {
-            "hoodie": (144, 64, 144, 255),  # purple vest
-            "hoodie_dark": (70, 30, 70, 255),
-            "pants": (32, 64, 96, 255),  # dark teal pants
-            "pants_dark": (20, 40, 60, 255),
-            "shoe": (210, 194, 211, 255),
-            "shoe_dark": (30, 30, 30, 255),
-            "skin": (240, 192, 160, 255),
+            "hoodie": (155, 78, 153, 255),  # purple vest
+            "hoodie_dark": (80, 35, 80, 255),
+            "pants": (47, 71, 105, 255),  # dark teal/slate pants
+            "pants_dark": (25, 42, 62, 255),
+            "shoe": (232, 219, 238, 255),
+            "shoe_dark": (40, 40, 40, 255),
+            "skin": (247, 204, 180, 255),
         }
 
     front_crop = body_im.crop(front_box)
-    # Upscale 2x with Lanczos for smooth subpixel anti-aliasing
     fw, fh = front_crop.size
     front_2x = front_crop.resize((fw * 2, fh * 2), Image.Resampling.LANCZOS)
     front_clean = floodfill_transparent_bg(front_2x, bg_thresh=238)
@@ -378,33 +339,34 @@ def extract_body_parts(
     parts: Dict[str, Dict[str, Any]] = {}
 
     if char_id == "boy_b":
-        # Coordinates on 300x986 2x canvas
-        # 1. Torso
-        torso_crop = arr[235:545, 45:255].copy()
-        # Inpaint/fill arm overlap sides with solid hoodie color so raising arm leaves no hollow edge
+        # 2x front canvas: 300 x 702
+        # Front crop was (20, 155, 170, 506) -> 1x Y origin is 155, 1x X origin is 20
+        # 1. Torso: Y in 1x is 158..282 -> in 2x: (158-155)*2 = 6 to (282-155)*2 = 254
+        torso_crop = arr[4:256, 45:255].copy()
         torso_img = Image.fromarray(torso_crop)
-        # Expand side boundaries
         tdraw = ImageDraw.Draw(torso_img)
-        tdraw.rectangle([0, 60, 35, 250], fill=palette["hoodie"])
-        tdraw.rectangle([175, 60, 210, 250], fill=palette["hoodie"])
+        # Fill side areas behind upper arms with solid hoodie color
+        tdraw.rectangle([0, 30, 35, 240], fill=palette["hoodie"])
+        tdraw.rectangle([175, 30, 210, 240], fill=palette["hoodie"])
 
         parts["torso"] = {
             "image": torso_img,
-            "pivot": [105, 290],  # waist / hip pivot
+            "pivot": [105, 245],  # waist / hip pivot
             "parent": None,
             "parent_joint": None,
             "z_index": 4,
             "joints": {
-                "neck": [105, 12],
-                "shoulder_left": [25, 45],
-                "shoulder_right": [185, 45],
-                "hip_left": [70, 290],
-                "hip_right": [140, 290],
+                "neck": [105, 6],
+                "shoulder_left": [25, 30],
+                "shoulder_right": [185, 30],
+                "hip_left": [68, 245],
+                "hip_right": [142, 245],
             },
         }
 
         # 2. Upper arm left (screen-left)
-        ua_l = arr[250:415, 8:75].copy()
+        # Y in 1x: 165..225 -> in 2x: 20..140
+        ua_l = arr[18:142, 5:75].copy()
         ua_l_img = Image.fromarray(ua_l)
         ua_l_capped, ua_l_piv = add_overlap_joint_cap(
             ua_l_img, pivot=(28, 12), radius=16, fill_color=palette["hoodie"], outline_color=palette["hoodie_dark"]
@@ -415,14 +377,15 @@ def extract_body_parts(
             "parent": "torso",
             "parent_joint": "shoulder_left",
             "z_index": 6,
-            "joints": {"elbow": [ua_l_piv[0] - 2, ua_l_piv[1] + 130]},
+            "joints": {"elbow": [ua_l_piv[0] - 2, ua_l_piv[1] + 112]},
         }
 
         # 3. Forearm + hand left
-        la_l = arr[395:575, 5:75].copy()
+        # Y in 1x: 220..295 -> in 2x: 130..280
+        la_l = arr[128:280, 5:75].copy()
         la_l_img = Image.fromarray(la_l)
         la_l_capped, la_l_piv = add_overlap_joint_cap(
-            la_l_img, pivot=(30, 8), radius=14, fill_color=palette["hoodie"], outline_color=palette["hoodie_dark"]
+            la_l_img, pivot=(30, 10), radius=14, fill_color=palette["hoodie"], outline_color=palette["hoodie_dark"]
         )
         parts["arm_lower_left"] = {
             "image": la_l_capped,
@@ -434,7 +397,7 @@ def extract_body_parts(
         }
 
         # 4. Upper arm right (screen-right)
-        ua_r = arr[250:415, 225:292].copy()
+        ua_r = arr[18:142, 225:295].copy()
         ua_r_img = Image.fromarray(ua_r)
         ua_r_capped, ua_r_piv = add_overlap_joint_cap(
             ua_r_img, pivot=(35, 12), radius=16, fill_color=palette["hoodie"], outline_color=palette["hoodie_dark"]
@@ -445,14 +408,14 @@ def extract_body_parts(
             "parent": "torso",
             "parent_joint": "shoulder_right",
             "z_index": 3,
-            "joints": {"elbow": [ua_r_piv[0] + 2, ua_r_piv[1] + 130]},
+            "joints": {"elbow": [ua_r_piv[0] + 2, ua_r_piv[1] + 112]},
         }
 
         # 5. Forearm + hand right
-        la_r = arr[395:575, 225:295].copy()
+        la_r = arr[128:280, 225:295].copy()
         la_r_img = Image.fromarray(la_r)
         la_r_capped, la_r_piv = add_overlap_joint_cap(
-            la_r_img, pivot=(36, 8), radius=14, fill_color=palette["hoodie"], outline_color=palette["hoodie_dark"]
+            la_r_img, pivot=(36, 10), radius=14, fill_color=palette["hoodie"], outline_color=palette["hoodie_dark"]
         )
         parts["arm_lower_right"] = {
             "image": la_r_capped,
@@ -464,7 +427,8 @@ def extract_body_parts(
         }
 
         # 6. Upper leg left
-        ul_l = arr[535:715, 65:140].copy()
+        # Y in 1x: 280..365 -> in 2x: 250..420
+        ul_l = arr[248:422, 60:140].copy()
         ul_l_img = Image.fromarray(ul_l)
         ul_l_capped, ul_l_piv = add_overlap_joint_cap(
             ul_l_img, pivot=(38, 10), radius=18, fill_color=palette["pants"], outline_color=palette["pants_dark"]
@@ -475,14 +439,15 @@ def extract_body_parts(
             "parent": "torso",
             "parent_joint": "hip_left",
             "z_index": 2,
-            "joints": {"knee": [ul_l_piv[0], ul_l_piv[1] + 145]},
+            "joints": {"knee": [ul_l_piv[0], ul_l_piv[1] + 155]},
         }
 
         # 7. Lower leg left
-        ll_l = arr[695:875, 68:140].copy()
+        # Y in 1x: 360..450 -> in 2x: 410..590
+        ll_l = arr[408:592, 60:140].copy()
         ll_l_img = Image.fromarray(ll_l)
         ll_l_capped, ll_l_piv = add_overlap_joint_cap(
-            ll_l_img, pivot=(36, 8), radius=16, fill_color=palette["pants"], outline_color=palette["pants_dark"]
+            ll_l_img, pivot=(36, 10), radius=16, fill_color=palette["pants"], outline_color=palette["pants_dark"]
         )
         parts["leg_lower_left"] = {
             "image": ll_l_capped,
@@ -490,11 +455,12 @@ def extract_body_parts(
             "parent": "leg_upper_left",
             "parent_joint": "knee",
             "z_index": 2,
-            "joints": {"ankle": [ll_l_piv[0], ll_l_piv[1] + 155]},
+            "joints": {"ankle": [ll_l_piv[0], ll_l_piv[1] + 165]},
         }
 
         # 8. Shoe left
-        shoe_l = arr[860:980, 52:145].copy()
+        # Y in 1x: 445..503 -> in 2x: 580..700
+        shoe_l = arr[578:700, 48:145].copy()
         parts["shoe_left"] = {
             "image": Image.fromarray(shoe_l),
             "pivot": [46, 12],
@@ -505,7 +471,7 @@ def extract_body_parts(
         }
 
         # 9. Upper leg right
-        ul_r = arr[535:715, 145:220].copy()
+        ul_r = arr[248:422, 145:225].copy()
         ul_r_img = Image.fromarray(ul_r)
         ul_r_capped, ul_r_piv = add_overlap_joint_cap(
             ul_r_img, pivot=(38, 10), radius=18, fill_color=palette["pants"], outline_color=palette["pants_dark"]
@@ -516,14 +482,14 @@ def extract_body_parts(
             "parent": "torso",
             "parent_joint": "hip_right",
             "z_index": 1,
-            "joints": {"knee": [ul_r_piv[0], ul_r_piv[1] + 145]},
+            "joints": {"knee": [ul_r_piv[0], ul_r_piv[1] + 155]},
         }
 
         # 10. Lower leg right
-        ll_r = arr[695:875, 145:218].copy()
+        ll_r = arr[408:592, 145:225].copy()
         ll_r_img = Image.fromarray(ll_r)
         ll_r_capped, ll_r_piv = add_overlap_joint_cap(
-            ll_r_img, pivot=(36, 8), radius=16, fill_color=palette["pants"], outline_color=palette["pants_dark"]
+            ll_r_img, pivot=(36, 10), radius=16, fill_color=palette["pants"], outline_color=palette["pants_dark"]
         )
         parts["leg_lower_right"] = {
             "image": ll_r_capped,
@@ -531,11 +497,11 @@ def extract_body_parts(
             "parent": "leg_upper_right",
             "parent_joint": "knee",
             "z_index": 1,
-            "joints": {"ankle": [ll_r_piv[0], ll_r_piv[1] + 155]},
+            "joints": {"ankle": [ll_r_piv[0], ll_r_piv[1] + 165]},
         }
 
         # 11. Shoe right
-        shoe_r = arr[860:980, 145:238].copy()
+        shoe_r = arr[578:700, 145:242].copy()
         parts["shoe_right"] = {
             "image": Image.fromarray(shoe_r),
             "pivot": [38, 12],
@@ -546,34 +512,35 @@ def extract_body_parts(
         }
 
     else:  # girl_a
-        # Coordinates on 308x850 2x canvas
-        # 1. Torso
-        torso_crop = arr[190:470, 50:258].copy()
+        # 2x front canvas: 308 x 520
+        # Front crop was (18, 210, 172, 470) -> 1x Y origin is 210, 1x X origin is 18
+        # 1. Torso: Y in 1x is 212..290 -> in 2x: (212-210)*2 = 4 to (290-210)*2 = 160
+        torso_crop = arr[2:162, 50:258].copy()
         torso_img = Image.fromarray(torso_crop)
         tdraw = ImageDraw.Draw(torso_img)
-        tdraw.rectangle([0, 50, 30, 220], fill=palette["hoodie"])
-        tdraw.rectangle([178, 50, 208, 220], fill=palette["hoodie"])
+        tdraw.rectangle([0, 20, 32, 150], fill=palette["hoodie"])
+        tdraw.rectangle([176, 20, 208, 150], fill=palette["hoodie"])
 
         parts["torso"] = {
             "image": torso_img,
-            "pivot": [104, 260],
+            "pivot": [104, 154],
             "parent": None,
             "parent_joint": None,
             "z_index": 4,
             "joints": {
-                "neck": [104, 10],
-                "shoulder_left": [28, 40],
-                "shoulder_right": [180, 40],
-                "hip_left": [68, 260],
-                "hip_right": [140, 260],
+                "neck": [104, 6],
+                "shoulder_left": [26, 25],
+                "shoulder_right": [182, 25],
+                "hip_left": [68, 154],
+                "hip_right": [140, 154],
             },
         }
 
-        # Upper arm left
-        ua_l = arr[210:355, 20:80].copy()
+        # 2. Upper arm left (actual arm, Y in 1x is 215..265 -> in 2x: 10..110)
+        ua_l = arr[10:112, 10:80].copy()
         ua_l_img = Image.fromarray(ua_l)
         ua_l_capped, ua_l_piv = add_overlap_joint_cap(
-            ua_l_img, pivot=(28, 10), radius=15, fill_color=palette["hoodie"], outline_color=palette["hoodie_dark"]
+            ua_l_img, pivot=(28, 10), radius=15, fill_color=palette["skin"], outline_color=palette["hoodie_dark"]
         )
         parts["arm_upper_left"] = {
             "image": ua_l_capped,
@@ -581,11 +548,11 @@ def extract_body_parts(
             "parent": "torso",
             "parent_joint": "shoulder_left",
             "z_index": 6,
-            "joints": {"elbow": [ua_l_piv[0] - 2, ua_l_piv[1] + 115]},
+            "joints": {"elbow": [ua_l_piv[0] - 2, ua_l_piv[1] + 90]},
         }
 
-        # Forearm + hand left
-        la_l = arr[335:495, 20:80].copy()
+        # 3. Forearm + hand left (Y in 1x is 260..325 -> in 2x: 100..232)
+        la_l = arr[98:232, 10:80].copy()
         la_l_img = Image.fromarray(la_l)
         la_l_capped, la_l_piv = add_overlap_joint_cap(
             la_l_img, pivot=(28, 8), radius=13, fill_color=palette["skin"], outline_color=palette["hoodie_dark"]
@@ -599,11 +566,11 @@ def extract_body_parts(
             "joints": {},
         }
 
-        # Upper arm right
-        ua_r = arr[210:355, 225:285].copy()
+        # 4. Upper arm right (Y in 1x is 215..265 -> in 2x: 10..112)
+        ua_r = arr[10:112, 224:294].copy()
         ua_r_img = Image.fromarray(ua_r)
         ua_r_capped, ua_r_piv = add_overlap_joint_cap(
-            ua_r_img, pivot=(32, 10), radius=15, fill_color=palette["hoodie"], outline_color=palette["hoodie_dark"]
+            ua_r_img, pivot=(34, 10), radius=15, fill_color=palette["skin"], outline_color=palette["hoodie_dark"]
         )
         parts["arm_upper_right"] = {
             "image": ua_r_capped,
@@ -611,14 +578,14 @@ def extract_body_parts(
             "parent": "torso",
             "parent_joint": "shoulder_right",
             "z_index": 3,
-            "joints": {"elbow": [ua_r_piv[0] + 2, ua_r_piv[1] + 115]},
+            "joints": {"elbow": [ua_r_piv[0] + 2, ua_r_piv[1] + 90]},
         }
 
-        # Forearm + hand right
-        la_r = arr[335:495, 225:285].copy()
+        # 5. Forearm + hand right (Y in 1x is 260..325 -> in 2x: 98..232)
+        la_r = arr[98:232, 224:294].copy()
         la_r_img = Image.fromarray(la_r)
         la_r_capped, la_r_piv = add_overlap_joint_cap(
-            la_r_img, pivot=(32, 8), radius=13, fill_color=palette["skin"], outline_color=palette["hoodie_dark"]
+            la_r_img, pivot=(34, 8), radius=13, fill_color=palette["skin"], outline_color=palette["hoodie_dark"]
         )
         parts["arm_lower_right"] = {
             "image": la_r_capped,
@@ -629,8 +596,8 @@ def extract_body_parts(
             "joints": {},
         }
 
-        # Upper leg left
-        ul_l = arr[460:615, 68:145].copy()
+        # 6. Upper leg left (Y in 1x is 288..360 -> in 2x: 154..302)
+        ul_l = arr[152:304, 60:140].copy()
         ul_l_img = Image.fromarray(ul_l)
         ul_l_capped, ul_l_piv = add_overlap_joint_cap(
             ul_l_img, pivot=(38, 10), radius=16, fill_color=palette["pants"], outline_color=palette["pants_dark"]
@@ -641,11 +608,11 @@ def extract_body_parts(
             "parent": "torso",
             "parent_joint": "hip_left",
             "z_index": 2,
-            "joints": {"knee": [ul_l_piv[0], ul_l_piv[1] + 125]},
+            "joints": {"knee": [ul_l_piv[0], ul_l_piv[1] + 135]},
         }
 
-        # Lower leg left
-        ll_l = arr[595:745, 68:145].copy()
+        # 7. Lower leg left (Y in 1x is 355..432 -> in 2x: 288..446)
+        ll_l = arr[286:446, 60:140].copy()
         ll_l_img = Image.fromarray(ll_l)
         ll_l_capped, ll_l_piv = add_overlap_joint_cap(
             ll_l_img, pivot=(38, 8), radius=14, fill_color=palette["pants"], outline_color=palette["pants_dark"]
@@ -656,11 +623,11 @@ def extract_body_parts(
             "parent": "leg_upper_left",
             "parent_joint": "knee",
             "z_index": 2,
-            "joints": {"ankle": [ll_l_piv[0], ll_l_piv[1] + 130]},
+            "joints": {"ankle": [ll_l_piv[0], ll_l_piv[1] + 145]},
         }
 
-        # Shoe left
-        shoe_l = arr[730:845, 58:148].copy()
+        # 8. Shoe left (Y in 1x is 430..468 -> in 2x: 438..520)
+        shoe_l = arr[436:520, 50:145].copy()
         parts["shoe_left"] = {
             "image": Image.fromarray(shoe_l),
             "pivot": [45, 12],
@@ -670,8 +637,8 @@ def extract_body_parts(
             "joints": {},
         }
 
-        # Upper leg right
-        ul_r = arr[460:615, 150:228].copy()
+        # 9. Upper leg right
+        ul_r = arr[152:304, 145:225].copy()
         ul_r_img = Image.fromarray(ul_r)
         ul_r_capped, ul_r_piv = add_overlap_joint_cap(
             ul_r_img, pivot=(38, 10), radius=16, fill_color=palette["pants"], outline_color=palette["pants_dark"]
@@ -682,11 +649,11 @@ def extract_body_parts(
             "parent": "torso",
             "parent_joint": "hip_right",
             "z_index": 1,
-            "joints": {"knee": [ul_r_piv[0], ul_r_piv[1] + 125]},
+            "joints": {"knee": [ul_r_piv[0], ul_r_piv[1] + 135]},
         }
 
-        # Lower leg right
-        ll_r = arr[595:745, 150:228].copy()
+        # 10. Lower leg right
+        ll_r = arr[286:446, 145:225].copy()
         ll_r_img = Image.fromarray(ll_r)
         ll_r_capped, ll_r_piv = add_overlap_joint_cap(
             ll_r_img, pivot=(38, 8), radius=14, fill_color=palette["pants"], outline_color=palette["pants_dark"]
@@ -697,11 +664,11 @@ def extract_body_parts(
             "parent": "leg_upper_right",
             "parent_joint": "knee",
             "z_index": 1,
-            "joints": {"ankle": [ll_r_piv[0], ll_r_piv[1] + 130]},
+            "joints": {"ankle": [ll_r_piv[0], ll_r_piv[1] + 145]},
         }
 
-        # Shoe right
-        shoe_r = arr[730:845, 150:240].copy()
+        # 11. Shoe right
+        shoe_r = arr[436:520, 145:240].copy()
         parts["shoe_right"] = {
             "image": Image.fromarray(shoe_r),
             "pivot": [42, 12],
@@ -730,9 +697,8 @@ def assemble_character_pose(
     angles = angles or {}
     canvas = Image.new("RGBA", canvas_size, (0, 0, 0, 0))
 
-    # Calculate Torso placement
     torso = parts["torso"]
-    root_x, root_y = canvas_size[0] // 2, 540
+    root_x, root_y = canvas_size[0] // 2, 530
 
     transforms: Dict[str, Dict[str, Any]] = {}
     computed_joints: Dict[str, Tuple[float, float]] = {}
@@ -758,7 +724,7 @@ def assemble_character_pose(
         ry = dx * sin_t + dy * cos_t
         computed_joints[j_name] = (root_x + rx, root_y + ry)
 
-    # Helper to resolve chains
+    # Helper to resolve kinematics chains
     def resolve_part(name: str, parent_joint: str, local_rot_name: str):
         part = parts.get(name)
         if not part or parent_joint not in computed_joints:
@@ -800,12 +766,12 @@ def assemble_character_pose(
     resolve_part("leg_lower_right", "leg_upper_right_knee", "leg_lower_right")
     resolve_part("shoe_right", "leg_lower_right_ankle", "shoe_right")
 
-    # Head placement at neck
+    # Head placement at neck anchor (chin/neck seats right inside collar)
     neck_pos = computed_joints["neck"]
     head_rot = torso_rot + angles.get("head", 0.0)
-    head_piv = (142, 242)  # Chin / collar base of head
+    head_piv = (142, 240)
 
-    # Render sorted layers
+    # Render parts in z-order
     sorted_parts = sorted(transforms.items(), key=lambda x: x[1]["z_index"])
 
     for name, tdata in sorted_parts:
@@ -814,11 +780,10 @@ def assemble_character_pose(
         pos = tdata["world_pos"]
         rot = tdata["world_rot"]
 
-        # Rotate around pivot
         rotated, corner_pos = rotate_image_around_pivot(img, piv, rot, pos)
         canvas.alpha_composite(rotated, corner_pos)
 
-    # Render Head on top (or back of head if back view)
+    # Render Head
     if is_back_view:
         rot_hb, corner_hb = rotate_image_around_pivot(head_back_img, head_piv, head_rot, neck_pos)
         canvas.alpha_composite(rot_hb, corner_hb)
@@ -941,8 +906,8 @@ def create_character_pack(char_id: str) -> Dict[str, Any]:
     ]
 
     pivots = {
-        "neck": [105, 12] if char_id == "boy_b" else [104, 10],
-        "head": [142, 242],
+        "neck": body_parts["torso"]["joints"]["neck"],
+        "head": [142, 240],
         "shoulder_left": body_parts["torso"]["joints"]["shoulder_left"],
         "shoulder_right": body_parts["torso"]["joints"]["shoulder_right"],
         "elbow_left": body_parts["arm_upper_left"]["joints"]["elbow"],
@@ -1044,7 +1009,7 @@ def create_character_pack(char_id: str) -> Dict[str, Any]:
     char_json["parts"]["head"] = {
         "name": "head",
         "image": "layers/head_base.png",
-        "pivot": [142, 242],
+        "pivot": [142, 240],
         "parent": "torso",
         "parent_joint": "neck",
         "slot": None,
@@ -1062,20 +1027,6 @@ def create_character_pack(char_id: str) -> Dict[str, Any]:
     print(f"Saved character.json: {char_json_p.name}")
 
     # 7. Render Preview Sheet
-    # Poses:
-    # 1. Front standing (default eyes, closed mouth)
-    # 2. Mouth closed
-    # 3. Mouth slightly open
-    # 4. Mouth wide open
-    # 5. Mouth round O
-    # 6. Mouth open smile
-    # 7. Eyes blink
-    # 8. Eyes look left
-    # 9. Eyes look right
-    # 10. One arm raised
-    # 11. Walking leg swing
-    # 12. Back view standing
-
     preview_poses = [
         ("pose_01_front_standing", {}, "open", "closed", False),
         ("pose_02_mouth_slightly_open", {}, "open", "slightly_open", False),
@@ -1137,11 +1088,9 @@ def create_character_pack(char_id: str) -> Dict[str, Any]:
         x = col * cell_w
         y = row * cell_h
 
-        # Downscale pose to fit cell
         thumb = pimg.resize((cell_w, cell_h), Image.Resampling.LANCZOS)
         preview_sheet.alpha_composite(thumb, (x, y))
 
-        # Label
         label = pname.replace("pose_", "").replace("_", " ").title()
         sdraw.rectangle([x + 10, y + cell_h - 30, x + cell_w - 10, y + cell_h - 8], fill=(30, 41, 59, 220))
         sdraw.text((x + 16, y + cell_h - 26), label, fill=(248, 250, 252, 255))
@@ -1149,6 +1098,38 @@ def create_character_pack(char_id: str) -> Dict[str, Any]:
     contact_sheet_p = staging_dir / f"{char_id}_preview_sheet.png"
     preview_sheet.save(contact_sheet_p)
     print(f"Saved complete preview contact sheet: {contact_sheet_p}")
+
+    # 8. Render standing pose comparison against source sheet
+    body_im = Image.open(body_path).convert("RGBA")
+    front_src = body_im.crop((20, 15, 170, 508)) if char_id == "boy_b" else body_im.crop((18, 50, 172, 475))
+    front_src_clean = floodfill_transparent_bg(front_src, bg_thresh=238)
+
+    # Crop standing pose bounding box
+    standing_pose = rendered_pose_images[0][1]
+    bbox = standing_pose.getbbox()
+    if bbox:
+        standing_crop = standing_pose.crop(bbox)
+        # Scale to match source height
+        target_h = front_src_clean.size[1]
+        scale = target_h / max(1, standing_crop.size[1])
+        target_w = int(round(standing_crop.size[0] * scale))
+        standing_scaled = standing_crop.resize((target_w, target_h), Image.Resampling.LANCZOS)
+
+        cmp_w = front_src_clean.size[0] + standing_scaled.size[0] + 20
+        cmp_h = target_h + 40
+        cmp_img = Image.new("RGBA", (cmp_w, cmp_h), (255, 255, 255, 255))
+        cdraw = ImageDraw.Draw(cmp_img)
+
+        # Draw labels
+        cdraw.text((10, 8), "Source Sheet", fill=(100, 100, 100, 255))
+        cdraw.text((front_src_clean.size[0] + 30, 8), "Rebuilt Standing Pose", fill=(100, 100, 100, 255))
+
+        cmp_img.alpha_composite(front_src_clean, (10, 30))
+        cmp_img.alpha_composite(standing_scaled, (front_src_clean.size[0] + 20, 30))
+
+        cmp_p = staging_dir / f"{char_id}_source_comparison.png"
+        cmp_img.save(cmp_p)
+        print(f"Saved source comparison check: {cmp_p}")
 
     return {
         "char_id": char_id,
