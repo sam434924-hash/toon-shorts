@@ -3,8 +3,8 @@ Purpose: Central configuration, paths, model names, pricing, and limits.
 Inputs: Environment variables and optional .env file.
 Outputs: Path objects, model constants, hard caps, pricing dictionaries.
 Depends on: dotenv, os, pathlib, sys
-Used by: cli, config, core, core.assembler, core.caps, core.client, core.cost, core.pipeline, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.gemini_tts, plugins.voice.piper, voice_utils
-Config keys: GEMINI_API_KEY, OneDrive
+Used by: cli, config, core, core.assembler, core.caps, core.character2d, core.client, core.cost, core.pipeline, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.render.animejs, plugins.render.blender3d, plugins.render.cairo, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.gemini_tts, plugins.voice.piper, voice_utils
+Config keys: ANIME_JS_PATH, BLENDER_PATH, GEMINI_API_KEY, OneDrive, ROUGH_JS_PATH, TTS_CACHE_DIR
 Tests: tests/unit/test_spend_cap.py, tests/unit/test_styles.py
 """
 
@@ -24,9 +24,12 @@ if not STYLES_DIR.exists() and (PROJECT_ROOT / "styles").exists():
 
 OUTPUT_DIR = PROJECT_ROOT / "output"
 TEMP_DIR = PROJECT_ROOT / "temp"
+TTS_CACHE_DIR = PROJECT_ROOT / "cache" / "tts"
 ASSETS_DIR = PROJECT_ROOT / "assets"
 PIPER_VOICES_DIR = ASSETS_DIR / "voices" / "piper"
 VOICES_REGISTRY_PATH = PROJECT_ROOT / "voices.json"
+ANIME_JS_PATH = PROJECT_ROOT / "src" / "toonshorts" / "assets" / "vendor" / "anime-3.2.2.min.js"
+ROUGH_JS_PATH = PROJECT_ROOT / "src" / "toonshorts" / "assets" / "vendor" / "rough-4.6.6.min.js"
 
 # Load environment variables strictly from .env located at PROJECT_ROOT
 ENV_FILE = PROJECT_ROOT / ".env"
@@ -35,6 +38,12 @@ if ENV_FILE.is_file():
 
 # API Keys - Never log or print these!
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
+
+# Blender executable path
+_default_blender = r"C:\Program Files\Blender Foundation\Blender 5.2\blender.exe"
+BLENDER_PATH = os.getenv("BLENDER_PATH", "").strip()
+if not BLENDER_PATH and os.path.isfile(_default_blender):
+    BLENDER_PATH = _default_blender
 
 # Default Plugins
 DEFAULT_LLM = "gemini"
@@ -103,3 +112,17 @@ def check_cloud_sync_warning(project_path: Path = PROJECT_ROOT) -> bool:
         sys.stderr.flush()
         return True
     return False
+
+# 3D Blender Render Caps and Settings
+BLENDER_DRAFT_WIDTH = 540
+BLENDER_DRAFT_HEIGHT = 960
+BLENDER_DRAFT_FPS = 12
+
+BLENDER_FINAL_WIDTH = 1080
+BLENDER_FINAL_HEIGHT = 1920
+BLENDER_FINAL_FPS = 24
+
+BLENDER_MAX_FRAMES = 720
+BLENDER_MAX_SECONDS_PER_RUN = 120.0
+BLENDER_MAX_RESOLUTION = (1920, 1920)
+BLENDER_RENDER_TIMEOUT_SECONDS = 300
