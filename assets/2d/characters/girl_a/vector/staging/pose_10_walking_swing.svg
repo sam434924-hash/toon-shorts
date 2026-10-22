@@ -3,7 +3,7 @@
   <g id="character_root">
     <g id="fk_head_back" transform="rotate(0.0, 500, 520)">
       <g id="layer_head_back">
-    <path fill="#9e3108" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M330 240 L240 310 L275 345 L220 415 L280 435 L225 510 L300 500 L285 570 L360 520 L370 580 L440 510 L500 540 L560 510 L630 580 L640 520 L715 570 L700 500 L775 510 L720 435 L780 415 L725 345 L760 310 L670 240 Z" />
+    <path fill="#9e3108" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 45 L440 85 L375 120 L320 165 L270 235 L240 310 L275 345 L220 415 L280 435 L225 510 L300 500 L285 570 L360 520 L370 580 L440 510 L500 540 L560 510 L630 580 L640 520 L715 570 L700 500 L775 510 L720 435 L780 415 L725 345 L760 310 L730 235 L680 165 L625 120 L560 85 Z" />
     <polygon points="240,310 275,345 320,290" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="275,345 220,415 300,380" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="220,415 280,435 295,455" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
@@ -12,6 +12,13 @@
     <polygon points="725,345 780,415 700,380" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="780,415 720,435 705,455" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="720,435 775,510 700,480" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <!-- Top Back Facets for back view -->
+    <polygon points="500,45 440,85 500,140" fill="#eb5e1b" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="500,45 500,140 560,85" fill="#f8782a" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="440,85 375,120 440,165" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="440,85 440,165 500,140" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="560,85 500,140 560,165" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="560,85 625,120 560,165" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
   </g>
     </g>
     <g id="fk_leg_r" transform="rotate(-26.0, 565, 930)">
@@ -36,19 +43,29 @@
   </g>
         <g id="fk_shoe_r" transform="rotate(0.0, 600, 1380)">
           <g id="layer_shoe_right">
-    <!-- Ankle overlap cap (tucks under pant cuff) -->
-    <circle cx="600" cy="1380" r="36" fill="#6f3477" stroke="#2a1523" stroke-width="6" />
-    <!-- Shoe Upper Body -->
-    <path fill="#6f3477" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M665 1415 L625 1380 L535 1380 L530 1445 L555 1515 L680 1515 Z" />
-    <path fill="#934c9c" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M655 1415 L615 1380 L540 1380 L535 1440 L560 1510 L670 1510 Z" />
-    <!-- White Curved Rubber Toe Cap -->
-    <path fill="#ffffff" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M675 1515 L675 1475 C675 1440 640 1425 605 1425 L572 1515 Z" />
-    <!-- Laces -->
-    <line x1="615" y1="1435" x2="575" y2="1440" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
-    <line x1="622" y1="1460" x2="580" y2="1465" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
-    <line x1="632" y1="1485" x2="585" y2="1490" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
-    <!-- Thick Rubber Sole -->
-    <path fill="#f0e8f2" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M685 1510 L555 1510 C545 1510 540 1525 545 1545 L685 1545 C695 1545 695 1510 685 1510 Z" />
+    <!-- Ankle overlap cap (tucks under pant cuff at (600, 1370)) -->
+    <circle cx="600" cy="1370" r="34" fill="#6f3477" stroke="#2a1523" stroke-width="5" />
+    <!-- Skin sliver on medial side under cuff -->
+    <path fill="#fedbc3" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M578 1412 L556 1412 L556 1432 L578 1432 Z" />
+    <!-- Sneaker Tongue (purple rounded top sticking out above laces) -->
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M630 1418 C620 1410 585 1410 577 1418 L577 1437 L634 1437 Z" />
+    <!-- Purple Canvas Quarter / Heel counter (lateral/medial side panel) -->
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M577 1432 L549 1437 L545 1494 L604 1502 L604 1488 Z" />
+    <path fill="#6f3477" d="M558 1436 L549 1437 L545 1494 L557 1497 Z" />
+    <!-- Throat / Laces Underlay (dark purple canvas) -->
+    <path fill="#6f3477" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M630 1437 L577 1437 L604 1488 L655 1469 Z" />
+    <!-- 4 White Laces Bars -->
+    <path fill="#ffffff" stroke="#2a1523" stroke-width="2.5" stroke-linejoin="round" d="M635 1440 Q608 1444 580 1440 L583 1448 Q609 1452 638 1448 Z" />
+    <path fill="#ffffff" stroke="#2a1523" stroke-width="2.5" stroke-linejoin="round" d="M642 1451 Q614 1455 588 1452 L591 1460 Q615 1463 645 1459 Z" />
+    <path fill="#ffffff" stroke="#2a1523" stroke-width="2.5" stroke-linejoin="round" d="M649 1460 Q620 1465 594 1462 L597 1470 Q621 1474 652 1469 Z" />
+    <path fill="#ffffff" stroke="#2a1523" stroke-width="2.5" stroke-linejoin="round" d="M656 1470 Q628 1476 602 1474 L605 1482 Q629 1484 659 1478 Z" />
+    <!-- White Rubber Toe Cap (Solid 3D volume matching source) -->
+    <path fill="#ffffff" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M655 1469 L604 1488 L647 1494 C671 1490 681 1483 684 1479 Z" />
+    <path fill="#eef2f6" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M684 1479 C681 1483 671 1490 647 1494 L604 1488 L604 1502 L647 1509 C671 1505 682 1498 685 1494 Z" />
+    <!-- Thick Rubber Sole with 3D contour -->
+    <path fill="#f0e8f2" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M685 1494 C682 1498 671 1505 647 1509 L604 1502 L604 1526 L655 1533 C674 1530 684 1520 685 1508 Z" />
+    <path fill="#e6eaef" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M604 1502 L545 1494 L546 1506 L590 1530 L604 1526 Z" />
+    <line x1="604" y1="1502" x2="604" y2="1526" stroke="#2a1523" stroke-width="4.5" stroke-linecap="round" />
   </g>
         </g>
       </g>
@@ -75,19 +92,29 @@
   </g>
         <g id="fk_shoe_l" transform="rotate(0.0, 400, 1380)">
           <g id="layer_shoe_left">
-    <!-- Ankle overlap cap (tucks under pant cuff) -->
-    <circle cx="400" cy="1380" r="36" fill="#6f3477" stroke="#2a1523" stroke-width="6" />
-    <!-- Shoe Upper Body -->
-    <path fill="#6f3477" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M335 1415 L375 1380 L465 1380 L470 1445 L445 1515 L320 1515 Z" />
-    <path fill="#934c9c" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M345 1415 L385 1380 L460 1380 L465 1440 L440 1510 L330 1510 Z" />
-    <!-- White Curved Rubber Toe Cap -->
-    <path fill="#ffffff" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M325 1515 L325 1475 C325 1440 360 1425 395 1425 L428 1515 Z" />
-    <!-- Laces -->
-    <line x1="385" y1="1435" x2="425" y2="1440" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
-    <line x1="378" y1="1460" x2="420" y2="1465" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
-    <line x1="368" y1="1485" x2="415" y2="1490" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
-    <!-- Thick Rubber Sole -->
-    <path fill="#f0e8f2" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M315 1510 L445 1510 C455 1510 460 1525 455 1545 L315 1545 C305 1545 305 1510 315 1510 Z" />
+    <!-- Ankle overlap cap (tucks under pant cuff at (400, 1370)) -->
+    <circle cx="400" cy="1370" r="34" fill="#6f3477" stroke="#2a1523" stroke-width="5" />
+    <!-- Skin sliver on medial side under cuff -->
+    <path fill="#fedbc3" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M422 1412 L444 1412 L444 1432 L422 1432 Z" />
+    <!-- Sneaker Tongue (purple rounded top sticking out above laces) -->
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M370 1418 C380 1410 415 1410 423 1418 L423 1437 L366 1437 Z" />
+    <!-- Purple Canvas Quarter / Heel counter (lateral/medial side panel) -->
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M423 1432 L451 1437 L455 1494 L396 1502 L396 1488 Z" />
+    <path fill="#6f3477" d="M442 1436 L451 1437 L455 1494 L443 1497 Z" />
+    <!-- Throat / Laces Underlay (dark purple canvas) -->
+    <path fill="#6f3477" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M370 1437 L423 1437 L396 1488 L345 1469 Z" />
+    <!-- 4 White Laces Bars -->
+    <path fill="#ffffff" stroke="#2a1523" stroke-width="2.5" stroke-linejoin="round" d="M365 1440 Q392 1444 420 1440 L417 1448 Q391 1452 362 1448 Z" />
+    <path fill="#ffffff" stroke="#2a1523" stroke-width="2.5" stroke-linejoin="round" d="M358 1451 Q386 1455 412 1452 L409 1460 Q385 1463 355 1459 Z" />
+    <path fill="#ffffff" stroke="#2a1523" stroke-width="2.5" stroke-linejoin="round" d="M351 1460 Q380 1465 406 1462 L403 1470 Q379 1474 348 1469 Z" />
+    <path fill="#ffffff" stroke="#2a1523" stroke-width="2.5" stroke-linejoin="round" d="M344 1470 Q372 1476 398 1474 L395 1482 Q371 1484 341 1478 Z" />
+    <!-- White Rubber Toe Cap (Solid 3D volume matching source) -->
+    <path fill="#ffffff" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M345 1469 L396 1488 L353 1494 C329 1490 319 1483 316 1479 Z" />
+    <path fill="#eef2f6" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M316 1479 C319 1483 329 1490 353 1494 L396 1488 L396 1502 L353 1509 C329 1505 318 1498 315 1494 Z" />
+    <!-- Thick Rubber Sole with 3D contour -->
+    <path fill="#f0e8f2" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M315 1494 C318 1498 329 1505 353 1509 L396 1502 L396 1526 L345 1533 C326 1530 316 1520 315 1508 Z" />
+    <path fill="#e6eaef" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M396 1502 L455 1494 L454 1506 L410 1530 L396 1526 Z" />
+    <line x1="396" y1="1502" x2="396" y2="1526" stroke="#2a1523" stroke-width="4.5" stroke-linecap="round" />
   </g>
         </g>
       </g>
@@ -171,6 +198,8 @@
     <circle cx="595" cy="426" r="2.5" fill="#d5896a" />
     <!-- Nose -->
     <path fill="#f1b799" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M492 390 Q500 402 508 390 Z" />
+    <!-- Hair Front Solid Silhouette Underlay (prevents seam slivers, pinholes, and white gaps) -->
+    <path fill="#9e3108" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 45 L440 90 L375 125 L320 170 L295 245 L345 280 L375 250 L390 205 L445 215 L485 250 L500 205 L515 250 L555 215 L610 205 L625 250 L655 280 L705 245 L680 170 L625 125 L560 90 Z" />
     <!-- Hair Front Facets -->
     <polygon points="500,45 440,90 500,115" fill="#f8782a" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="500,45 500,115 560,90" fill="#eb5e1b" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
@@ -187,16 +216,21 @@
     <polygon points="565,145 555,215 610,205" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="480,175 445,215 485,250" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="480,175 485,250 500,205" fill="#eb5e1b" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <!-- Center connecting facet (previously missing, leaving white hole) -->
+    <polygon points="480,175 520,175 500,205" fill="#eb5e1b" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="520,175 500,205 515,250" fill="#f8782a" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="520,175 515,250 555,215" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="375,125 320,170 355,220" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="375,125 355,220 390,205" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="355,220 295,245 345,280" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
-    <polygon points="355,220 345,280 390,250" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="355,220 345,280 375,250" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="355,220 375,250 390,205" fill="#eb5e1b" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="625,125 610,205 645,220" fill="#f8782a" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="625,125 645,220 680,170" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
-    <polygon points="645,220 610,250 655,280" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="645,220 625,250 655,280" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="645,220 610,205 625,250" fill="#eb5e1b" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="645,220 655,280 705,245" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
+    <!-- Outer Contour Stroke -->
     <path fill="none" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 45 L440 90 L375 125 L320 170 L295 245 L345 280 L375 250 L390 205 L445 215 L485 250 L500 205 L515 250 L555 215 L610 205 L625 250 L655 280 L705 245 L680 170 L625 125 L560 90 Z" />
   </g>
       <g id="layer_eyes_open">

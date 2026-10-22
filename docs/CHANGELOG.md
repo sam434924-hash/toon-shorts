@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-22: Fixed hair facet holes and white spot transparency in boy_b and girl_a vector character packs with solid silhouette underlays, and upgraded shoes to authentic 3/4 perspective faceted sneakers with contoured soles and laces matching reference artwork.
 - 2026-10-22: Refined boy_b and girl_a vector character packs: corrected boy_b elbow split to waist level with full hoodie sleeves and cuffs, aligned girl_a knee/ankle pivots with joint cap centers, and added layer_paths to manifest schemas.
 - 2026-10-22: Rebuilt boy_b and girl_a character packs as clean vector (SVG) layers with elbow/knee splits, 22 independent layers each, direct fills/strokes, consistent 1000x1500 viewBox, redrawn shoes/hands/hair, and multi-resolution preview sheets in vector/ subfolders.
 

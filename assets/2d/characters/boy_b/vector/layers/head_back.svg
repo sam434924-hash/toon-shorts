@@ -1,11 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_head_back">
-    <path fill="#2c1813" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M330 250 L270 310 L295 340 L255 400 L300 420 L260 480 L325 485 L315 530 L375 490 L385 535 L440 480 L500 505 L560 480 L615 535 L625 490 L685 530 L675 485 L740 480 L700 420 L745 400 L705 340 L730 310 L670 250 Z" />
-    <polygon points="330,250 270,310 320,330" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
-    <polygon points="270,310 295,340 255,400" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
-    <polygon points="255,400 300,420 260,480" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
-    <polygon points="670,250 730,310 680,330" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
-    <polygon points="730,310 705,340 745,400" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
-    <polygon points="745,400 700,420 740,480" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <path fill="#2c1813" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 60 L445 95 L385 130 L330 180 L270 240 L250 310 L280 345 L240 410 L290 430 L250 485 L315 490 L305 535 L365 495 L375 540 L435 485 L500 510 L565 485 L625 540 L635 495 L695 535 L685 490 L750 485 L710 430 L760 410 L720 345 L750 310 L730 240 L670 180 L615 130 L555 95 Z" />
+    <polygon points="330,240 270,310 320,330" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="270,310 280,345 240,410" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="240,410 290,430 250,485" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="670,240 730,310 680,330" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="730,310 720,345 760,410" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="760,410 710,430 750,485" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <!-- Top Back Facets for back view -->
+    <polygon points="500,60 445,95 500,150" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="500,60 500,150 555,95" fill="#5b3429" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="445,95 385,130 440,175" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="445,95 440,175 500,150" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="555,95 500,150 560,175" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="555,95 615,130 560,175" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
   </g>
 </svg>

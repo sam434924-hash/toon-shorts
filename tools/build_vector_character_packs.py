@@ -57,13 +57,20 @@ def get_boy_b_layers() -> Dict[str, str]:
     # 1. head_back
     layers["head_back"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_head_back">
-    <path fill="{HAIR_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M330 250 L270 310 L295 340 L255 400 L300 420 L260 480 L325 485 L315 530 L375 490 L385 535 L440 480 L500 505 L560 480 L615 535 L625 490 L685 530 L675 485 L740 480 L700 420 L745 400 L705 340 L730 310 L670 250 Z" />
-    <polygon points="330,250 270,310 320,330" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
-    <polygon points="270,310 295,340 255,400" fill="{HAIR_DARK}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
-    <polygon points="255,400 300,420 260,480" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
-    <polygon points="670,250 730,310 680,330" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
-    <polygon points="730,310 705,340 745,400" fill="{HAIR_DARK}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
-    <polygon points="745,400 700,420 740,480" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <path fill="{HAIR_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 60 L445 95 L385 130 L330 180 L270 240 L250 310 L280 345 L240 410 L290 430 L250 485 L315 490 L305 535 L365 495 L375 540 L435 485 L500 510 L565 485 L625 540 L635 495 L695 535 L685 490 L750 485 L710 430 L760 410 L720 345 L750 310 L730 240 L670 180 L615 130 L555 95 Z" />
+    <polygon points="330,240 270,310 320,330" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="270,310 280,345 240,410" fill="{HAIR_DARK}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="240,410 290,430 250,485" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="670,240 730,310 680,330" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="730,310 720,345 760,410" fill="{HAIR_DARK}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="760,410 710,430 750,485" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <!-- Top Back Facets for back view -->
+    <polygon points="500,60 445,95 500,150" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="500,60 500,150 555,95" fill="{HAIR_LIGHT}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="445,95 385,130 440,175" fill="{HAIR_DARK}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="445,95 440,175 500,150" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="555,95 500,150 560,175" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="555,95 615,130 560,175" fill="{HAIR_DARK}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
   </g>
 </svg>"""
 
@@ -93,6 +100,8 @@ def get_boy_b_layers() -> Dict[str, str]:
     <path fill="none" stroke="#251a17" stroke-width="9" stroke-linecap="round" d="M492 336 Q500 325 508 336" />
     <line x1="398" y1="336" x2="362" y2="330" stroke="#251a17" stroke-width="7" stroke-linecap="round" />
     <line x1="602" y1="336" x2="638" y2="330" stroke="#251a17" stroke-width="7" stroke-linecap="round" />
+    <!-- Hair Front Solid Silhouette Underlay (prevents seam slivers, pinholes, and white gaps) -->
+    <path fill="{HAIR_DARK}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 60 L445 100 L390 130 L335 175 L315 240 L355 275 L385 245 L400 205 L450 215 L485 245 L500 200 L515 245 L550 215 L600 205 L615 245 L645 275 L685 240 L665 175 L610 130 L555 100 Z" />
     <!-- Hair Front Facets -->
     <polygon points="500,60 445,100 500,120" fill="{HAIR_LIGHT}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
     <polygon points="500,60 500,120 555,100" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
@@ -109,16 +118,21 @@ def get_boy_b_layers() -> Dict[str, str]:
     <polygon points="560,150 550,215 600,205" fill="{HAIR_DARK}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
     <polygon points="480,175 450,215 485,245" fill="{HAIR_SHADOW}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
     <polygon points="480,175 485,245 500,200" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <!-- Center connecting facet (previously missing, leaving white hole) -->
+    <polygon points="480,175 520,175 500,200" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
     <polygon points="520,175 500,200 515,245" fill="{HAIR_LIGHT}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
     <polygon points="520,175 515,245 550,215" fill="{HAIR_DARK}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
     <polygon points="390,130 335,175 365,225" fill="{HAIR_DARK}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
     <polygon points="390,130 365,225 400,205" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
     <polygon points="365,225 315,240 355,275" fill="{HAIR_SHADOW}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
-    <polygon points="365,225 355,275 400,250" fill="{HAIR_DARK}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="365,225 355,275 385,245" fill="{HAIR_DARK}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="365,225 385,245 400,205" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
     <polygon points="610,130 595,205 635,225" fill="{HAIR_LIGHT}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
     <polygon points="610,130 635,225 665,175" fill="{HAIR_DARK}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
-    <polygon points="635,225 600,250 645,275" fill="{HAIR_DARK}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="635,225 615,245 645,275" fill="{HAIR_DARK}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="635,225 600,205 615,245" fill="{HAIR_BASE}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
     <polygon points="635,225 645,275 685,240" fill="{HAIR_SHADOW}" stroke="{STROKE_SUBTLE}" stroke-width="3" stroke-linejoin="round" />
+    <!-- Outer Contour Stroke -->
     <path fill="none" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 60 L445 100 L390 130 L335 175 L315 240 L355 275 L385 245 L400 205 L450 215 L485 245 L500 200 L515 245 L550 215 L600 205 L615 245 L645 275 L685 240 L665 175 L610 130 L555 100 Z" />
   </g>
 </svg>"""
@@ -391,23 +405,33 @@ def get_boy_b_layers() -> Dict[str, str]:
   </g>
 </svg>"""
 
-    # 19. shoe_left (sneaker with ankle overlap cap, body, white toe cap, laces, sole)
+    # 19. shoe_left (authentic 3/4 perspective sneaker matching boy_b_front_large.png)
     # Ankle pivot at (420, 1345)
     layers["shoe_left"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_shoe_left">
-    <!-- Ankle overlap cap (tucks under jeans cuff) -->
+    <!-- Ankle overlap cap (tucks under jeans cuff at (420, 1345)) -->
     <circle cx="420" cy="1345" r="32" fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" />
-    <!-- Shoe Upper Body -->
-    <path fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M340 1400 L380 1345 L465 1345 L470 1435 L445 1510 L330 1510 Z" />
-    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M350 1400 L390 1345 L460 1345 L465 1430 L440 1505 L340 1505 Z" />
-    <!-- White Curved Rubber Toe Cap -->
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M335 1510 L335 1470 C335 1435 370 1420 405 1420 L435 1510 Z" />
-    <!-- Laces -->
-    <line x1="395" y1="1430" x2="435" y2="1435" stroke="{SHOE_WHITE}" stroke-width="4" stroke-linecap="round" />
-    <line x1="388" y1="1455" x2="430" y2="1460" stroke="{SHOE_WHITE}" stroke-width="4" stroke-linecap="round" />
-    <line x1="378" y1="1480" x2="425" y2="1485" stroke="{SHOE_WHITE}" stroke-width="4" stroke-linecap="round" />
-    <!-- Thick Rubber Sole -->
-    <path fill="{SHOE_SOLE}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M325 1505 L450 1505 C460 1505 465 1520 460 1540 L325 1540 C315 1540 315 1505 325 1505 Z" />
+    <!-- Sock sliver on medial side under cuff -->
+    <path fill="#edf0f5" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M443 1345 L463 1345 L463 1365 L443 1365 Z" />
+    <!-- Sneaker Tongue (purple rounded top sticking out above laces) -->
+    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M390 1353 C400 1345 435 1345 443 1353 L443 1372 L386 1372 Z" />
+    <!-- Purple Canvas Quarter / Heel counter (lateral/medial side panel) -->
+    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M443 1367 L471 1372 L475 1429 L416 1437 L416 1423 Z" />
+    <path fill="{SHOE_SHADOW}" d="M462 1371 L471 1372 L475 1429 L463 1432 Z" />
+    <!-- Throat / Laces Underlay (dark purple canvas) -->
+    <path fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M390 1372 L443 1372 L416 1423 L365 1404 Z" />
+    <!-- 4 White Laces Bars -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M385 1375 Q412 1379 440 1375 L437 1383 Q411 1387 382 1383 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M378 1386 Q406 1390 432 1387 L429 1395 Q405 1398 375 1394 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M371 1395 Q400 1400 426 1397 L423 1405 Q399 1409 368 1404 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M364 1405 Q392 1411 418 1409 L415 1417 Q391 1419 361 1413 Z" />
+    <!-- White Rubber Toe Cap (Solid 3D volume matching source) -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M365 1404 L416 1423 L373 1429 C349 1425 339 1418 336 1414 Z" />
+    <path fill="#eef2f6" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M336 1414 C339 1418 349 1425 373 1429 L416 1423 L416 1437 L373 1444 C349 1440 338 1433 335 1429 Z" />
+    <!-- Thick Rubber Sole with 3D contour -->
+    <path fill="{SHOE_SOLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M335 1429 C338 1433 349 1440 373 1444 L416 1437 L416 1461 L365 1468 C346 1465 336 1455 335 1443 Z" />
+    <path fill="#e6eaef" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M416 1437 L475 1429 L474 1441 L430 1465 L416 1461 Z" />
+    <line x1="416" y1="1437" x2="416" y2="1461" stroke="{STROKE_THICK}" stroke-width="4.5" stroke-linecap="round" />
   </g>
 </svg>"""
 
@@ -439,23 +463,33 @@ def get_boy_b_layers() -> Dict[str, str]:
   </g>
 </svg>"""
 
-    # 22. shoe_right (sneaker with ankle overlap cap, body, white toe cap, laces, sole)
+    # 22. shoe_right (authentic 3/4 perspective sneaker matching boy_b_front_large.png)
     # Ankle pivot at (580, 1345)
     layers["shoe_right"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_shoe_right">
-    <!-- Ankle overlap cap (tucks under jeans cuff) -->
+    <!-- Ankle overlap cap (tucks under jeans cuff at (580, 1345)) -->
     <circle cx="580" cy="1345" r="32" fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5" />
-    <!-- Shoe Upper Body -->
-    <path fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M660 1400 L620 1345 L535 1345 L530 1435 L555 1510 L670 1510 Z" />
-    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M650 1400 L610 1345 L540 1345 L535 1430 L560 1505 L660 1505 Z" />
-    <!-- White Curved Rubber Toe Cap -->
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_THIN}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M665 1510 L665 1470 C665 1435 630 1420 595 1420 L565 1510 Z" />
-    <!-- Laces -->
-    <line x1="605" y1="1430" x2="565" y2="1435" stroke="{SHOE_WHITE}" stroke-width="4" stroke-linecap="round" />
-    <line x1="612" y1="1455" x2="570" y2="1460" stroke="{SHOE_WHITE}" stroke-width="4" stroke-linecap="round" />
-    <line x1="622" y1="1480" x2="575" y2="1485" stroke="{SHOE_WHITE}" stroke-width="4" stroke-linecap="round" />
-    <!-- Thick Rubber Sole -->
-    <path fill="{SHOE_SOLE}" stroke="{STROKE_THICK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M675 1505 L550 1505 C540 1505 535 1520 540 1540 L675 1540 C685 1540 685 1505 675 1505 Z" />
+    <!-- Sock sliver on medial side under cuff -->
+    <path fill="#edf0f5" stroke="{STROKE_THICK}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M557 1345 L537 1345 L537 1365 L557 1365 Z" />
+    <!-- Sneaker Tongue (purple rounded top sticking out above laces) -->
+    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M610 1353 C600 1345 565 1345 557 1353 L557 1372 L614 1372 Z" />
+    <!-- Purple Canvas Quarter / Heel counter (lateral/medial side panel) -->
+    <path fill="{SHOE_PURPLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M557 1367 L529 1372 L525 1429 L584 1437 L584 1423 Z" />
+    <path fill="{SHOE_SHADOW}" d="M538 1371 L529 1372 L525 1429 L537 1432 Z" />
+    <!-- Throat / Laces Underlay (dark purple canvas) -->
+    <path fill="{SHOE_SHADOW}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M610 1372 L557 1372 L584 1423 L635 1404 Z" />
+    <!-- 4 White Laces Bars -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M615 1375 Q588 1379 560 1375 L563 1383 Q589 1387 618 1383 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M622 1386 Q594 1390 568 1387 L571 1395 Q595 1398 625 1394 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M629 1395 Q600 1400 574 1397 L577 1405 Q601 1409 632 1404 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="2.5" stroke-linejoin="round" d="M636 1405 Q608 1411 582 1409 L585 1417 Q609 1419 639 1413 Z" />
+    <!-- White Rubber Toe Cap (Solid 3D volume matching source) -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M635 1404 L584 1423 L627 1429 C651 1425 661 1418 664 1414 Z" />
+    <path fill="#eef2f6" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M664 1414 C661 1418 651 1425 627 1429 L584 1423 L584 1437 L627 1444 C651 1440 662 1433 665 1429 Z" />
+    <!-- Thick Rubber Sole with 3D contour -->
+    <path fill="{SHOE_SOLE}" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M665 1429 C662 1433 651 1440 627 1444 L584 1437 L584 1461 L635 1468 C654 1465 664 1455 665 1443 Z" />
+    <path fill="#e6eaef" stroke="{STROKE_THICK}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M584 1437 L525 1429 L526 1441 L570 1465 L584 1461 Z" />
+    <line x1="584" y1="1437" x2="584" y2="1461" stroke="{STROKE_THICK}" stroke-width="4.5" stroke-linecap="round" />
   </g>
 </svg>"""
 
@@ -499,7 +533,7 @@ def get_girl_a_layers() -> Dict[str, str]:
     # 1. head_back
     layers["head_back"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_head_back">
-    <path fill="{HAIR_DARK}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M330 240 L240 310 L275 345 L220 415 L280 435 L225 510 L300 500 L285 570 L360 520 L370 580 L440 510 L500 540 L560 510 L630 580 L640 520 L715 570 L700 500 L775 510 L720 435 L780 415 L725 345 L760 310 L670 240 Z" />
+    <path fill="{HAIR_DARK}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 45 L440 85 L375 120 L320 165 L270 235 L240 310 L275 345 L220 415 L280 435 L225 510 L300 500 L285 570 L360 520 L370 580 L440 510 L500 540 L560 510 L630 580 L640 520 L715 570 L700 500 L775 510 L720 435 L780 415 L725 345 L760 310 L730 235 L680 165 L625 120 L560 85 Z" />
     <polygon points="240,310 275,345 320,290" fill="{HAIR_MID}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="275,345 220,415 300,380" fill="{HAIR_DARK}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="220,415 280,435 295,455" fill="{HAIR_MID}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
@@ -508,6 +542,13 @@ def get_girl_a_layers() -> Dict[str, str]:
     <polygon points="725,345 780,415 700,380" fill="{HAIR_DARK}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="780,415 720,435 705,455" fill="{HAIR_MID}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="720,435 775,510 700,480" fill="{HAIR_DARK}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
+    <!-- Top Back Facets for back view -->
+    <polygon points="500,45 440,85 500,140" fill="{HAIR_BASE}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="500,45 500,140 560,85" fill="{HAIR_LIGHT}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="440,85 375,120 440,165" fill="{HAIR_DARK}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="440,85 440,165 500,140" fill="{HAIR_MID}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="560,85 500,140 560,165" fill="{HAIR_MID}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="560,85 625,120 560,165" fill="{HAIR_DARK}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
   </g>
 </svg>"""
 
@@ -547,6 +588,8 @@ def get_girl_a_layers() -> Dict[str, str]:
     <circle cx="595" cy="426" r="2.5" fill="{FRECKLE}" />
     <!-- Nose -->
     <path fill="{SKIN_SHADOW}" stroke="{STROKE_INNER}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M492 390 Q500 402 508 390 Z" />
+    <!-- Hair Front Solid Silhouette Underlay (prevents seam slivers, pinholes, and white gaps) -->
+    <path fill="{HAIR_DARK}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 45 L440 90 L375 125 L320 170 L295 245 L345 280 L375 250 L390 205 L445 215 L485 250 L500 205 L515 250 L555 215 L610 205 L625 250 L655 280 L705 245 L680 170 L625 125 L560 90 Z" />
     <!-- Hair Front Facets -->
     <polygon points="500,45 440,90 500,115" fill="{HAIR_LIGHT}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="500,45 500,115 560,90" fill="{HAIR_BASE}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
@@ -563,16 +606,21 @@ def get_girl_a_layers() -> Dict[str, str]:
     <polygon points="565,145 555,215 610,205" fill="{HAIR_DARK}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="480,175 445,215 485,250" fill="{HAIR_DARK}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="480,175 485,250 500,205" fill="{HAIR_BASE}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
+    <!-- Center connecting facet (previously missing, leaving white hole) -->
+    <polygon points="480,175 520,175 500,205" fill="{HAIR_BASE}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="520,175 500,205 515,250" fill="{HAIR_LIGHT}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="520,175 515,250 555,215" fill="{HAIR_DARK}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="375,125 320,170 355,220" fill="{HAIR_MID}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="375,125 355,220 390,205" fill="{HAIR_DARK}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="355,220 295,245 345,280" fill="{HAIR_DARK}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
-    <polygon points="355,220 345,280 390,250" fill="{HAIR_MID}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="355,220 345,280 375,250" fill="{HAIR_MID}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="355,220 375,250 390,205" fill="{HAIR_BASE}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="625,125 610,205 645,220" fill="{HAIR_LIGHT}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="625,125 645,220 680,170" fill="{HAIR_DARK}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
-    <polygon points="645,220 610,250 655,280" fill="{HAIR_MID}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="645,220 625,250 655,280" fill="{HAIR_MID}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
+    <polygon points="645,220 610,205 625,250" fill="{HAIR_BASE}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="645,220 655,280 705,245" fill="{HAIR_DARK}" stroke="{STROKE_FACET}" stroke-width="3.5" stroke-linejoin="round" />
+    <!-- Outer Contour Stroke -->
     <path fill="none" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 45 L440 90 L375 125 L320 170 L295 245 L345 280 L375 250 L390 205 L445 215 L485 250 L500 205 L515 250 L555 215 L610 205 L625 250 L655 280 L705 245 L680 170 L625 125 L560 90 Z" />
   </g>
 </svg>"""
@@ -824,23 +872,33 @@ def get_girl_a_layers() -> Dict[str, str]:
   </g>
 </svg>"""
 
-    # 19. shoe_left (redrawn authentic sneaker matching girl_a vest palette)
-    # Ankle at (400, 1370), Cuff ends at 1412, Shoe extends to 1530
+    # 19. shoe_left (authentic 3/4 perspective sneaker matching girl_a vest palette)
+    # Ankle at (400, 1370), Cuff ends at 1412
     layers["shoe_left"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_shoe_left">
-    <!-- Ankle overlap cap (tucks under pant cuff) -->
-    <circle cx="400" cy="1380" r="36" fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="6" />
-    <!-- Shoe Upper Body -->
-    <path fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M335 1415 L375 1380 L465 1380 L470 1445 L445 1515 L320 1515 Z" />
-    <path fill="{SHOE_BASE}" stroke="{STROKE_INNER}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M345 1415 L385 1380 L460 1380 L465 1440 L440 1510 L330 1510 Z" />
-    <!-- White Curved Rubber Toe Cap -->
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_INNER}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M325 1515 L325 1475 C325 1440 360 1425 395 1425 L428 1515 Z" />
-    <!-- Laces -->
-    <line x1="385" y1="1435" x2="425" y2="1440" stroke="{SHOE_WHITE}" stroke-width="4" stroke-linecap="round" />
-    <line x1="378" y1="1460" x2="420" y2="1465" stroke="{SHOE_WHITE}" stroke-width="4" stroke-linecap="round" />
-    <line x1="368" y1="1485" x2="415" y2="1490" stroke="{SHOE_WHITE}" stroke-width="4" stroke-linecap="round" />
-    <!-- Thick Rubber Sole -->
-    <path fill="{SHOE_SOLE}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M315 1510 L445 1510 C455 1510 460 1525 455 1545 L315 1545 C305 1545 305 1510 315 1510 Z" />
+    <!-- Ankle overlap cap (tucks under pant cuff at (400, 1370)) -->
+    <circle cx="400" cy="1370" r="34" fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5" />
+    <!-- Skin sliver on medial side under cuff -->
+    <path fill="{SKIN_BASE}" stroke="{STROKE_MAIN}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M422 1412 L444 1412 L444 1432 L422 1432 Z" />
+    <!-- Sneaker Tongue (purple rounded top sticking out above laces) -->
+    <path fill="{SHOE_BASE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M370 1418 C380 1410 415 1410 423 1418 L423 1437 L366 1437 Z" />
+    <!-- Purple Canvas Quarter / Heel counter (lateral/medial side panel) -->
+    <path fill="{SHOE_BASE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M423 1432 L451 1437 L455 1494 L396 1502 L396 1488 Z" />
+    <path fill="{SHOE_SHADOW}" d="M442 1436 L451 1437 L455 1494 L443 1497 Z" />
+    <!-- Throat / Laces Underlay (dark purple canvas) -->
+    <path fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M370 1437 L423 1437 L396 1488 L345 1469 Z" />
+    <!-- 4 White Laces Bars -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M365 1440 Q392 1444 420 1440 L417 1448 Q391 1452 362 1448 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M358 1451 Q386 1455 412 1452 L409 1460 Q385 1463 355 1459 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M351 1460 Q380 1465 406 1462 L403 1470 Q379 1474 348 1469 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M344 1470 Q372 1476 398 1474 L395 1482 Q371 1484 341 1478 Z" />
+    <!-- White Rubber Toe Cap (Solid 3D volume matching source) -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M345 1469 L396 1488 L353 1494 C329 1490 319 1483 316 1479 Z" />
+    <path fill="#eef2f6" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M316 1479 C319 1483 329 1490 353 1494 L396 1488 L396 1502 L353 1509 C329 1505 318 1498 315 1494 Z" />
+    <!-- Thick Rubber Sole with 3D contour -->
+    <path fill="{SHOE_SOLE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M315 1494 C318 1498 329 1505 353 1509 L396 1502 L396 1526 L345 1533 C326 1530 316 1520 315 1508 Z" />
+    <path fill="#e6eaef" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M396 1502 L455 1494 L454 1506 L410 1530 L396 1526 Z" />
+    <line x1="396" y1="1502" x2="396" y2="1526" stroke="{STROKE_MAIN}" stroke-width="4.5" stroke-linecap="round" />
   </g>
 </svg>"""
 
@@ -872,23 +930,33 @@ def get_girl_a_layers() -> Dict[str, str]:
   </g>
 </svg>"""
 
-    # 22. shoe_right (redrawn authentic sneaker matching girl_a vest palette)
-    # Ankle at (600, 1370), Cuff ends at 1412, Shoe extends to 1530
+    # 22. shoe_right (authentic 3/4 perspective sneaker matching girl_a vest palette)
+    # Ankle at (600, 1370), Cuff ends at 1412
     layers["shoe_right"] = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
   <g id="layer_shoe_right">
-    <!-- Ankle overlap cap (tucks under pant cuff) -->
-    <circle cx="600" cy="1380" r="36" fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="6" />
-    <!-- Shoe Upper Body -->
-    <path fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M665 1415 L625 1380 L535 1380 L530 1445 L555 1515 L680 1515 Z" />
-    <path fill="{SHOE_BASE}" stroke="{STROKE_INNER}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M655 1415 L615 1380 L540 1380 L535 1440 L560 1510 L670 1510 Z" />
-    <!-- White Curved Rubber Toe Cap -->
-    <path fill="{SHOE_WHITE}" stroke="{STROKE_INNER}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M675 1515 L675 1475 C675 1440 640 1425 605 1425 L572 1515 Z" />
-    <!-- Laces -->
-    <line x1="615" y1="1435" x2="575" y2="1440" stroke="{SHOE_WHITE}" stroke-width="4" stroke-linecap="round" />
-    <line x1="622" y1="1460" x2="580" y2="1465" stroke="{SHOE_WHITE}" stroke-width="4" stroke-linecap="round" />
-    <line x1="632" y1="1485" x2="585" y2="1490" stroke="{SHOE_WHITE}" stroke-width="4" stroke-linecap="round" />
-    <!-- Thick Rubber Sole -->
-    <path fill="{SHOE_SOLE}" stroke="{STROKE_MAIN}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M685 1510 L555 1510 C545 1510 540 1525 545 1545 L685 1545 C695 1545 695 1510 685 1510 Z" />
+    <!-- Ankle overlap cap (tucks under pant cuff at (600, 1370)) -->
+    <circle cx="600" cy="1370" r="34" fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5" />
+    <!-- Skin sliver on medial side under cuff -->
+    <path fill="{SKIN_BASE}" stroke="{STROKE_MAIN}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M578 1412 L556 1412 L556 1432 L578 1432 Z" />
+    <!-- Sneaker Tongue (purple rounded top sticking out above laces) -->
+    <path fill="{SHOE_BASE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M630 1418 C620 1410 585 1410 577 1418 L577 1437 L634 1437 Z" />
+    <!-- Purple Canvas Quarter / Heel counter (lateral/medial side panel) -->
+    <path fill="{SHOE_BASE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M577 1432 L549 1437 L545 1494 L604 1502 L604 1488 Z" />
+    <path fill="{SHOE_SHADOW}" d="M558 1436 L549 1437 L545 1494 L557 1497 Z" />
+    <!-- Throat / Laces Underlay (dark purple canvas) -->
+    <path fill="{SHOE_SHADOW}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M630 1437 L577 1437 L604 1488 L655 1469 Z" />
+    <!-- 4 White Laces Bars -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M635 1440 Q608 1444 580 1440 L583 1448 Q609 1452 638 1448 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M642 1451 Q614 1455 588 1452 L591 1460 Q615 1463 645 1459 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M649 1460 Q620 1465 594 1462 L597 1470 Q621 1474 652 1469 Z" />
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="2.5" stroke-linejoin="round" d="M656 1470 Q628 1476 602 1474 L605 1482 Q629 1484 659 1478 Z" />
+    <!-- White Rubber Toe Cap (Solid 3D volume matching source) -->
+    <path fill="{SHOE_WHITE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M655 1469 L604 1488 L647 1494 C671 1490 681 1483 684 1479 Z" />
+    <path fill="#eef2f6" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M684 1479 C681 1483 671 1490 647 1494 L604 1488 L604 1502 L647 1509 C671 1505 682 1498 685 1494 Z" />
+    <!-- Thick Rubber Sole with 3D contour -->
+    <path fill="{SHOE_SOLE}" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M685 1494 C682 1498 671 1505 647 1509 L604 1502 L604 1526 L655 1533 C674 1530 684 1520 685 1508 Z" />
+    <path fill="#e6eaef" stroke="{STROKE_MAIN}" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M604 1502 L545 1494 L546 1506 L590 1530 L604 1526 Z" />
+    <line x1="604" y1="1502" x2="604" y2="1526" stroke="{STROKE_MAIN}" stroke-width="4.5" stroke-linecap="round" />
   </g>
 </svg>"""
 

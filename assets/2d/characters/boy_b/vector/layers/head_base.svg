@@ -23,6 +23,8 @@
     <path fill="none" stroke="#251a17" stroke-width="9" stroke-linecap="round" d="M492 336 Q500 325 508 336" />
     <line x1="398" y1="336" x2="362" y2="330" stroke="#251a17" stroke-width="7" stroke-linecap="round" />
     <line x1="602" y1="336" x2="638" y2="330" stroke="#251a17" stroke-width="7" stroke-linecap="round" />
+    <!-- Hair Front Solid Silhouette Underlay (prevents seam slivers, pinholes, and white gaps) -->
+    <path fill="#361f19" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 60 L445 100 L390 130 L335 175 L315 240 L355 275 L385 245 L400 205 L450 215 L485 245 L500 200 L515 245 L550 215 L600 205 L615 245 L645 275 L685 240 L665 175 L610 130 L555 100 Z" />
     <!-- Hair Front Facets -->
     <polygon points="500,60 445,100 500,120" fill="#5b3429" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
     <polygon points="500,60 500,120 555,100" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
@@ -39,16 +41,21 @@
     <polygon points="560,150 550,215 600,205" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
     <polygon points="480,175 450,215 485,245" fill="#2c1813" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
     <polygon points="480,175 485,245 500,200" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <!-- Center connecting facet (previously missing, leaving white hole) -->
+    <polygon points="480,175 520,175 500,200" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
     <polygon points="520,175 500,200 515,245" fill="#5b3429" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
     <polygon points="520,175 515,245 550,215" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
     <polygon points="390,130 335,175 365,225" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
     <polygon points="390,130 365,225 400,205" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
     <polygon points="365,225 315,240 355,275" fill="#2c1813" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
-    <polygon points="365,225 355,275 400,250" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="365,225 355,275 385,245" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="365,225 385,245 400,205" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
     <polygon points="610,130 595,205 635,225" fill="#5b3429" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
     <polygon points="610,130 635,225 665,175" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
-    <polygon points="635,225 600,250 645,275" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="635,225 615,245 645,275" fill="#361f19" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <polygon points="635,225 600,205 615,245" fill="#482920" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
     <polygon points="635,225 645,275 685,240" fill="#2c1813" stroke="#2b1d1f" stroke-width="3" stroke-linejoin="round" />
+    <!-- Outer Contour Stroke -->
     <path fill="none" stroke="#1b1516" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 60 L445 100 L390 130 L335 175 L315 240 L355 275 L385 245 L400 205 L450 215 L485 245 L500 200 L515 245 L550 215 L600 205 L615 245 L645 275 L685 240 L665 175 L610 130 L555 100 Z" />
   </g>
 </svg>
