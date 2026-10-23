@@ -1,7 +1,7 @@
 """
-Unit tests for Fast Preview Mode (--fast):
-1. Verifies fast mode produces 540x960 resolution at 15 fps.
-2. Verifies duration is capped at <= 6.0 seconds.
+Unit tests for Fast Preview / Fast Draft Mode (--fast):
+1. Verifies non-supporting renderers raise PipelineError on --fast.
+2. Verifies fast mode produces 540x960 resolution at 15 fps on animejs renderer.
 3. Verifies output is written strictly into output/fast/ and never the normal output name.
 4. Verifies fast mode makes no Gemini API calls and reuses cached audio.
 """
@@ -12,6 +12,7 @@ import subprocess
 import pytest
 
 from toonshorts.core import config
+from toonshorts.core.errors import PipelineError
 from toonshorts.core.pipeline import run_pipeline
 
 
@@ -36,9 +37,21 @@ def get_video_metadata(video_path: Path):
     return width, height, fps, duration
 
 
+def test_fast_mode_rejects_unsupported_renderer():
+    """Fast draft mode must raise an explicit PipelineError if renderer does not support it."""
+    with pytest.raises(PipelineError, match="does not support fast draft mode"):
+        run_pipeline(
+            topic="What is an API?",
+            style_name="stickman",
+            renderer_name="cairo",
+            mock=True,
+            fast=True,
+        )
+
+
 @pytest.mark.slow
 def test_fast_preview_mode_pipeline(monkeypatch):
-    """Verifies fast preview generates <= 6s video at 540x960 @ 15fps in output/fast/."""
+    """Verifies fast draft generates 540x960 @ 15fps in output/fast/ on supported renderer."""
     # Ensure no Gemini calls occur by sabotaging API client if invoked
     from toonshorts.core.client import GeminiClientWrapper
     def bomb_generate(*args, **kwargs):
@@ -51,10 +64,11 @@ def test_fast_preview_mode_pipeline(monkeypatch):
     normal_output = config.OUTPUT_DIR / "What_is_an_API.mp4"
     initial_mtime = normal_output.stat().st_mtime if normal_output.exists() else None
 
-    # Run pipeline in fast mode with cached topic
+    # Run pipeline in fast mode with cached topic and animejs
     fast_video = run_pipeline(
         topic="What is an API?",
-        style_name="stickman",
+        style_name="whiteboard",
+        renderer_name="animejs",
         fast=True,
     )
 
@@ -71,4 +85,4 @@ def test_fast_preview_mode_pipeline(monkeypatch):
     width, height, fps, duration = get_video_metadata(fast_video)
     assert (width, height) == (540, 960), f"Expected half resolution (540, 960), got ({width}, {height})"
     assert fps == 15, f"Expected 15 fps, got {fps}"
-    assert duration <= 6.05, f"Expected duration <= 6.0s, got {duration}s"
+    assert duration > 10.0, f"Expected full duration matching plan, got {duration}s"

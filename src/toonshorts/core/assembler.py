@@ -237,8 +237,6 @@ def assemble_final_video(
         "-c:a", "aac", "-b:a", "192k",
         "-r", str(target_fps),
     ]
-    if fast:
-        final_burn_cmd.extend(["-t", "6.000"])
     final_burn_cmd.append(str(final_output_path.resolve()))
 
     logger.info("Burning in ASS word-level captions to final video...")

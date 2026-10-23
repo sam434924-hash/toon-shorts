@@ -36,6 +36,11 @@ logger = logging.getLogger("toonshorts.cli")
 
 def make_command(args: argparse.Namespace) -> int:
     """Executes video generation through the modular pipeline runner or validated brief."""
+    workers = getattr(args, "workers", None)
+    if workers is not None and (workers < 1 or workers > 4):
+        sys.stderr.write(f"Error: Invalid worker count: {workers}. Worker count must be between 1 and 4.\n")
+        return 1
+
     output_dir = Path(args.output_dir) if args.output_dir else None
 
     # Brief mode execution
@@ -49,6 +54,8 @@ def make_command(args: argparse.Namespace) -> int:
                 auto_confirm=args.yes,
                 mock=args.mock,
                 keep_temp=args.keep_temp,
+                fast=getattr(args, "fast", False),
+                workers=workers,
             )
             if getattr(args, "stills_only", False):
                 print("\n=======================================================")
@@ -97,6 +104,7 @@ def make_command(args: argparse.Namespace) -> int:
             mock=args.mock,
             allow_noncommercial=args.allow_noncommercial,
             fast=getattr(args, "fast", False),
+            workers=workers,
         )
         if final_video:
             print("\n=======================================================")
@@ -137,7 +145,13 @@ def main():
         "--fast",
         action="store_true",
         default=False,
-        help="Fast preview mode: first 6 seconds, half resolution (540x960), 15 fps, saved to output/fast/",
+        help="Fast draft mode: half resolution (540x960), 15 fps, roughness 0, blur off",
+    )
+    make_parser.add_argument(
+        "--workers",
+        type=int,
+        default=None,
+        help="Number of parallel render workers (1-4, default: 2)",
     )
     make_parser.add_argument("--llm", default=None, help="LLM plugin to use (gemini, fake)")
     make_parser.add_argument(

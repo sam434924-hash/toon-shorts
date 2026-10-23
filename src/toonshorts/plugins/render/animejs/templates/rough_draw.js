@@ -9,8 +9,12 @@ function initRoughSketches() {
 
   const rc = rough.svg(roughSvg);
   const canvasRect = roughSvg.getBoundingClientRect();
+  const baseSeed = (typeof window.__roughSeed === "number") ? window.__roughSeed : 0;
+  const isFast = !!window.__isFast;
+  const roughnessMult = isFast ? 0.0 : 1.0;
+  const bowingMult = isFast ? 0.0 : 1.0;
 
-  // 1. Hand-sketched underline under the title badge (fixed seed: 101)
+  // 1. Hand-sketched underline under the title badge
   const titleEl = document.getElementById("wb-title");
   if (titleEl) {
     const tRect = titleEl.getBoundingClientRect();
@@ -18,7 +22,7 @@ function initRoughSketches() {
     const rightX = (tRect.right - canvasRect.left) - 16;
     const underY = (tRect.bottom - canvasRect.top) + 8;
     const uLine = rc.line(leftX, underY, rightX, underY, {
-      seed: 101, stroke: '#f59e0b', strokeWidth: 5.5, roughness: 1.3, bowing: 1.2
+      seed: 101 + baseSeed, stroke: '#f59e0b', strokeWidth: 5.5, roughness: 1.3 * roughnessMult, bowing: 1.2 * bowingMult
     });
     uLine.id = 'rough-title-underline';
     roughSvg.appendChild(uLine);
@@ -47,7 +51,7 @@ function initRoughSketches() {
     const cH = Math.max(tRect.height + 36, 80);
 
     const circleNode = rc.ellipse(cX, cY, cW, cH, {
-      seed: 201 + idx * 13, stroke: '#2563eb', strokeWidth: 4.5, roughness: 1.25,
+      seed: 201 + baseSeed + idx * 13, stroke: '#2563eb', strokeWidth: 4.5, roughness: 1.25 * roughnessMult,
     });
     circleNode.id = `rough-circle-${idx+1}`;
     circleNode.classList.add("rough-card-circle");
@@ -56,7 +60,7 @@ function initRoughSketches() {
     cardRects.push(card.getBoundingClientRect());
   });
 
-  // 3. Hand-sketched larger, clearly visible arrows between list cards (fixed seeds: 301, 351)
+  // 3. Hand-sketched larger, clearly visible arrows between list cards
   for (let i = 0; i < cardRects.length - 1; i++) {
     const r1 = cardRects[i];
     const r2 = cardRects[i + 1];
@@ -65,10 +69,11 @@ function initRoughSketches() {
     const y2 = (r2.top - canvasRect.top) - 2;
     if (y2 > y1) {
       const shaft = rc.line(arrowX, y1, arrowX, y2, {
-        seed: 301 + i * 17,
+        seed: 301 + baseSeed + i * 17,
         stroke: '#1e40af',
         strokeWidth: 6.0,
-        roughness: 1.1
+        roughness: 1.1 * roughnessMult,
+        bowing: 1.0 * bowingMult
       });
       shaft.classList.add("arrow-shaft");
 
@@ -77,10 +82,11 @@ function initRoughSketches() {
         [arrowX, y2],
         [arrowX + 22, y2 - 20]
       ], {
-        seed: 351 + i * 17,
+        seed: 351 + baseSeed + i * 17,
         stroke: '#1e40af',
         strokeWidth: 6.0,
-        roughness: 1.1
+        roughness: 1.1 * roughnessMult,
+        bowing: 1.0 * bowingMult
       });
       head.classList.add("arrow-head");
 

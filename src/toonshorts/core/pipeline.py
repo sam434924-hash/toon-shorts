@@ -16,6 +16,7 @@ import subprocess
 from typing import Dict, Any, List, Optional, Union
 
 from . import config
+from .errors import PipelineError
 from .models import ScriptPlan, SceneAudio, Character, CameraMove
 from .cost import estimate_costs, confirm_cost_gate
 from .assembler import assemble_final_video, check_ffmpeg_subtitles_support
@@ -62,6 +63,7 @@ def run_pipeline(
     mock: bool = False,
     allow_noncommercial: bool = False,
     fast: bool = False,
+    workers: Optional[int] = None,
 ) -> Optional[Path]:
     """Executes the full modular video generation pipeline."""
     config.check_cloud_sync_warning()
@@ -144,40 +146,6 @@ def run_pipeline(
         logger.info("[3/6] Generating voice track via %s...", voice.name)
         scene_audios = voice.generate_all_voices(refined_plan, temp_dir)
 
-        # Fast preview mode trims total duration to <= 6.0 seconds
-        if fast:
-            fast_scenes = []
-            fast_audios = []
-            accum_dur = 0.0
-            for sc, sa in zip(refined_plan.scenes, scene_audios):
-                if accum_dur >= 6.0:
-                    break
-                rem = 6.0 - accum_dur
-                if sa.scene_total_duration > rem:
-                    trimmed_wav = temp_dir / f"fast_trimmed_sc{sc.scene_number}.wav"
-                    subprocess.run([
-                        "ffmpeg", "-y",
-                        "-i", str(sa.audio_path),
-                        "-t", f"{rem:.3f}",
-                        "-c", "copy",
-                        str(trimmed_wav)
-                    ], capture_output=True, check=True, stdin=subprocess.DEVNULL)
-                    fast_audios.append(SceneAudio(
-                        scene_index=sa.scene_index,
-                        audio_path=trimmed_wav,
-                        duration_seconds=rem,
-                        scene_total_duration=rem,
-                        word_timings=[w for w in sa.word_timings if w.start_time < rem],
-                    ))
-                    fast_scenes.append(sc)
-                    accum_dur = 6.0
-                    break
-                else:
-                    fast_scenes.append(sc)
-                    fast_audios.append(sa)
-                    accum_dur += sa.scene_total_duration
-            refined_plan.scenes = fast_scenes
-            scene_audios = fast_audios
 
         # 5. Scene Rendering
         logger.info("[4/6] Rendering scene images via %s...", renderer.name)
@@ -188,13 +156,15 @@ def run_pipeline(
             logger.info("Renderer '%s' does not support scene_audios; generating still scene frames.", renderer.name)
 
         if fast:
-            if getattr(renderer, "supports_fast", False):
-                render_kwargs["fast"] = True
-            else:
-                logger.warning(
-                    "Renderer '%s' does not support native fast rendering; degrading explicitly via assembler downsampling.",
-                    renderer.name,
+            if not getattr(renderer, "supports_fast", False):
+                raise PipelineError(
+                    f"Renderer '{renderer.name}' does not support fast draft mode (--fast). "
+                    f"Fast draft mode requires a renderer with supports_fast=True."
                 )
+            render_kwargs["fast"] = True
+
+        if workers is not None:
+            render_kwargs["workers"] = workers
 
         scene_images = renderer.render_all_scenes(refined_plan, preset, temp_dir, **render_kwargs)
 
@@ -226,6 +196,8 @@ def run_pipeline_from_brief(
     auto_confirm: bool = True,
     mock: bool = False,
     keep_temp: bool = False,
+    fast: bool = False,
+    workers: Optional[int] = None,
 ) -> Dict[str, Any]:
     """
     Executes the video build pipeline strictly driven by a validated VideoBrief file.
@@ -375,6 +347,17 @@ def run_pipeline_from_brief(
         elif scene_audios:
             logger.info("Renderer '%s' does not support scene_audios; generating still scene frames.", renderer.name)
 
+        if fast:
+            if not getattr(renderer, "supports_fast", False):
+                raise PipelineError(
+                    f"Renderer '{renderer.name}' does not support fast draft mode (--fast). "
+                    f"Fast draft mode requires a renderer with supports_fast=True."
+                )
+            render_kwargs["fast"] = True
+
+        if workers is not None:
+            render_kwargs["workers"] = workers
+
         scene_images = renderer.render_all_scenes(plan, preset, temp_dir, **render_kwargs)
 
         final_raw_video = assemble_final_video(
@@ -385,9 +368,11 @@ def run_pipeline_from_brief(
             temp_dir=temp_dir,
             output_dir=dest_output_dir,
             motion_plugin=motion,
+            fast=fast,
         )
 
-        final_video_path = dest_output_dir / f"{brief.video_name}.mp4"
+        target_video_name = f"{brief.video_name}_fast.mp4" if fast else f"{brief.video_name}.mp4"
+        final_video_path = dest_output_dir / target_video_name
         if final_raw_video != final_video_path and final_raw_video.exists():
             if final_video_path.exists():
                 final_video_path.unlink()

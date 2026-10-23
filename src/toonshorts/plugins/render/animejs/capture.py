@@ -1,25 +1,80 @@
 """
-Purpose: Playwright headless browser frame stepping and FFmpeg pipe video capture.
-Inputs: Compiled whiteboard HTML, audio files, animation durations, and target FPS.
+Purpose: Playwright headless browser frame stepping, FFmpeg pipe video capture, and parallel worker pool.
+Inputs: Compiled whiteboard HTML, audio files, animation durations, target FPS, and scene jobs.
 Outputs: Generated MP4 scene clips and still preview PNG frames.
-Depends on: core.config, logging, pathlib, playwright, plugins.render.animejs.audio_sync, plugins.render.animejs.html_builder, subprocess, typing
+Depends on: concurrent.futures, dataclasses, logging, pathlib, playwright, plugins.render.animejs.audio_sync, plugins.render.animejs.html_builder, shutil, subprocess, tempfile, threading, typing
 Used by: plugins.render.animejs, plugins.render.animejs.plugin
 Config keys: VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
 Tests: tests/unit/test_animejs.py
 """
 
+import concurrent.futures
+from dataclasses import dataclass
 import logging
 from pathlib import Path
+import shutil
 import subprocess
+import tempfile
+import threading
 from typing import Any, Dict, List, Optional
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import Browser, sync_playwright
 
 from toonshorts.core import config
 from toonshorts.plugins.render.animejs.audio_sync import compute_mouth_cues_from_audio
 from toonshorts.plugins.render.animejs.html_builder import generate_whiteboard_html
 
 logger = logging.getLogger(__name__)
+
+DEFAULT_WORKERS = 2
+MAX_WORKERS = 4
+
+
+def validate_worker_count(workers: Optional[int]) -> int:
+    """
+    Validates the worker count for parallel rendering.
+    Defaults to 2; accepts integers from 1 up to MAX_WORKERS (4);
+    rejects any value below 1 or above 4 with an explicit ValueError.
+    """
+    if workers is None:
+        return DEFAULT_WORKERS
+    if not isinstance(workers, int) or workers < 1 or workers > MAX_WORKERS:
+        raise ValueError(
+            f"Invalid worker count: {workers}. Worker count must be an integer between 1 and {MAX_WORKERS}."
+        )
+    return workers
+
+
+def derive_scene_seed(scene_number: int, global_seed: int = 42) -> int:
+    """
+    Derives a deterministic Rough.js integer seed per scene from the scene number and a global seed.
+    Never uses time-based or completion-order-based seeds so parallel equals sequential output.
+    """
+    return (int(global_seed) * 10007 + int(scene_number) * 1013) & 0x7FFFFFFF
+
+
+@dataclass
+class SceneRenderJob:
+    """Specification of a single scene to render into an MP4 video clip."""
+    scene_number: int
+    title: str
+    words: List[Dict[str, Any]]
+    audio_path: Optional[Path]
+    output_path: Path
+    duration_sec: float = 3.0
+    gesture: str = "idle"
+    fps: int = config.VIDEO_FPS
+    annotations: Optional[List[Dict[str, Any]]] = None
+    characters_data: Optional[List[Dict[str, Any]]] = None
+    width: int = config.VIDEO_WIDTH
+    height: int = config.VIDEO_HEIGHT
+    layout: str = "cards"
+    visuals: Optional[List[Any]] = None
+    word_timings: Optional[List[Any]] = None
+    theme: str = "whiteboard"
+    rough_seed: Optional[int] = None
+    fast: bool = False
+    temp_dir: Optional[Path] = None
 
 
 def capture_still_frame(
@@ -49,6 +104,184 @@ def capture_still_frame(
     return output_path
 
 
+def _render_job_with_browser(
+    job: SceneRenderJob,
+    browser: Optional[Browser] = None,
+    cancel_event: Optional[threading.Event] = None,
+    active_procs: Optional[Dict[int, subprocess.Popen]] = None,
+) -> Path:
+    """
+    Renders a single SceneRenderJob to output_path using Playwright and an FFmpeg stdin pipe.
+    Drains stderr to a dedicated log file to prevent Windows pipe deadlocks.
+    Cleanly terminates FFmpeg and removes partial output on error or cancellation.
+    """
+    if cancel_event and cancel_event.is_set():
+        raise InterruptedError(f"Rendering cancelled before Scene {job.scene_number} started.")
+
+    job.output_path.parent.mkdir(parents=True, exist_ok=True)
+    work_dir = job.temp_dir or job.output_path.parent / f"temp_animejs_sc{job.scene_number}"
+    work_dir.mkdir(parents=True, exist_ok=True)
+
+    mouth_cues = compute_mouth_cues_from_audio(job.audio_path, fps=job.fps)
+    rough_seed = job.rough_seed if job.rough_seed is not None else derive_scene_seed(job.scene_number)
+
+    html_content = generate_whiteboard_html(
+        title=job.title,
+        words=job.words,
+        duration_sec=job.duration_sec,
+        mouth_cues=mouth_cues,
+        gesture=job.gesture,
+        fps=job.fps,
+        width=job.width,
+        height=job.height,
+        scene_number=job.scene_number,
+        annotations=job.annotations,
+        characters_data=job.characters_data,
+        layout=job.layout,
+        visuals=job.visuals,
+        word_timings=job.word_timings,
+        theme=job.theme,
+        rough_seed=rough_seed,
+        fast=job.fast,
+    )
+
+    html_file = (work_dir / "whiteboard_scene.html").resolve()
+    html_file.write_text(html_content, encoding="utf-8")
+
+    total_frames = max(1, int(round(job.fps * job.duration_sec)))
+
+    cmd = [
+        "ffmpeg", "-y",
+        "-f", "image2pipe",
+        "-vcodec", "png",
+        "-r", str(job.fps),
+        "-i", "pipe:0",
+    ]
+
+    if job.audio_path and job.audio_path.is_file():
+        cmd.extend([
+            "-i", str(job.audio_path.resolve()),
+            "-af", "apad",
+            "-c:a", "aac",
+            "-b:a", "192k",
+        ])
+
+    cmd.extend([
+        "-c:v", "libx264",
+        "-preset", "ultrafast",
+        "-pix_fmt", "yuv420p",
+        "-r", str(job.fps),
+        "-t", f"{job.duration_sec:.3f}",
+        str(job.output_path.resolve()),
+    ])
+
+    log_file = work_dir / f"ffmpeg_scene_{job.scene_number}.log"
+    proc: Optional[subprocess.Popen] = None
+    own_browser: Optional[Browser] = None
+    context = None
+
+    try:
+        with open(log_file, "wb") as lf:
+            proc = subprocess.Popen(
+                cmd,
+                stdin=subprocess.PIPE,
+                stdout=subprocess.DEVNULL,
+                stderr=lf,
+            )
+            if active_procs is not None:
+                active_procs[job.scene_number] = proc
+
+            if browser is None:
+                p_inst = sync_playwright().start()
+                own_browser = p_inst.chromium.launch(headless=True)
+                active_browser = own_browser
+            else:
+                active_browser = browser
+
+            context = active_browser.new_context(viewport={"width": job.width, "height": job.height})
+            page = context.new_page()
+
+            page_errors = []
+            page.on("pageerror", lambda err: page_errors.append(str(err)))
+            page.goto(html_file.as_uri())
+
+            if page_errors:
+                raise RuntimeError(f"JavaScript execution error in {html_file.name}: {'; '.join(page_errors)}")
+
+            missing = page.evaluate(
+                "typeof window.__checkModulesLoaded === 'function' ? window.__checkModulesLoaded() : ['window.__checkModulesLoaded missing']"
+            )
+            if missing:
+                raise RuntimeError(f"Missing required JS modules or functions in {html_file.name}: {', '.join(missing)}")
+
+            for frame_idx in range(total_frames):
+                if cancel_event and cancel_event.is_set():
+                    raise InterruptedError(f"Rendering cancelled for Scene {job.scene_number}")
+
+                t_ms = (frame_idx / job.fps) * 1000.0
+                page.evaluate(f"window.seekTo({t_ms})")
+                buf = page.screenshot(type="png")
+
+                try:
+                    if proc.stdin and not proc.stdin.closed:
+                        proc.stdin.write(buf)
+                except (BrokenPipeError, OSError) as bpe:
+                    logger.warning("FFmpeg pipe broken at frame %d for scene %d: %s", frame_idx, job.scene_number, bpe)
+                    break
+
+            if proc.stdin and not proc.stdin.closed:
+                proc.stdin.close()
+            ret = proc.wait()
+
+            if ret != 0:
+                last_err = ""
+                if log_file.exists():
+                    lines = log_file.read_text(encoding="utf-8", errors="replace").splitlines()
+                    last_err = "\n".join(lines[-20:])
+                raise RuntimeError(f"FFmpeg pipeline failed for scene {job.scene_number} with return code {ret}:\n{last_err}")
+
+    except BaseException as exc:
+        if proc and proc.poll() is None:
+            try:
+                if proc.stdin and not proc.stdin.closed:
+                    proc.stdin.close()
+            except Exception:
+                pass
+            try:
+                proc.terminate()
+                proc.wait(timeout=2)
+            except Exception:
+                try:
+                    proc.kill()
+                except Exception:
+                    pass
+
+        if job.output_path.exists():
+            try:
+                job.output_path.unlink()
+            except Exception:
+                pass
+        raise
+
+    finally:
+        if active_procs is not None and job.scene_number in active_procs:
+            active_procs.pop(job.scene_number, None)
+
+        if context:
+            try:
+                context.close()
+            except Exception:
+                pass
+
+        if own_browser:
+            try:
+                own_browser.close()
+            except Exception:
+                pass
+
+    return job.output_path
+
+
 def render_whiteboard_video(
     title: str,
     words: List[Dict[str, Any]],
@@ -67,112 +300,178 @@ def render_whiteboard_video(
     visuals: Optional[List[Any]] = None,
     word_timings: Optional[List[Any]] = None,
     theme: str = "whiteboard",
+    rough_seed: Optional[int] = None,
+    fast: bool = False,
 ) -> Path:
     """
-    Renders a fully animated MP4 video with easing transitions synced to an audio clip.
-    Mouth flapping is driven by voice audio loudness (RMS).
-    Character exhibits subtle idle motion.
-    Streams Playwright frames directly into FFmpeg stdin.
+    Renders a fully animated MP4 video clip with mouth sync, camera moves, and Rough.js sketches.
+    Pipes frames directly to FFmpeg stdin without intermediate PNG files on disk.
     """
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    work_dir = temp_dir or output_path.parent / "temp_animejs"
-    work_dir.mkdir(parents=True, exist_ok=True)
-
-    mouth_cues = compute_mouth_cues_from_audio(audio_path, fps=fps)
-
-    html_content = generate_whiteboard_html(
+    job = SceneRenderJob(
+        scene_number=scene_number,
         title=title,
         words=words,
+        audio_path=audio_path,
+        output_path=output_path,
         duration_sec=duration_sec,
-        mouth_cues=mouth_cues,
         gesture=gesture,
         fps=fps,
-        width=width,
-        height=height,
-        scene_number=scene_number,
         annotations=annotations,
         characters_data=characters_data,
+        width=width,
+        height=height,
         layout=layout,
         visuals=visuals,
         word_timings=word_timings,
         theme=theme,
+        rough_seed=rough_seed,
+        fast=fast,
+        temp_dir=temp_dir,
     )
+    return _render_job_with_browser(job)
 
-    html_file = (work_dir / "whiteboard_scene.html").resolve()
-    html_file.write_text(html_content, encoding="utf-8")
 
-    total_frames = max(1, int(round(fps * duration_sec)))
+def render_scenes_in_parallel(
+    jobs: List[SceneRenderJob],
+    workers: Optional[int] = None,
+    global_seed: int = 42,
+) -> List[Path]:
+    """
+    Renders multiple scenes in parallel using a worker pool of Playwright browser contexts.
+    - Worker pool bounded between 1 and MAX_WORKERS (4), defaulting to 2.
+    - Rejects invalid worker counts with clear ValueError.
+    - Does not start more browsers than worker count.
+    - Rough.js seeded deterministically per scene id so parallel equals sequential output.
+    - Each worker uses a unique temp directory created via tempfile.
+    - Always joins scenes in scene order, never completion order.
+    - If one worker fails, cancels others, cleans up temp files and partial clips, and raises
+      an error clearly naming the failed scene.
+    - Closes all browsers and cleans temp files on success, failure, and Ctrl+C.
+    """
+    num_workers = validate_worker_count(workers)
+    if not jobs:
+        return []
 
-    cmd = [
-        "ffmpeg", "-y",
-        "-f", "image2pipe",
-        "-vcodec", "png",
-        "-r", str(fps),
-        "-i", "pipe:0",
-    ]
+    # Assign deterministic rough_seed to each job if not already set
+    for job in jobs:
+        if job.rough_seed is None:
+            job.rough_seed = derive_scene_seed(job.scene_number, global_seed=global_seed)
 
-    if audio_path and audio_path.is_file():
-        cmd.extend([
-            "-i", str(audio_path.resolve()),
-            "-af", "apad",
-            "-c:a", "aac",
-            "-b:a", "192k",
-        ])
+    created_temp_dirs: List[Path] = []
+    active_procs: Dict[int, subprocess.Popen] = {}
+    cancel_event = threading.Event()
+    scene_results: Dict[int, Path] = {}
+    failed_scene: Optional[int] = None
+    first_error: Optional[BaseException] = None
 
-    cmd.extend([
-        "-c:v", "libx264",
-        "-preset", "ultrafast",
-        "-pix_fmt", "yuv420p",
-        "-r", str(fps),
-        "-t", f"{duration_sec:.3f}",
-        str(output_path.resolve()),
-    ])
+    tls = threading.local()
 
-    log_file = work_dir / "ffmpeg_render.log"
-    with open(log_file, "wb") as lf:
-        proc = subprocess.Popen(
-            cmd,
-            stdin=subprocess.PIPE,
-            stdout=subprocess.DEVNULL,
-            stderr=lf,
+    def get_thread_browser() -> Browser:
+        if not hasattr(tls, "playwright") or tls.playwright is None:
+            tls.playwright = sync_playwright().start()
+            tls.browser = tls.playwright.chromium.launch(headless=True)
+        return tls.browser
+
+    def cleanup_thread():
+        if hasattr(tls, "browser") and tls.browser is not None:
+            try:
+                tls.browser.close()
+            except Exception:
+                pass
+            tls.browser = None
+        if hasattr(tls, "playwright") and tls.playwright is not None:
+            try:
+                tls.playwright.stop()
+            except Exception:
+                pass
+            tls.playwright = None
+
+    def worker_runner(job: SceneRenderJob) -> Optional[Path]:
+        nonlocal failed_scene, first_error
+        if cancel_event.is_set():
+            return None
+
+        # Unique temp directory created with tempfile (not from user text)
+        job_temp = Path(tempfile.mkdtemp(prefix=f"toonshorts_sc{job.scene_number}_"))
+        created_temp_dirs.append(job_temp)
+        job.temp_dir = job_temp
+
+        thread_browser = get_thread_browser()
+        return _render_job_with_browser(
+            job=job,
+            browser=thread_browser,
+            cancel_event=cancel_event,
+            active_procs=active_procs,
         )
 
-        with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
-            page = browser.new_page(viewport={"width": width, "height": height})
-            page_errors = []
-            page.on("pageerror", lambda err: page_errors.append(str(err)))
-            page.goto(html_file.as_uri())
+    actual_workers = min(num_workers, len(jobs))
 
-            if page_errors:
-                browser.close()
-                if proc.stdin:
-                    proc.stdin.close()
-                proc.kill()
-                raise RuntimeError(f"JavaScript execution error in {html_file.name}: {'; '.join(page_errors)}")
+    try:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=actual_workers) as executor:
+            future_to_job = {executor.submit(worker_runner, j): j for j in jobs}
 
-            missing = page.evaluate("typeof window.__checkModulesLoaded === 'function' ? window.__checkModulesLoaded() : ['window.__checkModulesLoaded missing']")
-            if missing:
-                browser.close()
-                if proc.stdin:
-                    proc.stdin.close()
-                proc.kill()
-                raise RuntimeError(f"Missing required JS modules or functions in {html_file.name}: {', '.join(missing)}")
+            for fut in concurrent.futures.as_completed(future_to_job):
+                j = future_to_job[fut]
+                try:
+                    clip_path = fut.result()
+                    if clip_path:
+                        scene_results[j.scene_number] = clip_path
+                except BaseException as exc:
+                    if first_error is None:
+                        failed_scene = j.scene_number
+                        first_error = exc
+                    cancel_event.set()
 
+                    # Cancel remaining pending futures
+                    for other_fut in future_to_job:
+                        other_fut.cancel()
+
+                    # Terminate all running FFmpeg processes
+                    for s_num, proc in list(active_procs.items()):
+                        try:
+                            proc.terminate()
+                        except Exception:
+                            pass
+                    break
+
+            # Close all browsers across worker threads
+            cleanup_futs = [executor.submit(cleanup_thread) for _ in range(actual_workers)]
+            concurrent.futures.wait(cleanup_futs, timeout=5)
+
+    except KeyboardInterrupt:
+        cancel_event.set()
+        for s_num, proc in list(active_procs.items()):
             try:
-                for frame_idx in range(total_frames):
-                    t_ms = (frame_idx / fps) * 1000.0
-                    page.evaluate(f"window.seekTo({t_ms})")
-                    buf = page.screenshot(type="png")
-                    proc.stdin.write(buf)
-            finally:
-                if proc.stdin:
-                    proc.stdin.close()
-                proc.wait()
-                browser.close()
+                proc.terminate()
+            except Exception:
+                pass
+        for job in jobs:
+            if job.output_path.exists():
+                try:
+                    job.output_path.unlink()
+                except Exception:
+                    pass
+        for td in created_temp_dirs:
+            shutil.rmtree(td, ignore_errors=True)
+        raise
 
-    if proc.returncode != 0:
-        log_text = log_file.read_text(encoding="utf-8", errors="replace") if log_file.exists() else "No log"
-        raise RuntimeError(f"FFmpeg pipeline failed with return code {proc.returncode}:\n{log_text}")
+    finally:
+        # Clean up partial output if there was a failure
+        if first_error is not None:
+            for job in jobs:
+                if job.output_path.exists():
+                    try:
+                        job.output_path.unlink()
+                    except Exception:
+                        pass
 
-    return output_path
+        # Clean up all created temp directories
+        for td in created_temp_dirs:
+            shutil.rmtree(td, ignore_errors=True)
+
+    if first_error is not None:
+        raise RuntimeError(f"Rendering failed in Scene {failed_scene}: {first_error}") from first_error
+
+    # Strictly ordered by scene number (never completion order)
+    ordered_clips = [scene_results[job.scene_number] for job in jobs]
+    return ordered_clips

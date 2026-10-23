@@ -83,7 +83,7 @@ def get_video_metadata(video_path: Path) -> dict:
     }
 
 
-def render_test_video(output_dir: Path) -> tuple[Path, float]:
+def render_test_video(output_dir: Path, workers: int | None = None, fast: bool = False) -> tuple[Path, float]:
     """Runs the full pipeline on standard test brief and returns (video_path, elapsed_seconds)."""
     from toonshorts.core.pipeline import run_pipeline_from_brief
     from toonshorts.brief import load_brief
@@ -97,6 +97,8 @@ def render_test_video(output_dir: Path) -> tuple[Path, float]:
         output_dir=output_dir,
         auto_confirm=True,
         keep_temp=False,
+        fast=fast,
+        workers=workers,
     )
     elapsed = time.time() - start_t
     video_path = result.get("video")
@@ -219,6 +221,7 @@ def main():
     parser = argparse.ArgumentParser(description="ToonShorts Baseline Comparison")
     parser.add_argument("--init-baseline", action="store_true", help="Render and store initial baseline")
     parser.add_argument("--video", type=str, default=None, help="Existing video path to compare against baseline")
+    parser.add_argument("--workers", type=int, default=None, help="Number of render workers")
     parser.add_argument("--output-dir", type=str, default=str(DEFAULT_TEST_DIR), help="Output dir for rendered video")
     parser.add_argument("--max-diff", type=float, default=2.0, help="Max allowed mean pixel diff")
     args = parser.parse_args()
@@ -230,8 +233,8 @@ def main():
     if args.video:
         video_path = Path(args.video)
     else:
-        print(f"Rendering standard test video into {args.output_dir}...")
-        video_path, elapsed = render_test_video(Path(args.output_dir))
+        print(f"Rendering standard test video into {args.output_dir} (workers={args.workers})...")
+        video_path, elapsed = render_test_video(Path(args.output_dir), workers=args.workers)
         print(f"Render completed in {elapsed:.2f}s: {video_path}")
 
     ok = compare_against_baseline(video_path, max_mean_diff_threshold=args.max_diff)

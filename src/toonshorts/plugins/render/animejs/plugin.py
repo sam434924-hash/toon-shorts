@@ -16,7 +16,13 @@ from toonshorts.core import config
 from toonshorts.core.models import Character, Scene, SceneAudio, ScriptPlan
 from toonshorts.core.registry import RenderInterface, register_renderer
 from toonshorts.plugins.render.animejs.annotations import extract_whiteboard_content_and_annotations
-from toonshorts.plugins.render.animejs.capture import capture_still_frame, render_whiteboard_video
+from toonshorts.plugins.render.animejs.capture import (
+    SceneRenderJob,
+    capture_still_frame,
+    derive_scene_seed,
+    render_scenes_in_parallel,
+    render_whiteboard_video,
+)
 from toonshorts.plugins.render.animejs.cast import build_characters_data, resolve_scene_cast
 from toonshorts.plugins.render.animejs.html_builder import generate_whiteboard_html
 
@@ -28,7 +34,6 @@ class AnimeJSRenderPlugin(RenderInterface):
     """HTML5 / Anime.js code-driven whiteboard rendering engine with Rough.js hand-drawn sketches and character mouth sync."""
     supports_scene_audios: bool = True
     supports_fast: bool = True
-
 
     @property
     def name(self) -> str:
@@ -62,6 +67,7 @@ class AnimeJSRenderPlugin(RenderInterface):
         visuals = getattr(scene, "visuals", None)
         theme = style_preset.get("name", "whiteboard") if style_preset else "whiteboard"
         scene_word_timings = getattr(scene, "word_timings", None)
+        rough_seed = derive_scene_seed(scene.scene_number)
 
         html_str = generate_whiteboard_html(
             title=title,
@@ -78,6 +84,7 @@ class AnimeJSRenderPlugin(RenderInterface):
             visuals=visuals,
             word_timings=scene_word_timings,
             theme=theme,
+            rough_seed=rough_seed,
         )
 
         html_file = temp_dir / f"scene_{scene.scene_number}_still.html"
@@ -110,6 +117,8 @@ class AnimeJSRenderPlugin(RenderInterface):
         visuals: Optional[List[Any]] = None,
         word_timings: Optional[List[Any]] = None,
         theme: str = "whiteboard",
+        rough_seed: Optional[int] = None,
+        fast: bool = False,
     ) -> Path:
         """
         Renders a fully animated MP4 video with easing transitions synced to an audio clip.
@@ -135,6 +144,8 @@ class AnimeJSRenderPlugin(RenderInterface):
             visuals=visuals,
             word_timings=word_timings,
             theme=theme,
+            rough_seed=rough_seed,
+            fast=fast,
         )
 
     def render_all_scenes(
@@ -145,19 +156,20 @@ class AnimeJSRenderPlugin(RenderInterface):
         character_refs: Optional[Dict[str, Path]] = None,
         scene_audios: Optional[List[SceneAudio]] = None,
         fast: bool = False,
+        workers: Optional[int] = None,
     ) -> List[Path]:
         """
         Renders scenes for the screenplay plan.
-        If scene_audios is provided, generates animated MP4 video clips with mouth sync and idle motion.
+        If scene_audios is provided, generates animated MP4 video clips in parallel using workers.
         Otherwise renders still PNG frames.
         """
         temp_dir.mkdir(parents=True, exist_ok=True)
-        results = []
         fps = 15 if fast else config.VIDEO_FPS
         width = 540 if fast else config.VIDEO_WIDTH
         height = 960 if fast else config.VIDEO_HEIGHT
 
         if scene_audios and len(scene_audios) == len(plan.scenes):
+            jobs: List[SceneRenderJob] = []
             for i, (scene, audio) in enumerate(zip(plan.scenes, scene_audios)):
                 clip_path = temp_dir / f"animejs_scene_{scene.scene_number}.mp4"
                 title, words, annotations = extract_whiteboard_content_and_annotations(
@@ -173,7 +185,10 @@ class AnimeJSRenderPlugin(RenderInterface):
                 layout = getattr(scene, "layout", "cards") or "cards"
                 visuals = getattr(scene, "visuals", None)
                 theme = style_preset.get("name", "whiteboard") if style_preset else "whiteboard"
-                self.render_whiteboard_video(
+                rough_seed = derive_scene_seed(scene.scene_number)
+
+                job = SceneRenderJob(
+                    scene_number=scene.scene_number,
                     title=title,
                     words=words,
                     audio_path=audio.audio_path,
@@ -182,7 +197,6 @@ class AnimeJSRenderPlugin(RenderInterface):
                     gesture=scene_gesture,
                     fps=fps,
                     temp_dir=temp_dir / f"scene_{scene.scene_number}_tmp",
-                    scene_number=scene.scene_number,
                     annotations=annotations,
                     characters_data=characters_data,
                     width=width,
@@ -191,12 +205,16 @@ class AnimeJSRenderPlugin(RenderInterface):
                     visuals=visuals,
                     word_timings=audio.word_timings,
                     theme=theme,
+                    rough_seed=rough_seed,
+                    fast=fast,
                 )
-                results.append(clip_path)
+                jobs.append(job)
+
+            return render_scenes_in_parallel(jobs, workers=workers)
         else:
+            results = []
             for scene in plan.scenes:
                 out_path = temp_dir / f"animejs_scene_{scene.scene_number}.png"
                 self.render_scene(scene, plan.characters, style_preset, out_path, temp_dir)
                 results.append(out_path)
-
-        return results
+            return results

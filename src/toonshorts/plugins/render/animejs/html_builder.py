@@ -42,6 +42,8 @@ def generate_whiteboard_html(
     visuals: Optional[List[Any]] = None,
     word_timings: Optional[List[Any]] = None,
     theme: str = "whiteboard",
+    rough_seed: int = 1000,
+    fast: bool = False,
 ) -> str:
     """
     Generates a high-contrast HTML5/SVG composition with Anime.js whiteboard animation,
@@ -325,6 +327,8 @@ def generate_whiteboard_html(
     result = result.replace("{{CAMERA_PRESETS_JSON}}", camera_presets_json)
     result = result.replace("{{CAMERA_CONFIG_JSON}}", camera_config_json)
     result = result.replace("{{WORD_TIMINGS_JSON}}", word_timings_json)
+    result = result.replace("{{ROUGH_SEED}}", str(rough_seed))
+    result = result.replace("{{IS_FAST}}", "true" if fast else "false")
     result = result.replace("{{TOTAL_DURATION_MS}}", str(total_duration_ms))
     result = result.replace("{{TIMELINE_CHAIN}}", timeline_chain)
 

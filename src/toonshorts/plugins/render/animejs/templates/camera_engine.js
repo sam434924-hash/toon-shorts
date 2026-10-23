@@ -190,14 +190,22 @@ function applyMultiplaneParallax(camState) {
     el.style.transform = 'translate(' + shiftX.toFixed(2) + 'px, ' + shiftY.toFixed(2) + 'px) scale(' + scale.toFixed(3) + ') rotate(' + camState.driftRot.toFixed(3) + 'deg)';
   });
 
-  // Rack Focus Blur Application with continuous ramp
-  const f = typeof camState.focus === 'number' ? camState.focus : (camState.focus === 'board' ? 1.0 : 0.0);
-  const rf = camState.cfg.rack_focus || { sharp: 0.0, near_defocus: 2.2, far_defocus: 3.8 };
-
   const fgEl = document.getElementById('layer-foreground');
   const subjEl = document.getElementById('layer-subject');
   const boardEl = document.getElementById('layer-board');
   const bgEl = document.getElementById('layer-deep-bg');
+
+  if (window.__isFast) {
+    if (fgEl) fgEl.style.filter = 'none';
+    if (subjEl) subjEl.style.filter = 'none';
+    if (boardEl) boardEl.style.filter = 'none';
+    if (bgEl) bgEl.style.filter = 'none';
+    return;
+  }
+
+  // Rack Focus Blur Application with continuous ramp
+  const f = typeof camState.focus === 'number' ? camState.focus : (camState.focus === 'board' ? 1.0 : 0.0);
+  const rf = camState.cfg.rack_focus || { sharp: 0.0, near_defocus: 2.2, far_defocus: 3.8 };
 
   const fgBlur = rf.near_defocus + f * (rf.far_defocus - rf.near_defocus);
   const subjBlur = rf.sharp + f * (rf.near_defocus - rf.sharp);
