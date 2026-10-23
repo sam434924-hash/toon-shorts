@@ -184,6 +184,13 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Capabilities**: Safe SVG parsing, hex color normalization, multi-character style distance calculation, and single-style-per-video enforcement.
 - **Tests**: `tests/unit/test_style_profile.py`
 
+### Layered Background & Parallax (`render/animejs/layout`)
+- **Description**: 3-layer vector SVG multiplane background system (far, mid, near) oversized by 300px on all edges with distinct depth factors shifting only on purposeful camera moves and static between cues.
+- **Files**: `src/toonshorts/plugins/render/animejs/layout.py`, `src/toonshorts/plugins/render/animejs/templates/style.css`, `src/toonshorts/plugins/render/animejs/templates/camera_engine.js`
+- **Config Flags**: `ENABLE_PARALLAX_BACKGROUND`, `BACKGROUND_PARALLAX_DEPTHS`, `CAMERA_PARALLAX_FACTORS`
+- **Capabilities**: Zero empty edge guarantee across all extreme camera poses, vector SVG style matching, and blur disabled in fast mode.
+- **Tests**: `tests/unit/test_depth_camera_parallax.py`
+
 ## 2D Layered Character System (`core/character2d`, `core/character_pack`)
 
 ### `presenter` (Whiteboard Presenter Character Pack)

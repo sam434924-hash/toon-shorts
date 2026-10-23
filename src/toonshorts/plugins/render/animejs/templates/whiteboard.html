@@ -17,6 +17,17 @@
 </head>
 <body class="theme-{{THEME_NAME}}">
   <div id="camera-viewport">
+    <!-- 3 Multiplane Parallax Background Depth Layers (Far, Mid, Near) -->
+    <div id="bg-layer-far" class="depth-layer layer-bg-far" data-depth-factor="0.08">
+{{BG_FAR_CONTENT}}
+    </div>
+    <div id="bg-layer-mid" class="depth-layer layer-bg-mid" data-depth-factor="0.18">
+{{BG_MID_CONTENT}}
+    </div>
+    <div id="bg-layer-near" class="depth-layer layer-bg-near" data-depth-factor="0.32">
+{{BG_NEAR_CONTENT}}
+    </div>
+
     <!-- Layer 4: Deep Background (Wall, LED strips, window with city lights, shelf decor) -->
     <div id="layer-deep-bg" class="depth-layer layer-deep-bg" data-depth-factor="0.12">
       <div class="deep-bg-surface"></div>

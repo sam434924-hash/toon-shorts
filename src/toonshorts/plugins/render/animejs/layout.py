@@ -183,6 +183,91 @@ def generate_scene_decorations(scene_number: int = 1, theme: str = "whiteboard")
     return shelf_svg, desk_svg
 
 
+def build_parallax_background_layers(
+    theme: str = "whiteboard",
+    style_profile: Optional[Dict[str, Any]] = None,
+) -> Dict[str, str]:
+    """
+    Builds 3 oversized multiplane background depth layers (far, mid, near) as pure vector SVG.
+    All colors, strokes, and accents match the active style profile exactly.
+    Oversized to [-300, 1380] x [-300, 2220] to guarantee zero empty edges at extreme camera moves.
+    """
+    prof = style_profile or {}
+    pal = prof.get("palette") or (
+        ["#0b0f19", "#0f172a", "#1e293b", "#38bdf8", "#818cf8"]
+        if theme == "night_studio"
+        else ["#0f172a", "#f8fafc", "#2563EB", "#F59E0B", "#e2e8f0"]
+    )
+    outline = prof.get("outline_color") or ("#1e293b" if theme == "night_studio" else "#94a3b8")
+    stroke_w = float(prof.get("stroke_width", 5.0))
+    highlight = prof.get("highlight_color") or ("#38bdf8" if theme == "night_studio" else "#2563EB")
+    bg_main = pal[0] if theme == "night_studio" else (pal[1] if len(pal) > 1 else "#f8fafc")
+    bg_deep = "#03060c" if theme == "night_studio" else "#f1f5f9"
+    accent = pal[3] if len(pal) > 3 else highlight
+
+    # 1. FAR LAYER (depth 0.08): Deep sky/wall gradient, distant city skyline or architectural verticals
+    far_svg = f"""
+    <svg class="bg-vector-svg" viewBox="-300 -300 1680 2520" width="1680" height="2520" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="far-grad" cx="50%" cy="30%" r="75%">
+          <stop offset="0%" stop-color="{bg_main}" stop-opacity="1.0"/>
+          <stop offset="60%" stop-color="{bg_deep}" stop-opacity="1.0"/>
+          <stop offset="100%" stop-color="#020408" stop-opacity="1.0"/>
+        </radialGradient>
+      </defs>
+      <!-- Deep Wall Base Surface -->
+      <rect x="-300" y="-300" width="1680" height="2520" fill="url(#far-grad)"/>
+      <!-- Distant City Skyline / Structural Pillars -->
+      <rect x="-150" y="450" width="120" height="1800" fill="{bg_main}" opacity="0.35"/>
+      <rect x="50" y="320" width="90" height="1900" fill="{bg_main}" opacity="0.25"/>
+      <rect x="420" y="520" width="140" height="1700" fill="{bg_main}" opacity="0.30"/>
+      <rect x="920" y="280" width="110" height="1950" fill="{bg_main}" opacity="0.25"/>
+      <rect x="1150" y="480" width="130" height="1750" fill="{bg_main}" opacity="0.35"/>
+    </svg>"""
+
+    # 2. MID LAYER (depth 0.18): Studio room window, vertical LED strips, acoustic diffusers
+    mid_svg = f"""
+    <svg class="bg-vector-svg" viewBox="-300 -300 1680 2520" width="1680" height="2520" xmlns="http://www.w3.org/2000/svg">
+      <!-- Vertical Architectural Diffuser Battens -->
+      <line x1="-120" y1="-200" x2="-120" y2="1800" stroke="{outline}" stroke-width="{stroke_w * 0.8:.1f}" opacity="0.4"/>
+      <line x1="1200" y1="-200" x2="1200" y2="1800" stroke="{outline}" stroke-width="{stroke_w * 0.8:.1f}" opacity="0.4"/>
+      <!-- Studio Window Frame with lit panes -->
+      <g transform="translate(460, 750)">
+        <rect x="0" y="0" width="160" height="280" rx="10" fill="{bg_deep}" stroke="{outline}" stroke-width="{stroke_w:.1f}"/>
+        <rect x="15" y="80" width="35" height="195" fill="{bg_main}"/>
+        <rect x="55" y="45" width="45" height="230" fill="{bg_deep}"/>
+        <rect x="105" y="110" width="40" height="165" fill="{bg_main}"/>
+        <rect class="city-win win-1" x="22" y="95" width="6" height="8" rx="1" fill="{highlight}"/>
+        <rect class="city-win win-2" x="35" y="125" width="6" height="8" rx="1" fill="{accent}"/>
+        <rect class="city-win win-3" x="65" y="60" width="8" height="10" rx="1" fill="{highlight}"/>
+        <rect class="city-win win-4" x="82" y="85" width="8" height="10" rx="1" fill="{accent}"/>
+        <rect class="city-win win-5" x="115" y="130" width="6" height="8" rx="1" fill="{highlight}"/>
+      </g>
+      <!-- Vertical Glowing LED Edge Bars -->
+      <rect x="35" y="40" width="8" height="1100" rx="4" fill="{highlight}" opacity="0.9"/>
+      <rect x="1037" y="40" width="8" height="1100" rx="4" fill="{accent}" opacity="0.9"/>
+    </svg>"""
+
+    # 3. NEAR LAYER (depth 0.32): Wall shelves, books, geometric potted plant, framed badge
+    near_svg = f"""
+    <svg class="bg-vector-svg" viewBox="-300 -300 1680 2520" width="1680" height="2520" xmlns="http://www.w3.org/2000/svg">
+      <!-- Floating Wall Shelf on Right Studio Wall -->
+      <g transform="translate(810, 635)">
+        <rect x="0" y="75" width="220" height="18" rx="4" fill="{outline}" stroke="{outline}" stroke-width="{stroke_w * 0.6:.1f}"/>
+        <!-- Plant in Pot -->
+        <rect x="15" y="42" width="28" height="32" rx="4" fill="{bg_main}" stroke="{outline}" stroke-width="{stroke_w * 0.6:.1f}"/>
+        <path d="M 29 42 C 18 24, 6 30, 14 42 Z" fill="#10b981"/>
+        <path d="M 29 42 C 34 16, 50 22, 42 42 Z" fill="#059669"/>
+        <!-- Studio Books on Shelf -->
+        <rect x="52" y="32" width="12" height="42" rx="2" fill="{highlight}"/>
+        <rect x="66" y="24" width="14" height="50" rx="2" fill="{accent}"/>
+        <rect x="82" y="36" width="10" height="38" rx="2" fill="{pal[2] if len(pal) > 2 else '#3b82f6'}"/>
+      </g>
+    </svg>"""
+
+    return {"far": far_svg, "mid": mid_svg, "near": near_svg}
+
+
 def compute_gesture_bounds(
     gesture: str,
     width: int = config.VIDEO_WIDTH,

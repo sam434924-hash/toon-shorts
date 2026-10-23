@@ -94,7 +94,20 @@ NIGHT_STUDIO_SUBTITLE_STRIP = {
 }
 
 # 4-Layer Depth & Parallax factors (Foreground, Subject, Board, Deep Background)
+# 3-Layer Parallax Background Depths (Far, Mid, Near)
+BACKGROUND_PARALLAX_DEPTHS = {
+    "far": 0.08,
+    "mid": 0.18,
+    "near": 0.32,
+}
+
+# Phase 4B: Parallax Background
+ENABLE_PARALLAX_BACKGROUND = True
+
 CAMERA_PARALLAX_FACTORS = {
+    "bg_far": 0.08,
+    "bg_mid": 0.18,
+    "bg_near": 0.32,
     "foreground": 2.0,
     "subject": 1.0,
     "board": 0.5,

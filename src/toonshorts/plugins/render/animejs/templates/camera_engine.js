@@ -349,6 +349,9 @@ function computeCameraState(ms, frameIdx) {
 function applyMultiplaneParallax(camState) {
   const p = camState.pFactors;
   const layers = [
+    { id: 'bg-layer-far', factor: p.bg_far || 0.08 },
+    { id: 'bg-layer-mid', factor: p.bg_mid || 0.18 },
+    { id: 'bg-layer-near', factor: p.bg_near || 0.32 },
     { id: 'layer-foreground', factor: p.foreground || 2.0 },
     { id: 'layer-subject', factor: p.subject || 1.0 },
     { id: 'layer-board', factor: p.board || 0.5 },
@@ -369,12 +372,18 @@ function applyMultiplaneParallax(camState) {
   const subjEl = document.getElementById('layer-subject');
   const boardEl = document.getElementById('layer-board');
   const bgEl = document.getElementById('layer-deep-bg');
+  const bgFarEl = document.getElementById('bg-layer-far');
+  const bgMidEl = document.getElementById('bg-layer-mid');
+  const bgNearEl = document.getElementById('bg-layer-near');
 
   if (window.__isFast) {
     if (fgEl) fgEl.style.filter = 'none';
     if (subjEl) subjEl.style.filter = 'none';
     if (boardEl) boardEl.style.filter = 'none';
     if (bgEl) bgEl.style.filter = 'none';
+    if (bgFarEl) bgFarEl.style.filter = 'none';
+    if (bgMidEl) bgMidEl.style.filter = 'none';
+    if (bgNearEl) bgNearEl.style.filter = 'none';
     return;
   }
 
@@ -391,6 +400,9 @@ function applyMultiplaneParallax(camState) {
   if (subjEl) subjEl.style.filter = 'blur(' + subjBlur.toFixed(2) + 'px)';
   if (boardEl) boardEl.style.filter = 'blur(' + boardBlur.toFixed(2) + 'px)';
   if (bgEl) bgEl.style.filter = 'blur(' + bgBlur.toFixed(2) + 'px)';
+  if (bgFarEl) bgFarEl.style.filter = 'blur(' + (bgBlur * 1.2).toFixed(2) + 'px)';
+  if (bgMidEl) bgMidEl.style.filter = 'blur(' + (bgBlur * 0.9).toFixed(2) + 'px)';
+  if (bgNearEl) bgNearEl.style.filter = 'blur(' + (rf.near_defocus).toFixed(2) + 'px)';
 }
 
 window.smootherstep = smootherstep;

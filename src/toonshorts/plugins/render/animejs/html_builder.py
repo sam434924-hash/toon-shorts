@@ -4,7 +4,7 @@ Inputs: Scene metadata, character SVG rigs, timing cues, annotations, and stage 
 Outputs: Self-contained HTML5 string embedding local script engines and CSS.
 Depends on: core.camera, core.config, core.models, html, json, pathlib, plugins.render.animejs.cast, plugins.render.animejs.gestures, plugins.render.animejs.layout, plugins.render.animejs.visual_renderer, typing
 Used by: plugins.render.animejs, plugins.render.animejs.capture, plugins.render.animejs.plugin
-Config keys: ANIME_JS_PATH, ENABLE_PURPOSEFUL_CAMERA, ROUGH_JS_PATH, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
+Config keys: ANIME_JS_PATH, ENABLE_PARALLAX_BACKGROUND, ENABLE_PURPOSEFUL_CAMERA, ROUGH_JS_PATH, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
 Tests: tests/unit/test_animejs.py, tests/unit/test_word_annotations_security.py
 """
 
@@ -23,7 +23,10 @@ from toonshorts.core.camera import (
 from toonshorts.core.models import Scene
 from toonshorts.plugins.render.animejs.cast import build_characters_data
 from toonshorts.plugins.render.animejs.gestures import sanitize_gesture
-from toonshorts.plugins.render.animejs.layout import generate_scene_decorations
+from toonshorts.plugins.render.animejs.layout import (
+    build_parallax_background_layers,
+    generate_scene_decorations,
+)
 from toonshorts.plugins.render.animejs.visual_renderer import (
     build_stage_elements,
     resolve_visual_timings,
@@ -243,6 +246,17 @@ def generate_whiteboard_html(
     mouth_cues_json = json.dumps(mouth_cues or [])
     shelf_decor_html, desk_props_html = generate_scene_decorations(scene_number, theme=theme)
 
+    enable_parallax_bg = getattr(config, "ENABLE_PARALLAX_BACKGROUND", True)
+    if enable_parallax_bg:
+        bg_layers = build_parallax_background_layers(theme=theme, style_profile=None)
+        bg_far_content = bg_layers.get("far", "")
+        bg_mid_content = bg_layers.get("mid", "")
+        bg_near_content = bg_layers.get("near", "")
+    else:
+        bg_far_content = ""
+        bg_mid_content = ""
+        bg_near_content = ""
+
     # Multiplane Camera Motion & Depth Configuration from central config
     camera_parallax_json = json.dumps(getattr(config, "CAMERA_PARALLAX_FACTORS", {
         "foreground": 2.0, "subject": 1.0, "board": 0.5, "deep_bg": 0.12
@@ -340,6 +354,9 @@ def generate_whiteboard_html(
     result = result.replace("{{ANIME_JS}}", anime_js)
     result = result.replace("{{ROUGH_JS}}", rough_js)
     result = result.replace("{{SHELF_DECOR}}", shelf_decor_html)
+    result = result.replace("{{BG_FAR_CONTENT}}", bg_far_content)
+    result = result.replace("{{BG_MID_CONTENT}}", bg_mid_content)
+    result = result.replace("{{BG_NEAR_CONTENT}}", bg_near_content)
     result = result.replace("{{BOARD_CONTENT}}", board_content)
     result = result.replace("{{CARDS_MARKUP}}", cards_markup)
     result = result.replace("{{CHARACTERS_HTML}}", characters_html)

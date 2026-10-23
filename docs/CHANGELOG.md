@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-24: phase4b-3: 3-layer vector SVG parallax background (far, mid, near) with configured depths, 300px boundary oversizing, and fast mode blur suppression.
+
 - 2026-10-24: phase4b-2: style profile extractor, safe SVG palette parsing, single style per video enforcement, and toon-shorts-style skill.
 
 - 2026-10-24: phase4b-1: purposeful camera shot plan with lead-in moves, hold constraints, easeInOutCubic transitions, zero continuous drift, and timeline reporting.
