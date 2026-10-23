@@ -359,6 +359,9 @@ def render_scenes_in_parallel(
 
     created_temp_dirs: List[Path] = []
     active_procs: Dict[int, subprocess.Popen] = {}
+    active_browsers: List[Browser] = []
+    active_playwrights: List[Any] = []
+    resource_lock = threading.Lock()
     cancel_event = threading.Event()
     scene_results: Dict[int, Path] = {}
     failed_scene: Optional[int] = None
@@ -368,8 +371,13 @@ def render_scenes_in_parallel(
 
     def get_thread_browser() -> Browser:
         if not hasattr(tls, "playwright") or tls.playwright is None:
-            tls.playwright = sync_playwright().start()
-            tls.browser = tls.playwright.chromium.launch(headless=True)
+            pw = sync_playwright().start()
+            b = pw.chromium.launch(headless=True)
+            tls.playwright = pw
+            tls.browser = b
+            with resource_lock:
+                active_playwrights.append(pw)
+                active_browsers.append(b)
         return tls.browser
 
     def cleanup_thread():
@@ -378,13 +386,69 @@ def render_scenes_in_parallel(
                 tls.browser.close()
             except Exception:
                 pass
+            with resource_lock:
+                if tls.browser in active_browsers:
+                    active_browsers.remove(tls.browser)
             tls.browser = None
         if hasattr(tls, "playwright") and tls.playwright is not None:
             try:
                 tls.playwright.stop()
             except Exception:
                 pass
+            with resource_lock:
+                if tls.playwright in active_playwrights:
+                    active_playwrights.remove(tls.playwright)
             tls.playwright = None
+
+    def cleanup_all():
+        cancel_event.set()
+        # 1. Terminate all active FFmpeg processes
+        with resource_lock:
+            procs = list(active_procs.values())
+        for proc in procs:
+            try:
+                if proc.stdin and not proc.stdin.closed:
+                    proc.stdin.close()
+            except Exception:
+                pass
+            try:
+                proc.terminate()
+                proc.wait(timeout=2)
+            except Exception:
+                try:
+                    proc.kill()
+                except Exception:
+                    pass
+
+        # 2. Close all active browsers and stop playwright
+        with resource_lock:
+            browsers = list(active_browsers)
+            active_browsers.clear()
+            pws = list(active_playwrights)
+            active_playwrights.clear()
+
+        for b in browsers:
+            try:
+                b.close()
+            except Exception:
+                pass
+        for pw in pws:
+            try:
+                pw.stop()
+            except Exception:
+                pass
+
+        # 3. Clean up partial outputs
+        for job in jobs:
+            if job.output_path.exists():
+                try:
+                    job.output_path.unlink()
+                except Exception:
+                    pass
+
+        # 4. Clean up all created temp directories
+        for td in created_temp_dirs:
+            shutil.rmtree(td, ignore_errors=True)
 
     def worker_runner(job: SceneRenderJob) -> Optional[Path]:
         nonlocal failed_scene, first_error
@@ -393,7 +457,8 @@ def render_scenes_in_parallel(
 
         # Unique temp directory created with tempfile (not from user text)
         job_temp = Path(tempfile.mkdtemp(prefix=f"toonshorts_sc{job.scene_number}_"))
-        created_temp_dirs.append(job_temp)
+        with resource_lock:
+            created_temp_dirs.append(job_temp)
         job.temp_dir = job_temp
 
         thread_browser = get_thread_browser()
@@ -416,6 +481,12 @@ def render_scenes_in_parallel(
                     clip_path = fut.result()
                     if clip_path:
                         scene_results[j.scene_number] = clip_path
+                except KeyboardInterrupt:
+                    cancel_event.set()
+                    for other_fut in future_to_job:
+                        other_fut.cancel()
+                    cleanup_all()
+                    raise
                 except BaseException as exc:
                     if first_error is None:
                         failed_scene = j.scene_number
@@ -426,12 +497,7 @@ def render_scenes_in_parallel(
                     for other_fut in future_to_job:
                         other_fut.cancel()
 
-                    # Terminate all running FFmpeg processes
-                    for s_num, proc in list(active_procs.items()):
-                        try:
-                            proc.terminate()
-                        except Exception:
-                            pass
+                    cleanup_all()
                     break
 
             # Close all browsers across worker threads
@@ -439,35 +505,32 @@ def render_scenes_in_parallel(
             concurrent.futures.wait(cleanup_futs, timeout=5)
 
     except KeyboardInterrupt:
-        cancel_event.set()
-        for s_num, proc in list(active_procs.items()):
-            try:
-                proc.terminate()
-            except Exception:
-                pass
-        for job in jobs:
-            if job.output_path.exists():
-                try:
-                    job.output_path.unlink()
-                except Exception:
-                    pass
-        for td in created_temp_dirs:
-            shutil.rmtree(td, ignore_errors=True)
+        cleanup_all()
         raise
 
     finally:
-        # Clean up partial output if there was a failure
         if first_error is not None:
-            for job in jobs:
-                if job.output_path.exists():
-                    try:
-                        job.output_path.unlink()
-                    except Exception:
-                        pass
-
-        # Clean up all created temp directories
-        for td in created_temp_dirs:
-            shutil.rmtree(td, ignore_errors=True)
+            cleanup_all()
+        else:
+            # Clean up all created temp directories on success
+            for td in created_temp_dirs:
+                shutil.rmtree(td, ignore_errors=True)
+            # Ensure any leftover browsers are closed
+            with resource_lock:
+                browsers = list(active_browsers)
+                active_browsers.clear()
+                pws = list(active_playwrights)
+                active_playwrights.clear()
+            for b in browsers:
+                try:
+                    b.close()
+                except Exception:
+                    pass
+            for pw in pws:
+                try:
+                    pw.stop()
+                except Exception:
+                    pass
 
     if first_error is not None:
         raise RuntimeError(f"Rendering failed in Scene {failed_scene}: {first_error}") from first_error

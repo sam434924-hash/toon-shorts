@@ -143,3 +143,25 @@ def test_ffmpeg_pipe_error_handling(tmp_path):
 
     # Verify partial file is removed
     assert not out_file.exists()
+
+
+def test_keyboard_interrupt_cleanup(tmp_path):
+    """Simulates Ctrl+C (KeyboardInterrupt) and verifies cleanup of outputs, temp dirs, and procs."""
+    out_file1 = tmp_path / "sc1_int.mp4"
+    out_file2 = tmp_path / "sc2_int.mp4"
+    job1 = SceneRenderJob(scene_number=1, title="S1", words=[], audio_path=None, output_path=out_file1)
+    job2 = SceneRenderJob(scene_number=2, title="S2", words=[], audio_path=None, output_path=out_file2)
+
+    def mock_interrupt(job, **kwargs):
+        job.output_path.write_bytes(b"partial-data")
+        if job.scene_number == 1:
+            raise KeyboardInterrupt("Simulated Ctrl+C")
+        time.sleep(0.1)
+        return job.output_path
+
+    with patch("toonshorts.plugins.render.animejs.capture._render_job_with_browser", side_effect=mock_interrupt):
+        with pytest.raises(KeyboardInterrupt):
+            render_scenes_in_parallel([job1, job2], workers=2)
+
+    assert not out_file1.exists()
+    assert not out_file2.exists()

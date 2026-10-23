@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-23: Phase 3b hardening: enhanced thread-safe browser and process registry for parallel worker pool, guaranteeing zero leaked browser or FFmpeg processes and full temp cleanup on interrupt or failure.
+
 - 2026-10-23: Phase 3 performance: added fast draft mode (540x960, 15fps, roughness 0, blur off) and parallel scene rendering in Anime.js (worker pool 1-4, deterministic scene seeding, safe error handling and tempfile cleanup) cutting render time by more than 2x.
 - 2026-10-23: Phase 2b cleanup: removed obsolete monolithic script.js and redundant fallback injection, updated architecture overview docs, and retained tools/verify_raw_split.py.
 - 2026-10-23: Phase 2: split script.js into modular templates (camera_engine, gestures_fk, rough_draw, stage_visuals, main) with fixed-order local loading & error detection, and separated FK math into fk_solver.py and rendering into svg_renderer.py with identical raw browser frame determinism.
