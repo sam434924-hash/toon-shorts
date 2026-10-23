@@ -2,7 +2,7 @@
 Purpose: Pipeline runner orchestrating LLM, voice, render, and motion.
 Inputs: Video production topic, style name, flags, and plugin selections.
 Outputs: Path to finalized vertical animation MP4 short.
-Depends on: brief, core.assembler, core.config, core.cost, core.errors, core.models, core.registry, json, logging, pathlib, shutil, subprocess, typing
+Depends on: brief, core.assembler, core.camera, core.config, core.cost, core.errors, core.models, core.registry, json, logging, pathlib, shutil, subprocess, typing
 Used by: cli, core
 Config keys: DEFAULT_LLM, DEFAULT_MOTION, DEFAULT_RENDERER, DEFAULT_VOICE, OUTPUT_DIR, STYLES_DIR, TEMP_DIR
 Tests: tests/smoke/test_smoke_pipeline.py
@@ -16,6 +16,7 @@ import subprocess
 from typing import Dict, Any, List, Optional, Union
 
 from . import config
+from .camera import validate_camera_config
 from .errors import PipelineError
 from .models import ScriptPlan, SceneAudio, Character, CameraMove
 from .cost import estimate_costs, confirm_cost_gate
@@ -46,6 +47,9 @@ def load_style_preset(style_name: str, styles_dir: Path = config.STYLES_DIR) -> 
     for key in required_keys:
         if key not in preset:
             raise ValueError(f"Style preset '{style_name}' missing required field: '{key}'")
+
+    if "camera" in preset:
+        preset["camera"] = validate_camera_config(preset["camera"])
 
     return preset
 

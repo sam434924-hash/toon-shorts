@@ -22,6 +22,15 @@
     "style": "whiteboard_modern"
   },
   "pacing": "moderate",
+  "camera": {
+    "mode": "purposeful_only",
+    "continuous_drift": false,
+    "transition_duration_ms": 350,
+    "easing": "easeInOutCubic",
+    "lead_ms": 130,
+    "min_hold_ms": 1000,
+    "target_move_interval_s": [3, 6]
+  },
   "default_sound_effects": ["pop", "bell"],
   "avoid": [
     "photorealistic human skin",

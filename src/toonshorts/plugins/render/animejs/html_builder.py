@@ -2,9 +2,9 @@
 Purpose: Template assembly and HTML document generation for whiteboard scenes.
 Inputs: Scene metadata, character SVG rigs, timing cues, annotations, and stage visuals.
 Outputs: Self-contained HTML5 string embedding local script engines and CSS.
-Depends on: core.config, core.models, html, json, pathlib, plugins.render.animejs.cast, plugins.render.animejs.gestures, plugins.render.animejs.layout, plugins.render.animejs.visual_renderer, typing
+Depends on: core.camera, core.config, core.models, html, json, pathlib, plugins.render.animejs.cast, plugins.render.animejs.gestures, plugins.render.animejs.layout, plugins.render.animejs.visual_renderer, typing
 Used by: plugins.render.animejs, plugins.render.animejs.capture, plugins.render.animejs.plugin
-Config keys: ANIME_JS_PATH, ROUGH_JS_PATH, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
+Config keys: ANIME_JS_PATH, ENABLE_PURPOSEFUL_CAMERA, ROUGH_JS_PATH, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
 Tests: tests/unit/test_animejs.py, tests/unit/test_word_annotations_security.py
 """
 
@@ -14,6 +14,12 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from toonshorts.core import config
+from toonshorts.core.camera import (
+    format_camera_timeline,
+    load_camera_config_for_style,
+    plan_scene_camera_shots,
+    save_camera_timelines,
+)
 from toonshorts.core.models import Scene
 from toonshorts.plugins.render.animejs.cast import build_characters_data
 from toonshorts.plugins.render.animejs.gestures import sanitize_gesture
@@ -44,6 +50,8 @@ def generate_whiteboard_html(
     theme: str = "whiteboard",
     rough_seed: int = 1000,
     fast: bool = False,
+    camera_config: Optional[Dict[str, Any]] = None,
+    camera_shots: Optional[List[Dict[str, Any]]] = None,
 ) -> str:
     """
     Generates a high-contrast HTML5/SVG composition with Anime.js whiteboard animation,
@@ -245,15 +253,37 @@ def generate_whiteboard_html(
         "girl_close": {"x": -130.0, "y": -45.0, "zoom": 1.18, "focus": "subject"},
         "board_close": {"x": 0.0, "y": 90.0, "zoom": 1.25, "focus": "board"},
     }))
-    camera_config_json = json.dumps({
-        "transition_sec": getattr(config, "CAMERA_TRANSITION_SEC", 0.80),
-        "drift_rot_max": getattr(config, "CAMERA_DRIFT_ROT_MAX", 0.35),
-        "punch_in_zoom": getattr(config, "CAMERA_PUNCH_IN_ZOOM", 1.16),
-        "punch_in_shake": getattr(config, "CAMERA_PUNCH_IN_SHAKE_PX", 1.5),
-        "rack_focus": getattr(config, "CAMERA_RACK_FOCUS_BLUR", {
-            "sharp": 0.0, "near_defocus": 2.2, "far_defocus": 3.8, "transition_frames": 10
-        }),
-    })
+    enable_purposeful = getattr(config, "ENABLE_PURPOSEFUL_CAMERA", True)
+    resolved_cam_cfg = camera_config or load_camera_config_for_style(theme)
+
+    if resolved_cam_cfg and enable_purposeful:
+        if camera_shots is not None:
+            resolved_shots = camera_shots
+        else:
+            resolved_shots = plan_scene_camera_shots(
+                duration_sec=duration_sec,
+                word_timings=word_timings,
+                visuals=visuals,
+                speaker_id=speaker_slot_id,
+                camera_config=resolved_cam_cfg,
+                speaker_slot="right" if speaker_slot_id == "character-rig-right" else "left",
+                scene_number=scene_number,
+            )
+        timeline_txt = format_camera_timeline(resolved_shots, duration_sec, scene_number=scene_number)
+        save_camera_timelines({scene_number: timeline_txt})
+        camera_shot_list_json = json.dumps(resolved_shots)
+        camera_config_json = json.dumps(resolved_cam_cfg)
+    else:
+        camera_shot_list_json = "[]"
+        camera_config_json = json.dumps({
+            "transition_sec": getattr(config, "CAMERA_TRANSITION_SEC", 0.80),
+            "drift_rot_max": getattr(config, "CAMERA_DRIFT_ROT_MAX", 0.35),
+            "punch_in_zoom": getattr(config, "CAMERA_PUNCH_IN_ZOOM", 1.16),
+            "punch_in_shake": getattr(config, "CAMERA_PUNCH_IN_SHAKE_PX", 1.5),
+            "rack_focus": getattr(config, "CAMERA_RACK_FOCUS_BLUR", {
+                "sharp": 0.0, "near_defocus": 2.2, "far_defocus": 3.8, "transition_frames": 10
+            }),
+        })
     raw_wts = []
     if word_timings:
         for wt in word_timings:
@@ -326,6 +356,8 @@ def generate_whiteboard_html(
     result = result.replace("{{CAMERA_PARALLAX_JSON}}", camera_parallax_json)
     result = result.replace("{{CAMERA_PRESETS_JSON}}", camera_presets_json)
     result = result.replace("{{CAMERA_CONFIG_JSON}}", camera_config_json)
+    result = result.replace("{{CAMERA_SHOT_LIST_JSON}}", camera_shot_list_json)
+    result = result.replace("{{ENABLE_PURPOSEFUL_CAMERA}}", "true" if enable_purposeful else "false")
     result = result.replace("{{WORD_TIMINGS_JSON}}", word_timings_json)
     result = result.replace("{{ROUGH_SEED}}", str(rough_seed))
     result = result.replace("{{IS_FAST}}", "true" if fast else "false")

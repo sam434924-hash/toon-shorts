@@ -3,7 +3,7 @@ Purpose: Central configuration, paths, model names, pricing, and limits.
 Inputs: Environment variables and optional .env file.
 Outputs: Path objects, model constants, hard caps, pricing dictionaries.
 Depends on: dotenv, os, pathlib, sys
-Used by: brief, cli, config, core, core.assembler, core.caps, core.character2d, core.character_pack, core.client, core.cost, core.pipeline, inventory, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.render.animejs.audio_sync, plugins.render.animejs.capture, plugins.render.animejs.html_builder, plugins.render.animejs.layout, plugins.render.animejs.plugin, plugins.render.blender3d, plugins.render.cairo, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.gemini_tts, plugins.voice.piper, voice_utils
+Used by: brief, cli, config, core, core.assembler, core.camera, core.caps, core.character2d, core.character_pack, core.client, core.cost, core.pipeline, inventory, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.render.animejs.audio_sync, plugins.render.animejs.capture, plugins.render.animejs.html_builder, plugins.render.animejs.layout, plugins.render.animejs.plugin, plugins.render.blender3d, plugins.render.cairo, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.gemini_tts, plugins.voice.piper, voice_utils
 Config keys: ANIME_JS_PATH, BLENDER_PATH, GEMINI_API_KEY, OneDrive, ROUGH_JS_PATH, TTS_CACHE_DIR
 Tests: tests/unit/test_spend_cap.py, tests/unit/test_styles.py
 """
@@ -124,6 +124,9 @@ CAMERA_RACK_FOCUS_BLUR = {
 CAMERA_ZOOM_SPEAKER = 1.18
 CAMERA_ZOOM_BOARD = 1.25
 CAMERA_EASE_DURATION_SEC = 0.50
+
+# Phase 4B: Purposeful Camera Shot Planning
+ENABLE_PURPOSEFUL_CAMERA = True
 
 # Cost Estimator Pricing (USD, based on current Google GenAI API rates)
 PRICING = {

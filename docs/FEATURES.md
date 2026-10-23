@@ -168,6 +168,15 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 
 ---
 
+## Motion & Camera System (`core/camera`, `plugins/motion`)
+
+### Purposeful Camera Shot Planning (`core/camera`)
+- **Description**: Deterministic camera shot planner and easing engine that locks camera during line reads and moves purposeful transitions on cues with easeInOutCubic (no overshoot) and zero continuous drift.
+- **Files**: `src/toonshorts/core/camera.py`, `src/toonshorts/plugins/render/animejs/templates/camera_engine.js`
+- **Config Flags**: `ENABLE_PURPOSEFUL_CAMERA`, `camera.mode`, `camera.transition_duration_ms`, `camera.easing`, `camera.lead_ms`, `camera.min_hold_ms`, `camera.target_move_interval_s`
+- **Capabilities**: Pre-cue lead-in scheduling, minimum hold enforcement, cue conflict dropping, clamp to scene bounds, wide-locked fallback for cue-less scenes, pure function of time seeking, and text timeline generation to `baseline/phase4b/`.
+- **Tests**: `tests/unit/test_camera_shot_planner.py`
+
 ## 2D Layered Character System (`core/character2d`, `core/character_pack`)
 
 ### `presenter` (Whiteboard Presenter Character Pack)

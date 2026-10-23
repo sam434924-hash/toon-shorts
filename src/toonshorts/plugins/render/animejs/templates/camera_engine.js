@@ -5,6 +5,12 @@ function smootherstep(t) {
   return c * c * c * (c * (c * 6 - 15) + 10);
 }
 
+// Ease-in-out cubic: monotonic Hermite curve without overshoot
+function easeInOutCubic(t) {
+  const c = Math.max(0, Math.min(1, t));
+  return c < 0.5 ? 4 * c * c * c : 1 - Math.pow(-2 * c + 2, 3) / 2;
+}
+
 // Closed-form damped spring-mass solution (pure deterministic function of time)
 function dampedSpring(t, omegaD, zeta) {
   if (t <= 0) return 0.0;
@@ -40,6 +46,151 @@ function computeCameraState(ms, frameIdx) {
   const speakerPresetKey = isSpeakerRight ? 'girl_close' : 'boy_close';
   const speakerPreset = presets[speakerPresetKey] || presets.wide;
   const tau = ((cfg.transition_sec !== undefined) ? cfg.transition_sec : 0.80) * 1000.0;
+
+  // Phase 4B: Purposeful Camera Shot Plan (deterministic pure function of time)
+  if (window.__enablePurposefulCamera !== false && (cfg.mode === 'purposeful_only' || window.__cameraShotList !== undefined)) {
+    const shotList = window.__cameraShotList || [];
+
+    function resolveTargetCoords(targetName) {
+      if (!targetName || targetName === 'wide') {
+        return { x: presets.wide.x, y: presets.wide.y, zoom: presets.wide.zoom, focus: 0.0 };
+      }
+      if (targetName === 'board_close' || targetName.indexOf('board_') === 0) {
+        return { x: presets.board_close.x, y: presets.board_close.y, zoom: presets.board_close.zoom, focus: 1.0 };
+      }
+      if (targetName.indexOf('speaker_') === 0) {
+        const isRight = targetName.indexOf('right') !== -1 || targetName.indexOf('girl') !== -1 ||
+          (isSpeakerRight && targetName.indexOf('left') === -1 && targetName.indexOf('boy') === -1);
+        const p = isRight ? presets.girl_close : presets.boy_close;
+        return { x: p.x, y: p.y, zoom: p.zoom, focus: 0.0 };
+      }
+      return { x: presets.wide.x, y: presets.wide.y, zoom: presets.wide.zoom, focus: 0.0 };
+    }
+
+    let baseCamX = presets.wide.x;
+    let baseCamY = presets.wide.y;
+    let baseCamZoom = presets.wide.zoom;
+    let baseFocus = 0.0;
+
+    if (shotList.length > 0) {
+      if (ms < shotList[0].t_start) {
+        const initCoords = resolveTargetCoords(shotList[0].from_target);
+        baseCamX = initCoords.x;
+        baseCamY = initCoords.y;
+        baseCamZoom = initCoords.zoom;
+        baseFocus = initCoords.focus;
+      } else {
+        let found = false;
+        for (let i = 0; i < shotList.length; i++) {
+          const s = shotList[i];
+          if (ms >= s.t_start && ms <= s.t_end) {
+            const p = (s.t_end > s.t_start) ? ((ms - s.t_start) / (s.t_end - s.t_start)) : 1.0;
+            const ease = easeInOutCubic(p);
+            const fromC = resolveTargetCoords(s.from_target);
+            const toC = resolveTargetCoords(s.to_target);
+            baseCamX = fromC.x + ease * (toC.x - fromC.x);
+            baseCamY = fromC.y + ease * (toC.y - fromC.y);
+            baseCamZoom = fromC.zoom + ease * (toC.zoom - fromC.zoom);
+            baseFocus = fromC.focus + ease * (toC.focus - fromC.focus);
+            found = true;
+            break;
+          } else if (ms > s.t_end) {
+            const nextShot = (i + 1 < shotList.length) ? shotList[i + 1] : null;
+            if (!nextShot || ms < nextShot.t_start) {
+              const toC = resolveTargetCoords(s.to_target);
+              baseCamX = toC.x;
+              baseCamY = toC.y;
+              baseCamZoom = toC.zoom;
+              baseFocus = toC.focus;
+              found = true;
+              break;
+            }
+          }
+        }
+        if (!found) {
+          const lastShot = shotList[shotList.length - 1];
+          const toC = resolveTargetCoords(lastShot.to_target);
+          baseCamX = toC.x;
+          baseCamY = toC.y;
+          baseCamZoom = toC.zoom;
+          baseFocus = toC.focus;
+        }
+      }
+    }
+
+    // Zero continuous drift when continuous_drift is false
+    const driftX = (cfg.continuous_drift === true) ? (2.5 * Math.sin(frameIdx * 0.035)) : 0.0;
+    const driftY = (cfg.continuous_drift === true) ? (1.8 * Math.cos(frameIdx * 0.028)) : 0.0;
+    const driftRot = (cfg.continuous_drift === true) ? ((cfg.drift_rot_max || 0.35) * Math.sin(frameIdx * 0.022)) : 0.0;
+
+    // Preserve Phase 4 closed-form damped spring punch-in on surprise words
+    let punchZoom = 0.0;
+    let punchShakeX = 0.0;
+    let punchShakeY = 0.0;
+    if (window.__wordTimings && window.__wordTimings.length > 0) {
+      const riseDur = 200;
+      const decayDur = 400;
+      const totalDur = riseDur + decayDur;
+      const maxPunch = 0.050;
+
+      const beats = [];
+      for (let i = 0; i < window.__wordTimings.length; i++) {
+        const wt = window.__wordTimings[i];
+        const wClean = (wt.word || '').toLowerCase();
+        if (wClean.includes('three') || wClean.includes('blue') || wClean.includes('blood') || wClean.includes('heart')) {
+          if (beats.length === 0 || (wt.start_ms >= beats[beats.length - 1] + totalDur)) {
+            beats.push(wt.start_ms);
+          }
+        }
+      }
+
+      for (let i = 0; i < beats.length; i++) {
+        const pStart = beats[i];
+        if (ms >= pStart && ms < pStart + totalDur) {
+          const deltaMs = ms - pStart;
+          let zoomBoost = 0.0;
+          if (window.__enableSpringCamera !== false) {
+            if (deltaMs < riseDur) {
+              zoomBoost = maxPunch * dampedSpring(deltaMs / riseDur);
+            } else {
+              const decayT = (deltaMs - riseDur) / decayDur;
+              zoomBoost = maxPunch * (1.0 - dampedSpring(decayT));
+            }
+          } else {
+            if (deltaMs < riseDur) {
+              zoomBoost = maxPunch * Math.sin((deltaMs / riseDur) * (Math.PI / 2));
+            } else {
+              const decayT = (deltaMs - riseDur) / decayDur;
+              zoomBoost = maxPunch * (1.0 - smootherstep(decayT));
+            }
+          }
+          punchZoom = zoomBoost;
+
+          const shakeDecay = Math.max(0, 1.0 - (deltaMs / (riseDur + 100)));
+          const shakePhase = (frameIdx % 4);
+          punchShakeX = (shakePhase === 1 ? 1.5 : (shakePhase === 3 ? -1.5 : 0)) * shakeDecay;
+          punchShakeY = (shakePhase === 2 ? 1.2 : (shakePhase === 0 ? -1.2 : 0)) * shakeDecay;
+          break;
+        }
+      }
+    }
+
+    const camX = baseCamX + punchShakeX;
+    const camY = baseCamY + punchShakeY;
+    const camZoom = baseCamZoom + punchZoom;
+
+    return {
+      camX: camX,
+      camY: camY,
+      camZoom: camZoom,
+      driftX: driftX,
+      driftY: driftY,
+      driftRot: driftRot,
+      focus: baseFocus,
+      pFactors: pFactors,
+      cfg: cfg
+    };
+  }
 
   // Build sequential timeline events to compute interpolated base camera values
   // 1. Initial move from wide -> speaker starts at t=0
@@ -243,5 +394,7 @@ function applyMultiplaneParallax(camState) {
 }
 
 window.smootherstep = smootherstep;
+window.easeInOutCubic = easeInOutCubic;
+window.dampedSpring = dampedSpring;
 window.computeCameraState = computeCameraState;
 window.applyMultiplaneParallax = applyMultiplaneParallax;
