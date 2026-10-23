@@ -93,9 +93,25 @@
 
     window.__timeline
 {{TIMELINE_CHAIN}};
+  </script>
 
-{{SCRIPT_JS}}
-
+  <!-- Local modular template scripts loaded in fixed order -->
+  <script id="module-rough-draw">
+{{ROUGH_DRAW_JS}}
+  </script>
+  <script id="module-stage-visuals">
+{{STAGE_VISUALS_JS}}
+  </script>
+  <script id="module-camera-engine">
+{{CAMERA_ENGINE_JS}}
+  </script>
+  <script id="module-gestures-fk">
+{{GESTURES_FK_JS}}
+  </script>
+  <script id="module-main">
+{{MAIN_JS}}
+  </script>
+  <script>
     window.addEventListener("DOMContentLoaded", () => {
       initRoughSketches();
       window.seekTo(0);

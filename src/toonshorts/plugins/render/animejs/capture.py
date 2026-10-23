@@ -33,7 +33,16 @@ def capture_still_frame(
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page(viewport={"width": width, "height": height})
+        page_errors = []
+        page.on("pageerror", lambda err: page_errors.append(str(err)))
         page.goto(html_file.resolve().as_uri())
+        if page_errors:
+            browser.close()
+            raise RuntimeError(f"JavaScript execution error in {html_file.name}: {'; '.join(page_errors)}")
+        missing = page.evaluate("typeof window.__checkModulesLoaded === 'function' ? window.__checkModulesLoaded() : ['window.__checkModulesLoaded missing']")
+        if missing:
+            browser.close()
+            raise RuntimeError(f"Missing required JS modules or functions in {html_file.name}: {', '.join(missing)}")
         page.evaluate(f"window.seekTo({int(duration_sec * 1000)})")
         page.screenshot(path=str(output_path), type="png")
         browser.close()
@@ -131,7 +140,24 @@ def render_whiteboard_video(
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
             page = browser.new_page(viewport={"width": width, "height": height})
+            page_errors = []
+            page.on("pageerror", lambda err: page_errors.append(str(err)))
             page.goto(html_file.as_uri())
+
+            if page_errors:
+                browser.close()
+                if proc.stdin:
+                    proc.stdin.close()
+                proc.kill()
+                raise RuntimeError(f"JavaScript execution error in {html_file.name}: {'; '.join(page_errors)}")
+
+            missing = page.evaluate("typeof window.__checkModulesLoaded === 'function' ? window.__checkModulesLoaded() : ['window.__checkModulesLoaded missing']")
+            if missing:
+                browser.close()
+                if proc.stdin:
+                    proc.stdin.close()
+                proc.kill()
+                raise RuntimeError(f"Missing required JS modules or functions in {html_file.name}: {', '.join(missing)}")
 
             try:
                 for frame_idx in range(total_frames):

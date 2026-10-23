@@ -675,3 +675,65 @@ def test_listener_eye_glance_in_dom_both_slots(tmp_path):
 
         browser.close()
 
+def test_modular_templates_load_in_fixed_order():
+    """Verify that all template modules are embedded in strict fixed order without network access."""
+    html_out = generate_whiteboard_html(
+        title="Modular Test",
+        words=[{"text": "Module Order"}],
+        duration_sec=2.0,
+    )
+    # Check script tags order
+    idx_rough = html_out.index('id="module-rough-draw"')
+    idx_stage = html_out.index('id="module-stage-visuals"')
+    idx_cam = html_out.index('id="module-camera-engine"')
+    idx_gest = html_out.index('id="module-gestures-fk"')
+    idx_main = html_out.index('id="module-main"')
+
+    assert idx_rough < idx_stage < idx_cam < idx_gest < idx_main
+    assert "https://" not in html_out
+    assert "http://cdn" not in html_out and "https://cdn" not in html_out
+
+
+def test_missing_template_module_raises_error():
+    """Verify that a missing template module file raises FileNotFoundError with a clear message."""
+    from unittest.mock import patch
+    import toonshorts.plugins.render.animejs.html_builder as hb
+
+    orig_is_file = Path.is_file
+
+    def fake_is_file(self):
+        if self.name == "camera_engine.js":
+            return False
+        return orig_is_file(self)
+
+    with patch.object(Path, "is_file", fake_is_file):
+        with pytest.raises(FileNotFoundError, match="camera_engine.js"):
+            hb.generate_whiteboard_html(
+                title="Error Test",
+                words=[{"text": "Fail"}],
+                duration_sec=1.0,
+            )
+
+
+def test_broken_module_or_missing_function_raises_error(tmp_path):
+    """Verify that missing expected functions in JS modules raise RuntimeError during render."""
+    from toonshorts.plugins.render.animejs.capture import capture_still_frame
+
+    html_out = generate_whiteboard_html(
+        title="Corrupted Module Test",
+        words=[{"text": "Broken"}],
+        duration_sec=1.0,
+    )
+    # Corrupt a required function name to simulate missing function
+    broken_html = html_out.replace("function computeCameraState", "function missingComputeCameraState")
+    broken_file = tmp_path / "broken_scene.html"
+    broken_file.write_text(broken_html, encoding="utf-8")
+    out_png = tmp_path / "out.png"
+
+    with pytest.raises(RuntimeError, match="(Missing required JS modules|JavaScript execution error)"):
+        capture_still_frame(
+            html_file=broken_file,
+            output_path=out_png,
+            duration_sec=1.0,
+        )
+

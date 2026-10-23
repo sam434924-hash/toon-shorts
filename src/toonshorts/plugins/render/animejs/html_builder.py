@@ -277,7 +277,21 @@ def generate_whiteboard_html(
     # Load templates from disk
     template_html = (TEMPLATES_DIR / "whiteboard.html").read_text(encoding="utf-8")
     style_css = (TEMPLATES_DIR / "style.css").read_text(encoding="utf-8")
-    script_js = (TEMPLATES_DIR / "script.js").read_text(encoding="utf-8")
+
+    # Load modular template scripts in fixed order from disk
+    module_definitions = [
+        ("rough_draw.js", "{{ROUGH_DRAW_JS}}"),
+        ("stage_visuals.js", "{{STAGE_VISUALS_JS}}"),
+        ("camera_engine.js", "{{CAMERA_ENGINE_JS}}"),
+        ("gestures_fk.js", "{{GESTURES_FK_JS}}"),
+        ("main.js", "{{MAIN_JS}}"),
+    ]
+    loaded_scripts = []
+    for mod_filename, _ in module_definitions:
+        mod_path = TEMPLATES_DIR / mod_filename
+        if not mod_path.is_file():
+            raise FileNotFoundError(f"Required template module '{mod_filename}' not found at {mod_path}")
+        loaded_scripts.append(mod_path.read_text(encoding="utf-8"))
 
     # Format CSS
     formatted_css = style_css.replace("{{WIDTH}}", str(width)).replace("{{HEIGHT}}", str(height))
@@ -313,6 +327,11 @@ def generate_whiteboard_html(
     result = result.replace("{{WORD_TIMINGS_JSON}}", word_timings_json)
     result = result.replace("{{TOTAL_DURATION_MS}}", str(total_duration_ms))
     result = result.replace("{{TIMELINE_CHAIN}}", timeline_chain)
-    result = result.replace("{{SCRIPT_JS}}", script_js)
+
+    for (mod_filename, placeholder), mod_text in zip(module_definitions, loaded_scripts):
+        result = result.replace(placeholder, mod_text)
+
+    combined_script = "\n\n".join(loaded_scripts)
+    result = result.replace("{{SCRIPT_JS}}", combined_script)
 
     return result
