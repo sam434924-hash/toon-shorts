@@ -18,7 +18,6 @@ from typing import Any, Dict, List, Literal, Optional, Set, Union
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from toonshorts.core import config, paths
-from toonshorts.inventory import get_inventory
 
 BRIEFS_DIR = paths.PROJECT_ROOT / "briefs"
 
@@ -81,6 +80,7 @@ class VideoBrief(BaseModel):
     def validate_against_inventory(self, inv: Optional[Dict[str, Any]] = None) -> List[str]:
         """Validates all brief choices against real installed inventory."""
         if inv is None:
+            from toonshorts.inventory import get_inventory
             inv = get_inventory()
 
         errors: List[str] = []

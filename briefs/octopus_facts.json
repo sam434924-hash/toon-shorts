@@ -1,0 +1,26 @@
+{
+  "video_name": "octopus_facts",
+  "story": "Boy and Girl discuss octopus anatomy facts: 3 hearts (two for gills, one for body), two-thirds of neurons in eight semi-independent arms, and copper-based blue blood.",
+  "format": "explanation video",
+  "style": "whiteboard",
+  "characters": [
+    "boy_a",
+    "girl_a"
+  ],
+  "speaker": "both",
+  "voice": "Puck",
+  "voice_engine": "gemini_tts",
+  "board_animations_use": [
+    "counter",
+    "bullet_cards",
+    "circle"
+  ],
+  "board_animations_avoid": [
+    "typed_code"
+  ],
+  "hand_gestures": "on",
+  "camera": "zoom_speaker",
+  "length_seconds": 40,
+  "custom": "Blue ink accent on blue blood, heart icons on 3 hearts.",
+  "created_at": "2026-10-22T17:40:29Z"
+}

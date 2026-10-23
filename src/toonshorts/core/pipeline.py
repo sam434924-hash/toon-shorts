@@ -248,50 +248,55 @@ def run_pipeline_from_brief(
             preset.setdefault("avoid", []).extend(brief.board_animations_avoid)
 
         # 2. Plan Screenplay from story & brief
-        llm_plugin = "fake" if mock else config.DEFAULT_LLM
-        try:
-            llm = get_llm(llm_plugin)
-            plan: ScriptPlan = llm.generate_plan(brief.story, brief.style, preset)
-        except Exception as l_err:
-            if not mock:
-                logger.warning("Live LLM failed (%s), falling back to offline planner for brief.", l_err)
-                llm = get_llm("fake")
-                plan = llm.generate_plan(brief.story, brief.style, preset)
-            else:
-                raise
-
-        plan.title = brief.video_name
-
-        # Ensure cast matches brief
-        if brief.characters:
-            chars = [Character(name=c, visual_description=f"Character {c}") for c in brief.characters]
-            if len(chars) < 2:
-                sec_name = "boy_b" if chars[0].name != "boy_b" else "girl_a"
-                chars.append(Character(name=sec_name, visual_description=f"Character {sec_name}"))
-            plan.characters = chars
-
-        # Ensure speaker matches brief
-        if brief.speaker and brief.speaker not in ("both", "all", "none"):
-            for sc in plan.scenes:
-                sc.speaker = brief.speaker
-
-        # Apply camera rules
-        if brief.camera in ("fixed", "static"):
-            for sc in plan.scenes:
-                sc.camera_move = CameraMove.STATIC
-        elif brief.camera in ("zoom_speaker", "zoom on speaker"):
-            for idx, sc in enumerate(plan.scenes):
-                # Zoom on important emphasis/turn scenes, stay wide on others
-                if idx in (1, len(plan.scenes) - 1):
-                    sc.camera_move = CameraMove.ZOOM_IN
-                else:
-                    sc.camera_move = CameraMove.STATIC
-
-        # Save scene file directly from story and brief
         scene_file_path = brief_module.BRIEFS_DIR / f"{brief.video_name}_scene.json"
         brief_module.BRIEFS_DIR.mkdir(parents=True, exist_ok=True)
-        scene_file_path.write_text(json.dumps(plan.model_dump(), indent=2), encoding="utf-8")
-        logger.info("Wrote validated scene file to: %s", scene_file_path)
+        if scene_file_path.is_file():
+            plan_data = json.loads(scene_file_path.read_text(encoding="utf-8"))
+            plan = ScriptPlan.model_validate(plan_data)
+            logger.info("Loaded pre-existing scene file from: %s", scene_file_path)
+        else:
+            llm_plugin = "fake" if mock else config.DEFAULT_LLM
+            try:
+                llm = get_llm(llm_plugin)
+                plan = llm.generate_plan(brief.story, brief.style, preset)
+            except Exception as l_err:
+                if not mock:
+                    logger.warning("Live LLM failed (%s), falling back to offline planner for brief.", l_err)
+                    llm = get_llm("fake")
+                    plan = llm.generate_plan(brief.story, brief.style, preset)
+                else:
+                    raise
+
+            plan.title = brief.video_name
+
+            # Ensure cast matches brief
+            if brief.characters:
+                chars = [Character(name=c, visual_description=f"Character {c}") for c in brief.characters]
+                if len(chars) < 2:
+                    sec_name = "boy_b" if chars[0].name != "boy_b" else "girl_a"
+                    chars.append(Character(name=sec_name, visual_description=f"Character {sec_name}"))
+                plan.characters = chars
+
+            # Ensure speaker matches brief
+            if brief.speaker and brief.speaker not in ("both", "all", "none"):
+                for sc in plan.scenes:
+                    sc.speaker = brief.speaker
+
+            # Apply camera rules
+            if brief.camera in ("fixed", "static"):
+                for sc in plan.scenes:
+                    sc.camera_move = CameraMove.STATIC
+            elif brief.camera in ("zoom_speaker", "zoom on speaker"):
+                for idx, sc in enumerate(plan.scenes):
+                    # Zoom on important emphasis/turn scenes, stay wide on others
+                    if idx in (1, len(plan.scenes) - 1):
+                        sc.camera_move = CameraMove.ZOOM_IN
+                    else:
+                        sc.camera_move = CameraMove.STATIC
+
+            # Save scene file directly from story and brief
+            scene_file_path.write_text(json.dumps(plan.model_dump(), indent=2), encoding="utf-8")
+            logger.info("Wrote validated scene file to: %s", scene_file_path)
 
         # 3. Voice generation
         voice_engine = brief.voice_engine

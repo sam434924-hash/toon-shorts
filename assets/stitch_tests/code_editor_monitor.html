@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CYBER//IDE - Neural Quantum Core</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface": "#0f131c",
+            "secondary-fixed": "#acedff",
+            "tertiary-container": "#00a572",
+            "surface-dim": "#0f131c",
+            "background": "#0f131c",
+            "surface-container-high": "#262a34",
+            "surface-container-low": "#181b25",
+            "surface-container-lowest": "#0a0e17",
+            "inverse-primary": "#842bd2",
+            "on-error": "#690005",
+            "surface-tint": "#ddb7ff",
+            "on-secondary-fixed-variant": "#004e5c",
+            "surface-bright": "#353943",
+            "outline-variant": "#4d4354",
+            "on-tertiary-fixed-variant": "#005236",
+            "error-container": "#93000a",
+            "secondary-fixed-dim": "#4cd7f6",
+            "inverse-surface": "#dfe2ef",
+            "error": "#ffb4ab",
+            "primary-fixed": "#f0dbff",
+            "on-primary-fixed": "#2c0051",
+            "outline": "#988d9f",
+            "on-surface-variant": "#cfc2d6",
+            "on-primary": "#490080",
+            "on-secondary": "#003640",
+            "tertiary-fixed-dim": "#4edea3",
+            "secondary": "#4cd7f6",
+            "surface-container-highest": "#31353f",
+            "on-tertiary-container": "#00311f",
+            "tertiary": "#4edea3",
+            "secondary-container": "#03b5d3",
+            "tertiary-fixed": "#6ffbbe",
+            "inverse-on-surface": "#2c303a",
+            "on-background": "#dfe2ef",
+            "on-tertiary": "#003824",
+            "primary": "#ddb7ff",
+            "on-primary-fixed-variant": "#6900b3",
+            "primary-fixed-dim": "#ddb7ff",
+            "primary-container": "#b76dff",
+            "surface-container": "#1c1f29",
+            "on-error-container": "#ffdad6",
+            "surface-variant": "#31353f",
+            "on-secondary-container": "#00424e",
+            "on-tertiary-fixed": "#002113",
+            "on-primary-container": "#400071",
+            "on-secondary-fixed": "#001f26",
+            "on-surface": "#dfe2ef"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-xl": "1.5rem",
+            "space-xs": "0.25rem",
+            "margin": "0.75rem",
+            "margin-panel": "0rem",
+            "gutter-loose": "0.5rem",
+            "space-sm": "0.5rem",
+            "gutter": "1px",
+            "space-md": "0.75rem",
+            "space-lg": "1rem"
+          },
+          "fontFamily": {
+            "body-lg": ["JetBrains Mono"],
+            "body-md": ["JetBrains Mono"],
+            "body-sm": ["JetBrains Mono"],
+            "label-sm": ["JetBrains Mono"],
+            "headline-lg": ["Space Grotesk"],
+            "headline-lg-mobile": ["Space Grotesk"],
+            "headline-md": ["Space Grotesk"],
+            "headline-sm": ["Space Grotesk"],
+            "code": ["JetBrains Mono"],
+            "label-md": ["JetBrains Mono"]
+          },
+          "fontSize": {
+            "body-lg": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "body-md": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "500" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "500" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "500" }],
+            "code": ["13px", { "lineHeight": "22px", "fontWeight": "400" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 350, 'GRAD' 0, 'opsz' 20;
+      font-size: 16px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    @keyframes cursor-blink {
+      0%, 45% { opacity: 1; }
+      50%, 95% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    .animate-cursor {
+      animation: cursor-blink 1.06s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.35); opacity: 0.4; }
+    }
+    .pulse-glow {
+      animation: pulse-dot 2.2s infinite ease-in-out;
+    }
+    /* Thin custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0e17;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #31353f;
+      border-radius: 2px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4d4354;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface h-screen w-screen overflow-hidden flex flex-col font-body-sm select-none antialiased">
+<!-- TOP APP BAR (Shared Components JSON Compliant) -->
+<header class="h-10 flex items-center justify-between px-3 w-full border-b border-outline-variant/30 select-none bg-surface-container-lowest text-primary z-50">
+<!-- Left Region: OS Window Buttons & Brand & Command Bar -->
+<div class="flex items-center gap-3">
+<!-- Window Control Pills -->
+<div class="flex items-center gap-1.5 pr-2">
+<span class="w-2.5 h-2.5 rounded-full bg-error border border-error/50 inline-block cursor-pointer hover:opacity-80"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-container border border-secondary/50 inline-block cursor-pointer hover:opacity-80"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary-container border border-tertiary/50 inline-block cursor-pointer hover:opacity-80"></span>
+</div>
+<!-- Brand Logo / Product Name -->
+<div class="text-label-md font-label-md font-bold tracking-widest text-primary flex items-center gap-1.5 pl-1 border-l border-outline-variant/30">
+<span class="material-symbols-outlined text-secondary text-sm">terminal</span>
+<span>CYBER//IDE</span>
+</div>
+<!-- Quick Command Search (Search Bar on left per JSON) -->
+<div class="hidden lg:flex items-center bg-surface-container-low border border-outline-variant/30 rounded px-2.5 py-1 text-label-sm font-label-sm text-outline hover:border-secondary/40 transition-colors cursor-pointer w-64 justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-outline text-xs">search</span>
+<span class="text-on-surface-variant font-code text-[11px]">quantum_matrix.ts</span>
+</div>
+<kbd class="text-[9px] bg-surface-container-highest px-1 py-0.5 rounded text-outline font-code">⌘P</kbd>
+</div>
+</div>
+<!-- Center Region: Top Editor Tabs (From JSON navigation_links) -->
+<div class="flex items-center h-full overflow-x-auto">
+<div class="text-secondary border-b-2 border-secondary font-code text-body-sm px-3 py-1 bg-surface-container/50 flex items-center gap-2 cursor-pointer h-full">
+<span class="material-symbols-outlined text-secondary text-xs">code</span>
+<span>quantum_matrix.ts</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary inline-block"></span>
+<span class="material-symbols-outlined text-outline hover:text-on-surface text-xs ml-1">close</span>
+</div>
+<div class="text-outline hover:text-on-surface font-code text-body-sm px-3 py-1 hover:bg-surface-container-high/40 hover:text-secondary transition-colors duration-150 flex items-center gap-2 cursor-pointer h-full border-r border-outline-variant/20">
+<span class="material-symbols-outlined text-tertiary text-xs">memory</span>
+<span>neural_core.rs</span>
+<span class="material-symbols-outlined text-outline/50 hover:text-on-surface text-xs">close</span>
+</div>
+<div class="text-outline hover:text-on-surface font-code text-body-sm px-3 py-1 hover:bg-surface-container-high/40 hover:text-secondary transition-colors duration-150 flex items-center gap-2 cursor-pointer h-full border-r border-outline-variant/20">
+<span class="material-symbols-outlined text-primary text-xs">filter_drama</span>
+<span>pipeline.wgsl</span>
+<span class="material-symbols-outlined text-outline/50 hover:text-on-surface text-xs">close</span>
+</div>
+</div>
+<!-- Right Region: Actions & Layout Toggles (From JSON Trailing Actions) -->
+<div class="flex items-center gap-2 text-label-sm font-label-sm">
+<button class="flex items-center gap-1 text-on-surface bg-surface-container hover:bg-surface-container-high/70 border border-outline-variant/40 px-2.5 py-1 rounded cursor-pointer transition-colors active:opacity-70">
+<span class="material-symbols-outlined text-xs text-secondary">build</span>
+<span>Build</span>
+</button>
+<button class="flex items-center gap-1 text-on-primary bg-primary-container hover:bg-primary-container/90 px-3 py-1 rounded cursor-pointer transition-colors active:opacity-70 font-semibold shadow-[0_0_10px_rgba(183,109,255,0.3)]">
+<span class="material-symbols-outlined text-xs">rocket_launch</span>
+<span>Deploy</span>
+</button>
+<div class="h-4 w-px bg-outline-variant/30 mx-1"></div>
+<button class="text-outline hover:text-secondary p-1 rounded hover:bg-surface-container-high/40 cursor-pointer" title="Split Screen">
+<span class="material-symbols-outlined text-base">splitscreen</span>
+</button>
+<button class="text-outline hover:text-secondary p-1 rounded hover:bg-surface-container-high/40 cursor-pointer" title="Toggle Terminal">
+<span class="material-symbols-outlined text-base">terminal</span>
+</button>
+<button class="text-outline hover:text-secondary p-1 rounded hover:bg-surface-container-high/40 cursor-pointer" title="Settings">
+<span class="material-symbols-outlined text-base">settings</span>
+</button>
+</div>
+</header>
+<!-- WORKSPACE BODY: Sidebar + Tree + Main Code Canvas + Minimap -->
+<div class="flex-1 flex overflow-hidden relative">
+<!-- SIDE NAV BAR (Activity Rail per Shared Components JSON) -->
+<aside class="w-12 flex flex-col justify-between items-center py-2 z-40 bg-surface-container-lowest border-r border-outline-variant/30 select-none flex-shrink-0">
+<!-- Upper Tabs Group -->
+<div class="w-full flex flex-col items-center">
+<!-- Explorer (Active per Intent: Code Browsing) -->
+<button class="w-full text-secondary border-l-2 border-secondary bg-surface-container-high/30 py-3 flex justify-center items-center cursor-pointer active:scale-95 transition-transform" title="Explorer (Ctrl+Shift+E)">
+<span class="material-symbols-outlined text-xl">folder</span>
+</button>
+<!-- Search -->
+<button class="w-full text-outline py-3 flex justify-center items-center hover:text-on-surface hover:text-secondary-fixed hover:bg-surface-container-high/20 transition-all duration-150 cursor-pointer active:scale-95" title="Search">
+<span class="material-symbols-outlined text-xl">search</span>
+</button>
+<!-- Source Control -->
+<button class="w-full text-outline py-3 flex justify-center items-center hover:text-on-surface hover:text-secondary-fixed hover:bg-surface-container-high/20 transition-all duration-150 cursor-pointer active:scale-95 relative" title="Source Control">
+<span class="material-symbols-outlined text-xl">account_tree</span>
+<span class="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-secondary"></span>
+</button>
+<!-- Debug -->
+<button class="w-full text-outline py-3 flex justify-center items-center hover:text-on-surface hover:text-secondary-fixed hover:bg-surface-container-high/20 transition-all duration-150 cursor-pointer active:scale-95" title="Debug &amp; Execution">
+<span class="material-symbols-outlined text-xl">bug_report</span>
+</button>
+<!-- AI Copilot -->
+<button class="w-full text-primary py-3 flex justify-center items-center hover:text-primary-fixed hover:bg-surface-container-high/20 transition-all duration-150 cursor-pointer active:scale-95 relative" title="AI Copilot Engine">
+<span class="material-symbols-outlined text-xl">neurology</span>
+<span class="absolute top-2.5 right-2 w-1.5 h-1.5 rounded-full bg-primary-container pulse-glow"></span>
+</button>
+</div>
+<!-- Footer Tab Labels / Actions -->
+<div class="w-full flex flex-col items-center border-t border-outline-variant/20 pt-2">
+<button class="w-full text-tertiary py-2.5 flex justify-center items-center hover:text-tertiary-fixed hover:bg-surface-container-high/20 transition-all duration-150 cursor-pointer" title="Telemetry &amp; Quantum Nodes">
+<span class="material-symbols-outlined text-lg">pulse_alert</span>
+</button>
+<button class="w-full text-outline py-2.5 flex justify-center items-center hover:text-on-surface hover:bg-surface-container-high/20 transition-all duration-150 cursor-pointer" title="Workspace Settings">
+<span class="material-symbols-outlined text-lg">settings</span>
+</button>
+<div class="mt-2 w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center border border-primary/30" title="Workspace: NEURAL_V4">
+<span class="text-[9px] font-bold text-primary">N4</span>
+</div>
+</div>
+</aside>
+<!-- COLLAPSIBLE FILE EXPLORER DRAWER -->
+<div class="w-56 bg-surface-container-lowest/90 border-r border-outline-variant/30 flex flex-col flex-shrink-0 text-body-sm select-none">
+<!-- Explorer Header -->
+<div class="h-8 px-3 flex items-center justify-between border-b border-outline-variant/20 text-label-sm font-label-sm text-outline tracking-wider font-semibold">
+<span class="flex items-center gap-1 text-on-surface">
+<span class="material-symbols-outlined text-xs">expand_more</span>
+<span>WORKSPACE // NEURAL_V4</span>
+</span>
+<div class="flex items-center gap-1 text-outline">
+<span class="material-symbols-outlined text-xs cursor-pointer hover:text-secondary">create_new_folder</span>
+<span class="material-symbols-outlined text-xs cursor-pointer hover:text-secondary">note_add</span>
+<span class="material-symbols-outlined text-xs cursor-pointer hover:text-secondary">sync</span>
+</div>
+</div>
+<!-- Tree View List -->
+<div class="flex-1 overflow-y-auto py-2 font-code text-body-sm text-on-surface-variant">
+<!-- Root node -->
+<div class="flex items-center px-3 py-1 hover:bg-surface-container-high/30 cursor-pointer text-on-surface">
+<span class="material-symbols-outlined text-xs text-outline mr-1">expand_more</span>
+<span class="material-symbols-outlined text-xs text-secondary mr-1.5">folder_open</span>
+<span class="text-xs font-medium">src</span>
+</div>
+<!-- src > core -->
+<div class="flex items-center pl-6 pr-3 py-1 hover:bg-surface-container-high/30 cursor-pointer text-on-surface">
+<span class="material-symbols-outlined text-xs text-outline mr-1">expand_more</span>
+<span class="material-symbols-outlined text-xs text-secondary-fixed-dim mr-1.5">folder_open</span>
+<span class="text-xs font-medium">core</span>
+</div>
+<!-- Files inside core -->
+<div class="flex items-center justify-between pl-9 pr-3 py-1 bg-primary/10 border-l-2 border-primary text-primary font-medium cursor-pointer">
+<div class="flex items-center truncate">
+<span class="material-symbols-outlined text-xs text-secondary mr-1.5">javascript</span>
+<span class="text-xs truncate">quantum_matrix.ts</span>
+</div>
+<span class="text-[10px] text-secondary font-mono">M</span>
+</div>
+<div class="flex items-center justify-between pl-9 pr-3 py-1 hover:bg-surface-container-high/20 text-on-surface-variant cursor-pointer">
+<div class="flex items-center truncate">
+<span class="material-symbols-outlined text-xs text-tertiary mr-1.5">memory</span>
+<span class="text-xs truncate">neural_core.rs</span>
+</div>
+<span class="text-[10px] text-tertiary font-mono">U</span>
+</div>
+<div class="flex items-center justify-between pl-9 pr-3 py-1 hover:bg-surface-container-high/20 text-on-surface-variant cursor-pointer">
+<div class="flex items-center truncate">
+<span class="material-symbols-outlined text-xs text-primary mr-1.5">filter_drama</span>
+<span class="text-xs truncate">pipeline.wgsl</span>
+</div>
+</div>
+<div class="flex items-center justify-between pl-9 pr-3 py-1 hover:bg-surface-container-high/20 text-outline cursor-pointer">
+<div class="flex items-center truncate">
+<span class="material-symbols-outlined text-xs text-outline mr-1.5">data_object</span>
+<span class="text-xs truncate">types.d.ts</span>
+</div>
+</div>
+<!-- src > shaders -->
+<div class="flex items-center pl-6 pr-3 py-1 hover:bg-surface-container-high/30 cursor-pointer text-outline">
+<span class="material-symbols-outlined text-xs text-outline mr-1">chevron_right</span>
+<span class="material-symbols-outlined text-xs text-outline mr-1.5">folder</span>
+<span class="text-xs">shaders</span>
+</div>
+<!-- src > telemetry -->
+<div class="flex items-center pl-6 pr-3 py-1 hover:bg-surface-container-high/30 cursor-pointer text-outline">
+<span class="material-symbols-outlined text-xs text-outline mr-1">chevron_right</span>
+<span class="material-symbols-outlined text-xs text-outline mr-1.5">folder</span>
+<span class="text-xs">telemetry</span>
+</div>
+<!-- Config Files -->
+<div class="mt-3 pt-2 border-t border-outline-variant/10">
+<div class="flex items-center justify-between pl-6 pr-3 py-1 hover:bg-surface-container-high/20 text-outline cursor-pointer">
+<div class="flex items-center truncate">
+<span class="material-symbols-outlined text-xs text-secondary-fixed mr-1.5">tune</span>
+<span class="text-xs truncate">cyber.config.json</span>
+</div>
+</div>
+<div class="flex items-center justify-between pl-6 pr-3 py-1 hover:bg-surface-container-high/20 text-outline cursor-pointer">
+<div class="flex items-center truncate">
+<span class="material-symbols-outlined text-xs text-error mr-1.5">lock</span>
+<span class="text-xs truncate">cargo.lock</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Git / Outline Summary Drawer Bottom Pill -->
+<div class="p-2 border-t border-outline-variant/20 bg-surface-container-lowest flex items-center justify-between text-label-sm font-label-sm">
+<span class="text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-tertiary">commit</span>
+<span>BRANCH: main*</span>
+</span>
+<span class="text-[10px] text-secondary font-mono bg-secondary/10 px-1.5 py-0.5 rounded border border-secondary/20">+142 -12</span>
+</div>
+</div>
+<!-- MAIN CODE CANVAS & EDITOR WORKSPACE -->
+<main class="flex-1 flex flex-col bg-surface-container-lowest overflow-hidden">
+<!-- Breadcrumb Bar -->
+<div class="h-7 px-4 flex items-center gap-1.5 border-b border-outline-variant/20 bg-surface-container-lowest/80 text-label-sm font-label-sm text-outline select-none">
+<span class="hover:text-on-surface cursor-pointer">src</span>
+<span class="text-outline-variant">›</span>
+<span class="hover:text-on-surface cursor-pointer">core</span>
+<span class="text-outline-variant">›</span>
+<span class="hover:text-on-surface cursor-pointer text-secondary">quantum_matrix.ts</span>
+<span class="text-outline-variant">›</span>
+<span class="text-primary font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-primary">functions</span>
+<span>calculateQuantumTensor()</span>
+</span>
+</div>
+<!-- Editor Grid: Gutter + Code Area + Minimap -->
+<div class="flex-1 flex overflow-hidden relative">
+<!-- Line Numbers Gutter & Breakpoint Column -->
+<div class="w-14 bg-surface-container-lowest/95 border-r border-outline-variant/20 py-2 select-none font-code text-body-sm text-outline/60 flex flex-col text-right pr-3 flex-shrink-0">
+<div>1</div>
+<div>2</div>
+<div>3</div>
+<div class="text-outline">4</div>
+<div>5</div>
+<div>6</div>
+<div>7</div>
+<div>8</div>
+<div>9</div>
+<div>10</div>
+<div>11</div>
+<div>12</div>
+<div>13</div>
+<div>14</div>
+<div>15</div>
+<div>16</div>
+<div>17</div>
+<div>18</div>
+<div>19</div>
+<div>20</div>
+<div>21</div>
+<div>22</div>
+<div>23</div>
+<!-- Line 24 Breakpoint Marker -->
+<div class="relative text-secondary font-semibold flex items-center justify-end">
+<span class="w-2.5 h-2.5 rounded-full bg-error border border-error shadow-[0_0_8px_#ffb4ab] absolute left-2 cursor-pointer"></span>
+<span>24</span>
+</div>
+<div>25</div>
+<div>26</div>
+<div>27</div>
+<!-- Line 28: Active Line indicator -->
+<div class="text-secondary font-bold">28</div>
+<div>29</div>
+<div>30</div>
+<div>31</div>
+<div>32</div>
+<div>33</div>
+<div>34</div>
+<div>35</div>
+<div>36</div>
+</div>
+<!-- Code Content Area -->
+<div class="flex-1 overflow-auto py-2 px-4 font-code text-code leading-6 relative bg-surface-container-lowest/40">
+<!-- Active Line Highlight Backdrop (Line 28) -->
+<div class="absolute left-0 right-0 top-[606px] h-6 bg-gradient-to-r from-secondary/15 via-primary/10 to-transparent border-y border-secondary/30 pointer-events-none"></div>
+<!-- Code Token Syntax Highlighting -->
+<div class="whitespace-pre text-on-surface">
+<span class="text-primary font-medium">import</span> { <span class="text-secondary-fixed">QuantumState</span>, <span class="text-secondary-fixed">TensorBuffer</span> } <span class="text-primary font-medium">from</span> <span class="text-tertiary">"@neural/matrix-accelerator"</span>;
+<span class="text-primary font-medium">import</span> { <span class="text-secondary-fixed">WGSLComputePipeline</span> } <span class="text-primary font-medium">from</span> <span class="text-tertiary">"../shaders/pipeline"</span>;
+
+<span class="text-outline/70 italic">// [CYBER//IDE] High-frequency tensor acceleration core v4.12</span>
+<span class="text-primary font-medium">export interface</span> <span class="text-secondary-fixed">TensorConfig</span> {
+  readonly dimensions: [<span class="text-secondary-fixed-dim">number</span>, <span class="text-secondary-fixed-dim">number</span>, <span class="text-secondary-fixed-dim">number</span>];
+  precision: <span class="text-tertiary">"f32"</span> | <span class="text-tertiary">"f16"</span> | <span class="text-tertiary">"quantum-bit"</span>;
+  enableNeuralSynthesis: <span class="text-secondary-fixed-dim">boolean</span>;
+}
+
+<span class="text-primary font-medium">export class</span> <span class="text-secondary-fixed">NeuralQuantumMatrix</span> {
+  <span class="text-primary">private</span> readonly <span class="text-on-surface-variant">pipeline</span>: <span class="text-secondary-fixed">WGSLComputePipeline</span>;
+  <span class="text-primary">private</span> <span class="text-on-surface-variant">tensorBuffer</span>: <span class="text-secondary-fixed">TensorBuffer</span>;
+  <span class="text-primary">private</span> <span class="text-on-surface-variant">executionCycles</span>: <span class="text-secondary-fixed-dim">number</span> = <span class="text-secondary">0</span>;
+
+  <span class="text-primary">constructor</span>(<span class="text-on-surface">config</span>: <span class="text-secondary-fixed">TensorConfig</span>) {
+    <span class="text-primary">this</span>.<span class="text-on-surface-variant">pipeline</span> = <span class="text-primary">new</span> <span class="text-secondary-fixed">WGSLComputePipeline</span>(config);
+    <span class="text-primary">this</span>.<span class="text-on-surface-variant">tensorBuffer</span> = <span class="text-primary">this</span>.<span class="text-secondary">allocateQuantumMemory</span>(config.dimensions);
+  }
+
+  <span class="text-outline/70 italic">/**
+   * Executes distributed quantum state synthesis across GPU clusters
+   */</span>
+<span class="text-primary font-medium">public async</span> <span class="text-secondary font-medium">calculateQuantumTensor</span>(
+    <span class="text-on-surface">matrixId</span>: <span class="text-secondary-fixed-dim">string</span>,
+    <span class="text-on-surface">alphaFactor</span>: <span class="text-secondary-fixed-dim">number</span> = <span class="text-secondary">0.9842</span>
+  ): <span class="text-secondary-fixed">Promise</span>&lt;<span class="text-secondary-fixed">QuantumState</span>&gt; {
+    <span class="text-primary font-medium">const</span> <span class="text-on-surface">kernelSession</span> = <span class="text-primary">await</span> <span class="text-primary">this</span>.<span class="text-on-surface-variant">pipeline</span>.<span class="text-secondary">acquireDeviceLock</span>();
+    <span class="text-primary font-medium">const</span> <span class="text-on-surface">entropyVector</span> = <span class="text-primary">this</span>.<span class="text-secondary">synthesizeEntropy</span>(alphaFactor);
+
+    <span class="text-outline/70 italic">// Breakpoint active: verifying tensor layout alignment</span>
+<span class="text-primary font-medium">if</span> (!kernelSession.<span class="text-secondary">isHardwareAccelerated</span>()) {
+      <span class="text-primary">throw new</span> <span class="text-error">Error</span>(<span class="text-tertiary">"FATAL: WebGPU Quantum acceleration device unavailable"</span>);
+    }
+
+    <span class="text-primary font-medium">const</span> <span class="text-on-surface">quantumPayload</span> = <span class="text-primary">await</span> kernelSession.<span class="text-secondary">dispatchKernel</span>({
+      <span class="text-on-surface-variant">seed</span>: matrixId,
+      <span class="text-on-surface-variant">entropy</span>: entropyVector,
+      <span class="text-on-surface-variant">dimension</span>: <span class="text-primary">this</span>.<span class="text-on-surface-variant">tensorBuffer</span>.<span class="text-secondary">dimensions</span><span class="inline-block w-2 h-4.5 bg-secondary ml-0.5 align-middle animate-cursor shadow-[0_0_8px_#4cd7f6]"></span>
+    });
+          </div>
+<!-- INLINE AI COPILOT GHOST SUGGESTION CARD -->
+<div class="mt-2 ml-6 mr-12 bg-surface-container-high/90 border border-primary/40 rounded-lg p-3 shadow-[0_0_16px_rgba(183,109,255,0.2)] backdrop-blur-md">
+<div class="flex items-center justify-between border-b border-outline-variant/30 pb-2 mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">neurology</span>
+<span class="text-xs font-semibold text-primary font-code tracking-wide">NEURAL COPILOT // TENSOR COMPLETION</span>
+<span class="text-[10px] bg-primary/20 text-primary-fixed border border-primary/30 px-1.5 py-0.5 rounded font-mono">99.4% confidence</span>
+</div>
+<div class="flex items-center gap-2 text-label-sm font-label-sm">
+<span class="text-outline text-[10px]">Accept with</span>
+<kbd class="bg-surface-container-highest text-secondary text-[10px] px-1.5 py-0.5 rounded border border-outline-variant/40 font-code font-bold">Tab</kbd>
+<span class="text-outline text-[10px]">Dismiss with</span>
+<kbd class="bg-surface-container-highest text-outline text-[10px] px-1.5 py-0.5 rounded border border-outline-variant/40 font-code">Esc</kbd>
+</div>
+</div>
+<!-- Ghost Diff Preview -->
+<pre class="font-code text-code text-on-surface-variant/90 leading-5 overflow-x-auto"><span class="text-tertiary font-bold">+</span>     <span class="text-primary">this</span>.<span class="text-on-surface-variant">executionCycles</span> += <span class="text-secondary">1</span>;
+<span class="text-tertiary font-bold">+</span>     <span class="text-primary">return</span> <span class="text-primary">new</span> <span class="text-secondary-fixed">QuantumState</span>({
+<span class="text-tertiary font-bold">+</span>       tensor: quantumPayload.<span class="text-secondary">toNativeTensorBuffer</span>(),
+<span class="text-tertiary font-bold">+</span>       telemetry: { latencyMs: <span class="text-secondary">1.42</span>, engine: <span class="text-tertiary">"WGSL-V4"</span> }
+<span class="text-tertiary font-bold">+</span>     });</pre>
+</div>
+<!-- Trailing Code Continuation -->
+<div class="whitespace-pre text-on-surface mt-3">
+  }
+}
+          </div>
+</div>
+<!-- RIGHT MINIMAP RAIL -->
+<div class="w-24 bg-surface-container-lowest/80 border-l border-outline-variant/20 relative select-none flex-shrink-0 hidden md:block overflow-hidden py-1">
+<!-- Visible Viewport Highlight Box -->
+<div class="absolute left-0 right-0 top-16 h-32 bg-secondary/10 border-y border-secondary/30 pointer-events-none shadow-[inset_0_0_8px_rgba(76,215,246,0.15)]"></div>
+<!-- Micro Density Minimap Lines -->
+<div class="px-2 space-y-1 opacity-60 pointer-events-none text-[5px] leading-[7px] font-mono text-outline select-none">
+<div class="w-16 h-1 bg-primary/40 rounded-sm"></div>
+<div class="w-12 h-1 bg-secondary/40 rounded-sm"></div>
+<div class="w-20 h-1 bg-outline/20 rounded-sm"></div>
+<div class="w-14 h-1 bg-outline/20 rounded-sm"></div>
+<div class="w-10 h-1 bg-tertiary/40 rounded-sm"></div>
+<div class="w-16 h-1 bg-secondary/30 rounded-sm"></div>
+<div class="w-18 h-1 bg-outline/20 rounded-sm"></div>
+<div class="w-8 h-1 bg-primary/30 rounded-sm"></div>
+<div class="w-14 h-1 bg-outline/20 rounded-sm"></div>
+<div class="w-12 h-1 bg-tertiary/30 rounded-sm"></div>
+<div class="w-20 h-1 bg-secondary/50 rounded-sm"></div>
+<div class="w-16 h-1 bg-primary/50 rounded-sm"></div>
+<div class="w-10 h-1 bg-error/50 rounded-sm"></div>
+<div class="w-18 h-1 bg-outline/30 rounded-sm"></div>
+<div class="w-14 h-1 bg-secondary/60 rounded-sm"></div>
+<div class="w-16 h-1 bg-secondary/40 rounded-sm"></div>
+<div class="w-20 h-1 bg-primary/40 rounded-sm"></div>
+<div class="w-12 h-1 bg-tertiary/40 rounded-sm"></div>
+<div class="w-10 h-1 bg-outline/20 rounded-sm"></div>
+<div class="w-14 h-1 bg-outline/20 rounded-sm"></div>
+<div class="w-18 h-1 bg-outline/20 rounded-sm"></div>
+<div class="w-16 h-1 bg-secondary/30 rounded-sm"></div>
+<div class="w-8 h-1 bg-outline/20 rounded-sm"></div>
+<div class="w-12 h-1 bg-primary/40 rounded-sm"></div>
+</div>
+</div>
+</div>
+<!-- BOTTOM INTEGRATED TERMINAL & TELEMETRY DRAWER -->
+<div class="h-44 border-t border-outline-variant/30 bg-surface-container-lowest flex flex-col flex-shrink-0 z-30">
+<!-- Terminal Tab Bar -->
+<div class="h-7 px-3 flex items-center justify-between border-b border-outline-variant/20 bg-surface-container-low/60 text-label-sm font-label-sm">
+<div class="flex items-center gap-4">
+<span class="text-secondary border-b-2 border-secondary font-code text-xs pb-0.5 cursor-pointer font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">terminal</span>
+<span>TERMINAL</span>
+</span>
+<span class="text-outline hover:text-on-surface font-code text-xs pb-0.5 cursor-pointer flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">receipt_long</span>
+<span>OUTPUT</span>
+</span>
+<span class="text-outline hover:text-on-surface font-code text-xs pb-0.5 cursor-pointer flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">bug_report</span>
+<span>DEBUG CONSOLE</span>
+</span>
+<span class="text-tertiary hover:text-tertiary-fixed font-code text-xs pb-0.5 cursor-pointer flex items-center gap-1">
+<span class="material-symbols-outlined text-xs text-tertiary">pulse_alert</span>
+<span>NEURAL TELEMETRY</span>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary pulse-glow"></span>
+</span>
+</div>
+<div class="flex items-center gap-2 text-outline">
+<span class="text-[10px] font-mono text-outline">zsh -- 80x24</span>
+<span class="material-symbols-outlined text-xs cursor-pointer hover:text-secondary">add</span>
+<span class="material-symbols-outlined text-xs cursor-pointer hover:text-secondary">delete</span>
+<span class="material-symbols-outlined text-xs cursor-pointer hover:text-secondary">keyboard_arrow_up</span>
+<span class="material-symbols-outlined text-xs cursor-pointer hover:text-secondary">close</span>
+</div>
+</div>
+<!-- Terminal Output Buffer -->
+<div class="flex-1 p-2.5 font-code text-body-sm overflow-y-auto space-y-1 bg-surface-container-lowest/80 text-on-surface">
+<div class="text-tertiary flex items-center gap-1.5">
+<span class="text-[11px] bg-tertiary/15 text-tertiary border border-tertiary/30 px-1 py-0.2 rounded font-mono">[OK]</span>
+<span>Quantum Core initialized in 1.4ms (WGSL hardware backend: NVIDIA RTX 4090 Native)</span>
+</div>
+<div class="text-secondary flex items-center gap-1.5">
+<span class="text-[11px] bg-secondary/15 text-secondary border border-secondary/30 px-1 py-0.2 rounded font-mono">[SYS]</span>
+<span>Memory: 142MB / VRAM: 3.2GB / Active Tensors: 1,048,576 dims</span>
+</div>
+<div class="text-primary flex items-center gap-1.5">
+<span class="text-[11px] bg-primary/15 text-primary border border-primary/30 px-1 py-0.2 rounded font-mono">[AI]</span>
+<span>Neural Copilot Model V4-Ultra connected to local tensor engine socket</span>
+</div>
+<div class="text-outline text-xs">
+<span>[DEBUG] Watcher attached to /workspace/neural_v4/src/**</span>
+</div>
+<!-- Active Prompt Line -->
+<div class="flex items-center gap-2 pt-1 text-on-surface">
+<span class="text-secondary font-bold font-code">$</span>
+<span class="text-on-surface font-code">cyber-engine build --target=wgsl-neon --optimize=level3</span>
+<span class="w-2 h-4 bg-secondary inline-block animate-cursor"></span>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- STATUS FOOTER BAR (Shared Components JSON Compliant) -->
+<footer class="fixed bottom-0 left-0 w-full h-6 z-50 flex items-center justify-between px-3 border-t border-outline-variant/30 bg-surface-container-lowest select-none text-label-sm font-label-sm">
+<!-- Left Status Cluster -->
+<div class="flex items-center gap-4 text-tertiary font-code">
+<!-- Git Branch Link -->
+<div class="text-tertiary font-code text-label-sm flex items-center gap-1 cursor-pointer hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-xs">account_tree</span>
+<span>main*</span>
+</div>
+<!-- Sync Status Indicator -->
+<div class="text-outline font-code text-label-sm flex items-center gap-1 cursor-pointer hover:text-on-surface">
+<span class="material-symbols-outlined text-xs">sync</span>
+<span>0↓ 1↑</span>
+</div>
+<!-- Error & Warning Counters -->
+<div class="flex items-center gap-2">
+<span class="flex items-center gap-1 text-on-surface hover:text-error cursor-pointer">
+<span class="material-symbols-outlined text-xs text-error">cancel</span>
+<span class="font-mono text-[10px]">0</span>
+</span>
+<span class="flex items-center gap-1 text-on-surface hover:text-secondary cursor-pointer">
+<span class="material-symbols-outlined text-xs text-secondary-fixed">warning</span>
+<span class="font-mono text-[10px]">1</span>
+</span>
+</div>
+</div>
+<!-- Center Status Text (Copyright / Ready string from JSON) -->
+<div class="hidden sm:block text-outline font-code text-[10px] tracking-wider text-center">
+      READY // MAIN // UTF-8 // LN 142, COL 38
+    </div>
+<!-- Right Cluster Links (From Shared Components JSON) -->
+<div class="flex items-center gap-4 font-code text-label-sm">
+<div class="text-outline font-code text-label-sm flex items-center gap-1 cursor-pointer hover:text-on-surface">
+<span>Ln 28, Col 42</span>
+</div>
+<div class="text-outline font-code text-label-sm flex items-center gap-1 cursor-pointer hover:text-on-surface">
+<span>TypeScript 5.4</span>
+</div>
+<div class="text-outline font-code text-label-sm flex items-center gap-1 cursor-pointer hover:text-on-surface">
+<span>Prettier</span>
+</div>
+<!-- Neural Engine Status Pill -->
+<div class="text-tertiary font-code text-label-sm flex items-center gap-1.5 cursor-pointer bg-tertiary/10 px-2 py-0.5 rounded border border-tertiary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary pulse-glow"></span>
+<span class="text-xs font-semibold">Neural Engine: Ready</span>
+</div>
+</div>
+</footer>
+</body></html>
