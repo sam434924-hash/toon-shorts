@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-23: Phase 4A: implemented closed-form damped spring camera zoom for punch-ins with bounded overshoot (1.066x) and zero accumulated state.
+
 - 2026-10-23: Phase 3b hardening: enhanced thread-safe browser and process registry for parallel worker pool, guaranteeing zero leaked browser or FFmpeg processes and full temp cleanup on interrupt or failure.
 
 - 2026-10-23: Phase 3 performance: added fast draft mode (540x960, 15fps, roughness 0, blur off) and parallel scene rendering in Anime.js (worker pool 1-4, deterministic scene seeding, safe error handling and tempfile cleanup) cutting render time by more than 2x.

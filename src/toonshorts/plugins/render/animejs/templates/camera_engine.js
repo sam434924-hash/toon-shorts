@@ -5,6 +5,21 @@ function smootherstep(t) {
   return c * c * c * (c * (c * 6 - 15) + 10);
 }
 
+// Closed-form damped spring-mass solution (pure deterministic function of time)
+function dampedSpring(t, omegaD, zeta) {
+  if (t <= 0) return 0.0;
+  if (t >= 1) return 1.0;
+  const oD = (omegaD !== undefined) ? omegaD : (2 * Math.PI);
+  const z = (zeta !== undefined) ? zeta : 0.65;
+  const sZeta = Math.sqrt(1 - z * z);
+  const omegaN = oD / sZeta;
+  const decay = z * omegaN;
+  const coeff = z / sZeta;
+  const env = Math.exp(-decay * t) - t * Math.exp(-decay);
+  const osc = Math.cos(oD * t) + coeff * Math.sin(oD * t);
+  return 1.0 - env * osc;
+}
+
 function computeCameraState(ms, frameIdx) {
   const pFactors = window.__cameraParallax || { foreground: 2.0, subject: 1.0, board: 0.5, deep_bg: 0.12 };
   const presets = window.__cameraPresets || {
@@ -126,13 +141,22 @@ function computeCameraState(ms, frameIdx) {
       if (ms >= pStart && ms < pStart + totalDur) {
         const deltaMs = ms - pStart;
         let zoomBoost = 0.0;
-        if (deltaMs < riseDur) {
-          // Ease-out rise
-          zoomBoost = maxPunch * Math.sin((deltaMs / riseDur) * (Math.PI / 2));
+        if (window.__enableSpringCamera !== false) {
+          // Closed-form damped spring-mass response for punch-in zoom
+          if (deltaMs < riseDur) {
+            zoomBoost = maxPunch * dampedSpring(deltaMs / riseDur);
+          } else {
+            const decayT = (deltaMs - riseDur) / decayDur;
+            zoomBoost = maxPunch * (1.0 - dampedSpring(decayT));
+          }
         } else {
-          // Smootherstep decay
-          const decayT = (deltaMs - riseDur) / decayDur;
-          zoomBoost = maxPunch * (1.0 - smootherstep(decayT));
+          // Fallback smootherstep easing
+          if (deltaMs < riseDur) {
+            zoomBoost = maxPunch * Math.sin((deltaMs / riseDur) * (Math.PI / 2));
+          } else {
+            const decayT = (deltaMs - riseDur) / decayDur;
+            zoomBoost = maxPunch * (1.0 - smootherstep(decayT));
+          }
         }
         punchZoom = zoomBoost;
 
