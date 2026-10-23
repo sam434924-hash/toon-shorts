@@ -1,3 +1,4 @@
+from toonshorts.core import paths
 """Unit tests for dynamic inventory discovery."""
 
 import json
@@ -57,16 +58,17 @@ def test_dynamic_new_pack_in_temp_assets_without_code_changes(tmp_path):
     temp_chars_dir = tmp_path / "temp_characters"
     temp_chars_dir.mkdir(parents=True)
 
-    # Place a brand new character pack in temp assets folder
+    # Place a brand new valid character pack in temp assets folder
     new_pack = temp_chars_dir / "astronaut_sam"
     new_pack.mkdir()
-    manifest_data = {
-        "character_name": "astronaut_sam",
-        "description": "Space explorer in reflective helmet",
-        "slots": ["suit", "helmet"],
-    }
+
+    boy_a_dir = paths.CHARACTERS_2D_DIR / "boy_a"
+    manifest_data = json.loads((boy_a_dir / "manifest.json").read_text(encoding="utf-8"))
+    manifest_data["id"] = "astronaut_sam"
+    manifest_data["name"] = "Astronaut Sam"
+    manifest_data["description"] = "Space explorer in reflective helmet"
     (new_pack / "manifest.json").write_text(json.dumps(manifest_data), encoding="utf-8")
-    (new_pack / "vector").mkdir()
+    (new_pack / "character.svg").write_text((boy_a_dir / "character.svg").read_text(encoding="utf-8"), encoding="utf-8")
 
     # Discover characters pointing to temp directory
     discovered = get_installed_characters(characters_2d_dir=temp_chars_dir)
@@ -74,10 +76,54 @@ def test_dynamic_new_pack_in_temp_assets_without_code_changes(tmp_path):
     assert "astronaut_sam" in discovered_ids
     found_pack = next(p for p in discovered["2d_packs"] if p["id"] == "astronaut_sam")
     assert "Space explorer" in found_pack["description"]
+    assert "broken_packs" in discovered
+    assert not any(p["id"] == "astronaut_sam" for p in discovered["broken_packs"])
 
     # Also test via get_inventory
     inv = get_inventory(characters_2d_dir=temp_chars_dir)
     assert any(p["id"] == "astronaut_sam" for p in inv["characters"]["2d_packs"])
+
+
+def test_broken_pack_goes_to_broken_list(tmp_path):
+    temp_chars_dir = tmp_path / "broken_characters"
+    temp_chars_dir.mkdir(parents=True)
+
+    # Broken pack 1: missing SVG file
+    broken_pack = temp_chars_dir / "broken_droid"
+    broken_pack.mkdir()
+    manifest_data = {
+        "id": "broken_droid",
+        "name": "Broken Droid",
+        "kind": "vector",
+        "type": "layered_svg",
+        "svg_file": "missing.svg",
+    }
+    (broken_pack / "manifest.json").write_text(json.dumps(manifest_data), encoding="utf-8")
+
+    # Broken pack 2: malformed manifest
+    bad_pack = temp_chars_dir / "corrupted_bot"
+    bad_pack.mkdir()
+    (bad_pack / "manifest.json").write_text("{invalid json", encoding="utf-8")
+
+    discovered = get_installed_characters(characters_2d_dir=temp_chars_dir)
+    broken_ids = [p["id"] for p in discovered["broken_packs"]]
+    assert "broken_droid" in broken_ids
+    assert "corrupted_bot" in broken_ids
+    assert not any(p["id"] in ["broken_droid", "corrupted_bot"] for p in discovered["2d_packs"])
+
+    # Check that a one-line reason is provided
+    droid_reason = next(p["reason"] for p in discovered["broken_packs"] if p["id"] == "broken_droid")
+    assert isinstance(droid_reason, str) and len(droid_reason) > 0
+
+
+def test_boy_b_and_girl_a_appear_in_real_list():
+    chars = get_installed_characters()
+    real_ids = [p["id"] for p in chars["2d_packs"]]
+    assert "boy_b" in real_ids
+    assert "girl_a" in real_ids
+    broken_ids = [p["id"] for p in chars.get("broken_packs", [])]
+    assert "boy_b" not in broken_ids
+    assert "girl_a" not in broken_ids
 
 
 def test_styles_discovery():

@@ -7,7 +7,7 @@
   "viewBox": "0 0 1000 1500",
   "default_eyes": "open",
   "default_mouth": "closed",
-  "default_slot": "left",
+  "default_slot": "right",
   "scale": 1.0,
   "head_position": [
     500,

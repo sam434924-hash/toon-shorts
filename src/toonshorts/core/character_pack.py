@@ -3,7 +3,7 @@ Purpose: 2D layered SVG character pack system with security validation and test 
 Inputs: Character pack directory, manifest JSON, layered SVG markup, eye/mouth state requests.
 Outputs: Validated CharacterPack instances, state-swapped SVG code, rendered preview frames.
 Depends on: json, os, pathlib, re, typing, xml.etree.ElementTree, PIL, core.config
-Used by: core.character2d
+Used by: core.character2d, inventory
 Config keys: None
 Tests: tests/unit/test_character_pack.py, tests/unit/test_character2d.py
 """
@@ -468,11 +468,16 @@ def load_character_pack(
         pack_path = Path(pack_id_or_path).resolve()
         # Security: must stay inside root_dir if base_dir is explicitly given or standard
         ensure_path_inside_dir(pack_path, root_dir)
-        pack_id = pack_path.name
+        if pack_path.name == "vector":
+            pack_id = pack_path.parent.name
+        else:
+            pack_id = pack_path.name
     else:
         pack_id = validate_pack_name(str(pack_id_or_path))
         pack_path = (root_dir / pack_id).resolve()
         ensure_path_inside_dir(pack_path, root_dir)
+        if (pack_path / "vector" / "manifest.json").is_file():
+            pack_path = pack_path / "vector"
 
     if not pack_path.is_dir():
         raise FileNotFoundError(f"Character pack directory not found at '{pack_path}'")

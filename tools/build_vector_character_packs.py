@@ -20,7 +20,11 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 from toonshorts.core import paths
-from toonshorts.core.character_pack import validate_svg_security, validate_manifest_schema
+from toonshorts.core.character_pack import (
+    validate_svg_security,
+    validate_manifest_schema,
+    CharacterPack,
+)
 
 
 def get_boy_b_layers() -> Dict[str, str]:
@@ -1234,7 +1238,7 @@ def build_manifest_and_character_json(char_id: str) -> Tuple[Dict[str, Any], Dic
     """Builds manifest.json and character.json metadata for character pack."""
     is_boy = char_id == "boy_b"
     name = "Boy B" if is_boy else "Girl A"
-    default_slot = "right" if is_boy else "left"
+    default_slot = "left" if is_boy else "right"
 
     pivots = {
         "neck": [500, 500 if is_boy else 520],
@@ -1845,6 +1849,117 @@ def render_svg_to_image(page, svg_content: str, width: int = 1000, height: int =
     return Image.open(io.BytesIO(png_bytes)).convert("RGBA")
 
 
+def extract_inner_layer_content(svg_str: str, layer_name: str) -> str:
+    """Extracts elements inside the layer SVG and wraps in a group with id=layer_name."""
+    import re
+    m = re.search(r'<g\s+id=[\'"][^\'"]+[\'"]\s*>(.*)</g>', svg_str, re.DOTALL)
+    if m:
+        content = m.group(1).strip()
+        return f'<g id="{layer_name}">\n      {content}\n    </g>'
+    return f'<g id="{layer_name}">\n      {svg_str}\n    </g>'
+
+
+def build_master_character_svg(char_id: str, layers: Dict[str, str]) -> str:
+    """
+    Builds modular, fully validated master character.svg containing all 27 layers
+    (front body, joint hierarchies, swappable eye/mouth states, and hidden rear layers)
+    with .eye-state and .mouth-state CSS rule blocks for zero-error CharacterPack validation
+    and clean dynamic lip-sync / expression swapping.
+    """
+    manifest, _ = build_manifest_and_character_json(char_id)
+    piv = manifest["pivots"]
+    neck = piv["neck"]
+    sh_l = piv["shoulder_left"]
+    el_l = piv["elbow_left"]
+    sh_r = piv["shoulder_right"]
+    el_r = piv["elbow_right"]
+    hip_l = piv["hip_left"]
+    kn_l = piv["knee_left"]
+    ak_l = piv["ankle_left"]
+    hip_r = piv["hip_right"]
+    kn_r = piv["knee_right"]
+    ak_r = piv["ankle_right"]
+
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <defs>
+    <style>
+      .eye-state {{ display: none; }}
+      .mouth-state {{ display: none; }}
+      #eyes-open {{ display: inline; }}
+      #mouth-closed {{ display: inline; }}
+    </style>
+  </defs>
+  <rect width="1000" height="1500" fill="none" />
+  <g id="character_root">
+    <!-- Hidden back view layers (present for full pack layer validation and state access) -->
+    <g id="back_view_layers" display="none">
+      {extract_inner_layer_content(layers['torso_back'], 'torso_back')}
+      {extract_inner_layer_content(layers['shoe_back_left'], 'shoe_back_left')}
+      {extract_inner_layer_content(layers['shoe_back_right'], 'shoe_back_right')}
+      {extract_inner_layer_content(layers['leg_upper_back_left'], 'leg_upper_back_left')}
+      {extract_inner_layer_content(layers['leg_upper_back_right'], 'leg_upper_back_right')}
+    </g>
+
+    <g id="fk_head_back" transform="rotate(0, {neck[0]}, {neck[1]})">
+      {extract_inner_layer_content(layers['head_back'], 'head_back')}
+    </g>
+
+    <g id="fk_leg_r" transform="rotate(0, {hip_r[0]}, {hip_r[1]})">
+      {extract_inner_layer_content(layers['leg_upper_right'], 'leg_upper_right')}
+      <g id="fk_leg_lower_r" transform="rotate(0, {kn_r[0]}, {kn_r[1]})">
+        {extract_inner_layer_content(layers['leg_lower_right'], 'leg_lower_right')}
+        <g id="fk_shoe_r" transform="rotate(0, {ak_r[0]}, {ak_r[1]})">
+          {extract_inner_layer_content(layers['shoe_right'], 'shoe_right')}
+        </g>
+      </g>
+    </g>
+
+    <g id="fk_leg_l" transform="rotate(0, {hip_l[0]}, {hip_l[1]})">
+      {extract_inner_layer_content(layers['leg_upper_left'], 'leg_upper_left')}
+      <g id="fk_leg_lower_l" transform="rotate(0, {kn_l[0]}, {kn_l[1]})">
+        {extract_inner_layer_content(layers['leg_lower_left'], 'leg_lower_left')}
+        <g id="fk_shoe_l" transform="rotate(0, {ak_l[0]}, {ak_l[1]})">
+          {extract_inner_layer_content(layers['shoe_left'], 'shoe_left')}
+        </g>
+      </g>
+    </g>
+
+    <g id="fk_arm_r" transform="rotate(0, {sh_r[0]}, {sh_r[1]})">
+      {extract_inner_layer_content(layers['arm_upper_right'], 'arm_upper_right')}
+      <g id="fk_arm_lower_r" transform="rotate(0, {el_r[0]}, {el_r[1]})">
+        {extract_inner_layer_content(layers['arm_lower_right'], 'arm_lower_right')}
+      </g>
+    </g>
+
+    <g id="fk_arm_l" transform="rotate(0, {sh_l[0]}, {sh_l[1]})">
+      {extract_inner_layer_content(layers['arm_upper_left'], 'arm_upper_left')}
+      <g id="fk_arm_lower_l" transform="rotate(0, {el_l[0]}, {el_l[1]})">
+        {extract_inner_layer_content(layers['arm_lower_left'], 'arm_lower_left')}
+      </g>
+    </g>
+
+    <g id="fk_head_base" transform="rotate(0, {neck[0]}, {neck[1]})">
+      {extract_inner_layer_content(layers['head_base'], 'head_base')}
+      <g id="layer_eyes">
+        <g id="eyes-open" class="eye-state" data-eye="open">{extract_inner_layer_content(layers['eyes_open'], 'eyes_open')}</g>
+        <g id="eyes-blink" class="eye-state" data-eye="blink">{extract_inner_layer_content(layers['eyes_blink'], 'eyes_blink')}</g>
+        <g id="eyes-look_left" class="eye-state" data-eye="look_left">{extract_inner_layer_content(layers['eyes_look_left'], 'eyes_look_left')}</g>
+        <g id="eyes-look_right" class="eye-state" data-eye="look_right">{extract_inner_layer_content(layers['eyes_look_right'], 'eyes_look_right')}</g>
+      </g>
+      <g id="layer_mouths">
+        <g id="mouth-closed" class="mouth-state" data-mouth="closed">{extract_inner_layer_content(layers['mouth_closed'], 'mouth_closed')}</g>
+        <g id="mouth-slightly_open" class="mouth-state" data-mouth="slightly_open">{extract_inner_layer_content(layers['mouth_slightly_open'], 'mouth_slightly_open')}</g>
+        <g id="mouth-wide_open" class="mouth-state" data-mouth="wide_open">{extract_inner_layer_content(layers['mouth_wide_open'], 'mouth_wide_open')}</g>
+        <g id="mouth-round_o" class="mouth-state" data-mouth="round_o">{extract_inner_layer_content(layers['mouth_round_o'], 'mouth_round_o')}</g>
+        <g id="mouth-open_smile" class="mouth-state" data-mouth="open_smile">{extract_inner_layer_content(layers['mouth_open_smile'], 'mouth_open_smile')}</g>
+      </g>
+    </g>
+
+    {extract_inner_layer_content(layers['torso'], 'torso')}
+  </g>
+</svg>"""
+
+
 def build_and_verify_character(char_id: str):
     """Executes full generation, schema validation, joint rotation verification, and preview rendering."""
     print(f"\n==================================================")
@@ -1931,13 +2046,27 @@ def build_and_verify_character(char_id: str):
             )
             # Save SVG pose
             (staging_dir / f"{pname}.svg").write_text(pose_svg, encoding="utf-8")
-            if pname == "pose_01_front_standing":
-                (vector_dir / "character.svg").write_text(pose_svg, encoding="utf-8")
             # Render PNG at 1000x1500
             pose_img = render_svg_to_image(page, pose_svg, width=1000, height=1500)
             pose_img.save(staging_dir / f"{pname}.png")
             rendered_pose_images.append((pname, pose_img))
             print(f"   Rendered {pname}.png")
+
+        # 4b. Write and validate master character.svg containing all swappable states and layers
+        master_svg = build_master_character_svg(char_id, layers)
+        (vector_dir / "character.svg").write_text(master_svg, encoding="utf-8")
+        pack = CharacterPack(
+            pack_id=char_id,
+            name=manifest.get("name", char_id),
+            folder=vector_dir,
+            svg_content=master_svg,
+            manifest=manifest,
+            svg_path=vector_dir / "character.svg",
+        )
+        pack_errors = pack.validate()
+        if pack_errors:
+            raise ValueError(f"Generated character pack {char_id} failed CharacterPack.validate(): {pack_errors}")
+        print(f"   CharacterPack.validate() PASSED for {char_id} with 0 errors.")
 
         # 5. Composite Preview Sheet (3 rows x 4 columns)
         print(f"4. Generating {char_id}_preview_sheet.png...")

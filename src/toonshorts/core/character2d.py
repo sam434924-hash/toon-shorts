@@ -3,7 +3,7 @@ Purpose: 2D layered character system with registry, FK skeleton, character packs
 Inputs: Layout JSON, character sheet images, action parameters, audio loudness.
 Outputs: Cut transparent character layers, character registry JSON, rendered frames.
 Depends on: json, math, os, pathlib, re, time, typing, PIL, numpy, core.character_pack, core.config, core.paths
-Used by: plugins.render.animejs.cast
+Used by: inventory, plugins.render.animejs.cast
 Config keys: None
 Tests: tests/unit/test_character2d.py
 """
@@ -294,11 +294,17 @@ def get_character(
             "message": f"Character '{name}' not found in registry",
         }
 
-    # 1. Check for SVG Character Pack (manifest.json)
-    if manifest_json.is_file():
+    # 1. Check for SVG Character Pack (vector/manifest.json or root manifest.json)
+    vector_manifest = char_folder / "vector" / "manifest.json"
+    if vector_manifest.is_file() or manifest_json.is_file():
         try:
             return load_character_pack(name, base_dir=characters_root)
         except Exception as e:
+            if char_json.is_file() and not vector_manifest.is_file():
+                try:
+                    return Character2D.from_json(char_json)
+                except Exception:
+                    pass
             return {"status": "error", "name": name, "message": f"Failed to load character pack '{name}': {e}"}
 
     # 2. Check for skeletal Character2D (character.json)

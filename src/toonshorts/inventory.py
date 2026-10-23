@@ -28,9 +28,10 @@ def get_installed_characters(
     characters_2d_dir: Optional[Path] = None,
     models_3d_dir: Optional[Path] = None,
 ) -> Dict[str, List[Dict[str, str]]]:
-    """Dynamically inspects character asset directories and procedural renderer capabilities."""
+    """Dynamically inspects character asset directories and procedural renderer capabilities with honest load validation."""
     result: Dict[str, List[Dict[str, str]]] = {
         "2d_packs": [],
+        "broken_packs": [],
         "procedural": [],
         "3d_models": [],
     }
@@ -39,42 +40,45 @@ def get_installed_characters(
     if char_2d_dir.is_dir():
         for item in sorted(char_2d_dir.iterdir()):
             if item.is_dir() and not item.name.startswith((".", "_")):
-                has_layers = (item / "layers").is_dir() or (item / "character.json").is_file()
-                has_vector = (item / "vector").is_dir() or any(item.glob("*.svg"))
+                from toonshorts.core.character2d import get_character, Character2D
+                from toonshorts.core.character_pack import CharacterPack
 
-                if has_layers:
-                    pack_type = "sliced pack"
-                elif has_vector:
-                    pack_type = "vector pack"
+                char_obj = get_character(item.name, base_dir=char_2d_dir)
+
+                if isinstance(char_obj, CharacterPack):
+                    validation_errors = char_obj.validate()
+                    if validation_errors:
+                        result["broken_packs"].append({
+                            "id": item.name,
+                            "reason": f"Validation failed: {validation_errors[0]}",
+                        })
+                    else:
+                        desc = char_obj.manifest.get("description") or f"2D vector pack ({char_obj.name})"
+                        result["2d_packs"].append({
+                            "id": item.name,
+                            "name": item.name,
+                            "pack_type": "vector pack",
+                            "description": desc,
+                        })
+                elif isinstance(char_obj, Character2D):
+                    desc = f"2D sliced pack ({char_obj.name})"
+                    result["2d_packs"].append({
+                        "id": item.name,
+                        "name": f"{item.name} sliced pack",
+                        "pack_type": "sliced pack",
+                        "description": desc,
+                    })
+                elif isinstance(char_obj, dict) and char_obj.get("status") in ("error", "missing"):
+                    result["broken_packs"].append({
+                        "id": item.name,
+                        "reason": char_obj.get("message", "Failed to load character pack"),
+                    })
                 else:
-                    pack_type = "character pack"
-
-                desc = f"2D {pack_type} ({item.name})"
-                manifest_path = item / "manifest.json"
-                char_json_path = item / "character.json"
-
-                if manifest_path.is_file():
-                    try:
-                        data = json.loads(manifest_path.read_text(encoding="utf-8"))
-                        char_n = data.get("character_name") or item.name
-                        desc = data.get("description") or f"2D {pack_type} ({char_n})"
-                    except Exception:
-                        pass
-                elif char_json_path.is_file():
-                    try:
-                        data = json.loads(char_json_path.read_text(encoding="utf-8"))
-                        char_n = data.get("name") or item.name
-                        desc = f"2D {pack_type} ({char_n})"
-                    except Exception:
-                        pass
-
-                display_name = f"{item.name} {pack_type}" if "sliced" in pack_type else item.name
-                result["2d_packs"].append({
-                    "id": item.name,
-                    "name": display_name,
-                    "pack_type": pack_type,
-                    "description": desc,
-                })
+                    msg = char_obj.get("message") if isinstance(char_obj, dict) else "Unknown character format"
+                    result["broken_packs"].append({
+                        "id": item.name,
+                        "reason": msg,
+                    })
 
     # Procedural characters provided dynamically by renderer engines
     for r in list_renderers():
@@ -256,6 +260,8 @@ def format_inventory_display(inv: Optional[Dict[str, Any]] = None) -> str:
         lines.append(f"   - [Procedural] {proc['name']}: {proc['description']}")
     for model in chars.get("3d_models", []):
         lines.append(f"   - [3D Model] {model['id']} ({model.get('file', '')})")
+    for broken in chars.get("broken_packs", []):
+        lines.append(f"   - [Broken Pack] {broken['id']}: {broken['reason']}")
 
     lines.append("")
     lines.append("2. BOARD THEMES / STYLES:")

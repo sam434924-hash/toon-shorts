@@ -1,9 +1,94 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1500" width="1000" height="1500">
+  <defs>
+    <style>
+      .eye-state { display: none; }
+      .mouth-state { display: none; }
+      #eyes-open { display: inline; }
+      #mouth-closed { display: inline; }
+    </style>
+  </defs>
   <rect width="1000" height="1500" fill="none" />
   <g id="character_root">
-    <g id="fk_head_back" transform="rotate(0.0, 500, 520)">
-      <g id="layer_head_back">
-    <path fill="#9e3108" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 45 L440 85 L375 120 L320 165 L270 235 L240 310 L275 345 L220 415 L280 435 L225 510 L300 500 L285 570 L360 520 L370 580 L440 510 L500 540 L560 510 L630 580 L640 520 L715 570 L700 500 L775 510 L720 435 L780 415 L725 345 L760 310 L730 235 L680 165 L625 120 L560 85 Z" />
+    <!-- Hidden back view layers (present for full pack layer validation and state access) -->
+    <g id="back_view_layers" display="none">
+      <g id="torso_back">
+      <!-- Neck skin base connection under collar -->
+    <path fill="#fedbc3" stroke="none" d="M465 500 L465 522 Q500 538 535 522 L535 500 Z" />
+
+    <!-- Dark under-shirt body back -->
+    <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M412 518 L360 670 L366 885 L634 885 L640 670 L588 518 Z" />
+
+    <!-- Crew-neck back collar band -->
+    <path fill="#221622" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M455 515 Q500 536 545 515 L542 530 Q500 546 458 530 Z" />
+
+    <!-- Solid Purple Vest Back (single solid back panel across dark shirt and short sleeves) -->
+    <path fill="#6f3477" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M408 522 L372 670 C366 730 364 800 366 860 L368 900 C375 940 435 956 500 956 C565 956 625 940 632 900 L634 860 C636 800 634 730 628 670 L592 522 Q500 536 408 522 Z" />
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M414 525 L378 670 C372 730 370 800 372 860 L374 895 C380 932 438 948 500 948 C562 948 620 932 626 895 L628 860 C630 800 628 730 622 670 L586 525 Q500 536 414 525 Z" />
+
+    <!-- Center vertical vest back stitch -->
+    <path fill="none" stroke="#7b3a82" stroke-width="3" stroke-linecap="round" d="M500 538 L500 946" />
+    </g>
+      <g id="shoe_back_left">
+      <!-- Ankle joint cap tucks under jeans cuff at (400, 1380) -->
+    <circle cx="400" cy="1380" r="34" fill="#6f3477" stroke="#2a1523" stroke-width="5" />
+    <!-- Heel counter (purple canvas rear cup) -->
+    <path fill="#6f3477" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M356 1395 L444 1395 L452 1450 L348 1450 Z" />
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M362 1397 L438 1397 L446 1448 L354 1448 Z" />
+    
+    <!-- Vertical Purple Heel Pull Tab -->
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="3.5" stroke-linecap="round" d="M394 1390 Q400 1378 406 1390" />
+    <rect x="394" y="1388" width="12" height="60" rx="3" fill="#6f3477" stroke="#2a1523" stroke-width="3" />
+    <rect x="396" y="1390" width="8" height="56" rx="2" fill="#934c9c" />
+    
+    <!-- White / Lilac Rubber Sole -->
+    <path fill="#f0e8f2" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M345 1450 L455 1450 L455 1468 L345 1468 Z" />
+    <rect x="345" y="1462" width="110" height="6" fill="#ded4e0" />
+    </g>
+      <g id="shoe_back_right">
+      <!-- Ankle joint cap tucks under jeans cuff at (600, 1380) -->
+    <circle cx="600" cy="1380" r="34" fill="#6f3477" stroke="#2a1523" stroke-width="5" />
+    <!-- Heel counter (purple canvas rear cup) -->
+    <path fill="#6f3477" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M556 1395 L644 1395 L652 1450 L548 1450 Z" />
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M562 1397 L638 1397 L646 1448 L554 1448 Z" />
+    
+    <!-- Vertical Purple Heel Pull Tab -->
+    <path fill="#934c9c" stroke="#2a1523" stroke-width="3.5" stroke-linecap="round" d="M594 1390 Q600 1378 606 1390" />
+    <rect x="594" y="1388" width="12" height="60" rx="3" fill="#6f3477" stroke="#2a1523" stroke-width="3" />
+    <rect x="596" y="1390" width="8" height="56" rx="2" fill="#934c9c" />
+    
+    <!-- White / Lilac Rubber Sole -->
+    <path fill="#f0e8f2" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M545 1450 L655 1450 L655 1468 L545 1468 Z" />
+    <rect x="545" y="1462" width="110" height="6" fill="#ded4e0" />
+    </g>
+      <g id="leg_upper_back_left">
+      <circle cx="435" cy="930" r="46" fill="#293f59" stroke="#2a1523" stroke-width="6" />
+    <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M390 930 L370 1160 L465 1160 L485 930 Z" />
+    <path fill="#395779" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M400 930 L380 1160 L460 1160 L480 930 Z" />
+    <!-- Rear pocket left -->
+    <polygon points="405,960 460,960 455,1015 432,1028 410,1015" fill="#293f59" stroke="#2a1523" stroke-width="4" stroke-linejoin="round" />
+    <path fill="none" stroke="#253549" stroke-width="2.5" d="M414 980 Q432 995 450 980" />
+    <!-- Inseam -->
+    <line x1="485" y1="930" x2="465" y2="1160" stroke="#2a1523" stroke-width="4" stroke-linecap="round" />
+    <!-- Knee hem -->
+    <path fill="#293f59" stroke="#2a1523" stroke-width="5" stroke-linecap="round" d="M365 1155 Q420 1168 470 1155" />
+    </g>
+      <g id="leg_upper_back_right">
+      <circle cx="565" cy="930" r="46" fill="#293f59" stroke="#2a1523" stroke-width="6" />
+    <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M515 930 L535 1160 L630 1160 L610 930 Z" />
+    <path fill="#395779" stroke="#2a1523" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" d="M520 930 L540 1160 L620 1160 L600 930 Z" />
+    <!-- Rear pocket right -->
+    <polygon points="540,960 595,960 590,1015 568,1028 545,1015" fill="#293f59" stroke="#2a1523" stroke-width="4" stroke-linejoin="round" />
+    <path fill="none" stroke="#253549" stroke-width="2.5" d="M550 980 Q568 995 586 980" />
+    <!-- Inseam -->
+    <line x1="515" y1="930" x2="535" y2="1160" stroke="#2a1523" stroke-width="4" stroke-linecap="round" />
+    <!-- Knee hem -->
+    <path fill="#293f59" stroke="#2a1523" stroke-width="5" stroke-linecap="round" d="M530 1155 Q580 1168 635 1155" />
+    </g>
+    </g>
+
+    <g id="fk_head_back" transform="rotate(0, 500, 520)">
+      <g id="head_back">
+      <path fill="#9e3108" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 45 L440 85 L375 120 L320 165 L270 235 L240 310 L275 345 L220 415 L280 435 L225 510 L300 500 L285 570 L360 520 L370 580 L440 510 L500 540 L560 510 L630 580 L640 520 L715 570 L700 500 L775 510 L720 435 L780 415 L725 345 L760 310 L730 235 L680 165 L625 120 L560 85 Z" />
     <polygon points="240,310 275,345 320,290" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="275,345 220,415 300,380" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="220,415 280,435 295,455" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
@@ -19,31 +104,32 @@
     <polygon points="440,85 440,165 500,140" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="560,85 500,140 560,165" fill="#d34a10" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <polygon points="560,85 625,120 560,165" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
-  </g>
     </g>
-    <g id="fk_leg_r" transform="rotate(0.0, 565, 930)">
-      <g id="layer_leg_upper_right">
-    <!-- Hip overlap cap (tucks under vest hem) -->
+    </g>
+
+    <g id="fk_leg_r" transform="rotate(0, 565, 930)">
+      <g id="leg_upper_right">
+      <!-- Hip overlap cap (tucks under vest hem) -->
     <circle cx="565" cy="930" r="48" fill="#293f59" stroke="#2a1523" stroke-width="6" />
     <!-- Thigh body -->
     <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M515 920 L530 1150 L642 1150 L625 920 Z" />
     <path fill="#395779" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M518 920 L535 1150 L630 1150 L612 920 Z" />
     <!-- Knee hem covering lower leg cap -->
     <path fill="#293f59" stroke="#2a1523" stroke-width="5" stroke-linecap="round" d="M525 1145 Q585 1158 645 1145" />
-  </g>
-      <g id="fk_leg_lower_r" transform="rotate(0.0, 585, 1150)">
-        <g id="layer_leg_lower_right">
-    <!-- Knee overlap cap (tucks under thigh hem) -->
+    </g>
+      <g id="fk_leg_lower_r" transform="rotate(0, 585, 1150)">
+        <g id="leg_lower_right">
+      <!-- Knee overlap cap (tucks under thigh hem) -->
     <circle cx="585" cy="1150" r="44" fill="#293f59" stroke="#2a1523" stroke-width="6" />
     <!-- Calf body -->
     <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M530 1150 L535 1370 L655 1370 L642 1150 Z" />
     <path fill="#395779" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M535 1150 L538 1370 L640 1370 L630 1150 Z" />
     <!-- Pants cuff at ankle (covers shoe joint cap) -->
     <rect x="530" y="1360" width="135" height="52" rx="8" fill="#4d7199" stroke="#2a1523" stroke-width="6" />
-  </g>
-        <g id="fk_shoe_r" transform="rotate(0.0, 600, 1380)">
-          <g id="layer_shoe_right">
-    <!-- Ankle joint cap (tucks under pants cuff at (600, 1370)) -->
+    </g>
+        <g id="fk_shoe_r" transform="rotate(0, 600, 1380)">
+          <g id="shoe_right">
+      <!-- Ankle joint cap (tucks under pants cuff at (600, 1370)) -->
     <circle cx="600" cy="1370" r="36" fill="#6f3477" stroke="#2a1523" stroke-width="5" />
     
     <!-- Bare skin on medial side (inner ankle) -->
@@ -74,33 +160,34 @@
     <path fill="#f0e8f2" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M688 1474 C689 1480 682 1488 652 1490 L552 1487 C545 1484 544 1476 546 1471 L606 1475 C640 1478 674 1478 688 1474 Z" />
     <!-- Sole shadow contour -->
     <path fill="#ded4e0" stroke="#2a1523" stroke-width="2" stroke-linejoin="round" d="M686 1480 C672 1483 642 1484 602 1482 L548 1478 L550 1483 C556 1486 585 1488 642 1488 C672 1488 684 1484 686 1480 Z" />
-  </g>
+    </g>
         </g>
       </g>
     </g>
-    <g id="fk_leg_l" transform="rotate(0.0, 435, 930)">
-      <g id="layer_leg_upper_left">
-    <!-- Hip overlap cap (tucks under vest hem) -->
+
+    <g id="fk_leg_l" transform="rotate(0, 435, 930)">
+      <g id="leg_upper_left">
+      <!-- Hip overlap cap (tucks under vest hem) -->
     <circle cx="435" cy="930" r="48" fill="#293f59" stroke="#2a1523" stroke-width="6" />
     <!-- Thigh body -->
     <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M375 920 L358 1150 L470 1150 L485 920 Z" />
     <path fill="#395779" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M388 920 L370 1150 L465 1150 L482 920 Z" />
     <!-- Knee hem covering lower leg cap -->
     <path fill="#293f59" stroke="#2a1523" stroke-width="5" stroke-linecap="round" d="M355 1145 Q415 1158 475 1145" />
-  </g>
-      <g id="fk_leg_lower_l" transform="rotate(0.0, 415, 1150)">
-        <g id="layer_leg_lower_left">
-    <!-- Knee overlap cap (tucks under thigh hem) -->
+    </g>
+      <g id="fk_leg_lower_l" transform="rotate(0, 415, 1150)">
+        <g id="leg_lower_left">
+      <!-- Knee overlap cap (tucks under thigh hem) -->
     <circle cx="415" cy="1150" r="44" fill="#293f59" stroke="#2a1523" stroke-width="6" />
     <!-- Calf body -->
     <path fill="#293f59" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M358 1150 L345 1370 L465 1370 L470 1150 Z" />
     <path fill="#395779" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M370 1150 L360 1370 L462 1370 L465 1150 Z" />
     <!-- Pants cuff at ankle (covers shoe joint cap) -->
     <rect x="335" y="1360" width="135" height="52" rx="8" fill="#4d7199" stroke="#2a1523" stroke-width="6" />
-  </g>
-        <g id="fk_shoe_l" transform="rotate(0.0, 400, 1380)">
-          <g id="layer_shoe_left">
-    <!-- Ankle joint cap (tucks under pants cuff at (400, 1370)) -->
+    </g>
+        <g id="fk_shoe_l" transform="rotate(0, 400, 1380)">
+          <g id="shoe_left">
+      <!-- Ankle joint cap (tucks under pants cuff at (400, 1370)) -->
     <circle cx="400" cy="1370" r="36" fill="#6f3477" stroke="#2a1523" stroke-width="5" />
     
     <!-- Bare skin on medial side (inner ankle) -->
@@ -131,22 +218,23 @@
     <path fill="#f0e8f2" stroke="#2a1523" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" d="M312 1474 C311 1480 318 1488 348 1490 L448 1487 C455 1484 456 1476 454 1471 L394 1475 C360 1478 326 1478 312 1474 Z" />
     <!-- Sole shadow contour -->
     <path fill="#ded4e0" stroke="#2a1523" stroke-width="2" stroke-linejoin="round" d="M314 1480 C328 1483 358 1484 398 1482 L452 1478 L450 1483 C444 1486 415 1488 358 1488 C328 1488 316 1484 314 1480 Z" />
-  </g>
+    </g>
         </g>
       </g>
     </g>
-    <g id="fk_arm_r" transform="rotate(0.0, 585, 525)">
-      <g id="layer_arm_upper_right">
-    <!-- Shoulder overlap cap (tucks under torso shoulder) -->
+
+    <g id="fk_arm_r" transform="rotate(0, 585, 525)">
+      <g id="arm_upper_right">
+      <!-- Shoulder overlap cap (tucks under torso shoulder) -->
     <circle cx="585" cy="525" r="32" fill="#2b1f2b" stroke="#2a1523" stroke-width="6" />
     <!-- Sleeve Body -->
     <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M585 525 L690 680 L615 715 L565 550 Z" />
     <!-- Sleeve Cuff (covers forearm joint cap) -->
     <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M695 675 L612 718" />
-  </g>
-      <g id="fk_arm_lower_r" transform="rotate(0.0, 655, 705)">
-        <g id="layer_arm_lower_right">
-    <!-- Elbow overlap cap extending into sleeve cuff -->
+    </g>
+      <g id="fk_arm_lower_r" transform="rotate(0, 655, 705)">
+        <g id="arm_lower_right">
+      <!-- Elbow overlap cap extending into sleeve cuff -->
     <circle cx="655" cy="705" r="28" fill="#f1b799" stroke="#2a1523" stroke-width="5" />
     <!-- Forearm skin -->
     <path fill="#f1b799" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M665 695 L730 940 L660 950 L625 710 Z" />
@@ -164,21 +252,22 @@
       <line x1="718" y1="1078" x2="718" y2="1028" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
       <line x1="706" y1="1072" x2="706" y2="1028" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
     </g>
-  </g>
+    </g>
       </g>
     </g>
-    <g id="fk_arm_l" transform="rotate(0.0, 415, 525)">
-      <g id="layer_arm_upper_left">
-    <!-- Shoulder overlap cap (tucks under torso shoulder) -->
+
+    <g id="fk_arm_l" transform="rotate(0, 415, 525)">
+      <g id="arm_upper_left">
+      <!-- Shoulder overlap cap (tucks under torso shoulder) -->
     <circle cx="415" cy="525" r="32" fill="#2b1f2b" stroke="#2a1523" stroke-width="6" />
     <!-- Sleeve Body -->
     <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M415 525 L310 680 L385 715 L435 550 Z" />
     <!-- Sleeve Cuff (covers forearm joint cap) -->
     <path fill="#2b1f2b" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M305 675 L388 718" />
-  </g>
-      <g id="fk_arm_lower_l" transform="rotate(0.0, 345, 705)">
-        <g id="layer_arm_lower_left">
-    <!-- Elbow overlap cap extending into sleeve cuff -->
+    </g>
+      <g id="fk_arm_lower_l" transform="rotate(0, 345, 705)">
+        <g id="arm_lower_left">
+      <!-- Elbow overlap cap extending into sleeve cuff -->
     <circle cx="345" cy="705" r="28" fill="#f1b799" stroke="#2a1523" stroke-width="5" />
     <!-- Forearm skin -->
     <path fill="#f1b799" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M335 695 L270 940 L340 950 L375 710 Z" />
@@ -196,12 +285,13 @@
       <line x1="282" y1="1078" x2="282" y2="1028" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
       <line x1="294" y1="1072" x2="294" y2="1028" stroke="#2a1523" stroke-width="3" stroke-linecap="round" />
     </g>
-  </g>
+    </g>
       </g>
     </g>
-    <g id="fk_head_base" transform="rotate(0.0, 500, 520)">
-      <g id="layer_head_base">
-    <!-- Neck extending under collar -->
+
+    <g id="fk_head_base" transform="rotate(0, 500, 520)">
+      <g id="head_base">
+      <!-- Neck extending under collar -->
     <path fill="#f1b799" d="M460 450 L460 550 L540 550 L540 450 Z" />
     <line x1="460" y1="450" x2="460" y2="520" stroke="#2a1523" stroke-width="6" stroke-linecap="round" />
     <line x1="540" y1="450" x2="540" y2="520" stroke="#2a1523" stroke-width="6" stroke-linecap="round" />
@@ -272,9 +362,10 @@
     <polygon points="645,220 655,280 705,245" fill="#9e3108" stroke="#3e1b12" stroke-width="3.5" stroke-linejoin="round" />
     <!-- Outer Contour Stroke -->
     <path fill="none" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M500 45 L440 90 L375 125 L320 170 L295 245 L345 280 L375 250 L390 205 L445 215 L485 250 L500 205 L515 250 L555 215 L610 205 L625 250 L655 280 L705 245 L680 170 L625 125 L560 90 Z" />
-  </g>
-      <g id="layer_eyes_open">
-    <!-- Left Eye -->
+    </g>
+      <g id="layer_eyes">
+        <g id="eyes-open" class="eye-state" data-eye="open"><g id="eyes_open">
+      <!-- Left Eye -->
     <ellipse cx="440" cy="360" rx="42" ry="44" fill="#ffffff" stroke="#2a1523" stroke-width="5" />
     <ellipse cx="442" cy="360" rx="28" ry="30" fill="#135537" />
     <ellipse cx="442" cy="362" rx="24" ry="26" fill="#208759" />
@@ -290,14 +381,86 @@
     <ellipse cx="558" cy="360" rx="15" ry="16" fill="#162319" />
     <circle cx="550" cy="350" r="9" fill="#ffffff" />
     <circle cx="572" cy="370" r="4.5" fill="#ffffff" />
-  </g>
-      <g id="layer_mouth_closed">
-    <path fill="none" stroke="#2a1523" stroke-width="5" stroke-linecap="round" d="M465 425 Q500 440 535 425" />
+    </g></g>
+        <g id="eyes-blink" class="eye-state" data-eye="blink"><g id="eyes_blink">
+      <!-- Left Eye Blink curve -->
+    <path fill="none" stroke="#2a1523" stroke-width="6" stroke-linecap="round" d="M412 362 Q440 378 468 362" />
+    <path fill="none" stroke="#2a1523" stroke-width="4.5" stroke-linecap="round" d="M424 370 L418 379" />
+    <path fill="none" stroke="#2a1523" stroke-width="4.5" stroke-linecap="round" d="M456 370 L462 379" />
+    <!-- Right Eye Blink curve -->
+    <path fill="none" stroke="#2a1523" stroke-width="6" stroke-linecap="round" d="M532 362 Q560 378 588 362" />
+    <path fill="none" stroke="#2a1523" stroke-width="4.5" stroke-linecap="round" d="M544 370 L538 379" />
+    <path fill="none" stroke="#2a1523" stroke-width="4.5" stroke-linecap="round" d="M576 370 L582 379" />
+    </g></g>
+        <g id="eyes-look_left" class="eye-state" data-eye="look_left"><g id="eyes_look_left">
+      <!-- Left Eye: Look Left -->
+    <ellipse cx="440" cy="360" rx="42" ry="44" fill="#ffffff" stroke="#2a1523" stroke-width="5" />
+    <ellipse cx="428" cy="360" rx="26" ry="30" fill="#135537" />
+    <ellipse cx="428" cy="362" rx="22" ry="26" fill="#208759" />
+    <ellipse cx="428" cy="368" rx="16" ry="16" fill="#51ba86" />
+    <ellipse cx="428" cy="360" rx="13" ry="16" fill="#162319" />
+    <circle cx="420" cy="350" r="8" fill="#ffffff" />
+    <circle cx="440" cy="370" r="4" fill="#ffffff" />
+    <!-- Right Eye: Look Left -->
+    <ellipse cx="560" cy="360" rx="42" ry="44" fill="#ffffff" stroke="#2a1523" stroke-width="5" />
+    <ellipse cx="546" cy="360" rx="26" ry="30" fill="#135537" />
+    <ellipse cx="546" cy="362" rx="22" ry="26" fill="#208759" />
+    <ellipse cx="546" cy="368" rx="16" ry="16" fill="#51ba86" />
+    <ellipse cx="546" cy="360" rx="13" ry="16" fill="#162319" />
+    <circle cx="538" cy="350" r="8" fill="#ffffff" />
+    <circle cx="558" cy="370" r="4" fill="#ffffff" />
+    </g></g>
+        <g id="eyes-look_right" class="eye-state" data-eye="look_right"><g id="eyes_look_right">
+      <!-- Left Eye: Look Right -->
+    <ellipse cx="440" cy="360" rx="42" ry="44" fill="#ffffff" stroke="#2a1523" stroke-width="5" />
+    <ellipse cx="454" cy="360" rx="26" ry="30" fill="#135537" />
+    <ellipse cx="454" cy="362" rx="22" ry="26" fill="#208759" />
+    <ellipse cx="454" cy="368" rx="16" ry="16" fill="#51ba86" />
+    <ellipse cx="454" cy="360" rx="13" ry="16" fill="#162319" />
+    <circle cx="446" cy="350" r="8" fill="#ffffff" />
+    <circle cx="466" cy="370" r="4" fill="#ffffff" />
+    <!-- Right Eye: Look Right -->
+    <ellipse cx="560" cy="360" rx="42" ry="44" fill="#ffffff" stroke="#2a1523" stroke-width="5" />
+    <ellipse cx="572" cy="360" rx="26" ry="30" fill="#135537" />
+    <ellipse cx="572" cy="362" rx="22" ry="26" fill="#208759" />
+    <ellipse cx="572" cy="368" rx="16" ry="16" fill="#51ba86" />
+    <ellipse cx="572" cy="360" rx="13" ry="16" fill="#162319" />
+    <circle cx="564" cy="350" r="8" fill="#ffffff" />
+    <circle cx="584" cy="370" r="4" fill="#ffffff" />
+    </g></g>
+      </g>
+      <g id="layer_mouths">
+        <g id="mouth-closed" class="mouth-state" data-mouth="closed"><g id="mouth_closed">
+      <path fill="none" stroke="#2a1523" stroke-width="5" stroke-linecap="round" d="M465 425 Q500 440 535 425" />
     <path fill="#f1b799" d="M490 440 Q500 445 510 440 Z" />
-  </g>
+    </g></g>
+        <g id="mouth-slightly_open" class="mouth-state" data-mouth="slightly_open"><g id="mouth_slightly_open">
+      <path fill="#2a1523" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M470 422 Q500 415 530 422 Q500 442 470 422 Z" />
+    <path fill="#ffffff" d="M478 422 Q500 417 522 422 Q500 427 478 422 Z" />
+    <path fill="#f1b799" d="M490 444 Q500 448 510 444 Z" />
+    </g></g>
+        <g id="mouth-wide_open" class="mouth-state" data-mouth="wide_open"><g id="mouth_wide_open">
+      <path fill="#2a1523" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M462 416 Q500 410 538 416 C538 452 522 464 500 464 C478 464 462 452 462 416 Z" />
+    <path fill="#ffffff" d="M470 416 Q500 412 530 416 C528 426 472 426 470 416 Z" />
+    <path fill="#e27a7a" d="M480 460 C485 445 515 445 520 460 C510 463 490 463 480 460 Z" />
+    <path fill="#f1b799" d="M488 468 Q500 472 512 468 Z" />
+    </g></g>
+        <g id="mouth-round_o" class="mouth-state" data-mouth="round_o"><g id="mouth_round_o">
+      <ellipse cx="500" cy="428" rx="18" ry="22" fill="#2a1523" stroke="#2a1523" stroke-width="5" />
+    <ellipse cx="500" cy="436" rx="10" ry="8" fill="#e27a7a" />
+    <path fill="#f1b799" d="M490 454 Q500 458 510 454 Z" />
+    </g></g>
+        <g id="mouth-open_smile" class="mouth-state" data-mouth="open_smile"><g id="mouth_open_smile">
+      <path fill="#2a1523" stroke="#2a1523" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M458 418 Q500 408 542 418 C537 455 520 462 500 462 C480 462 463 455 458 418 Z" />
+    <path fill="#ffffff" stroke="#2a1523" stroke-width="2" d="M465 418 Q500 410 535 418 C530 428 470 428 465 418 Z" />
+    <path fill="#e27a7a" d="M478 458 C484 444 516 444 522 458 C512 461 488 461 478 458 Z" />
+    <path fill="#f1b799" d="M488 466 Q500 470 512 466 Z" />
+    </g></g>
+      </g>
     </g>
-    <g id="layer_torso">
-    <!-- Neck skin base connection under collar -->
+
+    <g id="torso">
+      <!-- Neck skin base connection under collar -->
     <path fill="#fedbc3" stroke="none" d="M465 500 L465 524 Q500 545 535 524 L535 500 Z" />
     
     <!-- Pelvis jeans underlay (covers leg joint rotation beneath t-shirt hem) -->
@@ -327,6 +490,6 @@
     <path fill="#934c9c" stroke="#2a1523" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" d="M558 522 L592 528 C582 572 595 624 628 670 C634 730 636 800 634 860 L630 915 C628 935 618 948 602 948 C580 948 555 946 540 942 C530 938 526 926 528 915 C532 850 536 760 542 680 C546 620 552 565 558 522 Z" />
     <!-- Right Lapel facing accent line -->
     <path fill="none" stroke="#7b3a82" stroke-width="3" stroke-linecap="round" d="M555 535 C549 615 544 715 540 815 C538 855 537 895 536 925" />
-  </g>
+    </g>
   </g>
 </svg>
