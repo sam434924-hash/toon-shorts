@@ -41,6 +41,7 @@ def generate_whiteboard_html(
     layout: str = "cards",
     visuals: Optional[List[Any]] = None,
     word_timings: Optional[List[Any]] = None,
+    theme: str = "whiteboard",
 ) -> str:
     """
     Generates a high-contrast HTML5/SVG composition with Anime.js whiteboard animation,
@@ -230,7 +231,16 @@ def generate_whiteboard_html(
 
     timeline_chain = "\n".join(timeline_steps)
     mouth_cues_json = json.dumps(mouth_cues or [])
-    shelf_decor_html, desk_props_html = generate_scene_decorations(scene_number)
+    shelf_decor_html, desk_props_html = generate_scene_decorations(scene_number, theme=theme)
+
+    panel_backdrop_style = ""
+    if theme == "night_studio":
+        # Check code_editor_monitor.png backdrop inside board panel
+        backdrop_path = config.PROJECT_ROOT / "assets" / "stitch_tests" / "code_editor_monitor.png"
+        if backdrop_path.is_file():
+            import base64
+            b64_img = base64.b64encode(backdrop_path.read_bytes()).decode("utf-8")
+            panel_backdrop_style = f"background-image: url('data:image/png;base64,{b64_img}');"
 
     # Load templates from disk
     template_html = (TEMPLATES_DIR / "whiteboard.html").read_text(encoding="utf-8")
@@ -242,6 +252,8 @@ def generate_whiteboard_html(
 
     # Replace placeholders in HTML template
     result = template_html
+    result = result.replace("{{THEME_NAME}}", theme)
+    result = result.replace("{{PANEL_BACKDROP_STYLE}}", panel_backdrop_style)
     result = result.replace("{{WIDTH}}", str(width))
     result = result.replace("{{HEIGHT}}", str(height))
     result = result.replace("{{TITLE}}", safe_title)

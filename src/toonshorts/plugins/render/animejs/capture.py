@@ -57,6 +57,7 @@ def render_whiteboard_video(
     layout: str = "cards",
     visuals: Optional[List[Any]] = None,
     word_timings: Optional[List[Any]] = None,
+    theme: str = "whiteboard",
 ) -> Path:
     """
     Renders a fully animated MP4 video with easing transitions synced to an audio clip.
@@ -85,6 +86,7 @@ def render_whiteboard_video(
         layout=layout,
         visuals=visuals,
         word_timings=word_timings,
+        theme=theme,
     )
 
     html_file = (work_dir / "whiteboard_scene.html").resolve()

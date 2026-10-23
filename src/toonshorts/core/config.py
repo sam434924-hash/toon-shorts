@@ -81,6 +81,11 @@ VIDEO_FPS = 30
 MIN_DURATION_SECONDS = 25
 MAX_DURATION_SECONDS = 65
 
+# Camera zoom settings for dynamic framing
+CAMERA_ZOOM_SPEAKER = 1.18
+CAMERA_ZOOM_BOARD = 1.25
+CAMERA_EASE_DURATION_SEC = 0.50
+
 # Cost Estimator Pricing (USD, based on current Google GenAI API rates)
 PRICING = {
     "text_input_per_million_tokens": 0.10,

@@ -57,3 +57,46 @@ class FFmpegMotionPlugin(MotionInterface):
                 f"scale=1080:1920:force_original_aspect_ratio=decrease,"
                 f"pad=1080:1920:(ow-iw)/2:(oh-ih)/2"
             )
+
+    def get_shot_filter_chain(
+        self,
+        shot_type: str,
+        target: str,
+        duration_seconds: float,
+        zoom_amount: float = config.CAMERA_ZOOM_SPEAKER,
+        ease_duration: float = config.CAMERA_EASE_DURATION_SEC,
+    ) -> str:
+        """
+        Builds a smooth zoompan filter string for targeted camera motion:
+        - target == 'speaker_left': eases into left character slot and returns
+        - target == 'speaker_right': eases into right character slot and returns
+        - target == 'board': eases into the top board panel and returns
+        """
+        fps = config.VIDEO_FPS
+        frames = max(int(duration_seconds * fps), 1)
+        ease_frames = max(int(ease_duration * fps), 1)
+        hold_frames = max(frames - 2 * ease_frames, 1)
+
+        # Center coordinates for pan/zoom
+        if target in ("speaker_left", "boy_b", "left"):
+            cx, cy = 0.32, 0.65
+        elif target in ("speaker_right", "girl_a", "right"):
+            cx, cy = 0.68, 0.65
+        elif target in ("board", "screen"):
+            cx, cy = 0.50, 0.32
+        else:
+            cx, cy = 0.50, 0.50
+
+        # Mathematical easing: smooth sine curve between 1.0 and zoom_amount
+        z_expr = (
+            f"if(lte(on,{ease_frames}), 1.0 + ({zoom_amount - 1.0})*sin(on/{ease_frames}*PI/2), "
+            f"if(lte(on,{ease_frames + hold_frames}), {zoom_amount}, "
+            f"1.0 + ({zoom_amount - 1.0})*cos((on-{ease_frames + hold_frames})/{ease_frames}*PI/2)))"
+        )
+        x_expr = f"(iw*{cx} - iw/zoom/2)"
+        y_expr = f"(ih*{cy} - ih/zoom/2)"
+
+        return (
+            f"scale=1080:1920,"
+            f"zoompan=z='{z_expr}':d={frames}:x='{x_expr}':y='{y_expr}':s=1080x1920:fps={fps}"
+        )

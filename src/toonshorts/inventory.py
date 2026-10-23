@@ -134,9 +134,17 @@ def get_installed_board_animations() -> Dict[str, List[str]]:
     """Reads available whiteboard visual animations and annotations."""
     visual_templates = sorted(list(ALLOWED_VISUAL_TYPES))
     sketch_annotations = ["underline", "circle", "arrow", "bullet_cards", "title_badge"]
+    graphics_plugins_list: List[str] = []
+    try:
+        from toonshorts.plugins.graphics import list_graphics_plugins
+        graphics_plugins_list = list_graphics_plugins()
+    except Exception:
+        pass
+
     return {
         "visual_templates": visual_templates,
         "sketch_annotations": sketch_annotations,
+        "graphics_plugins": graphics_plugins_list,
     }
 
 

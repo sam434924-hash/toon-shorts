@@ -15,7 +15,7 @@ from pathlib import Path
 def discover_plugins():
     """Dynamically imports all plugin modules so their registration decorators execute."""
     plugins_dir = Path(__file__).resolve().parent
-    subdirs = ["llm", "voice", "render", "motion"]
+    subdirs = ["llm", "voice", "render", "motion", "graphics"]
 
     for sub in subdirs:
         sub_path = plugins_dir / sub

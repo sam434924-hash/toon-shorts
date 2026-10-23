@@ -36,6 +36,12 @@
 - `src/toonshorts/inventory.py`: Dynamic asset and plugin inventory discovery without hardcoded lists. | Depends: json, pathlib, sys, typing, core.config, core.models, core.paths, core.registry, core.visuals, plugins | Used by: brief, cli
 - `src/toonshorts/models.py`: Compatibility re-export of data models and schemas. | Depends: core.models | Used by: None
 - `src/toonshorts/plugins/__init__.py`: Automatic discovery and loading for all swappable plugin modules. | Depends: importlib, inspect, os, pathlib, pkgutil | Used by: inventory
+- `src/toonshorts/plugins/graphics/__init__.py`: Graphics plugins discovery, registry, and factory invocation. | Depends: importlib, pathlib, typing | Used by: inventory, plugins.render.animejs.visual_renderer
+- `src/toonshorts/plugins/graphics/blue_blood_drop.py`: Pop-in blue blood droplet graphic plugin (blue_blood_drop). | Depends: html, typing | Used by: plugins.graphics
+- `src/toonshorts/plugins/graphics/draw_svg.py`: Stroke-by-stroke SVG drawing plugin (draw_svg). | Depends: html, typing | Used by: plugins.graphics, plugins.graphics.octopus_vector
+- `src/toonshorts/plugins/graphics/hearts_pop.py`: Pop-in bouncy heart icons plugin (hearts_pop). | Depends: html, typing | Used by: plugins.graphics
+- `src/toonshorts/plugins/graphics/kinetic_words.py`: Kinetic words motion graphics plugin. | Depends: html, typing | Used by: plugins.graphics
+- `src/toonshorts/plugins/graphics/octopus_vector.py`: Octopus vector line-art drawing plugin. | Depends: html, typing, plugins.graphics.draw_svg | Used by: plugins.graphics
 - `src/toonshorts/plugins/llm/fake.py`: Deterministic offline mock LLM plugin for fast test execution. | Depends: core.models, core.registry, json, pathlib, typing | Used by: None
 - `src/toonshorts/plugins/llm/gemini.py`: Gemini LLM plugin for screenplay writing and critic reviews. | Depends: core.client, core.config, core.models, core.registry, core.validator, json, logging, typing | Used by: None
 - `src/toonshorts/plugins/motion/ffmpeg.py`: Mathematical FFmpeg filter chain motion plugin for camera moves. | Depends: core.config, core.models, core.registry | Used by: None

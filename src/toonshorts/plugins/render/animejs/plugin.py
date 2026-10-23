@@ -57,6 +57,8 @@ class AnimeJSRenderPlugin(RenderInterface):
 
         layout = getattr(scene, "layout", "cards") or "cards"
         visuals = getattr(scene, "visuals", None)
+        theme = style_preset.get("name", "whiteboard") if style_preset else "whiteboard"
+        scene_word_timings = getattr(scene, "word_timings", None)
 
         html_str = generate_whiteboard_html(
             title=title,
@@ -71,6 +73,8 @@ class AnimeJSRenderPlugin(RenderInterface):
             characters_data=characters_data,
             layout=layout,
             visuals=visuals,
+            word_timings=scene_word_timings,
+            theme=theme,
         )
 
         html_file = temp_dir / f"scene_{scene.scene_number}_still.html"
@@ -163,6 +167,7 @@ class AnimeJSRenderPlugin(RenderInterface):
                 )
                 layout = getattr(scene, "layout", "cards") or "cards"
                 visuals = getattr(scene, "visuals", None)
+                theme = style_preset.get("name", "whiteboard") if style_preset else "whiteboard"
                 self.render_whiteboard_video(
                     title=title,
                     words=words,
@@ -180,6 +185,7 @@ class AnimeJSRenderPlugin(RenderInterface):
                     layout=layout,
                     visuals=visuals,
                     word_timings=audio.word_timings,
+                    theme=theme,
                 )
                 results.append(clip_path)
         else:

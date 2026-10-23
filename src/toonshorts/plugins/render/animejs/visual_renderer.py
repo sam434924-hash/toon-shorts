@@ -278,6 +278,22 @@ def build_stage_elements(
                 f'</div>'
             )
 
+        elif v_type in ("kinetic_words", "draw_svg", "octopus_vector", "hearts_pop", "blue_blood_drop"):
+            try:
+                from toonshorts.plugins.graphics import get_graphics_plugin
+                plugin_cls = get_graphics_plugin(v_type)
+                render_kwargs = dict(params)
+                render_kwargs["element_id"] = dom_id
+                render_kwargs["start_ms"] = start_ms
+                render_kwargs["duration_ms"] = dur_ms
+                plugin_out = plugin_cls.render(**render_kwargs)
+                html_items.append(plugin_out["html"])
+                if plugin_out.get("css"):
+                    css_rules.append(plugin_out["css"])
+                descriptor.update(plugin_out.get("descriptor", {}))
+            except Exception as e:
+                logger.warning("Failed to render graphics plugin %s: %s", v_type, e)
+
         js_descriptors.append(descriptor)
 
     stage_markup = f'<div class="stage-container" id="stage-container">\n' + "\n".join(html_items) + "\n</div>"

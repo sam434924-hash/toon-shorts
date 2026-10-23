@@ -1,0 +1,32 @@
+{
+  "name": "night_studio",
+  "renderer": "animejs",
+  "voice": "gemini_tts",
+  "motion": "static",
+  "image_prompt_prefix": "Modern night coding studio with boy and girl animated characters, glowing LED lights, dark framed screen panel, warm lamp, and night skyline",
+  "color_palette": {
+    "background": "#0b0f19",
+    "primary": "#0f172a",
+    "secondary": "#38bdf8",
+    "accent": "#818cf8"
+  },
+  "caption": {
+    "font": "Arial",
+    "font_size": 86,
+    "primary_color": "&H00FFFFFF",
+    "outline_color": "&H000F172A",
+    "highlight_color": "&H0000D8F6",
+    "margin_v": 580,
+    "outline_width": 7,
+    "shadow": 3,
+    "style": "whiteboard_modern"
+  },
+  "pacing": "moderate",
+  "default_sound_effects": ["pop", "bell"],
+  "avoid": [
+    "whiteboard",
+    "bright white background",
+    "3D glossy surfaces",
+    "cluttered mess"
+  ]
+}

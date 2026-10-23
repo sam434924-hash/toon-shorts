@@ -100,6 +100,7 @@ class Scene(BaseModel):
     layout: Optional[str] = Field(default="cards", max_length=10)
     shots: Optional[List[Shot]] = Field(default=None)
     visuals: Optional[List[Visual]] = Field(default=None)
+    word_timings: Optional[List[WordTiming]] = Field(default=None)
 
     @field_validator("gesture")
     @classmethod

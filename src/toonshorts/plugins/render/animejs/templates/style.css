@@ -34,13 +34,13 @@ body {
   box-shadow: 0 8px 18px rgba(0,0,0,0.35);
 }
 
-/* Whiteboard Outer Frame with Soft Ambient Glow */
+/* Whiteboard / Screen Panel Outer Frame with Soft Ambient Glow */
 .whiteboard-outer {
   position: absolute;
   top: 65px;
-  left: 100px;
-  width: 880px;
-  height: 560px;
+  left: 90px;
+  width: 900px;
+  height: 980px;
   background: #ffffff;
   border: 22px solid #1e293b;
   border-radius: 32px;
@@ -50,6 +50,24 @@ body {
   flex-direction: column;
   align-items: center;
   z-index: 2;
+  overflow: hidden;
+}
+.theme-night_studio .whiteboard-outer {
+  background-color: #050b14;
+  border: 22px solid #0f172a;
+  box-shadow: 0 0 50px rgba(56, 189, 248, 0.28), 0 0 90px rgba(168, 85, 247, 0.24), 0 30px 60px -12px rgba(0, 0, 0, 0.85);
+}
+.panel-backdrop-dim {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 1;
 }
 .whiteboard-outer::before {
   content: "";
@@ -161,24 +179,24 @@ body {
 /* Character Slots: Left (Current Position 75px) & Right (Mirrored 520px) */
 .char-slot-left, #character-rig {
   position: absolute;
-  top: 670px;
-  left: 75px;
-  width: 560px;
-  height: 630px;
+  top: 1040px;
+  left: 60px;
+  width: 540px;
+  height: 600px;
   z-index: 5;
-  transform-origin: 280px 600px;
-  filter: drop-shadow(0 20px 28px rgba(0, 0, 0, 0.50));
+  transform-origin: 270px 580px;
+  filter: drop-shadow(0 20px 28px rgba(0, 0, 0, 0.65));
 }
 .char-slot-right, #character-rig-right {
   position: absolute;
-  top: 670px;
-  left: 520px;
-  width: 560px;
-  height: 630px;
+  top: 1040px;
+  left: 500px;
+  width: 540px;
+  height: 600px;
   z-index: 5;
-  transform-origin: 280px 600px;
+  transform-origin: 270px 580px;
   transform: scaleX(-1);
-  filter: drop-shadow(0 20px 28px rgba(0, 0, 0, 0.50));
+  filter: drop-shadow(0 20px 28px rgba(0, 0, 0, 0.65));
 }
 
 .char-slot-left svg, .char-slot-right svg, #character-rig svg, #character-rig-right svg {
@@ -190,31 +208,31 @@ body {
 /* Desk and Surface Props */
 .desk-container {
   position: absolute;
-  top: 1220px;
+  top: 1540px;
   left: 0;
   width: {{WIDTH}}px;
-  height: 700px;
+  height: 400px;
   z-index: 6;
 }
 .desk-bevel {
   width: 100%;
   height: 12px;
-  background: #475569;
+  background: #334155;
 }
 .desk-top {
   width: 100%;
   height: 38px;
   background: #1e293b;
-  box-shadow: 0 14px 28px rgba(0,0,0,0.4);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.6);
 }
 .desk-body {
   width: 100%;
-  height: 650px;
-  background: #0f172a;
+  height: 350px;
+  background: #0b0f19;
 }
 .desk-props {
   position: absolute;
-  top: 1100px;
+  top: 1420px;
   left: 0;
   width: {{WIDTH}}px;
   height: 130px;
@@ -460,6 +478,26 @@ body {
   font-family: 'Consolas', monospace;
   box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
+
+/* Night Studio Particle Canvas & Theme Styling */
+#particles-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+.theme-night_studio .title-badge {
+  background: #1e293b;
+  color: #38bdf8;
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.25);
+}
+.theme-night_studio .marker-tray {
+  display: none;
+}
+
 .counter-label-text {
   font-size: 30px;
   font-weight: 700;

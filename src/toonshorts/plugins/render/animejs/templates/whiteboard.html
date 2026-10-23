@@ -15,16 +15,20 @@
 {{ANIME_JS}}
   </script>
 </head>
-<body>
+<body class="theme-{{THEME_NAME}}">
   <!-- Edge Vignette Filter -->
   <div class="vignette-overlay"></div>
+
+  <!-- Subtle Floating Particles Canvas -->
+  <canvas id="particles-canvas" width="{{WIDTH}}" height="{{HEIGHT}}"></canvas>
 
   <!-- Studio Room Wall Details (Constant Set Across All Scenes) -->
 {{SHELF_DECOR}}
 
   <!-- Whiteboard on Wall -->
   <div class="whiteboard-outer">
-    <svg id="rough-canvas" width="880" height="560"></svg>
+    <div class="panel-backdrop-dim" style="{{PANEL_BACKDROP_STYLE}}"></div>
+    <svg id="rough-canvas" width="900" height="980"></svg>
     <div class="title-badge" id="wb-title">{{TITLE}}</div>
 {{BOARD_CONTENT}}
     <div class="marker-tray">

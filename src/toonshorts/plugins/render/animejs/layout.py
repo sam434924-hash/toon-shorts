@@ -29,12 +29,76 @@ CHAR_RIG_LAYOUT = {
 }
 
 
-def generate_scene_decorations(scene_number: int = 1) -> Tuple[str, str]:
+def generate_scene_decorations(scene_number: int = 1, theme: str = "whiteboard") -> Tuple[str, str]:
     """
     Generates consistent SVG studio wall fixtures and foreground desk props.
-    The room, desk, shelf, and all props are 100% IDENTICAL in every scene.
-    Only the board content changes between scenes.
+    Supports themes:
+    - 'whiteboard': Classic daytime whiteboard studio.
+    - 'night_studio': Night coding studio with navy wall, LED strips, city window, warm lamp, and desk props.
     """
+    if theme == "night_studio":
+        # Night Studio Wall Decor: City skyline window, vertical glowing purple & blue LED strips, shelf, lamp, plant
+        shelf_svg = """
+    <!-- Night Studio Vertical Purple and Blue LED Light Strips -->
+    <div class="led-strip led-strip-purple" style="position: absolute; top: 40px; left: 35px; width: 8px; height: 1100px; background: #c084fc; border-radius: 4px; box-shadow: 0 0 25px #a855f7, 0 0 50px #9333ea; z-index: 1;"></div>
+    <div class="led-strip led-strip-blue" style="position: absolute; top: 40px; right: 35px; width: 8px; height: 1100px; background: #38bdf8; border-radius: 4px; box-shadow: 0 0 25px #0284c7, 0 0 50px #0369a1; z-index: 1;"></div>
+
+    <!-- Night City Window with Twinkling Windows (Behind Desk / Beside Board) -->
+    <svg viewBox="0 0 160 280" style="position: absolute; top: 750px; left: 460px; width: 160px; height: 280px; z-index: 1; opacity: 0.85;">
+      <rect x="0" y="0" width="160" height="280" rx="10" fill="#020617" stroke="#1e293b" stroke-width="6"/>
+      <!-- Skyline silhouette -->
+      <rect x="15" y="80" width="35" height="195" fill="#0f172a"/>
+      <rect x="55" y="45" width="45" height="230" fill="#0b1120"/>
+      <rect x="105" y="110" width="40" height="165" fill="#0f172a"/>
+      <!-- Small lit windows -->
+      <rect class="city-win win-1" x="22" y="95" width="6" height="8" rx="1" fill="#fbbf24"/>
+      <rect class="city-win win-2" x="35" y="125" width="6" height="8" rx="1" fill="#fde68a"/>
+      <rect class="city-win win-3" x="22" y="155" width="6" height="8" rx="1" fill="#38bdf8"/>
+      <rect class="city-win win-4" x="65" y="60" width="8" height="10" rx="1" fill="#fbbf24"/>
+      <rect class="city-win win-5" x="82" y="85" width="8" height="10" rx="1" fill="#fde68a"/>
+      <rect class="city-win win-6" x="65" y="120" width="8" height="10" rx="1" fill="#fbbf24"/>
+      <rect class="city-win win-7" x="82" y="150" width="8" height="10" rx="1" fill="#38bdf8"/>
+      <rect class="city-win win-8" x="115" y="130" width="6" height="8" rx="1" fill="#fde68a"/>
+      <rect class="city-win win-9" x="128" y="160" width="6" height="8" rx="1" fill="#fbbf24"/>
+    </svg>
+
+    <!-- Floating Dark Studio Shelf on Right Wall -->
+    <div class="studio-shelf" style="top: 710px; left: 810px; width: 210px; background: #1e293b; box-shadow: 0 10px 25px rgba(0,0,0,0.6);"></div>
+    <svg viewBox="0 0 100 90" style="position: absolute; top: 635px; left: 825px; width: 100px; height: 90px; z-index: 3;">
+      <rect x="15" y="42" width="28" height="32" rx="4" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+      <path d="M 29 42 C 18 24, 6 30, 14 42 Z" fill="#10b981"/>
+      <path d="M 29 42 C 34 16, 50 22, 42 42 Z" fill="#059669"/>
+      <path d="M 22 50 Q 8 68 14 84" stroke="#047857" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="14" cy="84" r="4.5" fill="#10b981"/>
+      <path d="M 34 52 Q 44 68 40 80" stroke="#047857" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <circle cx="40" cy="80" r="3.5" fill="#059669"/>
+      <rect x="52" y="32" width="12" height="42" rx="2" fill="#6366f1"/>
+      <rect x="66" y="24" width="14" height="50" rx="2" fill="#ec4899"/>
+      <rect x="82" y="36" width="10" height="38" rx="2" fill="#06b6d4"/>
+    </svg>"""
+
+        # Night Studio Desk Props: Warm desk lamp, laptop with glowing screen, coffee mug
+        desk_svg = """
+    <!-- Warm Desk Lamp (Cozy Amber Glow) -->
+    <path d="M 120 120 L 160 50 L 180 50" stroke="#475569" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M 170 45 L 210 65 L 185 85 Z" fill="#f59e0b"/>
+    <circle cx="195" cy="70" r="24" fill="rgba(251, 191, 36, 0.25)" filter="blur(6px)"/>
+    <!-- Glowing Modern Laptop -->
+    <rect x="650" y="38" width="180" height="84" rx="6" fill="#1e293b" stroke="#334155" stroke-width="2"/>
+    <rect x="660" y="46" width="160" height="68" rx="4" fill="#020617"/>
+    <line x1="672" y1="58" x2="730" y2="58" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+    <line x1="672" y1="70" x2="780" y2="70" stroke="#818cf8" stroke-width="4" stroke-linecap="round"/>
+    <line x1="672" y1="82" x2="745" y2="82" stroke="#34d399" stroke-width="4" stroke-linecap="round"/>
+    <line x1="672" y1="94" x2="710" y2="94" stroke="#f472b6" stroke-width="4" stroke-linecap="round"/>
+    <polygon points="620,122 860,122 840,116 640,116" fill="#334155"/>
+    <!-- Matte Navy Coffee Mug with Steam -->
+    <rect x="548" y="58" width="46" height="56" rx="8" fill="#1e1e38"/>
+    <path d="M 594 70 Q 610 70 610 86 Q 610 100 594 100" stroke="#1e1e38" stroke-width="6" fill="none"/>
+    <path d="M 563 50 Q 558 40 563 30" stroke="#64748b" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <path d="M 576 50 Q 581 40 576 30" stroke="#64748b" stroke-width="3" stroke-linecap="round" fill="none"/>"""
+
+        return shelf_svg, desk_svg
+
     shelf_svg = """
     <!-- Floating Studio Shelf on Right Wall (Constant Across All Scenes) -->
     <div class="studio-shelf" style="top: 710px; left: 810px; width: 210px;"></div>

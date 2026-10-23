@@ -160,11 +160,11 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Capabilities**: Backwards compatible v1 adapter, maximum 2 characters per scene, 180-degree rule enforcement, shot zoom limit (<= 1.35x), ease times (0.4 to 0.6s), minimum hold (>= 1.2s), zoom frequency limits (at most one zoom per 5s), target in cast check, non-overlapping shots, and scene length bounding.
 - **Tests**: `tests/unit/test_v2_validation.py`, `tests/unit/test_validation.py`
 
-### `Visual Templates (Allowlist)`
-- **Description**: Safe, deterministic animated visual components rendered inside the whiteboard in 'stage' layout. Supports 6 template types: `flow`, `request_response`, `typed_code`, `step_ladder`, `check_cross`, and `counter`.
-- **Files**: `src/toonshorts/core/visuals.py`, `src/toonshorts/plugins/render/animejs/visual_renderer.py`
-- **Capabilities**: Strict whitelist validation for types and parameters, named color palette restriction (no free CSS), script/SVG injection prevention, maximum 14 characters per label, Whisper trigger word time synchronization, progressive stroke reveal, eased packet animation along connecting arrows, and board safe area layout overflow checking.
-- **Tests**: `tests/unit/test_visual_templates.py`, `tests/unit/test_animejs.py`
+### `Visual Templates & Motion Graphics Plugins`
+- **Description**: Safe, deterministic animated visual components rendered inside the whiteboard and night studio in 'stage' layout. Supports 6 visual templates (`flow`, `request_response`, `typed_code`, `step_ladder`, `check_cross`, `counter`) as well as 5 standalone graphics plugins (`kinetic_words`, `draw_svg`, `octopus_vector`, `hearts_pop`, `blue_blood_drop`).
+- **Files**: `src/toonshorts/core/visuals.py`, `src/toonshorts/plugins/graphics/`, `src/toonshorts/plugins/render/animejs/visual_renderer.py`
+- **Capabilities**: Whitelist validation, automatic inventory registration, script injection safety, word-synchronized animations (pop, slide, stroke-dashoffset reveal, spring bounce), deterministic night studio particle effects, and board safe area validation.
+- **Tests**: `tests/unit/test_visual_templates.py`, `tests/unit/test_graphics_plugins.py`, `tests/unit/test_animejs.py`
 
 ---
 

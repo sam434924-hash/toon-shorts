@@ -428,6 +428,158 @@ window.seekAnimation = function(ms) {
   if (window.updateStageVisuals) {
     window.updateStageVisuals(ms);
   }
+
+  // 8. Deterministic night studio background motion (LED pulse, glow particles, twinkling windows)
+  if (window.updateNightStudioEffects) {
+    window.updateNightStudioEffects(ms);
+  }
+};
+
+// Deterministic Night Studio Background Motion
+window.updateNightStudioEffects = function(ms) {
+  const sec = ms / 1000.0;
+  const frame = Math.floor((ms * (window.__fps || 24)) / 1000.0);
+
+  // A. LED Glow Pulse (calm sine cycle ~2.5s)
+  const pulseVal = 0.85 + 0.15 * Math.sin(sec * 2.5);
+  const purpleLed = document.querySelector(".led-strip-purple");
+  const blueLed = document.querySelector(".led-strip-blue");
+  if (purpleLed) {
+    purpleLed.style.boxShadow = `0 0 ${20 * pulseVal}px #a855f7, 0 0 ${45 * pulseVal}px #9333ea`;
+    purpleLed.style.opacity = String(0.85 + 0.15 * pulseVal);
+  }
+  if (blueLed) {
+    blueLed.style.boxShadow = `0 0 ${20 * pulseVal}px #0284c7, 0 0 ${45 * pulseVal}px #0369a1`;
+    blueLed.style.opacity = String(0.85 + 0.15 * pulseVal);
+  }
+
+  // B. Twinkling City Windows (calm deterministic sine pattern)
+  const winEls = document.querySelectorAll(".city-win");
+  winEls.forEach((win, idx) => {
+    const twinkle = 0.4 + 0.6 * Math.sin(sec * 1.8 + idx * 1.2);
+    win.style.opacity = String(Math.max(0.15, twinkle));
+  });
+
+  // C. Drifting Glow Particles on Canvas (deterministic from frame)
+  const pCanvas = document.getElementById("particles-canvas");
+  if (pCanvas && pCanvas.getContext) {
+    const ctx = pCanvas.getContext("2d");
+    ctx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+
+    // 12 gentle floating particles
+    const particleCount = 12;
+    for (let i = 0; i < particleCount; i++) {
+      const baseSeed = i * 73.13;
+      const speed = 25 + (i % 5) * 8;
+      // Deterministic cycle
+      const y = (pCanvas.height - ((sec * speed + baseSeed * 10) % pCanvas.height));
+      const x = (baseSeed * 17 + Math.sin(sec * 0.8 + i) * 35) % pCanvas.width;
+      const alpha = 0.15 + 0.20 * Math.sin(sec * 1.5 + i);
+      const rad = 2 + (i % 3);
+
+      ctx.beginPath();
+      ctx.arc(x, y, rad, 0, Math.PI * 2);
+      ctx.fillStyle = (i % 2 === 0) ? `rgba(56, 189, 248, ${alpha})` : `rgba(192, 132, 252, ${alpha})`;
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = (i % 2 === 0) ? "#38bdf8" : "#c084fc";
+      ctx.fill();
+    }
+  }
+
+  // D. Stage Visual Graphics Plugins deterministic seeker
+  if (window.__stageVisuals) {
+    window.__stageVisuals.forEach(v => {
+      const el = document.querySelector(v.target);
+      if (!el) return;
+
+      const sMs = v.start_ms || 0;
+      const dMs = v.duration_ms || 600;
+
+      // Board item lifetime: at most 3 items on the board at once; clear old items with quick fade
+      if (ms < sMs) {
+        el.style.opacity = "0";
+        el.style.display = "none";
+        return;
+      }
+      el.style.display = "flex";
+
+      const elapsed = ms - sMs;
+      const progress = Math.min(1.0, elapsed / dMs);
+
+      // Fade-out logic after hold time (hold ~5s or until end)
+      const holdTime = 5500;
+      if (elapsed > holdTime) {
+        const fadeProgress = Math.min(1.0, (elapsed - holdTime) / 400.0);
+        el.style.opacity = String(1.0 - fadeProgress);
+      } else {
+        el.style.opacity = "1";
+      }
+
+      // 1. Kinetic words: pop or slide
+      if (v.type === "kinetic_words") {
+        if (v.animation === "pop") {
+          const scale = progress < 0.6 ? (progress / 0.6) * 1.15 : 1.15 - ((progress - 0.6) / 0.4) * 0.15;
+          el.style.transform = `scale(${Math.max(0, scale)})`;
+        } else {
+          const slideY = (1.0 - progress) * 30;
+          el.style.transform = `translateY(${slideY}px)`;
+        }
+      }
+
+      // 2. Draw SVG: stroke-dashoffset animation
+      if (v.type === "draw_svg") {
+        const paths = el.querySelectorAll(".draw-path");
+        paths.forEach(p => {
+          const dashLen = 1200;
+          p.style.strokeDashoffset = String(dashLen * (1.0 - progress));
+        });
+
+        // If arm numbers badge exists (octopus_vector)
+        if (v.show_numbers) {
+          const numStart = v.numbers_start_ms || (sMs + 600);
+          const badges = el.querySelectorAll(".arm-num-badge");
+          badges.forEach((b, bIdx) => {
+            const bStart = numStart + bIdx * 80;
+            if (ms >= bStart) {
+              const bProg = Math.min(1.0, (ms - bStart) / 250);
+              const bScale = bProg < 0.7 ? (bProg / 0.7) * 1.25 : 1.25 - ((bProg - 0.7) / 0.3) * 0.25;
+              b.style.opacity = "1";
+              b.style.transformOrigin = `${b.querySelector("circle").getAttribute("cx")}px ${b.querySelector("circle").getAttribute("cy")}px`;
+              b.style.transform = `scale(${bScale})`;
+            } else {
+              b.style.opacity = "0";
+            }
+          });
+        }
+      }
+
+      // 3. Hearts pop: Spring bounce pop-in
+      if (v.type === "hearts_pop") {
+        const items = el.querySelectorAll(".heart-item");
+        items.forEach((item, hIdx) => {
+          const hStart = sMs + hIdx * (v.stagger_ms || 240);
+          if (ms >= hStart) {
+            const hProg = Math.min(1.0, (ms - hStart) / 450);
+            // Elastic spring bounce
+            const spring = Math.sin(hProg * Math.PI * 1.5) * (1 - hProg) * 0.35 + hProg;
+            item.style.opacity = "1";
+            item.style.transform = `scale(${Math.max(0, spring)})`;
+          } else {
+            item.style.opacity = "0";
+            item.style.transform = "scale(0)";
+          }
+        });
+      }
+
+      // 4. Blue blood drop pop-in
+      if (v.type === "blue_blood_drop") {
+        const bProg = Math.min(1.0, elapsed / 450);
+        const spring = Math.sin(bProg * Math.PI * 1.5) * (1 - bProg) * 0.35 + bProg;
+        el.style.opacity = String(Math.min(1.0, bProg * 2.0));
+        el.style.transform = `scale(${Math.max(0, spring)})`;
+      }
+    });
+  }
 };
 
 window.seekTo = window.seekAnimation;

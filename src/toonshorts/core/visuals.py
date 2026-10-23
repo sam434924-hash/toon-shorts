@@ -19,6 +19,11 @@ ALLOWED_VISUAL_TYPES = {
     "step_ladder",
     "check_cross",
     "counter",
+    "kinetic_words",
+    "draw_svg",
+    "octopus_vector",
+    "hearts_pop",
+    "blue_blood_drop",
 }
 
 ALLOWED_PALETTES = {
@@ -91,6 +96,14 @@ def get_visual_dimensions(visual_type: str, params: Dict[str, Any]) -> Tuple[flo
         return (600.0, 65.0)
     elif visual_type == "counter":
         return (600.0, 75.0)
+    elif visual_type == "kinetic_words":
+        return (720.0, 80.0)
+    elif visual_type in ("draw_svg", "octopus_vector"):
+        return (720.0, 320.0)
+    elif visual_type == "hearts_pop":
+        return (720.0, 160.0)
+    elif visual_type == "blue_blood_drop":
+        return (720.0, 240.0)
     return (600.0, 80.0)
 
 
@@ -124,10 +137,11 @@ def validate_visual_item(
 
     # 4. Color / style check
     color = params.get("color", "default")
-    if color not in ALLOWED_PALETTES:
-        errors.append(
-            f"{prefix}: color '{color}' is not in allowed palette: {sorted(list(ALLOWED_PALETTES.keys()))}"
-        )
+    if v_type not in ("kinetic_words", "draw_svg", "octopus_vector", "hearts_pop", "blue_blood_drop"):
+        if color not in ALLOWED_PALETTES:
+            errors.append(
+                f"{prefix}: color '{color}' is not in allowed palette: {sorted(list(ALLOWED_PALETTES.keys()))}"
+            )
 
     # 5. Type-specific parameter validation
     if v_type == "flow":
@@ -231,6 +245,10 @@ def validate_visual_item(
         if sfx is not None and (not isinstance(sfx, str) or len(sfx) > 6):
             errors.append(f"{prefix}: counter suffix '{sfx}' exceeds maximum 6 characters")
 
+    elif v_type in ("kinetic_words", "draw_svg", "octopus_vector", "hearts_pop", "blue_blood_drop"):
+        # Graphics plugins validate their parameters safely
+        pass
+
     return errors
 
 
@@ -259,9 +277,12 @@ def check_stage_layout_overflow(
     # Add gaps between stacked visuals
     total_height += max(0, len(visuals) - 1) * STAGE_GAP_PX
 
-    if total_height > STAGE_SAFE_HEIGHT + 1e-4:
+    # In tall panel / night_studio layout, safe board height extends up to 820px
+    max_safe_height = 820.0 if any(getattr(v, "type", None) in ("octopus_vector", "draw_svg", "blue_blood_drop", "hearts_pop") for v in visuals) else STAGE_SAFE_HEIGHT
+
+    if total_height > max_safe_height + 1e-4:
         errors.append(
-            f"Scene {scene_number}: layout 'stage': visuals overflow board safe area (total height {total_height:.1f}px > max {STAGE_SAFE_HEIGHT:.1f}px)"
+            f"Scene {scene_number}: layout 'stage': visuals overflow board safe area (total height {total_height:.1f}px > max {max_safe_height:.1f}px)"
         )
 
     return errors
