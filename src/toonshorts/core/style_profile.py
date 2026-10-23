@@ -3,7 +3,7 @@ Purpose: Visual style profile extraction, schema validation, and multi-character
 Inputs: Character pack SVGs, manifest files, and brief style specifications.
 Outputs: Validated StyleProfile dictionaries, style JSON assets, and similarity checks.
 Depends on: json, logging, math, os, pathlib, re, typing, xml.etree.ElementTree
-Used by: core
+Used by: core, core.board_objects
 Config keys: ENABLE_STYLE_PROFILE
 Tests: tests/unit/test_style_profile.py
 """

@@ -578,3 +578,154 @@ body {
   font-size: 30px;
   font-weight: 700;
 }
+
+/* Phase 4B-4: Board Objects & Slots */
+.board-objects-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 6;
+}
+.board-slot {
+  position: absolute;
+  left: 30px;
+  width: calc(100% - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.slot-top {
+  top: 90px;
+  height: 160px;
+}
+.slot-mid {
+  top: 260px;
+  height: 250px;
+}
+.slot-bottom {
+  top: 530px;
+  height: 250px;
+}
+.slot-center {
+  top: 180px;
+  height: 520px;
+}
+
+.board-object {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 95%;
+  opacity: 0;
+  will-change: transform, opacity;
+  box-sizing: border-box;
+}
+
+.bo-text-pop {
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.25;
+  padding: 12px 24px;
+  border-radius: 16px;
+}
+
+.bo-typewriter {
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.35;
+  padding: 16px 24px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 3px solid #38bdf8;
+  border-radius: 14px;
+  color: #f8fafc;
+  width: 90%;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.bo-cursor {
+  font-weight: 900;
+  color: #38bdf8;
+  margin-left: 2px;
+}
+
+.bo-highlight-word {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  color: #0f172a;
+}
+.theme-night_studio .bo-highlight-word {
+  color: #f8fafc;
+}
+.bo-highlight-target {
+  font-weight: 900;
+  text-decoration: underline;
+  padding: 0 4px;
+  border-radius: 6px;
+}
+
+.bo-diagram-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+}
+.bo-diagram-node {
+  padding: 12px 22px;
+  border: 4px solid;
+  border-radius: 16px;
+  font-size: 28px;
+  font-weight: 800;
+  text-align: center;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  background: #ffffff;
+}
+.theme-night_studio .bo-diagram-node {
+  background: #0f172a;
+}
+.bo-diagram-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+}
+.bo-diagram-arrow svg {
+  overflow: visible;
+}
+
+.bo-icon-pop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+.bo-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.bo-icon-item svg {
+  filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.4));
+}
+
+.bo-svg-draw {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+.bo-svg-draw svg {
+  max-width: 90%;
+  max-height: 320px;
+}

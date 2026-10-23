@@ -2,10 +2,10 @@
 Purpose: Template assembly and HTML document generation for whiteboard scenes.
 Inputs: Scene metadata, character SVG rigs, timing cues, annotations, and stage visuals.
 Outputs: Self-contained HTML5 string embedding local script engines and CSS.
-Depends on: core.camera, core.config, core.models, html, json, pathlib, plugins.render.animejs.cast, plugins.render.animejs.gestures, plugins.render.animejs.layout, plugins.render.animejs.visual_renderer, typing
+Depends on: core.board_objects, core.camera, core.config, core.models, html, json, pathlib, plugins.render.animejs.cast, plugins.render.animejs.gestures, plugins.render.animejs.layout, plugins.render.animejs.visual_renderer, typing
 Used by: plugins.render.animejs, plugins.render.animejs.capture, plugins.render.animejs.plugin
-Config keys: ANIME_JS_PATH, ENABLE_PARALLAX_BACKGROUND, ENABLE_PURPOSEFUL_CAMERA, ROUGH_JS_PATH, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
-Tests: tests/unit/test_animejs.py, tests/unit/test_word_annotations_security.py
+Config keys: ANIME_JS_PATH, ENABLE_BOARD_OBJECTS, ENABLE_PARALLAX_BACKGROUND, ENABLE_PURPOSEFUL_CAMERA, ROUGH_JS_PATH, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
+Tests: tests/unit/test_animejs.py, tests/unit/test_board_objects.py, tests/unit/test_word_annotations_security.py
 """
 
 import html
@@ -14,6 +14,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from toonshorts.core import config
+from toonshorts.core.board_objects import (
+    convert_visuals_to_board_objects,
+    resolve_board_objects_for_scene,
+)
 from toonshorts.core.camera import (
     format_camera_timeline,
     load_camera_config_for_style,
@@ -55,6 +59,8 @@ def generate_whiteboard_html(
     fast: bool = False,
     camera_config: Optional[Dict[str, Any]] = None,
     camera_shots: Optional[List[Dict[str, Any]]] = None,
+    board_objects: Optional[List[Dict[str, Any]]] = None,
+    style_profile: Optional[Dict[str, Any]] = None,
 ) -> str:
     """
     Generates a high-contrast HTML5/SVG composition with Anime.js whiteboard animation,
@@ -311,6 +317,37 @@ def generate_whiteboard_html(
             })
     word_timings_json = json.dumps(raw_wts)
 
+    enable_board_objects = getattr(config, "ENABLE_BOARD_OBJECTS", True)
+    if enable_board_objects:
+        if board_objects:
+            resolved_bo = resolve_board_objects_for_scene(
+                board_objects,
+                scene_number=scene_number,
+                duration_sec=duration_sec,
+                word_timings=word_timings,
+                style_profile=style_profile,
+            )
+        elif visuals and layout == "stage":
+            resolved_bo = convert_visuals_to_board_objects(
+                visuals,
+                scene_number=scene_number,
+                duration_sec=duration_sec,
+                word_timings=word_timings,
+                style_profile=style_profile,
+            )
+        else:
+            resolved_bo = []
+    else:
+        resolved_bo = []
+
+    board_objects_json = json.dumps(resolved_bo)
+    board_objects_payload_json = (
+        json.dumps(resolved_bo)
+        .replace("<", "\\u003c")
+        .replace(">", "\\u003e")
+        .replace("&", "\\u0026")
+    )
+
     panel_backdrop_style = ""
     if theme == "night_studio":
         # Check code_editor_monitor.png backdrop inside board panel
@@ -378,6 +415,9 @@ def generate_whiteboard_html(
     result = result.replace("{{WORD_TIMINGS_JSON}}", word_timings_json)
     result = result.replace("{{ROUGH_SEED}}", str(rough_seed))
     result = result.replace("{{IS_FAST}}", "true" if fast else "false")
+    result = result.replace("{{ENABLE_BOARD_OBJECTS}}", "true" if enable_board_objects else "false")
+    result = result.replace("{{BOARD_OBJECTS_JSON}}", board_objects_json)
+    result = result.replace("{{BOARD_OBJECTS_PAYLOAD_JSON}}", board_objects_payload_json)
     safe_text_payload = {
         "title": safe_title,
         "cards": [

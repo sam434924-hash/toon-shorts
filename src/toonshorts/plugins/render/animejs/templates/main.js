@@ -22,10 +22,20 @@
   } catch (err) {
     console.warn("Could not apply safe text content:", err);
   }
+
+  // Initialize board objects DOM structure from safe payload
+  if (typeof window.initBoardObjects === "function") {
+    window.initBoardObjects();
+  }
 })();
 
 // Main Orchestrator and Deterministic Seek Engine
 window.seekAnimation = function(ms) {
+  if (!window.__boardObjectsInitialized && typeof window.initBoardObjects === "function") {
+    window.initBoardObjects();
+    window.__boardObjectsInitialized = true;
+  }
+
   if (window.__timeline) {
     window.__timeline.seek(ms);
   }
@@ -99,6 +109,11 @@ window.seekAnimation = function(ms) {
   // 7. Progressive animation for stage visuals (template-based)
   if (typeof window.updateStageVisuals === "function") {
     window.updateStageVisuals(ms);
+  }
+
+  // 7b. Pure deterministic animation for board objects (Phase 4B-4)
+  if (typeof window.updateBoardObjects === "function") {
+    window.updateBoardObjects(ms);
   }
 
   // 8. Deterministic night studio background motion (LED pulse, glow particles, twinkling windows)

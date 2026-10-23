@@ -191,6 +191,13 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Capabilities**: Zero empty edge guarantee across all extreme camera poses, vector SVG style matching, and blur disabled in fast mode.
 - **Tests**: `tests/unit/test_depth_camera_parallax.py`
 
+### Board Objects and Animated Text (`core/board_objects`)
+- **Description**: Deterministic board object engine with a fixed menu of 6 types (`text_pop`, `text_typewriter`, `highlight_word`, `svg_draw`, `diagram_flow`, `icon_pop`), slot allocation across fixed layout slots (`slot_top`, `slot_mid`, `slot_bottom`, `slot_center`), overlap collision avoidance, auto-fit font sizing with minimum 28px for 1080x1920 mobile viewing, and wrapping of legacy graphics plugins and visual templates.
+- **Files**: `src/toonshorts/core/board_objects.py`, `src/toonshorts/plugins/render/animejs/templates/stage_visuals.js`, `src/toonshorts/plugins/render/animejs/templates/style.css`, `src/toonshorts/plugins/render/animejs/html_builder.py`
+- **Config Flags**: `ENABLE_BOARD_OBJECTS`
+- **Capabilities**: Zero innerHTML injection, textContent DOM setting from safe JSON payload, speaker label stripping, hard caps (max 8 objects/scene, max 80 characters text with ellipsis, max 6 diagram nodes), Rough.js per-object seed, pure function of time seeking.
+- **Tests**: `tests/unit/test_board_objects.py`
+
 ## 2D Layered Character System (`core/character2d`, `core/character_pack`)
 
 ### `presenter` (Whiteboard Presenter Character Pack)

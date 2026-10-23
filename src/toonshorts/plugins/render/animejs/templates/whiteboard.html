@@ -44,6 +44,13 @@
         <svg id="rough-canvas" width="900" height="980"></svg>
         <div class="title-badge" id="wb-title">{{TITLE}}</div>
 {{BOARD_CONTENT}}
+        <!-- Board Objects Layer (Phase 4B-4) -->
+        <div id="board-objects-container" class="board-objects-container">
+          <div class="board-slot slot-top" id="board-slot-top"></div>
+          <div class="board-slot slot-mid" id="board-slot-mid"></div>
+          <div class="board-slot slot-bottom" id="board-slot-bottom"></div>
+          <div class="board-slot slot-center" id="board-slot-center"></div>
+        </div>
         <div class="marker-tray">
           <div class="marker black"></div>
           <div class="marker blue"></div>
@@ -99,6 +106,8 @@
     window.__wordTimings = {{WORD_TIMINGS_JSON}};
     window.__roughSeed = {{ROUGH_SEED}};
     window.__isFast = {{IS_FAST}};
+    window.__enableBoardObjects = {{ENABLE_BOARD_OBJECTS}};
+    window.__boardObjects = {{BOARD_OBJECTS_JSON}};
 
     window.__timeline = anime.timeline({
       autoplay: false,
@@ -112,6 +121,8 @@
 
   <!-- Safe JSON text payload for XSS-free textContent setting -->
   <script id="wb-safe-text-payload" type="application/json">{{SAFE_TEXT_JSON}}</script>
+  <!-- Safe JSON board objects payload for XSS-free textContent setting (Phase 4B-4) -->
+  <script id="board-objects-payload" type="application/json">{{BOARD_OBJECTS_PAYLOAD_JSON}}</script>
 
   <!-- Local modular template scripts loaded in fixed order -->
   <script id="module-rough-draw">
