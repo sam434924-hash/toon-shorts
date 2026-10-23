@@ -18,7 +18,7 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Description**: Google Gemini screenplay writer and critic scoring loop.
 - **Files**: `src/toonshorts/plugins/llm/gemini.py`, `src/toonshorts/core/client.py`
 - **Config Flags**: `GEMINI_API_KEY`, `TEXT_MODEL_NAME`, `CRITIC_MODEL_NAME`, `MAX_CRITIC_REWRITES`
-- **Tests**: `tests/contract/test_llm_contract.py`, `tests/unit/test_validation.py`
+- **Tests**: `tests/contract/test_llm_contract.py`, `tests/unit/test_validation.py`, `tests/unit/test_gemini_critic_repair.py`
 
 ### `fake`
 - **Description**: Deterministic mock screenplay planner and critic for fast offline runs.

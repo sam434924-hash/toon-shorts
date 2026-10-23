@@ -18,3 +18,4 @@ build/
 *.onnx
 *.wav
 *.mp4
+baseline/

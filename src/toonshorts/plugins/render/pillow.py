@@ -125,6 +125,8 @@ def _draw_stick_figure(
 @register_renderer("pillow")
 class PillowStickmanRenderPlugin(RenderInterface):
     """Procedural 2D stick figure rendering engine powered by Pillow."""
+    supports_scene_audios: bool = False
+    supports_fast: bool = False
     name = "pillow"
 
     def render_scene(

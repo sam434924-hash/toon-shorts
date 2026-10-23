@@ -5,7 +5,11 @@ import pytest
 from unittest.mock import patch, MagicMock
 from pathlib import Path
 
-from toonshorts.core.assembler import check_ffmpeg_subtitles_support, assemble_final_video
+from toonshorts.core.assembler import (
+    check_ffmpeg_subtitles_support,
+    assemble_final_video,
+    escape_ffmpeg_subtitles_path,
+)
 from toonshorts.core.models import ScriptPlan, Scene, Character, SceneAudio, CameraMove
 
 
@@ -30,7 +34,7 @@ def test_ffmpeg_missing_subtitles_filter_raises_error():
 
     with patch("shutil.which", return_value="C:\\ffmpeg\\bin\\ffmpeg.exe"):
         with patch("subprocess.run", return_value=mock_res):
-            with pytest.raises(RuntimeError, match="does not support the 'subtitles' filter"):
+            with pytest.raises(RuntimeError, match="does not support the 'subtitles' or 'ass' filter"):
                 check_ffmpeg_subtitles_support()
 
 
@@ -105,3 +109,36 @@ def test_assemble_never_outputs_without_captions(tmp_path):
                         temp_dir=tmp_path / "temp",
                         output_dir=tmp_path / "output",
                     )
+
+
+def test_escape_ffmpeg_subtitles_path_windows_path():
+    """Test subtitle path escaping for Windows paths with drive letter, spaces, and backslashes."""
+    test_path = r"C:\dev\my videos\sub.srt"
+    escaped = escape_ffmpeg_subtitles_path(test_path)
+    assert escaped == "'C\\:/dev/my videos/sub.srt'"
+    # Verify colon is escaped
+    assert "C\\:" in escaped
+    # Verify forward slashes
+    assert "\\" not in escaped.replace(r"\:", "")
+    # Verify quotes wrap
+    assert escaped.startswith("'") and escaped.endswith("'")
+
+
+def test_escape_ffmpeg_subtitles_path_single_quotes():
+    """Test subtitle path escaping handles single quotes safely."""
+    test_path = r"C:\dev\user's videos\sub.ass"
+    escaped = escape_ffmpeg_subtitles_path(test_path)
+    assert r"\'" in escaped
+    assert "C\\:" in escaped
+
+
+def test_ffmpeg_install_instructions_in_error():
+    """Verifies that missing FFmpeg or subtitles filter includes clear install instructions."""
+    with patch("shutil.which", return_value=None):
+        with pytest.raises(RuntimeError) as exc_info:
+            check_ffmpeg_subtitles_support()
+        err_msg = str(exc_info.value)
+        assert "choco install ffmpeg-full" in err_msg or "winget install" in err_msg
+        assert "brew install" in err_msg
+        assert "apt install" in err_msg
+

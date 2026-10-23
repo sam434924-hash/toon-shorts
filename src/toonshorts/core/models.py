@@ -206,11 +206,67 @@ class SceneAudio:
     word_timings: List[WordTiming]
 
 
-def sanitize_filename(title: str, max_length: int = 50) -> str:
-    """Sanitizes text for safe use as a filename across Windows/Linux/macOS."""
-    clean = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "", title)
-    clean = re.sub(r"\s+", "_", clean).strip("_.-")
+WINDOWS_RESERVED_NAMES = frozenset({
+    "CON", "PRN", "AUX", "NUL",
+    *(f"COM{i}" for i in range(1, 10)),
+    *(f"LPT{i}" for i in range(1, 10)),
+})
+
+
+def sanitize_filename(
+    title: str,
+    max_length: int = 100,
+    default_name: str = "toon_short",
+) -> str:
+    """Sanitizes text for safe use as a filename across Windows/Linux/macOS.
+
+    - Blocks Windows reserved names (CON, PRN, AUX, NUL, COM1-9, LPT1-9) case-insensitively,
+      including when followed by an extension (e.g. con.txt, nul.mp4).
+    - Strips path separators ('/', '\\') and directory traversal sequences ('..').
+    - Removes control characters and illegal filesystem characters.
+    - Strips trailing dots and spaces.
+    - Caps length to max_length (default 100 chars).
+    - Falls back to safe default name if the result is empty or reserved.
+    """
+    if not title:
+        return default_name
+
+    clean = str(title)
+
+    # 1. Strip control characters (\x00-\x1f, \x7f-\x9f)
+    clean = re.sub(r"[\x00-\x1f\x7f-\x9f]", "", clean)
+
+    # 2. Strip path separators and traversal '..'
+    clean = clean.replace("/", "").replace("\\", "")
+    while ".." in clean:
+        clean = clean.replace("..", "")
+
+    # 3. Remove illegal filesystem characters (< > : " | ? *)
+    clean = re.sub(r'[<>:"|?*]', "", clean)
+
+    # 4. Strip trailing dots and spaces before converting whitespace
+    clean = clean.rstrip(". ")
+
+    # 5. Replace whitespace sequences with underscore
+    clean = re.sub(r"\s+", "_", clean)
+
+    # 6. Keep only word characters, dashes, and dots
     clean = re.sub(r"[^\w\-.]", "", clean)
+
+    # 7. Strip trailing dots, spaces, and underscores
+    clean = clean.rstrip(". _")
+
+    # 8. Cap length to max_length
+    if len(clean) > max_length:
+        clean = clean[:max_length].rstrip(". _")
+
+    # 9. Fallback to default name if empty
     if not clean:
-        clean = "toon_short"
-    return clean[:max_length]
+        return default_name
+
+    # 10. Block Windows reserved device names case-insensitively (including with extensions)
+    stem = clean.split(".")[0].upper()
+    if stem in WINDOWS_RESERVED_NAMES:
+        return default_name
+
+    return clean

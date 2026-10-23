@@ -20,6 +20,8 @@ from toonshorts.core.registry import RenderInterface, register_renderer
 @register_renderer("fake")
 class FakeRenderPlugin(RenderInterface):
     """Fast in-memory mock renderer creating lightweight 1080x1920 PNG images."""
+    supports_scene_audios: bool = False
+    supports_fast: bool = False
     name = "fake"
 
     def render_scene(

@@ -181,15 +181,22 @@ def run_pipeline(
 
         # 5. Scene Rendering
         logger.info("[4/6] Rendering scene images via %s...", renderer.name)
-        try:
-            scene_images = renderer.render_all_scenes(
-                refined_plan, preset, temp_dir, scene_audios=scene_audios, fast=fast
-            )
-        except TypeError:
-            try:
-                scene_images = renderer.render_all_scenes(refined_plan, preset, temp_dir, scene_audios=scene_audios)
-            except TypeError:
-                scene_images = renderer.render_all_scenes(refined_plan, preset, temp_dir)
+        render_kwargs: Dict[str, Any] = {}
+        if getattr(renderer, "supports_scene_audios", False) and scene_audios:
+            render_kwargs["scene_audios"] = scene_audios
+        elif scene_audios:
+            logger.info("Renderer '%s' does not support scene_audios; generating still scene frames.", renderer.name)
+
+        if fast:
+            if getattr(renderer, "supports_fast", False):
+                render_kwargs["fast"] = True
+            else:
+                logger.warning(
+                    "Renderer '%s' does not support native fast rendering; degrading explicitly via assembler downsampling.",
+                    renderer.name,
+                )
+
+        scene_images = renderer.render_all_scenes(refined_plan, preset, temp_dir, **render_kwargs)
 
         # 6. Assembly & Motion
         logger.info("[5/6] Assembling video using %s motion...", motion.name)
@@ -362,10 +369,13 @@ def run_pipeline_from_brief(
         motion_name = preset.get("motion") or config.DEFAULT_MOTION
         motion = get_motion(motion_name)
 
-        try:
-            scene_images = renderer.render_all_scenes(plan, preset, temp_dir, scene_audios=scene_audios)
-        except TypeError:
-            scene_images = renderer.render_all_scenes(plan, preset, temp_dir)
+        render_kwargs: Dict[str, Any] = {}
+        if getattr(renderer, "supports_scene_audios", False) and scene_audios:
+            render_kwargs["scene_audios"] = scene_audios
+        elif scene_audios:
+            logger.info("Renderer '%s' does not support scene_audios; generating still scene frames.", renderer.name)
+
+        scene_images = renderer.render_all_scenes(plan, preset, temp_dir, **render_kwargs)
 
         final_raw_video = assemble_final_video(
             plan=plan,

@@ -161,9 +161,56 @@ Make sure each scene includes:
         if cleaned.endswith("```"):
             cleaned = cleaned[:-3]
         try:
-            return CriticReview.model_validate(json.loads(cleaned.strip()))
-        except (json.JSONDecodeError, ValidationError) as e:
-            raise RuntimeError(f"Failed to parse Gemini CriticReview response: {e}")
+            review = CriticReview.model_validate(json.loads(cleaned.strip()))
+            logger.info("Critic review successfully parsed and validated on first attempt.")
+            return review
+        except (json.JSONDecodeError, ValidationError, Exception) as first_err:
+            logger.warning("Critic output failed schema validation (%s). Making ONE repair attempt...", first_err)
+            repair_prompt = (
+                f"The following critic review output failed JSON schema validation:\n"
+                f"{raw_text}\n\n"
+                f"Validation Error: {first_err}\n\n"
+                f"Please fix and output ONLY a valid JSON object matching the CriticReview schema:\n"
+                f"- score (float between 1.0 and 10.0)\n"
+                f"- hook_strength (float)\n"
+                f"- joke_quality (float)\n"
+                f"- pacing (float)\n"
+                f"- variety (float)\n"
+                f"- weakest_scene_index (integer or null)\n"
+                f"- revision_instructions (string or null)"
+            )
+            try:
+                repair_raw = self.client.generate_text_with_retry(
+                    prompt=repair_prompt,
+                    system_instruction="You are a strict JSON repair assistant. Output ONLY valid JSON matching the schema.",
+                    model=config.CRITIC_MODEL_NAME,
+                    response_schema=CriticReview,
+                )
+                r_cleaned = repair_raw.strip()
+                if r_cleaned.startswith("```json"):
+                    r_cleaned = r_cleaned[7:]
+                if r_cleaned.startswith("```"):
+                    r_cleaned = r_cleaned[3:]
+                if r_cleaned.endswith("```"):
+                    r_cleaned = r_cleaned[:-3]
+                repaired_data = json.loads(r_cleaned.strip())
+                review = CriticReview.model_validate(repaired_data)
+                logger.info("Critic review successfully repaired and validated.")
+                return review
+            except (json.JSONDecodeError, ValidationError, Exception) as repair_err:
+                logger.error(
+                    "Critic repair attempt failed schema validation (%s). Setting score to 6.0 fallback.",
+                    repair_err,
+                )
+                return CriticReview(
+                    score=6.0,
+                    hook_strength=6.0,
+                    joke_quality=6.0,
+                    pacing=6.0,
+                    variety=6.0,
+                    weakest_scene_index=None,
+                    revision_instructions="Critic output failed schema validation and repair; score defaulted to 6.0 to trigger replan/alert.",
+                )
 
     def review_and_refine(
         self,

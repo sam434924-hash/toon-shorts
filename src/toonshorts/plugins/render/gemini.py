@@ -23,6 +23,8 @@ logger = logging.getLogger("toonshorts.plugins.render.gemini")
 @register_renderer("gemini")
 class GeminiRenderPlugin(RenderInterface):
     """AI image generation renderer powered by Google Imagen."""
+    supports_scene_audios: bool = False
+    supports_fast: bool = False
     name = "gemini"
 
     def __init__(self, client: Any = None):

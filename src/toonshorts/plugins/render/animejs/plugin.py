@@ -26,6 +26,9 @@ logger = logging.getLogger(__name__)
 @register_renderer("animejs")
 class AnimeJSRenderPlugin(RenderInterface):
     """HTML5 / Anime.js code-driven whiteboard rendering engine with Rough.js hand-drawn sketches and character mouth sync."""
+    supports_scene_audios: bool = True
+    supports_fast: bool = True
+
 
     @property
     def name(self) -> str:

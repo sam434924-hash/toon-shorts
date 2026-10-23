@@ -832,6 +832,8 @@ def compute_action_pose(
 @register_renderer("cairo")
 class CairoStickmanRenderPlugin(RenderInterface):
     """Headless 2D vector stickman rendering engine implemented in Pycairo."""
+    supports_scene_audios: bool = False
+    supports_fast: bool = False
     name = "cairo"
 
     def render_frame_to_surface(

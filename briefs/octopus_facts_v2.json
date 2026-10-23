@@ -1,0 +1,26 @@
+{
+  "video_name": "octopus_facts_v2",
+  "story": "Boy and Girl discuss octopus anatomy facts: 3 hearts, two-thirds of neurons in eight arms, and blue blood.",
+  "format": "explanation video",
+  "style": "night_studio",
+  "characters": [
+    "boy_b",
+    "girl_a"
+  ],
+  "speaker": "both",
+  "voice": "Puck",
+  "voice_engine": "gemini_tts",
+  "board_animations_use": [
+    "counter",
+    "bullet_cards",
+    "circle"
+  ],
+  "board_animations_avoid": [
+    "typed_code"
+  ],
+  "hand_gestures": "on",
+  "camera": "zoom_speaker",
+  "length_seconds": 25,
+  "custom": "Octopus anatomy facts in night_studio theme.",
+  "created_at": "2026-10-23T10:00:00Z"
+}

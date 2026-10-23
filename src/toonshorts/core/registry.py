@@ -71,6 +71,8 @@ class VoiceInterface(ABC):
 class RenderInterface(ABC):
     """Abstract interface for visual scene and character frame generation."""
     name: str
+    supports_scene_audios: bool = False
+    supports_fast: bool = False
 
     @abstractmethod
     def render_scene(
@@ -94,6 +96,9 @@ class RenderInterface(ABC):
     ) -> List[Path]:
         """Renders visual frames for all scenes in the screenplay."""
         pass
+
+
+BaseRenderer = RenderInterface
 
 
 class MotionInterface(ABC):

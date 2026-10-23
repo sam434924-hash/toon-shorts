@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-23: Phase 1: fixed critic bypass with single repair attempt & 6.0 fallback, added FFmpeg libass preflight check with Windows path escaping, enhanced filename sanitizer for Windows reserved names, and replaced TypeError cascade with explicit renderer capability flags.
 - 2026-10-23: Phase C: defined 2D full-body rig contract, updated vector generator and inventory labeling for gesture-ready status, and implemented FK gesture rig animation and director in Anime.js.
 - 2026-10-23: Phase B: implemented 4 multiplane depth layers in night_studio, deterministic camera motion (speaker focus, board focus, drift, punch-in, rack focus blur), and spring-overshoot board animations.
 - 2026-10-23: Phase A fixes: mapped speaker voices (Boy/boy_b -> Puck, Girl/girl_a -> Aoede), stripped speaker label prefixes across board, subtitles, kinetic text and TTS, and reserved clear subtitle strip in night_studio layout.

@@ -147,6 +147,8 @@ def get_scrubbed_env() -> Dict[str, str]:
 @register_renderer("blender3d")
 class Blender3DRenderPlugin(RenderInterface):
     """3D robot character renderer using headless Blender subprocesses."""
+    supports_scene_audios: bool = False
+    supports_fast: bool = False
     name = "blender3d"
 
     def __init__(self, blender_path: Optional[str] = None):

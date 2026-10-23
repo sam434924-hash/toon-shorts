@@ -22,35 +22,64 @@ from . import config
 logger = logging.getLogger("toonshorts.assembler")
 
 
+def escape_ffmpeg_subtitles_path(path: Any) -> str:
+    """Escapes a subtitle file path for FFmpeg's subtitles/libass filter.
+
+    Handles Windows drive-letter colon, backslashes, spaces, and single quotes:
+    - Normalizes backslashes to forward slashes.
+    - Escapes colons with backslash (e.g. C: -> C\\:).
+    - Escapes single quotes (e.g. ' -> \\').
+    - Encloses path in single quotes so spaces and special characters are preserved.
+    """
+    p = str(path).replace("\\", "/")
+    p = p.replace(":", r"\:")
+    p = p.replace("'", r"\'")
+    return f"'{p}'"
+
+
 def check_ffmpeg_subtitles_support() -> bool:
-    """Verifies that FFmpeg is installed and has the subtitles filter enabled.
+    """Verifies that FFmpeg is installed and has the subtitles/ass filter enabled.
 
     Raises:
-        RuntimeError: If FFmpeg is missing or does not support the subtitles filter.
+        RuntimeError: If FFmpeg is missing or does not support subtitles/ass filter,
+                      with platform-specific installation instructions.
     """
     ffmpeg_bin = shutil.which("ffmpeg")
+    install_instructions = (
+        "Install FFmpeg with libass/subtitles support:\n"
+        "  - On Windows: choco install ffmpeg-full  OR  winget install Gyan.FFmpeg\n"
+        "  - On macOS: brew install ffmpeg\n"
+        "  - On Linux: sudo apt update && sudo apt install ffmpeg libass-dev"
+    )
     if not ffmpeg_bin:
-        raise RuntimeError("FFmpeg is not installed or not found on PATH. FFmpeg with subtitles filter is required.")
+        raise RuntimeError(
+            f"FFmpeg is not installed or not found on PATH. FFmpeg with subtitles/ass filter is required.\n"
+            f"{install_instructions}"
+        )
 
     try:
         res = subprocess.run([ffmpeg_bin, "-filters"], capture_output=True, text=True, stdin=subprocess.DEVNULL)
     except Exception as e:
-        raise RuntimeError(f"Failed to execute FFmpeg to check filters: {e}") from e
+        raise RuntimeError(f"Failed to execute FFmpeg to check filters: {e}\n{install_instructions}") from e
 
     if res.returncode != 0:
-        raise RuntimeError(f"FFmpeg failed while checking filters:\n{res.stderr}")
+        raise RuntimeError(f"FFmpeg failed while checking filters:\n{res.stderr}\n{install_instructions}")
 
     lines = res.stdout.splitlines()
     has_subtitles = any(
         ("subtitles" in line and "Render text subtitles" in line)
         or line.strip().startswith(".. subtitles")
         or " subtitles " in line
+        or ("ass" in line and "Render ASS subtitles" in line)
+        or line.strip().startswith(".. ass")
+        or " ass " in line
         for line in lines
     )
     if not has_subtitles:
         raise RuntimeError(
-            "FFmpeg exists but does not support the 'subtitles' filter. "
-            "ToonShorts requires FFmpeg built with libass/subtitles support to ensure videos have captions."
+            "FFmpeg exists but does not support the 'subtitles' or 'ass' filter. "
+            "ToonShorts requires FFmpeg built with libass/subtitles support to ensure videos have captions.\n"
+            f"{install_instructions}"
         )
     return True
 
@@ -198,11 +227,12 @@ def assemble_final_video(
     ass_path = temp_dir / "captions.ass"
     generate_ass_subtitles(plan, scene_audios, style_preset, ass_path)
 
-    # 5. Burn in subtitles using relative filename inside temp_dir
+    # 5. Burn in subtitles using properly escaped path
+    escaped_ass = escape_ffmpeg_subtitles_path(ass_path.resolve())
     final_burn_cmd = [
         "ffmpeg", "-y",
         "-i", str(unsubbed_video.name),
-        "-vf", f"subtitles={ass_path.name}",
+        "-vf", f"subtitles={escaped_ass}",
         "-c:v", "libx264", "-preset", "ultrafast" if fast else "medium", "-crf", "18", "-pix_fmt", "yuv420p",
         "-c:a", "aac", "-b:a", "192k",
         "-r", str(target_fps),
