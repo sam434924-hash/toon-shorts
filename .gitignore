@@ -19,3 +19,7 @@ build/
 *.wav
 *.mp4
 baseline/
+node_modules/
+tools/remotion_trial/node_modules/
+tools/remotion_trial/.remotion/
+tools/remotion_trial/out/
