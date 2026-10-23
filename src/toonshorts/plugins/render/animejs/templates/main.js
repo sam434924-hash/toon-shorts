@@ -1,3 +1,29 @@
+// Safely set text content using textContent from JSON payload (never innerHTML or string eval)
+(function applySafeTextPayload() {
+  const payloadEl = document.getElementById("wb-safe-text-payload");
+  if (!payloadEl) return;
+  try {
+    const data = JSON.parse(payloadEl.textContent || "{}");
+    const titleEl = document.getElementById("wb-title");
+    if (titleEl && typeof data.title === "string") {
+      titleEl.textContent = data.title;
+    }
+    if (Array.isArray(data.cards)) {
+      data.cards.forEach(c => {
+        const cardEl = document.getElementById(c.id);
+        if (cardEl) {
+          const textEl = cardEl.querySelector(".word-text");
+          if (textEl && typeof c.text === "string") {
+            textEl.textContent = c.text;
+          }
+        }
+      });
+    }
+  } catch (err) {
+    console.warn("Could not apply safe text content:", err);
+  }
+})();
+
 // Main Orchestrator and Deterministic Seek Engine
 window.seekAnimation = function(ms) {
   if (window.__timeline) {

@@ -50,12 +50,24 @@ function initRoughSketches() {
     }
     const cH = Math.max(tRect.height + 36, 80);
 
-    const circleNode = rc.ellipse(cX, cY, cW, cH, {
-      seed: 201 + baseSeed + idx * 13, stroke: '#2563eb', strokeWidth: 4.5, roughness: 1.25 * roughnessMult,
-    });
-    circleNode.id = `rough-circle-${idx+1}`;
-    circleNode.classList.add("rough-card-circle");
-    roughSvg.appendChild(circleNode);
+    const cardAnn = (window.__annotations || []).find(a => a.card_index === idx || a.id === `rough-circle-${idx+1}` || a.id === `rough-box-${idx+1}`);
+    const isBox = cardAnn && cardAnn.type === "box";
+
+    let sketchNode;
+    if (isBox) {
+      sketchNode = rc.rectangle(cX - cW / 2, cY - cH / 2, cW, cH, {
+        seed: 201 + baseSeed + idx * 13, stroke: '#2563eb', strokeWidth: 4.5, roughness: 1.25 * roughnessMult,
+      });
+      sketchNode.id = `rough-box-${idx+1}`;
+      sketchNode.classList.add("rough-card-box");
+    } else {
+      sketchNode = rc.ellipse(cX, cY, cW, cH, {
+        seed: 201 + baseSeed + idx * 13, stroke: '#2563eb', strokeWidth: 4.5, roughness: 1.25 * roughnessMult,
+      });
+      sketchNode.id = `rough-circle-${idx+1}`;
+      sketchNode.classList.add("rough-card-circle");
+    }
+    roughSvg.appendChild(sketchNode);
 
     cardRects.push(card.getBoundingClientRect());
   });

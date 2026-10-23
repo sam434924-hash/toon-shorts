@@ -85,6 +85,25 @@ def capture_still_frame(
     height: int = config.VIDEO_HEIGHT,
 ) -> Path:
     """Renders a single still frame at animation completion using Playwright."""
+    try:
+        import asyncio
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = None
+
+    if loop is not None and loop.is_running():
+        # Playwright sync API cannot run directly inside a thread with an active asyncio event loop.
+        import concurrent.futures
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
+            return ex.submit(
+                capture_still_frame,
+                html_file=html_file,
+                output_path=output_path,
+                duration_sec=duration_sec,
+                width=width,
+                height=height,
+            ).result()
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page(viewport={"width": width, "height": height})

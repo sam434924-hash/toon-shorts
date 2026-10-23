@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-23: Phase 4C: implemented word-aligned Rough.js annotations synchronized with speech timings, text content validation, and strict JSON/textContent XSS safety.
+
 - 2026-10-23: Phase 4B: implemented deterministic FK right arm snap to active visual targets clamped to [-75.0, -35.0] with graceful fallback.
 
 - 2026-10-23: Phase 4A: implemented closed-form damped spring camera zoom for punch-ins with bounded overshoot (1.066x) and zero accumulated state.

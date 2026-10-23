@@ -5,7 +5,7 @@ Outputs: Self-contained HTML5 string embedding local script engines and CSS.
 Depends on: core.config, core.models, html, json, pathlib, plugins.render.animejs.cast, plugins.render.animejs.gestures, plugins.render.animejs.layout, plugins.render.animejs.visual_renderer, typing
 Used by: plugins.render.animejs, plugins.render.animejs.capture, plugins.render.animejs.plugin
 Config keys: ANIME_JS_PATH, ROUGH_JS_PATH, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
-Tests: tests/unit/test_animejs.py
+Tests: tests/unit/test_animejs.py, tests/unit/test_word_annotations_security.py
 """
 
 import html
@@ -329,6 +329,21 @@ def generate_whiteboard_html(
     result = result.replace("{{WORD_TIMINGS_JSON}}", word_timings_json)
     result = result.replace("{{ROUGH_SEED}}", str(rough_seed))
     result = result.replace("{{IS_FAST}}", "true" if fast else "false")
+    safe_text_payload = {
+        "title": safe_title,
+        "cards": [
+            {"id": f"word-card-{i+1}", "text": str(w_info.get("text", ""))}
+            for i, w_info in enumerate(words)
+        ],
+    }
+    safe_text_json = (
+        json.dumps(safe_text_payload)
+        .replace("<", "\\u003c")
+        .replace(">", "\\u003e")
+        .replace("&", "\\u0026")
+    )
+
+    result = result.replace("{{SAFE_TEXT_JSON}}", safe_text_json)
     result = result.replace("{{TOTAL_DURATION_MS}}", str(total_duration_ms))
     result = result.replace("{{TIMELINE_CHAIN}}", timeline_chain)
 
