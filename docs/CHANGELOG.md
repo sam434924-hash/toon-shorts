@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-23: Phase 2b cleanup: removed obsolete monolithic script.js and redundant fallback injection, updated architecture overview docs, and retained tools/verify_raw_split.py.
 - 2026-10-23: Phase 2: split script.js into modular templates (camera_engine, gestures_fk, rough_draw, stage_visuals, main) with fixed-order local loading & error detection, and separated FK math into fk_solver.py and rendering into svg_renderer.py with identical raw browser frame determinism.
 - 2026-10-23: Phase 1b hardening: added MAX_CRITIC_REWRITES limit alert for critic re-plans and live FFmpeg execution test with Windows drive path and spaces.
 - 2026-10-23: Phase 1: fixed critic bypass with single repair attempt & 6.0 fallback, added FFmpeg libass preflight check with Windows path escaping, enhanced filename sanitizer for Windows reserved names, and replaced TypeError cascade with explicit renderer capability flags.

@@ -31,7 +31,7 @@ Brief-mode entry (`toonshorts make --brief brief.json`) goes through `run_pipeli
 | `src/toonshorts/` | Main Python package (entry point, CLI, config, voice, subtitles) |
 | `src/toonshorts/core/` | Pipeline engine: pipeline.py, models.py, registry.py, assembler.py, character2d.py, character_pack.py, client.py, config.py |
 | `src/toonshorts/plugins/` | All swappable plugin implementations (llm/, voice/, render/, motion/, graphics/) |
-| `src/toonshorts/plugins/render/animejs/` | Primary production renderer — HTML5 + Playwright + Rough.js; templates/script.js is the animation engine |
+| `src/toonshorts/plugins/render/animejs/` | Primary production renderer — HTML5 + Playwright + Rough.js; templates/*.js (rough_draw, stage_visuals, camera_engine, gestures_fk, main) is the modular animation engine |
 | `src/toonshorts/styles/` | Style preset JSON files (7 styles: whiteboard, chalkboard, night_studio, stickman, crayon, paper_cutout, pixel_art) |
 | `src/toonshorts/assets/` | Vendored JS libs (anime.js 3.2.2, rough.js 4.6.6) |
 | `assets/2d/characters/` | Character packs (SVG layers + PNG rasters, see §6) |
@@ -68,7 +68,7 @@ Defined as Pydantic models in `src/toonshorts/core/models.py`.
 | `speaker` | Which character speaks; drives voice selection and camera focus |
 | `dialogue_line` | The spoken line (max 250 chars); TTS input |
 | `action` | Whiteboard card text drawn on the board |
-| `gesture` | One of 13 allowed gestures (wave, point, explain, shrug, etc.); drives FK rig animation in script.js |
+| `gesture` | One of 13 allowed gestures (wave, point, explain, shrug, etc.); drives FK rig animation in gestures_fk.js |
 | `camera_move` | zoom_in, zoom_out, pan_left, pan_right, shake, or static; passed to motion plugin |
 | `pose` | Coarse body pose enum (idle, waving, jumping, shocked, laughing) |
 | `transition` | Scene-to-scene edit (cut, fade, wipe, none) |
@@ -112,17 +112,17 @@ Character loading is split: `core/character_pack.py` handles SVG pack validation
 
 ## 7. Camera, Depth Layers, Gestures, Board Animation
 
-All live in `src/toonshorts/plugins/render/animejs/templates/script.js` (923 lines) and the surrounding animejs module.
+All live across modular templates in `src/toonshorts/plugins/render/animejs/templates/` (`rough_draw.js`, `stage_visuals.js`, `camera_engine.js`, `gestures_fk.js`, `main.js`) and the surrounding animejs module.
 
-**5 most important functions in script.js**
+**5 most important functions across animejs modular templates**
 
 | Function | What it does |
 |----------|-------------|
-| `initRoughSketches()` (line 5) | Page-load setup — creates Rough.js hand-drawn title underlines, card circles, and arrows; sets up stroke-dasharray for progressive draw |
-| `computeCameraState(ms, frameIdx)` (line 263) | Deterministic multiplane camera — builds a timeline of preset positions (wide, boy_close, girl_close, board_close), interpolates with smootherstep, adds sine-wave drift and slow push-in; returns camX/camY/camZoom/driftRot |
-| `applyMultiplaneParallax(camState)` (line 429) | Applies 4 depth layers (foreground ×2.0, subject ×1.0, board ×0.5, deep-bg ×0.12) to DOM elements; adds rack-focus blur between board and subject |
-| `window.seekAnimation(ms)` (line 469) | Main per-frame update called by Playwright at every captured timestamp — orchestrates mouth sync, eye blink, breathing bob, FK gesture animation, annotation stroke drawing, word-card highlighting, stage visuals |
-| `window.updateStageVisuals(ms)` (line 133) | Drives board visual templates synced to ms — flow arrows, request/response packets, typed code reveal, step ladders, check/cross reveals, counter roll-ups |
+| `initRoughSketches()` (`rough_draw.js`) | Page-load setup — creates Rough.js hand-drawn title underlines, card circles, and arrows; sets up stroke-dasharray for progressive draw |
+| `computeCameraState(ms, frameIdx)` (`camera_engine.js`) | Deterministic multiplane camera — builds a timeline of preset positions (wide, boy_close, girl_close, board_close), interpolates with smootherstep, adds sine-wave drift and slow push-in; returns camX/camY/camZoom/driftRot |
+| `applyMultiplaneParallax(camState)` (`camera_engine.js`) | Applies 4 depth layers (foreground ×2.0, subject ×1.0, board ×0.5, deep-bg ×0.12) to DOM elements; adds rack-focus blur between board and subject |
+| `window.seekAnimation(ms)` (`main.js`) | Main per-frame update called by Playwright at every captured timestamp — orchestrates mouth sync, eye blink, breathing bob, FK gesture animation, annotation stroke drawing, word-card highlighting, stage visuals |
+| `window.updateStageVisuals(ms)` (`stage_visuals.js`) | Drives board visual templates synced to ms — flow arrows, request/response packets, typed code reveal, step ladders, check/cross reveals, counter roll-ups |
 
 Supporting files: `animejs/capture.py` (Playwright headless stepping + FFmpeg pipe), `animejs/html_builder.py` (injects all JSON into `window.__` globals), `animejs/annotations.py` (card layout, word-sync sketch), `animejs/gestures.py` (gesture whitelist + resolve), `plugins/motion/ffmpeg.py` (final MP4 pan/zoom/shake filter chain).
 
@@ -152,7 +152,7 @@ The skipped live Gemini test is in `tests/contract/test_llm_contract.py` line 24
 4. **Windows reserved filename gap**: `core/models.py:sanitize_filename()` strips illegal characters but does not block Windows reserved names (CON, NUL, COM1–9, etc.).
 5. **Subtitle silent failure**: if FFmpeg lacks `libass`, subtitles are silently omitted and the unsubtitled video is kept. No user-visible error. `core/assembler.py`.
 6. **GenAI SDK deprecation**: `google/genai/types.py:42` uses `_UnionGenericAlias`, deprecated in Python 3.14+, broken in 3.17. Surfaces as a warning on every test run.
-7. **Large files**: `core/character2d.py` (43KB), `plugins/render/cairo.py` (34KB), `core/character_pack.py` (31KB), `templates/script.js` (37KB / 923 lines) — all candidates for splitting.
+7. **Split files**: `core/character2d.py` (split into `fk_solver.py` and `svg_renderer.py`), `templates/script.js` (split into 5 modular template files). Remaining large files: `plugins/render/cairo.py` (34KB), `core/character_pack.py` (31KB).
 8. **Compat re-export sprawl**: `models.py`, `schemas.py`, `client.py`, `config.py`, `voice.py`, `subtitles.py` at the package root are thin re-exports of `core.*` equivalents — kept for backwards compatibility but add navigation noise.
 
 ---
@@ -166,4 +166,4 @@ The skipped live Gemini test is in `tests/contract/test_llm_contract.py` line 24
 | 3 | `src/toonshorts/core/pipeline.py` | The orchestrator — read `run_pipeline()` and `run_pipeline_from_brief()` to see the full flow |
 | 4 | `src/toonshorts/core/registry.py` | Tiny file; shows exactly how plugins register and are looked up |
 | 5 | `src/toonshorts/plugins/render/animejs/plugin.py` | Entry point for the production renderer — shows how a scene JSON becomes frames |
-| 6 | `src/toonshorts/plugins/render/animejs/templates/script.js` | The animation engine; read `computeCameraState` and `seekAnimation` first |
+| 6 | `src/toonshorts/plugins/render/animejs/templates/main.js` | The animation engine entry point; read `camera_engine.js` and `main.js` first |

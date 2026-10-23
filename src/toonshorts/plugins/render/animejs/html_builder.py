@@ -331,7 +331,5 @@ def generate_whiteboard_html(
     for (mod_filename, placeholder), mod_text in zip(module_definitions, loaded_scripts):
         result = result.replace(placeholder, mod_text)
 
-    combined_script = "\n\n".join(loaded_scripts)
-    result = result.replace("{{SCRIPT_JS}}", combined_script)
 
     return result
