@@ -101,3 +101,42 @@ def test_critic_failed_repair_fallback_to_6(sample_plan):
     assert review.score < 7.0
     assert review.score != 7.5
     assert mock_client.generate_text_with_retry.call_count == 2
+
+
+def test_critic_replan_loop_respects_hard_max_limit(sample_plan, caplog):
+    """Verifies review_and_refine caps re-plans at MAX_CRITIC_REWRITES and logs an alert when score remains < 7.0."""
+    import logging
+    from toonshorts.core import config
+
+    mock_client = MagicMock()
+    mock_client.api_key = "valid_api_key_123"
+    mock_client.is_auto_fallback = False
+
+    plugin = GeminiLLMPlugin(client=mock_client)
+
+    low_review = CriticReview(
+        score=6.0,
+        hook_strength=6.0,
+        joke_quality=6.0,
+        pacing=6.0,
+        variety=6.0,
+        weakest_scene_index=1,
+        revision_instructions="Needs punchier humor",
+    )
+
+    # Mock evaluate_script to always return low_review
+    plugin.evaluate_script = MagicMock(return_value=low_review)
+
+    # Mock generate_text_with_retry for rewrites returning valid JSON plan
+    plan_json = json.dumps(sample_plan.model_dump())
+    mock_client.generate_text_with_retry.return_value = plan_json
+
+    with caplog.at_level(logging.WARNING):
+        best_plan, best_review = plugin.review_and_refine(sample_plan, style_preset={})
+
+    # Must only call generate_text_with_retry MAX_CRITIC_REWRITES times
+    assert mock_client.generate_text_with_retry.call_count == config.MAX_CRITIC_REWRITES
+    assert best_review.score == 6.0
+    # Must log warning alert about reaching limit
+    assert any("remained below the 7.0 pass threshold" in rec.message for rec in caplog.records)
+

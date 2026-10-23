@@ -5,7 +5,7 @@ Outputs: Generated ScriptPlan screenplays and CriticReview scores.
 Depends on: core.client, core.config, core.models, core.registry, core.validator, json, logging, typing
 Used by: None
 Config keys: CRITIC_MODEL_NAME, GEMINI_API_KEY, MAX_CRITIC_REWRITES, TEXT_MODEL_NAME
-Tests: tests/contract/test_llm_contract.py
+Tests: tests/contract/test_llm_contract.py, tests/unit/test_gemini_critic_repair.py
 """
 
 import json
@@ -260,5 +260,12 @@ Please rewrite and punch up this script to address the feedback. Keep the title,
                 current_plan = new_plan
             except Exception:
                 break
+
+        if best_review.score < 7.0:
+            logger.warning(
+                "Critic review score (%.1f/10) remained below the 7.0 pass threshold after reaching the maximum re-plan limit of %d attempts.",
+                best_review.score,
+                config.MAX_CRITIC_REWRITES,
+            )
 
         return best_plan, best_review

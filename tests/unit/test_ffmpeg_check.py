@@ -142,3 +142,35 @@ def test_ffmpeg_install_instructions_in_error():
         assert "brew install" in err_msg
         assert "apt install" in err_msg
 
+
+def test_real_ffmpeg_subtitles_with_spaces_and_drive_path(tmp_path):
+    """Verifies that FFmpeg actually runs and loads a subtitle file with drive colon and spaces."""
+    try:
+        check_ffmpeg_subtitles_support()
+    except RuntimeError as e:
+        pytest.skip(f"FFmpeg with libass/subtitles filter not available: {e}")
+
+    # Create directory with spaces, e.g. tmp_path / "my videos" / "sub.srt"
+    sub_dir = tmp_path / "my videos"
+    sub_dir.mkdir(parents=True, exist_ok=True)
+    sub_file = sub_dir / "sub.srt"
+    sub_file.write_text(
+        "1\n00:00:00,000 --> 00:00:01,000\nHello World\n\n",
+        encoding="utf-8",
+    )
+
+    resolved_path = str(sub_file.resolve())
+    escaped = escape_ffmpeg_subtitles_path(resolved_path)
+
+    cmd = [
+        "ffmpeg",
+        "-y",
+        "-f", "lavfi",
+        "-i", "color=c=black:s=100x100:d=1",
+        "-vf", f"subtitles={escaped}",
+        "-f", "null",
+        "-",
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    assert res.returncode == 0, f"FFmpeg failed to load subtitles from {escaped}:\n{res.stderr}"
+

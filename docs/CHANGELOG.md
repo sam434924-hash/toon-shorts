@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-23: Phase 1b hardening: added MAX_CRITIC_REWRITES limit alert for critic re-plans and live FFmpeg execution test with Windows drive path and spaces.
 - 2026-10-23: Phase 1: fixed critic bypass with single repair attempt & 6.0 fallback, added FFmpeg libass preflight check with Windows path escaping, enhanced filename sanitizer for Windows reserved names, and replaced TypeError cascade with explicit renderer capability flags.
 - 2026-10-23: Phase C: defined 2D full-body rig contract, updated vector generator and inventory labeling for gesture-ready status, and implemented FK gesture rig animation and director in Anime.js.
 - 2026-10-23: Phase B: implemented 4 multiplane depth layers in night_studio, deterministic camera motion (speaker focus, board focus, drift, punch-in, rack focus blur), and spring-overshoot board animations.
