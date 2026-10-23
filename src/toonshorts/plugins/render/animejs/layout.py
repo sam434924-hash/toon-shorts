@@ -28,6 +28,55 @@ CHAR_RIG_LAYOUT = {
     "height": 630.0,
 }
 
+SUBTITLE_STRIP = getattr(
+    config,
+    "NIGHT_STUDIO_SUBTITLE_STRIP",
+    {
+        "top": 1640.0,
+        "bottom": 1860.0,
+        "left": 60.0,
+        "right": 1020.0,
+        "margin_v": 120,
+        "font_size": 76,
+        "max_lines": 2,
+    },
+)
+
+
+def verify_subtitle_strip_clearance(theme: str = "night_studio") -> bool:
+    """
+    Verifies that the reserved subtitle strip is strictly clear of any
+    board frame, character visible area, desk edge/props, or lamps.
+    """
+    strip_top = float(SUBTITLE_STRIP["top"])
+    strip_bottom = float(SUBTITLE_STRIP["bottom"])
+
+    # 1. Whiteboard boundary check (top: 65, height: 980 -> bottom: 1045)
+    board_bottom = 1045.0
+    if board_bottom > strip_top:
+        return False
+
+    # 2. Desk props boundary check (props top: 1420, height: 130 -> bottom: 1550)
+    desk_props_bottom = 1550.0
+    if desk_props_bottom > strip_top:
+        return False
+
+    # 3. Desk bevel/surface boundary check (top: 1540, surface height: 38 -> bottom: 1578)
+    desk_surface_bottom = 1578.0
+    if desk_surface_bottom > strip_top:
+        return False
+
+    # 4. Character visible bounds: characters seated behind desk (legs hidden below desk surface 1540)
+    char_visible_bottom = 1540.0
+    if char_visible_bottom > strip_top:
+        return False
+
+    # 5. Check safe area bounds
+    if strip_top < SAFE_AREA["min_y"] or strip_bottom > SAFE_AREA["max_y"]:
+        return False
+
+    return True
+
 
 def generate_scene_decorations(scene_number: int = 1, theme: str = "whiteboard") -> Tuple[str, str]:
     """

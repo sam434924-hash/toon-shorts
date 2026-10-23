@@ -229,28 +229,40 @@ class GeminiClientWrapper:
                 err_str = str(e).lower()
                 is_quota = (status_code == 429) or ("resource_exhausted" in err_str) or ("quota" in err_str) or ("rate" in err_str)
                 if is_quota:
-                    logger.error("Gemini TTS quota or rate limit exceeded: %s. Synthesis halted immediately without retry.", e)
-                    raise VoiceError(f"Gemini TTS quota or rate limit exceeded: {e}") from e
+                    if attempt < max_retries:
+                        sleep_time = backoff + random.uniform(1.0, 3.0)
+                        logger.warning("Gemini TTS rate limited on attempt %d. Waiting %.2fs before retrying with limits...", attempt + 1, sleep_time)
+                        time.sleep(sleep_time)
+                        backoff *= 2.0
+                        continue
+                    logger.error("Gemini TTS rate limit exceeded after %d attempts: %s", attempt + 1, e)
+                    raise VoiceError(f"Gemini TTS rate limit exceeded after {attempt+1} attempts: {e}. Missing audio line: '{text}' (voice: {voice_name})") from e
                 elif status_code == 503 and attempt < max_retries:
                     sleep_time = backoff + random.uniform(0.5, 1.5)
                     logger.warning("Gemini TTS 503 on attempt %d. Retrying in %.2fs...", attempt + 1, sleep_time)
                     time.sleep(sleep_time)
                     backoff = max(backoff * 1.5, 10.0)
                 else:
-                    raise VoiceError(f"Gemini TTS call failed after {attempt+1} attempts: {e}") from e
+                    raise VoiceError(f"Gemini TTS call failed after {attempt+1} attempts: {e}. Missing audio line: '{text}' (voice: {voice_name})") from e
             except Exception as e:
                 err_str = str(e).lower()
                 is_quota = ("429" in err_str) or ("quota" in err_str) or ("resource_exhausted" in err_str) or ("rate" in err_str)
                 if is_quota:
-                    logger.error("Gemini TTS quota or rate limit exceeded: %s. Synthesis halted immediately without retry.", e)
-                    raise VoiceError(f"Gemini TTS quota or rate limit exceeded: {e}") from e
+                    if attempt < max_retries:
+                        sleep_time = backoff + random.uniform(1.0, 3.0)
+                        logger.warning("Gemini TTS rate limited on attempt %d. Waiting %.2fs before retrying with limits...", attempt + 1, sleep_time)
+                        time.sleep(sleep_time)
+                        backoff *= 2.0
+                        continue
+                    logger.error("Gemini TTS rate limit exceeded after %d attempts: %s", attempt + 1, e)
+                    raise VoiceError(f"Gemini TTS rate limit exceeded after {attempt+1} attempts: {e}. Missing audio line: '{text}' (voice: {voice_name})") from e
                 if attempt < max_retries and "503" in err_str:
                     sleep_time = 5.0 + random.uniform(1.0, 2.0)
                     logger.warning("Gemini TTS error on attempt %d (%s). Retrying in %.2fs...", attempt + 1, err_str[:80], sleep_time)
                     time.sleep(sleep_time)
                     backoff *= 2.0
                 else:
-                    raise VoiceError(f"Unexpected error calling Gemini TTS API: {e}") from e
+                    raise VoiceError(f"Unexpected error calling Gemini TTS API: {e}. Missing audio line: '{text}' (voice: {voice_name})") from e
 
     def _mock_speech_response(self, text: str) -> bytes:
         """Deterministic 16-bit 24kHz WAV speech generator for offline runs."""

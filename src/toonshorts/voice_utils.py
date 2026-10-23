@@ -397,10 +397,49 @@ def align_words_with_whisper(
 
 
 def assign_character_voices(plan: ScriptPlan, voice_list: List[str]) -> Dict[str, str]:
-    """Assigns distinct voices to characters in the screenplay."""
-    voice_map = {}
+    """
+    Assigns distinct voices to characters in the screenplay.
+    Prioritizes explicit Character.voice_id (e.g. boy_b -> Puck, girl_a -> Aoede).
+    For characters without an explicit voice, assigns distinct voices from voice_list.
+    Also creates aliases for speaker matching (e.g. 'boy' -> boy character voice).
+    """
+    voice_map: Dict[str, str] = {}
     if not voice_list:
         voice_list = ["default_voice"]
-    for i, char in enumerate(plan.characters):
-        voice_map[char.name.lower()] = voice_list[i % len(voice_list)]
+
+    used_voices = set()
+    unassigned = []
+
+    # 1. Assign explicit voice_id if specified on Character
+    for char in plan.characters:
+        c_name = char.name.lower().strip()
+        vid = getattr(char, "voice_id", None)
+        if vid and vid not in ("voice_default", "default_voice", ""):
+            voice_map[c_name] = vid
+            used_voices.add(vid)
+        else:
+            unassigned.append(c_name)
+
+    # 2. Assign remaining from voice_list
+    available_voices = [v for v in voice_list if v not in used_voices]
+    if not available_voices:
+        available_voices = list(voice_list)
+
+    for i, c_name in enumerate(unassigned):
+        voice_map[c_name] = available_voices[i % len(available_voices)]
+
+    # 3. Create friendly aliases for scenes using shorthand speaker names
+    # e.g., 'boy' -> 'boy_b', 'girl' -> 'girl_a'
+    for char in plan.characters:
+        c_name = char.name.lower().strip()
+        assigned_voice = voice_map.get(c_name)
+        if assigned_voice:
+            if c_name.startswith("boy_"):
+                voice_map.setdefault("boy", assigned_voice)
+            elif c_name.startswith("girl_"):
+                voice_map.setdefault("girl", assigned_voice)
+            elif c_name == "presenter":
+                voice_map.setdefault("host", assigned_voice)
+                voice_map.setdefault("speaker", assigned_voice)
+
     return voice_map

@@ -81,6 +81,18 @@ VIDEO_FPS = 30
 MIN_DURATION_SECONDS = 25
 MAX_DURATION_SECONDS = 65
 
+# Reserved subtitle strip for vertical video layouts (night_studio, whiteboard)
+# Strictly clear of board (65..1045), characters (1040..1540), desk props (1420..1550), and desk bevel (1540..1578)
+NIGHT_STUDIO_SUBTITLE_STRIP = {
+    "top": 1640,
+    "bottom": 1860,
+    "left": 60,
+    "right": 1020,
+    "margin_v": 120,
+    "font_size": 76,
+    "max_lines": 2,
+}
+
 # Camera zoom settings for dynamic framing
 CAMERA_ZOOM_SPEAKER = 1.18
 CAMERA_ZOOM_BOARD = 1.25

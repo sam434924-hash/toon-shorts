@@ -16,7 +16,7 @@ from typing import List, Optional
 
 from toonshorts.core import config
 from toonshorts.core.errors import VoiceError
-from toonshorts.core.models import ScriptPlan, Scene, SceneAudio
+from toonshorts.core.models import ScriptPlan, Scene, SceneAudio, strip_speaker_label
 from toonshorts.core.registry import VoiceInterface, register_voice
 from toonshorts.core.client import GeminiClientWrapper
 from toonshorts.voice_utils import (
@@ -64,14 +64,15 @@ class GeminiTTSVoicePlugin(VoiceInterface):
         temp_dir: Path,
         pause_seconds: float = 0.35,
     ) -> SceneAudio:
+        clean_text = strip_speaker_label(scene.dialogue_line)
         output_wav = temp_dir / f"scene_{scene_index}_voice.wav"
-        cache_key = compute_tts_cache_key(scene.dialogue_line, voice_name, self.model_name)
+        cache_key = compute_tts_cache_key(clean_text, voice_name, self.model_name)
         cached_file = self.cache_dir / f"{cache_key}.wav"
 
         cache_hit_valid = False
         if cached_file.is_file() and cached_file.stat().st_size > 0:
             try:
-                check_speech_audio(cached_file, scene.dialogue_line, target_sample_rate=24000)
+                check_speech_audio(cached_file, clean_text, target_sample_rate=24000)
                 cache_hit_valid = True
             except Exception as e:
                 logger.warning(
@@ -87,11 +88,11 @@ class GeminiTTSVoicePlugin(VoiceInterface):
             logger.info("Gemini TTS cache HIT for scene %d (key: %s)", scene_index, cache_key)
             self.cache_hits += 1
             shutil.copyfile(cached_file, output_wav)
-            duration = check_speech_audio(output_wav, scene.dialogue_line, target_sample_rate=24000)
+            duration = check_speech_audio(output_wav, clean_text, target_sample_rate=24000)
         else:
             if getattr(self, "cache_only", False):
                 raise VoiceError(
-                    f"Fast preview mode requires cached audio but found cache miss for dialogue: '{scene.dialogue_line}'. Live Gemini API calls are forbidden in fast mode."
+                    f"Fast preview mode requires cached audio but found cache miss for dialogue: '{clean_text}'. Live Gemini API calls are forbidden in fast mode."
                 )
             logger.info("Gemini TTS cache MISS for scene %d (key: %s) - synthesizing speech", scene_index, cache_key)
             self.cache_misses += 1
@@ -101,7 +102,7 @@ class GeminiTTSVoicePlugin(VoiceInterface):
                 )
             try:
                 audio_bytes = self.client_wrapper.generate_speech_with_retry(
-                    text=scene.dialogue_line,
+                    text=clean_text,
                     voice_name=voice_name,
                     model=self.model_name,
                 )
@@ -117,7 +118,7 @@ class GeminiTTSVoicePlugin(VoiceInterface):
                 
                 output_wav.write_bytes(audio_bytes)
                 # Verify speech before caching
-                duration = check_speech_audio(output_wav, scene.dialogue_line, target_sample_rate=24000)
+                duration = check_speech_audio(output_wav, clean_text, target_sample_rate=24000)
 
                 # Never cache mock audio in persistent cache; only cache verified real speech
                 if not getattr(self.client_wrapper, "mock", False):
@@ -131,7 +132,7 @@ class GeminiTTSVoicePlugin(VoiceInterface):
                 raise VoiceError(f"Gemini TTS generation failed for scene {scene_index}: {e}") from e
 
         # Word timing alignment via faster-whisper (falls back to proportional timing with warning)
-        word_timings = align_words_with_whisper(output_wav, scene.dialogue_line, duration)
+        word_timings = align_words_with_whisper(output_wav, clean_text, duration)
 
         return SceneAudio(
             scene_index=scene_index,
@@ -150,6 +151,14 @@ class GeminiTTSVoicePlugin(VoiceInterface):
         voice_map = assign_character_voices(plan, voice_pool)
         results = []
         for i, scene in enumerate(plan.scenes):
-            voice = voice_map.get(scene.speaker.lower(), voice_pool[0])
+            speaker_key = strip_speaker_label(scene.speaker).lower().strip().rstrip(":")
+            voice = voice_map.get(speaker_key)
+            if not voice:
+                if "boy" in speaker_key:
+                    voice = voice_map.get("boy") or voice_map.get("boy_b") or voice_map.get("boy_a")
+                elif "girl" in speaker_key:
+                    voice = voice_map.get("girl") or voice_map.get("girl_a")
+            if not voice:
+                voice = voice_pool[0]
             results.append(self.generate_scene_voice(i, scene, voice, temp_dir))
         return results

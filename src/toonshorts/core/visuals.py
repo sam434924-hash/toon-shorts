@@ -55,8 +55,10 @@ DISALLOWED_PATTERNS = [
 
 
 def sanitize_text(text: str) -> str:
-    """Escapes text for safe inclusion in HTML/SVG."""
-    return html.escape(str(text), quote=True)
+    """Escapes text for safe inclusion in HTML/SVG and strips speaker label prefixes."""
+    from toonshorts.core.models import strip_speaker_label
+    clean = strip_speaker_label(str(text))
+    return html.escape(clean, quote=True)
 
 
 def check_script_injection(val: Any) -> bool:

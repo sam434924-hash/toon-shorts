@@ -10,13 +10,14 @@ Tests: tests/unit/test_escaping.py
 
 from pathlib import Path
 from typing import List, Dict, Any
-from .models import ScriptPlan, SceneAudio
+from .models import ScriptPlan, SceneAudio, strip_speaker_label
 
 
 def escape_ass_text(text: str) -> str:
     """Strictly escapes raw model text to prevent ASS injection or formatting corruption."""
     if not text:
         return ""
+    text = strip_speaker_label(text)
     # 1. Neutralize backslashes (ASS override control prefix)
     sanitized = text.replace("\\", "/")
     # 2. Neutralize braces (ASS tag delimiters) with fullwidth unicode equivalents
@@ -55,6 +56,8 @@ def generate_ass_subtitles(
     margin_v = caption_cfg.get("margin_v", 420)
     outline_width = caption_cfg.get("outline_width", 6)
     shadow = caption_cfg.get("shadow", 3)
+    border_style = caption_cfg.get("border_style", 3 if style_preset.get("name") == "night_studio" else 1)
+    back_color = caption_cfg.get("back_color", "&H60050811" if style_preset.get("name") == "night_studio" else "&H80000000")
 
     ass_header = f"""[Script Info]
 Title: ToonShorts Captions
@@ -66,7 +69,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,{font_name},{font_size},{primary_color},&H000000FF,{outline_color},&H80000000,-1,0,0,0,100,100,0,0,1,{outline_width},{shadow},2,60,60,{margin_v},1
+Style: Default,{font_name},{font_size},{primary_color},&H000000FF,{outline_color},{back_color},-1,0,0,0,100,100,0,0,{border_style},{outline_width},{shadow},2,60,60,{margin_v},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
@@ -85,10 +88,11 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             t_end = format_ass_time(scene_start + audio.duration_seconds)
             dialogue_lines.append(f"Dialogue: 0,{t_start},{t_end},Default,,0,0,0,,{scene_text}")
         else:
-            phrase_chunk_size = 4
+            phrase_chunk_size = 8
             for chunk_idx in range(0, len(words), phrase_chunk_size):
                 chunk = words[chunk_idx:chunk_idx + phrase_chunk_size]
                 chunk_escaped = [escape_ass_text(w.word) for w in chunk]
+                split_at = len(chunk) // 2 if len(chunk) > 4 else -1
 
                 for word_pos, active_word in enumerate(chunk):
                     w_start = format_ass_time(scene_start + active_word.start_time)
@@ -101,7 +105,13 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                         else:
                             formatted_words.append(txt)
 
-                    line_text = " ".join(formatted_words)
+                    if split_at > 0:
+                        line1 = " ".join(formatted_words[:split_at])
+                        line2 = " ".join(formatted_words[split_at:])
+                        line_text = f"{line1}\\N{line2}"
+                    else:
+                        line_text = " ".join(formatted_words)
+
                     dialogue_lines.append(f"Dialogue: 0,{w_start},{w_end},Default,,0,0,0,,{line_text}")
 
         current_timeline += audio.scene_total_duration

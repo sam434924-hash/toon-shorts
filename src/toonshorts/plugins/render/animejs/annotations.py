@@ -11,7 +11,7 @@ Tests: tests/unit/test_animejs.py
 import re
 from typing import Any, Dict, List, Optional, Tuple
 
-from toonshorts.core.models import Scene, WordTiming
+from toonshorts.core.models import Scene, WordTiming, strip_speaker_label
 
 
 def extract_whiteboard_content_and_annotations(
@@ -23,14 +23,15 @@ def extract_whiteboard_content_and_annotations(
     Extracts whiteboard title, bullet point cards, and synchronized annotations (underlines, circles, arrows).
     Each annotation is tied to a specific word and starts drawing when that word starts.
     """
-    action_text = (scene.action or "").strip()
+    clean_dlg = strip_speaker_label(scene.dialogue_line)
+    action_text = strip_speaker_label(scene.action or "").strip()
     if ":" in action_text:
         title_part, points_part = action_text.split(":", 1)
         title = title_part.strip()
         points = [p.strip() for p in points_part.replace(";", ",").split(",") if p.strip()]
     elif action_text:
         title = action_text[:45]
-        words_dlg = scene.dialogue_line.split()
+        words_dlg = clean_dlg.split()
         if len(words_dlg) >= 6:
             points = [
                 " ".join(words_dlg[: len(words_dlg) // 3]),
@@ -38,7 +39,7 @@ def extract_whiteboard_content_and_annotations(
                 " ".join(words_dlg[2 * len(words_dlg) // 3 :]),
             ]
         else:
-            points = [scene.dialogue_line[:30]]
+            points = [clean_dlg[:30]]
     else:
         title = f"Scene {scene.scene_number}"
         points = ["Key Idea", "Implementation", "Result"]
@@ -51,7 +52,7 @@ def extract_whiteboard_content_and_annotations(
     if word_timings and len(word_timings) > 0:
         raw_timings = list(word_timings)
     else:
-        dlg_words = [w for w in scene.dialogue_line.split() if w.strip()]
+        dlg_words = [w for w in clean_dlg.split() if w.strip()]
         if not dlg_words:
             dlg_words = ["API", "metaphor", "service", "system"]
         speech_span = max(duration_sec - 0.6, 1.2)

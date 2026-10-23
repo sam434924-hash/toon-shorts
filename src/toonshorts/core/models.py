@@ -3,7 +3,7 @@ Purpose: Data schemas for screenplay direction, audio timing, and review.
 Inputs: Raw dictionary definitions or keyword arguments.
 Outputs: Validated Pydantic models, enums, dataclasses, and safe filenames.
 Depends on: dataclasses, enum, pathlib, pydantic, re, typing
-Used by: core, core.assembler, core.client, core.cost, core.pipeline, core.registry, core.schemas, core.subtitles, core.validator, inventory, models, plugins.llm.fake, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.motion.static, plugins.render.animejs.annotations, plugins.render.animejs.cast, plugins.render.animejs.html_builder, plugins.render.animejs.plugin, plugins.render.animejs.visual_renderer, plugins.render.blender3d, plugins.render.cairo, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.fake, plugins.voice.gemini_tts, plugins.voice.piper, plugins.voice.windows_sapi, voice, voice_utils
+Used by: core, core.assembler, core.client, core.cost, core.pipeline, core.registry, core.schemas, core.subtitles, core.validator, core.visuals, inventory, models, plugins.graphics.kinetic_words, plugins.llm.fake, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.motion.static, plugins.render.animejs.annotations, plugins.render.animejs.cast, plugins.render.animejs.html_builder, plugins.render.animejs.plugin, plugins.render.animejs.visual_renderer, plugins.render.blender3d, plugins.render.cairo, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.fake, plugins.voice.gemini_tts, plugins.voice.piper, plugins.voice.windows_sapi, voice, voice_utils
 Config keys: None
 Tests: tests/unit/test_sanitizing.py, tests/unit/test_validation.py, tests/unit/test_v2_validation.py
 """
@@ -22,6 +22,16 @@ class PlanValidationError(ValueError):
         super().__init__(message)
         self.scene_number = scene_number
         self.field = field
+
+
+def strip_speaker_label(text: str) -> str:
+    """
+    Strips leading speaker label prefixes like 'Boy:', 'Girl:', 'Presenter:', etc.
+    Ensures speaker labels never contaminate dialogue, subtitles, kinetic text, or board cards.
+    """
+    if not text:
+        return ""
+    return re.sub(r"^(?:Boy|Girl|Presenter|Host|Speaker|[A-Za-z0-9_-]+)\s*:\s*", "", text.strip(), flags=re.IGNORECASE).strip()
 
 
 class CameraMove(str, Enum):
@@ -101,6 +111,20 @@ class Scene(BaseModel):
     shots: Optional[List[Shot]] = Field(default=None)
     visuals: Optional[List[Visual]] = Field(default=None)
     word_timings: Optional[List[WordTiming]] = Field(default=None)
+
+    @field_validator("dialogue_line", mode="before")
+    @classmethod
+    def strip_dialogue_speaker_label(cls, v: str) -> str:
+        if isinstance(v, str):
+            return strip_speaker_label(v)
+        return v
+
+    @field_validator("speaker", mode="before")
+    @classmethod
+    def sanitize_speaker_name(cls, v: str) -> str:
+        if isinstance(v, str):
+            return re.sub(r"[:\s]+$", "", v.strip())
+        return v
 
     @field_validator("gesture")
     @classmethod

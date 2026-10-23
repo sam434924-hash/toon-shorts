@@ -10,6 +10,7 @@ Tests: tests/unit/test_graphics_plugins.py
 
 import html
 from typing import Any, Dict, List, Optional
+from toonshorts.core.models import strip_speaker_label
 
 
 class KineticWordsPlugin:
@@ -31,7 +32,8 @@ class KineticWordsPlugin:
         """
         Builds HTML markup, CSS styling, and Anime.js animation descriptor for kinetic words.
         """
-        words = text.split()
+        clean_text = strip_speaker_label(text)
+        words = clean_text.split()
         spans = []
         for idx, w in enumerate(words):
             clean = w.strip(".,!?:;\"'").lower()

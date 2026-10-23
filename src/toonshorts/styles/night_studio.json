@@ -12,13 +12,15 @@
   },
   "caption": {
     "font": "Arial",
-    "font_size": 86,
+    "font_size": 76,
     "primary_color": "&H00FFFFFF",
     "outline_color": "&H000F172A",
     "highlight_color": "&H0000D8F6",
-    "margin_v": 580,
+    "back_color": "&H60050811",
+    "border_style": 3,
+    "margin_v": 120,
     "outline_width": 7,
-    "shadow": 3,
+    "shadow": 0,
     "style": "whiteboard_modern"
   },
   "pacing": "moderate",

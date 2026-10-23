@@ -31,10 +31,10 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 ## Voice Plugins (`plugins/voice`)
 
 ### `gemini_tts`
-- **Description**: Official Google Gemini text-to-speech audio generator with deterministic SHA-256 disk audio caching, immediate quota/rate limit error abort, and speech verification.
+- **Description**: Official Google Gemini text-to-speech audio generator with deterministic SHA-256 disk audio caching, character voice mapping, rate-limit retry with limits and missing line reporting, and speech verification.
 - **Files**: `src/toonshorts/plugins/voice/gemini_tts.py`, `src/toonshorts/core/client.py`
 - **Config Flags**: `GEMINI_API_KEY`, `TTS_MODEL_NAME`, `GEMINI_VOICES`
-- **Tests**: `tests/contract/test_voice_contract.py`, `tests/unit/test_gemini_tts_cache.py`
+- **Tests**: `tests/contract/test_voice_contract.py`, `tests/unit/test_gemini_tts_cache.py`, `tests/unit/test_speaker_voice_mapping.py`
 
 ### `piper`
 - **Description**: Local fast neural TTS engine running through subprocess argument lists and stdin.
