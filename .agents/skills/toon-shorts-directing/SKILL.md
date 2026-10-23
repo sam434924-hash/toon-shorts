@@ -48,6 +48,13 @@ Whenever a story or video idea is provided:
 ## Story beats
 - Hook (first 3 s): a question or surprising line, wide shot.
 - Setup, then Turn (the twist or key explanation, best place for a zoom), then Payoff, then a short outro.
+
+## 2D Full-Body Rig Contract
+- **Anatomy**: head, neck, torso, upper arms, forearms, hands (open, point, fist, thumbs_up, wave), thighs, shins, feet.
+- **Pivots**: neck, shoulder_left/right, elbow_left/right, wrist_left/right, hip_left/right, knee_left/right, ankle_left/right.
+- **11 Standard Poses**: idle, explain, point_board, point_other, wave, thumbs_up, shrug, nod, head_tilt, lean_speaker, listening_reaction.
+- **Seated vs Standing**: Seated desk layout shows upper body while legs remain behind desk ($Y > 1540$ px); standing layout renders full body.
+- **Inventory Labeling**: Character packs meeting all rig criteria are marked `[gesture-ready]`; packs missing lower limbs or gestures are labeled `[limited-gestures]` with missing parts listed.
 - Board text and drawn annotations appear at the moment the related word is spoken.
 
 ## Output

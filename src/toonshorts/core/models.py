@@ -132,7 +132,10 @@ class Scene(BaseModel):
         if v is None:
             return None
         clean = v.lower().strip()
-        allowed = {"idle", "wave", "point", "explain", "open_hand", "thumbs_up", "shrug"}
+        allowed = {
+            "idle", "wave", "point", "explain", "open_hand", "thumbs_up", "shrug",
+            "point_board", "point_other", "nod", "head_tilt", "lean_speaker", "listening_reaction"
+        }
         if clean not in allowed:
             raise ValueError(f"Invalid gesture '{v}'. Allowed gestures: {sorted(list(allowed))}")
         return clean

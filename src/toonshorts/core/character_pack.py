@@ -231,6 +231,101 @@ def ensure_path_inside_dir(target_path: Path, parent_dir: Path) -> Path:
     return resolved_target
 
 
+REQUIRED_RIG_PARTS = [
+    "head",
+    "neck",
+    "torso",
+    "upper_arms",
+    "forearms",
+    "hands",
+    "thighs",
+    "shins",
+    "feet",
+]
+
+REQUIRED_HAND_SHAPES = ["open", "point", "fist", "thumbs_up", "wave"]
+
+REQUIRED_RIG_PIVOTS = [
+    "neck",
+    "shoulder_left",
+    "shoulder_right",
+    "elbow_left",
+    "elbow_right",
+    "wrist_left",
+    "wrist_right",
+    "hip_left",
+    "hip_right",
+    "knee_left",
+    "knee_right",
+    "ankle_left",
+    "ankle_right",
+]
+
+REQUIRED_RIG_POSES = [
+    "idle",
+    "explain",
+    "point_board",
+    "point_other",
+    "wave",
+    "thumbs_up",
+    "shrug",
+    "nod",
+    "head_tilt",
+    "lean_speaker",
+    "listening_reaction",
+]
+
+
+def check_pack_rig_contract(manifest: Dict[str, Any], raw_svg: str = "") -> Tuple[bool, List[str]]:
+    """
+    Validates a character pack manifest and SVG against the 2D Full-Body Rig Contract.
+    Checks:
+    - Anatomy parts: head, neck, torso, upper_arms, forearms, hands, thighs, shins, feet.
+    - Joint pivots: neck, shoulder_l/r, elbow_l/r, wrist_l/r, hip_l/r, knee_l/r, ankle_l/r.
+    - Poses / gestures: idle, explain, point_board, point_other, wave, thumbs_up, shrug, nod, head_tilt, lean_speaker, listening_reaction.
+    Returns (is_ready: bool, missing_items: List[str]).
+    """
+    missing: List[str] = []
+    pivots = manifest.get("pivots") or {}
+    layers = [str(l).lower() for l in (manifest.get("layers") or [])]
+    gestures = [str(g).lower() for g in (manifest.get("allowed_gestures") or manifest.get("poses") or [])]
+    raw_lower = raw_svg.lower()
+
+    # 1. Anatomy parts check
+    if not (any("head" in l for l in layers) or ("head" in raw_lower)):
+        missing.append("head")
+    if not (any("neck" in l for l in layers) or ("neck" in pivots) or ("neck" in raw_lower)):
+        missing.append("neck")
+    if not (any("torso" in l or "body" in l for l in layers) or ("torso" in raw_lower) or ("body" in raw_lower)):
+        missing.append("torso")
+    if not (any("arm_upper" in l or "upper_arm" in l for l in layers) or ("arm_upper" in raw_lower) or ("arm" in layers)):
+        missing.append("upper_arms")
+    if not (any("arm_lower" in l or "forearm" in l for l in layers) or ("arm_lower" in raw_lower) or ("forearm" in raw_lower)):
+        missing.append("forearms")
+    if not (any("hand" in l for l in layers) or ("hand" in raw_lower) or ("point" in gestures and "wave" in gestures)):
+        missing.append("hands")
+    if not (any("leg_upper" in l or "thigh" in l for l in layers) or ("leg_upper" in raw_lower) or ("thigh" in raw_lower)):
+        missing.append("thighs")
+    if not (any("leg_lower" in l or "shin" in l for l in layers) or ("leg_lower" in raw_lower) or ("shin" in raw_lower)):
+        missing.append("shins")
+    if not (any("shoe" in l or "foot" in l or "feet" in l for l in layers) or ("shoe" in raw_lower) or ("foot" in raw_lower)):
+        missing.append("feet")
+
+    # 2. Joint pivots check
+    for p_name in REQUIRED_RIG_PIVOTS:
+        if p_name not in pivots:
+            missing.append(f"pivot:{p_name}")
+
+    # 3. Poses check
+    for pose in REQUIRED_RIG_POSES:
+        matched = (pose in gestures) or (pose == "point_board" and "point" in gestures) or (pose in ("nod", "head_tilt", "lean_speaker", "listening_reaction") and "idle" in gestures)
+        if not matched:
+            missing.append(f"pose:{pose}")
+
+    is_ready = (len(missing) == 0)
+    return is_ready, missing
+
+
 class CharacterPack:
     """
     Modular 2D Layered SVG Character Pack.
@@ -372,6 +467,10 @@ class CharacterPack:
                         errors.append(f"Missing required structural layer defined in manifest: #{layer}")
 
         return errors
+
+    def check_rig_contract(self) -> Tuple[bool, List[str]]:
+        """Validates this character pack against the full-body 2D Rig Contract."""
+        return check_pack_rig_contract(self.manifest, self.raw_svg)
 
     def to_dict(self) -> Dict[str, Any]:
         """Serializes character pack metadata."""

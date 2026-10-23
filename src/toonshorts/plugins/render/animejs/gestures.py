@@ -13,7 +13,21 @@ from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
 
-ALLOWED_GESTURES = frozenset({"idle", "wave", "point", "explain", "open_hand", "thumbs_up", "shrug"})
+ALLOWED_GESTURES = frozenset({
+    "idle",
+    "wave",
+    "point",
+    "explain",
+    "open_hand",
+    "thumbs_up",
+    "shrug",
+    "point_board",
+    "point_other",
+    "nod",
+    "head_tilt",
+    "lean_speaker",
+    "listening_reaction",
+})
 
 
 def sanitize_gesture(gesture: Optional[str]) -> str:

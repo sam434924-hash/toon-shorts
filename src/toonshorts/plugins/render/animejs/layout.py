@@ -204,12 +204,17 @@ def compute_gesture_bounds(
         local_max_x = 495.0
         local_min_y = 145.0
         local_max_y = 572.0
-    elif clean == "point":
+    elif clean in ("point", "point_board"):
         local_min_x = 348.0
         local_max_x = 520.0
         local_min_y = 150.0
         local_max_y = 572.0
-    elif clean == "explain":
+    elif clean == "point_other":
+        local_min_x = 348.0
+        local_max_x = 515.0
+        local_min_y = 200.0
+        local_max_y = 572.0
+    elif clean in ("explain", "open_hand"):
         local_min_x = 348.0
         local_max_x = 518.0
         local_min_y = 320.0
@@ -223,6 +228,11 @@ def compute_gesture_bounds(
         local_min_x = 90.0
         local_max_x = 440.0
         local_min_y = 350.0
+        local_max_y = 572.0
+    elif clean in ("nod", "head_tilt", "lean_speaker", "listening_reaction"):
+        local_min_x = 110.0
+        local_max_x = 415.0
+        local_min_y = 340.0
         local_max_y = 572.0
     else:  # idle
         local_min_x = 120.0

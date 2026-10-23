@@ -466,15 +466,18 @@ window.seekAnimation = function(ms) {
     charRigRight.style.transform = `scaleX(-1) translateY(${breatheYRight.toFixed(2)}px) rotate(${(-headTilt).toFixed(2)}deg) ${rightSquash}`;
   }
 
-  // 4. Purposeful gesture animation: raises at meaningful moment, holds, returns to rest with easing
+  // 4. Purposeful gesture & FK full-body rig animation
   const gestType = window.__gestureType;
   const speakerElForGest = document.getElementById(window.__speakerSlotId || "character-rig");
-  const gestArm = speakerElForGest ? speakerElForGest.querySelector(`#arm-gesture-${gestType}`) : document.getElementById(`arm-gesture-${gestType}`);
   const trigMs = window.__gestureTriggerMs;
 
+  // 4a. Standalone arm element fallback (e.g. presenter pack)
+  const gestArm = speakerElForGest ? speakerElForGest.querySelector(`#arm-gesture-${gestType}`) : document.getElementById(`arm-gesture-${gestType}`);
   const restAngles = {
     wave: 132,
     point: 130,
+    point_board: 130,
+    point_other: 110,
     explain: 78,
     thumbs_up: 110,
     shrug: 45,
@@ -513,6 +516,116 @@ window.seekAnimation = function(ms) {
     }
   } else if (gestArm) {
     gestArm.style.transform = "rotate(0deg)";
+  }
+
+  // 4b. Full-Body FK Rig Animation (boy_b, girl_a, and gesture-ready packs)
+  if (speakerElForGest) {
+    const fkArmR = speakerElForGest.querySelector("#fk_arm_r");
+    const fkArmLowerR = speakerElForGest.querySelector("#fk_arm_lower_r");
+    const fkArmL = speakerElForGest.querySelector("#fk_arm_l");
+    const fkArmLowerL = speakerElForGest.querySelector("#fk_arm_lower_l");
+    const fkHead = speakerElForGest.querySelector("#fk_head_base");
+
+    if (fkArmR && fkArmLowerR) {
+      // Joint pivot points from SVG transform or defaults
+      const pShR = [585, 525];
+      const pElR = [610, 660];
+      const pShL = [415, 525];
+      const pElL = [390, 660];
+      const pHead = [500, 500];
+
+      // Gesture phase calculation: anticipation -> quick arc -> hold -> return
+      let gPhase = 0.0;
+      let inHold = false;
+      const raiseDur = 350;
+      const holdDur = 1200;
+      const lowerDur = 450;
+      const holdEnd = trigMs + raiseDur + holdDur;
+      const animEnd = holdEnd + lowerDur;
+
+      if (ms >= trigMs && ms < trigMs + raiseDur) {
+        const t = (ms - trigMs) / raiseDur;
+        // Anticipation dip then snap arc
+        if (t < 0.20) {
+          gPhase = -0.08 * (t / 0.20);
+        } else {
+          const tNorm = (t - 0.20) / 0.80;
+          gPhase = 1.0 - Math.pow(1.0 - tNorm, 3);
+        }
+      } else if (ms >= trigMs + raiseDur && ms < holdEnd) {
+        gPhase = 1.0;
+        inHold = true;
+      } else if (ms >= holdEnd && ms < animEnd) {
+        const t = (ms - holdEnd) / lowerDur;
+        // Smooth return with ease-in-out
+        gPhase = 1.0 - (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
+      } else {
+        gPhase = 0.0;
+      }
+
+      let angShR = 0, angElR = 0, angShL = 0, angElL = 0, angHead = 0;
+
+      if (gestType === "point" || gestType === "point_board") {
+        // Right arm raises upward pointing toward the board
+        angShR = -55 * gPhase;
+        angElR = -25 * gPhase;
+        if (inHold) {
+          angShR += Math.sin((ms - trigMs) * 0.005) * 1.5;
+        }
+      } else if (gestType === "point_other") {
+        // Arm points inward toward other character
+        angShR = 25 * gPhase;
+        angElR = -45 * gPhase;
+      } else if (gestType === "explain") {
+        // Two-handed explain / open gestures
+        angShR = -38 * gPhase;
+        angElR = -28 * gPhase;
+        angShL = 35 * gPhase;
+        angElL = 25 * gPhase;
+        if (inHold) {
+          const emp = Math.sin((ms - trigMs) * 0.008) * 3;
+          angShR += emp;
+          angShL -= emp;
+        }
+      } else if (gestType === "wave") {
+        angShR = -85 * gPhase;
+        angElR = -40 * gPhase;
+        if (inHold) {
+          angElR += Math.sin((ms - trigMs - raiseDur) * 0.015) * 12;
+        }
+      } else if (gestType === "thumbs_up") {
+        angShR = -45 * gPhase;
+        angElR = -55 * gPhase;
+      } else if (gestType === "shrug") {
+        angShR = -18 * gPhase;
+        angElR = -35 * gPhase;
+        angShL = 18 * gPhase;
+        angElL = 35 * gPhase;
+        angHead = 6 * gPhase;
+      } else if (gestType === "nod") {
+        angHead = Math.sin((ms - trigMs) * 0.014) * 8 * gPhase;
+      } else if (gestType === "head_tilt") {
+        angHead = 7 * gPhase;
+      }
+
+      fkArmR.setAttribute("transform", `rotate(${angShR.toFixed(2)}, ${pShR[0]}, ${pShR[1]})`);
+      fkArmLowerR.setAttribute("transform", `rotate(${angElR.toFixed(2)}, ${pElR[0]}, ${pElR[1]})`);
+      if (fkArmL) fkArmL.setAttribute("transform", `rotate(${angShL.toFixed(2)}, ${pShL[0]}, ${pShL[1]})`);
+      if (fkArmLowerL) fkArmLowerL.setAttribute("transform", `rotate(${angElL.toFixed(2)}, ${pElL[0]}, ${pElL[1]})`);
+      if (fkHead && angHead !== 0) fkHead.setAttribute("transform", `rotate(${angHead.toFixed(2)}, ${pHead[0]}, ${pHead[1]})`);
+    }
+  }
+
+  // 4c. Listener reactive subtle pose (nod, head tilt, glance at board)
+  const listenerElForGest = document.getElementById(window.__listenerSlotId);
+  if (listenerElForGest) {
+    const lFkHead = listenerElForGest.querySelector("#fk_head_base");
+    if (lFkHead) {
+      // Subtly nod or tilt head during speaker turns
+      const lNod = Math.sin((ms + 400) * 0.0035) * 2.2;
+      const lTilt = Math.sin((ms + 900) * 0.0022) * 2.5;
+      lFkHead.setAttribute("transform", `rotate(${(lNod + lTilt).toFixed(2)}, 500, 500)`);
+    }
   }
 
   // 5. Progressive stroke-by-stroke drawing synced to speech

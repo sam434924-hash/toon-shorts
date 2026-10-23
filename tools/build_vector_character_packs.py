@@ -1247,6 +1247,8 @@ def build_manifest_and_character_json(char_id: str) -> Tuple[Dict[str, Any], Dic
         "shoulder_right": [585, 525],
         "elbow_left": [390, 660] if is_boy else [345, 705],
         "elbow_right": [610, 660] if is_boy else [655, 705],
+        "wrist_left": [370, 780] if is_boy else [320, 830],
+        "wrist_right": [630, 780] if is_boy else [680, 830],
         "hip_left": [435, 870 if is_boy else 930],
         "hip_right": [565, 870 if is_boy else 930],
         "knee_left": [425, 1100] if is_boy else [415, 1150],
@@ -1398,7 +1400,7 @@ def build_manifest_and_character_json(char_id: str) -> Tuple[Dict[str, Any], Dic
         },
         "eye_states": ["open", "blink", "look_left", "look_right"],
         "mouth_states": ["closed", "slightly_open", "wide_open", "round_o", "open_smile"],
-        "allowed_gestures": ["idle", "walk", "wave", "point", "explain"],
+        "allowed_gestures": ["idle", "explain", "point", "point_board", "point_other", "wave", "thumbs_up", "shrug", "nod", "head_tilt", "lean_speaker", "listening_reaction"],
     }
 
     character_json = {

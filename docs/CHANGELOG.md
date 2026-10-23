@@ -1,5 +1,6 @@
 # Changelog
 
+- 2026-10-23: Phase C: defined 2D full-body rig contract, updated vector generator and inventory labeling for gesture-ready status, and implemented FK gesture rig animation and director in Anime.js.
 - 2026-10-23: Phase B: implemented 4 multiplane depth layers in night_studio, deterministic camera motion (speaker focus, board focus, drift, punch-in, rack focus blur), and spring-overshoot board animations.
 - 2026-10-23: Phase A fixes: mapped speaker voices (Boy/boy_b -> Puck, Girl/girl_a -> Aoede), stripped speaker label prefixes across board, subtitles, kinetic text and TTS, and reserved clear subtitle strip in night_studio layout.
 - 2026-10-23: Built night_studio theme with dark board panel, code editor backdrop, LED glow pulses, city window twinkling, motion graphics plugins (kinetic_words, draw_svg, octopus_vector, hearts_pop, blue_blood_drop), word timing alignment, and octopus_facts_v2 stills preview.

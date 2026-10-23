@@ -60,6 +60,14 @@
     "ankle_right": [
       58,
       173
+    ],
+    "wrist_left": [
+      320,
+      830
+    ],
+    "wrist_right": [
+      680,
+      830
     ]
   },
   "anchors": {
@@ -146,9 +154,16 @@
   ],
   "allowed_gestures": [
     "idle",
-    "walk",
-    "wave",
+    "explain",
     "point",
-    "explain"
+    "point_board",
+    "point_other",
+    "wave",
+    "thumbs_up",
+    "shrug",
+    "nod",
+    "head_tilt",
+    "lean_speaker",
+    "listening_reaction"
   ]
 }

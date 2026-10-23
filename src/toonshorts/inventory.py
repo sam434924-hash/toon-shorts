@@ -54,11 +54,14 @@ def get_installed_characters(
                         })
                     else:
                         desc = char_obj.manifest.get("description") or f"2D vector pack ({char_obj.name})"
+                        is_ready, missing = char_obj.check_rig_contract()
                         result["2d_packs"].append({
                             "id": item.name,
                             "name": item.name,
                             "pack_type": "vector pack",
                             "description": desc,
+                            "gesture_ready": is_ready,
+                            "missing_rig_parts": missing,
                         })
                 elif isinstance(char_obj, Character2D):
                     desc = f"2D sliced pack ({char_obj.name})"
@@ -67,6 +70,8 @@ def get_installed_characters(
                         "name": f"{item.name} sliced pack",
                         "pack_type": "sliced pack",
                         "description": desc,
+                        "gesture_ready": False,
+                        "missing_rig_parts": ["vector_layers", "rig_pivots", "standard_poses"],
                     })
                 elif isinstance(char_obj, dict) and char_obj.get("status") in ("error", "missing"):
                     result["broken_packs"].append({
@@ -263,7 +268,18 @@ def format_inventory_display(inv: Optional[Dict[str, Any]] = None) -> str:
     chars = inv.get("characters", {})
     for pack in chars.get("2d_packs", []):
         display_label = pack.get("name", pack["id"])
-        lines.append(f"   - [2D {pack.get('pack_type', 'Pack').title()}] {display_label}: {pack['description']}")
+        if pack.get("gesture_ready"):
+            rig_status = "[gesture-ready]"
+        else:
+            missing = pack.get("missing_rig_parts", [])
+            if missing:
+                missing_str = ", ".join(missing[:4])
+                if len(missing) > 4:
+                    missing_str += f" (+{len(missing)-4} more)"
+                rig_status = f"[limited-gestures (missing: {missing_str})]"
+            else:
+                rig_status = "[limited-gestures]"
+        lines.append(f"   - [2D {pack.get('pack_type', 'Pack').title()}] {display_label} {rig_status}: {pack['description']}")
     for proc in chars.get("procedural", []):
         lines.append(f"   - [Procedural] {proc['name']}: {proc['description']}")
     for model in chars.get("3d_models", []):
