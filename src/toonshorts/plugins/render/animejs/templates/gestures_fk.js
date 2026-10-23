@@ -1,4 +1,63 @@
 // Character Animation, Mouth Sync, Idle Life & Forward Kinematics (FK) Limb Math
+
+// Computes snap rotation angle for right arm pointing toward active visual target
+function computeArmSnapAngle(fkArmR, ms, trigMs, defaultAngle) {
+  const defAng = (defaultAngle !== undefined) ? defaultAngle : -55.0;
+  if (window.__enableArmSnap === false) return defAng;
+  if (!fkArmR) return defAng;
+
+  // 1. Locate active visual target from stage visuals or board cards
+  let targetEl = null;
+  const visuals = window.__stageVisuals || [];
+  for (let i = 0; i < visuals.length; i++) {
+    const v = visuals[i];
+    const s = v.start_ms || 0;
+    const d = v.duration_ms || 800;
+    if (ms >= s && ms < s + d + 800) {
+      targetEl = document.querySelector(v.target) || document.getElementById(v.dom_id);
+      if (targetEl) break;
+    }
+  }
+
+  // Fallback to board card if no stage visual is active
+  if (!targetEl) {
+    const cards = document.querySelectorAll('.card');
+    if (cards && cards.length > 0) {
+      targetEl = cards[0];
+    }
+  }
+
+  // 2. Validate target existence, size, and on-stage boundaries
+  if (!targetEl) return defAng;
+  const r = targetEl.getBoundingClientRect();
+  if (!r || r.width <= 0 || r.height <= 0) return defAng;
+
+  const stageW = window.__stageWidth || 1080;
+  const stageH = window.__stageHeight || 1920;
+  if (r.right < 0 || r.bottom < 0 || r.left > stageW || r.top > stageH) {
+    return defAng;
+  }
+
+  // 3. Resolve shoulder screen coordinates via SVG matrix transform
+  const svgEl = fkArmR.ownerSVGElement;
+  if (!svgEl || typeof svgEl.createSVGPoint !== 'function') return defAng;
+  const pt = svgEl.createSVGPoint();
+  pt.x = 585;
+  pt.y = 525;
+  const parentCtm = fkArmR.parentElement ? fkArmR.parentElement.getScreenCTM() : null;
+  if (!parentCtm) return defAng;
+  const screenSh = pt.matrixTransform(parentCtm);
+
+  // 4. Compute elevation angle to target center and clamp to sane range [-75.0, -35.0]
+  const tgtX = r.left + r.width / 2;
+  const tgtY = r.top + r.height / 2;
+  const dx = tgtX - screenSh.x;
+  const dy = tgtY - screenSh.y;
+
+  const thetaDeg = Math.atan2(dy, Math.abs(dx)) * (180 / Math.PI);
+  return Math.max(-75.0, Math.min(-35.0, thetaDeg));
+}
+
 function seekLimbAnimation(ms, frameIdx) {
   const fps = window.__fps || 24;
 
@@ -172,8 +231,9 @@ function seekLimbAnimation(ms, frameIdx) {
       let angShR = 0, angElR = 0, angShL = 0, angElL = 0, angHead = 0;
 
       if (gestType === "point" || gestType === "point_board") {
-        // Right arm raises upward pointing toward the board
-        angShR = -55 * gPhase;
+        // Right arm raises upward pointing toward the active visual target
+        const snapAngle = computeArmSnapAngle(fkArmR, ms, trigMs, -55.0);
+        angShR = snapAngle * gPhase;
         angElR = -25 * gPhase;
         if (inHold) {
           angShR += Math.sin((ms - trigMs) * 0.005) * 1.5;
@@ -236,3 +296,4 @@ function seekLimbAnimation(ms, frameIdx) {
 }
 
 window.seekLimbAnimation = seekLimbAnimation;
+window.computeArmSnapAngle = computeArmSnapAngle;

@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-23: Phase 4B: implemented deterministic FK right arm snap to active visual targets clamped to [-75.0, -35.0] with graceful fallback.
+
 - 2026-10-23: Phase 4A: implemented closed-form damped spring camera zoom for punch-ins with bounded overshoot (1.066x) and zero accumulated state.
 
 - 2026-10-23: Phase 3b hardening: enhanced thread-safe browser and process registry for parallel worker pool, guaranteeing zero leaked browser or FFmpeg processes and full temp cleanup on interrupt or failure.
