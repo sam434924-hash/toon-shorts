@@ -16,44 +16,57 @@
   </script>
 </head>
 <body class="theme-{{THEME_NAME}}">
-  <!-- Edge Vignette Filter -->
-  <div class="vignette-overlay"></div>
-
-  <!-- Subtle Floating Particles Canvas -->
-  <canvas id="particles-canvas" width="{{WIDTH}}" height="{{HEIGHT}}"></canvas>
-
-  <!-- Studio Room Wall Details (Constant Set Across All Scenes) -->
+  <div id="camera-viewport">
+    <!-- Layer 4: Deep Background (Wall, LED strips, window with city lights, shelf decor) -->
+    <div id="layer-deep-bg" class="depth-layer layer-deep-bg" data-depth-factor="0.12">
+      <div class="deep-bg-surface"></div>
+      <!-- Subtle Floating Particles Canvas -->
+      <canvas id="particles-canvas" width="{{WIDTH}}" height="{{HEIGHT}}"></canvas>
+      <!-- Studio Room Wall Details (Constant Set Across All Scenes) -->
 {{SHELF_DECOR}}
-
-  <!-- Whiteboard on Wall -->
-  <div class="whiteboard-outer">
-    <div class="panel-backdrop-dim" style="{{PANEL_BACKDROP_STYLE}}"></div>
-    <svg id="rough-canvas" width="900" height="980"></svg>
-    <div class="title-badge" id="wb-title">{{TITLE}}</div>
-{{BOARD_CONTENT}}
-    <div class="marker-tray">
-      <div class="marker black"></div>
-      <div class="marker blue"></div>
-      <div class="marker red"></div>
-      <div class="marker eraser"></div>
     </div>
-  </div>
 
-  <!-- Character Slots (Left and Right) -->
+    <!-- Layer 3: Board (The board panel and its graphics) -->
+    <div id="layer-board" class="depth-layer layer-board" data-depth-factor="0.5">
+      <div class="whiteboard-outer">
+        <div class="panel-backdrop-dim" style="{{PANEL_BACKDROP_STYLE}}"></div>
+        <svg id="rough-canvas" width="900" height="980"></svg>
+        <div class="title-badge" id="wb-title">{{TITLE}}</div>
+{{BOARD_CONTENT}}
+        <div class="marker-tray">
+          <div class="marker black"></div>
+          <div class="marker blue"></div>
+          <div class="marker red"></div>
+          <div class="marker eraser"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layer 2: Subject (The two characters) -->
+    <div id="layer-subject" class="depth-layer layer-subject" data-depth-factor="1.0">
+      <!-- Character Slots (Left and Right) -->
 {{CHARACTERS_HTML}}
+    </div>
 
-  <!-- Foreground Desk Props (Constant Across All Scenes) -->
-  <div class="desk-props">
-    <svg viewBox="0 0 1080 130" width="1080" height="130">
+    <!-- Layer 1: Foreground (Desk edge, lamp, mug, small card / laptop) -->
+    <div id="layer-foreground" class="depth-layer layer-foreground" data-depth-factor="2.0">
+      <!-- Foreground Desk Props (Constant Across All Scenes) -->
+      <div class="desk-props">
+        <svg viewBox="0 0 1080 130" width="1080" height="130">
 {{DESK_PROPS}}
-    </svg>
-  </div>
+        </svg>
+      </div>
 
-  <!-- Desk Surface -->
-  <div class="desk-container">
-    <div class="desk-bevel"></div>
-    <div class="desk-top"></div>
-    <div class="desk-body"></div>
+      <!-- Desk Surface -->
+      <div class="desk-container">
+        <div class="desk-bevel"></div>
+        <div class="desk-top"></div>
+        <div class="desk-body"></div>
+      </div>
+    </div>
+
+    <!-- Edge Vignette Filter -->
+    <div class="vignette-overlay"></div>
   </div>
 
   <script>
@@ -67,6 +80,10 @@
     window.__gestureType = "{{SPEAKER_GESTURE}}";
     window.__speakerSlotId = "{{SPEAKER_SLOT_ID}}";
     window.__listenerSlotId = "{{LISTENER_SLOT_ID}}";
+    window.__cameraParallax = {{CAMERA_PARALLAX_JSON}};
+    window.__cameraPresets = {{CAMERA_PRESETS_JSON}};
+    window.__cameraConfig = {{CAMERA_CONFIG_JSON}};
+    window.__wordTimings = {{WORD_TIMINGS_JSON}};
 
     window.__timeline = anime.timeline({
       autoplay: false,

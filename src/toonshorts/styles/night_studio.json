@@ -2,7 +2,7 @@
   "name": "night_studio",
   "renderer": "animejs",
   "voice": "gemini_tts",
-  "motion": "static",
+  "motion": "ffmpeg",
   "image_prompt_prefix": "Modern night coding studio with boy and girl animated characters, glowing LED lights, dark framed screen panel, warm lamp, and night skyline",
   "color_palette": {
     "background": "#0b0f19",

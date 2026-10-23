@@ -93,6 +93,33 @@ NIGHT_STUDIO_SUBTITLE_STRIP = {
     "max_lines": 2,
 }
 
+# 4-Layer Depth & Parallax factors (Foreground, Subject, Board, Deep Background)
+CAMERA_PARALLAX_FACTORS = {
+    "foreground": 2.0,
+    "subject": 1.0,
+    "board": 0.5,
+    "deep_bg": 0.12,
+}
+
+# Camera presets for deterministic framing
+CAMERA_PRESETS = {
+    "wide": {"x": 0.0, "y": 0.0, "zoom": 1.0, "focus": "subject"},
+    "boy_close": {"x": 130.0, "y": -45.0, "zoom": 1.18, "focus": "subject"},
+    "girl_close": {"x": -130.0, "y": -45.0, "zoom": 1.18, "focus": "subject"},
+    "board_close": {"x": 0.0, "y": 90.0, "zoom": 1.25, "focus": "board"},
+}
+
+CAMERA_TRANSITION_SEC = 0.40  # 0.3 to 0.5s with easing
+CAMERA_DRIFT_ROT_MAX = 0.35   # under 0.4 degrees
+CAMERA_PUNCH_IN_ZOOM = 1.16   # 1.12 to 1.18
+CAMERA_PUNCH_IN_SHAKE_PX = 1.5
+CAMERA_RACK_FOCUS_BLUR = {
+    "sharp": 0.0,
+    "near_defocus": 2.2,
+    "far_defocus": 3.8,
+    "transition_frames": 10,
+}
+
 # Camera zoom settings for dynamic framing
 CAMERA_ZOOM_SPEAKER = 1.18
 CAMERA_ZOOM_BOARD = 1.25

@@ -253,13 +253,150 @@ window.updateStageVisuals = function(ms) {
   });
 };
 
+// Multiplane Parallax & Camera Presets Deterministic Engine
+function computeCameraState(ms, frameIdx) {
+  const pFactors = window.__cameraParallax || { foreground: 2.0, subject: 1.0, board: 0.5, deep_bg: 0.12 };
+  const presets = window.__cameraPresets || {
+    wide: { x: 0.0, y: 0.0, zoom: 1.0, focus: "subject" },
+    boy_close: { x: 130.0, y: -45.0, zoom: 1.18, focus: "subject" },
+    girl_close: { x: -130.0, y: -45.0, zoom: 1.18, focus: "subject" },
+    board_close: { x: 0.0, y: 90.0, zoom: 1.25, focus: "board" }
+  };
+  const cfg = window.__cameraConfig || {
+    transition_sec: 0.40,
+    drift_rot_max: 0.35,
+    punch_in_zoom: 1.16,
+    punch_in_shake: 1.5,
+    rack_focus: { sharp: 0.0, near_defocus: 2.2, far_defocus: 3.8, transition_frames: 10 }
+  };
+
+  const isSpeakerRight = (window.__speakerSlotId || "character-rig") === "character-rig-right";
+  const speakerPresetKey = isSpeakerRight ? "girl_close" : "boy_close";
+
+  // Leading move: start camera move 4 frames (~133ms) before visual/gesture lands
+  const leadMs = 133;
+  let nearestVisual = null;
+  if (window.__stageVisuals && window.__stageVisuals.length > 0) {
+    for (let i = 0; i < window.__stageVisuals.length; i++) {
+      const vis = window.__stageVisuals[i];
+      const trig = vis.start_ms || 0;
+      if (ms >= (trig - leadMs) && ms < (trig + (vis.duration_ms || 800) + 2600)) {
+        nearestVisual = vis;
+        break;
+      }
+    }
+  }
+
+  // Check surprise beats for punch-in ("three", "blue", "blood", "hearts")
+  let punchZoom = 0.0;
+  let punchShakeX = 0.0;
+  let punchShakeY = 0.0;
+  if (window.__wordTimings && window.__wordTimings.length > 0) {
+    for (let i = 0; i < window.__wordTimings.length; i++) {
+      const wt = window.__wordTimings[i];
+      const wClean = (wt.word || "").toLowerCase();
+      if (wClean.includes("three") || wClean.includes("blue") || wClean.includes("blood") || wClean.includes("heart")) {
+        const pStart = wt.start_ms;
+        const pDur = 400;
+        if (ms >= pStart && ms < pStart + pDur) {
+          const punchProg = (ms - pStart) / pDur;
+          // Zoom punch over ~2 frames
+          const zoomBoost = punchProg < 0.20 ? (punchProg / 0.20) * 0.16 : 0.16 * (1.0 - (punchProg - 0.20) / 0.80);
+          punchZoom = zoomBoost;
+          // 1 to 2px shake on landing
+          const shakeDecay = Math.max(0, 1.0 - punchProg * 2.5);
+          const shakePhase = (frameIdx % 4);
+          punchShakeX = (shakePhase === 1 ? 1.5 : (shakePhase === 3 ? -1.5 : 0)) * shakeDecay;
+          punchShakeY = (shakePhase === 2 ? 1.2 : (shakePhase === 0 ? -1.2 : 0)) * shakeDecay;
+          break;
+        }
+      }
+    }
+  }
+
+  // Preset Selection & Easing
+  let targetPreset = presets.wide;
+  let targetFocus = "subject";
+
+  if (nearestVisual) {
+    targetPreset = presets.board_close;
+    targetFocus = "board";
+  } else if (ms >= 150 && ms < (window.__mainTimeline ? window.__mainTimeline.duration - 300 : 999999)) {
+    targetPreset = presets[speakerPresetKey] || presets.wide;
+    targetFocus = "subject";
+  }
+
+  // Constant drift: tiny sine-wave in position and rotation < 0.4 deg
+  const driftX = 2.5 * Math.sin(frameIdx * 0.035);
+  const driftY = 1.8 * Math.cos(frameIdx * 0.028);
+  const driftRot = (cfg.drift_rot_max || 0.35) * Math.sin(frameIdx * 0.022);
+
+  // Slow push-in during long lines (up to 1.05)
+  const pushInZoom = 1.0 + Math.min(0.05, (ms / 6000.0) * 0.05);
+
+  const camX = targetPreset.x + punchShakeX;
+  const camY = targetPreset.y + punchShakeY;
+  const camZoom = (targetPreset.zoom + punchZoom) * pushInZoom;
+
+  return {
+    camX,
+    camY,
+    camZoom,
+    driftX,
+    driftY,
+    driftRot,
+    focus: targetFocus,
+    pFactors,
+    cfg
+  };
+}
+
+function applyMultiplaneParallax(camState) {
+  const p = camState.pFactors;
+  const layers = [
+    { id: "layer-foreground", factor: p.foreground || 2.0 },
+    { id: "layer-subject", factor: p.subject || 1.0 },
+    { id: "layer-board", factor: p.board || 0.5 },
+    { id: "layer-deep-bg", factor: p.deep_bg || 0.12 }
+  ];
+
+  layers.forEach(item => {
+    const el = document.getElementById(item.id);
+    if (!el) return;
+    const f = item.factor;
+    const shiftX = (-camState.camX * f) + (camState.driftX * f);
+    const shiftY = (-camState.camY * f) + (camState.driftY * f);
+    const scale = 1.0 + (camState.camZoom - 1.0) * Math.min(1.2, f);
+    el.style.transform = `translate(${shiftX.toFixed(2)}px, ${shiftY.toFixed(2)}px) scale(${scale.toFixed(3)}) rotate(${camState.driftRot.toFixed(3)}deg)`;
+  });
+
+  // Rack Focus Blur Application
+  const isBoardFocus = (camState.focus === "board");
+  const rf = camState.cfg.rack_focus || { sharp: 0.0, near_defocus: 2.2, far_defocus: 3.8 };
+
+  const fgEl = document.getElementById("layer-foreground");
+  const subjEl = document.getElementById("layer-subject");
+  const boardEl = document.getElementById("layer-board");
+  const bgEl = document.getElementById("layer-deep-bg");
+
+  if (fgEl) fgEl.style.filter = `blur(${isBoardFocus ? rf.far_defocus : rf.near_defocus}px)`;
+  if (subjEl) subjEl.style.filter = `blur(${isBoardFocus ? rf.near_defocus : rf.sharp}px)`;
+  if (boardEl) boardEl.style.filter = `blur(${isBoardFocus ? rf.sharp : rf.near_defocus}px)`;
+  if (bgEl) bgEl.style.filter = `blur(${rf.far_defocus}px)`;
+}
+
 window.seekAnimation = function(ms) {
   if (window.__timeline) {
     window.__timeline.seek(ms);
   }
 
-  // 1. Loudness-driven mouth sync for speaker
   const frameIdx = Math.floor((ms / 1000.0) * fps);
+
+  // 0. Compute deterministic multiplane camera state & parallax shifts
+  const camState = computeCameraState(ms, frameIdx);
+  applyMultiplaneParallax(camState);
+
+  // 1. Loudness-driven mouth sync for speaker
   const isOpen = (window.__mouthCues && window.__mouthCues[frameIdx]) || false;
   const speakerEl = document.getElementById(window.__speakerSlotId || "character-rig");
   if (speakerEl) {
@@ -311,16 +448,22 @@ window.seekAnimation = function(ms) {
     }
   }
 
-  // 3. Relaxed rest pose with gentle breathing sway only (NO constant bobbing)
+  // 3. Idle life: breathing bob (~1.5s), micro head tilt, and speech squash
+  const breatheY = Math.sin((ms / 1500.0) * 2 * Math.PI) * 1.8;
+  const headTilt = Math.sin((ms / 2800.0) * 2 * Math.PI) * 0.7;
+  const isLeftSpeaker = (window.__speakerSlotId || "character-rig") === "character-rig";
+  const isRightSpeaker = (window.__speakerSlotId || "character-rig") === "character-rig-right";
+  const leftSquash = (isLeftSpeaker && isOpen) ? "scale(1.012, 0.988)" : "scale(1.0, 1.0)";
+  const rightSquash = (isRightSpeaker && isOpen) ? "scale(1.012, 0.988)" : "scale(1.0, 1.0)";
+
   const charRig = document.getElementById("character-rig");
   if (charRig) {
-    const breatheY = Math.sin(ms * 0.0015) * 1.5;
-    charRig.style.transform = `translateY(${breatheY.toFixed(2)}px)`;
+    charRig.style.transform = `translateY(${breatheY.toFixed(2)}px) rotate(${headTilt.toFixed(2)}deg) ${leftSquash}`;
   }
   const charRigRight = document.getElementById("character-rig-right");
   if (charRigRight) {
-    const breatheYRight = Math.sin((ms + 600) * 0.0015) * 1.5;
-    charRigRight.style.transform = `scaleX(-1) translateY(${breatheYRight.toFixed(2)}px)`;
+    const breatheYRight = Math.sin(((ms + 600) / 1500.0) * 2 * Math.PI) * 1.8;
+    charRigRight.style.transform = `scaleX(-1) translateY(${breatheYRight.toFixed(2)}px) rotate(${(-headTilt).toFixed(2)}deg) ${rightSquash}`;
   }
 
   // 4. Purposeful gesture animation: raises at meaningful moment, holds, returns to rest with easing
@@ -515,10 +658,10 @@ window.updateNightStudioEffects = function(ms) {
         el.style.opacity = "1";
       }
 
-      // 1. Kinetic words: pop or slide
+      // 1. Kinetic words: pop with spring overshoot (0 -> 1.18 -> 1.0) or slide
       if (v.type === "kinetic_words") {
         if (v.animation === "pop") {
-          const scale = progress < 0.6 ? (progress / 0.6) * 1.15 : 1.15 - ((progress - 0.6) / 0.4) * 0.15;
+          const scale = progress < 0.65 ? (progress / 0.65) * 1.18 : 1.18 - ((progress - 0.65) / 0.35) * 0.18;
           el.style.transform = `scale(${Math.max(0, scale)})`;
         } else {
           const slideY = (1.0 - progress) * 30;
@@ -542,7 +685,7 @@ window.updateNightStudioEffects = function(ms) {
             const bStart = numStart + bIdx * 80;
             if (ms >= bStart) {
               const bProg = Math.min(1.0, (ms - bStart) / 250);
-              const bScale = bProg < 0.7 ? (bProg / 0.7) * 1.25 : 1.25 - ((bProg - 0.7) / 0.3) * 0.25;
+              const bScale = bProg < 0.65 ? (bProg / 0.65) * 1.18 : 1.18 - ((bProg - 0.65) / 0.35) * 0.18;
               b.style.opacity = "1";
               b.style.transformOrigin = `${b.querySelector("circle").getAttribute("cx")}px ${b.querySelector("circle").getAttribute("cy")}px`;
               b.style.transform = `scale(${bScale})`;
@@ -553,15 +696,14 @@ window.updateNightStudioEffects = function(ms) {
         }
       }
 
-      // 3. Hearts pop: Spring bounce pop-in
+      // 3. Hearts pop: Spring bounce pop-in with overshoot (0 -> 1.18 -> 1.0)
       if (v.type === "hearts_pop") {
         const items = el.querySelectorAll(".heart-item");
         items.forEach((item, hIdx) => {
           const hStart = sMs + hIdx * (v.stagger_ms || 240);
           if (ms >= hStart) {
             const hProg = Math.min(1.0, (ms - hStart) / 450);
-            // Elastic spring bounce
-            const spring = Math.sin(hProg * Math.PI * 1.5) * (1 - hProg) * 0.35 + hProg;
+            const spring = hProg < 0.65 ? (hProg / 0.65) * 1.18 : 1.18 - ((hProg - 0.65) / 0.35) * 0.18;
             item.style.opacity = "1";
             item.style.transform = `scale(${Math.max(0, spring)})`;
           } else {
@@ -571,12 +713,13 @@ window.updateNightStudioEffects = function(ms) {
         });
       }
 
-      // 4. Blue blood drop pop-in
+      // 4. Blue blood drop: falls, glows, and springs (0 -> 1.18 -> 1.0)
       if (v.type === "blue_blood_drop") {
         const bProg = Math.min(1.0, elapsed / 450);
-        const spring = Math.sin(bProg * Math.PI * 1.5) * (1 - bProg) * 0.35 + bProg;
-        el.style.opacity = String(Math.min(1.0, bProg * 2.0));
-        el.style.transform = `scale(${Math.max(0, spring)})`;
+        const fallY = (1.0 - Math.min(1.0, bProg * 1.4)) * -40.0;
+        const spring = bProg < 0.65 ? (bProg / 0.65) * 1.18 : 1.18 - ((bProg - 0.65) / 0.35) * 0.18;
+        el.style.opacity = String(Math.min(1.0, bProg * 2.5));
+        el.style.transform = `translateY(${fallY.toFixed(2)}px) scale(${Math.max(0, spring)})`;
       }
     });
   }

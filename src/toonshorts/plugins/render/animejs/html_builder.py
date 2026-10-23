@@ -233,6 +233,38 @@ def generate_whiteboard_html(
     mouth_cues_json = json.dumps(mouth_cues or [])
     shelf_decor_html, desk_props_html = generate_scene_decorations(scene_number, theme=theme)
 
+    # Multiplane Camera Motion & Depth Configuration from central config
+    camera_parallax_json = json.dumps(getattr(config, "CAMERA_PARALLAX_FACTORS", {
+        "foreground": 2.0, "subject": 1.0, "board": 0.5, "deep_bg": 0.12
+    }))
+    camera_presets_json = json.dumps(getattr(config, "CAMERA_PRESETS", {
+        "wide": {"x": 0.0, "y": 0.0, "zoom": 1.0, "focus": "subject"},
+        "boy_close": {"x": 130.0, "y": -45.0, "zoom": 1.18, "focus": "subject"},
+        "girl_close": {"x": -130.0, "y": -45.0, "zoom": 1.18, "focus": "subject"},
+        "board_close": {"x": 0.0, "y": 90.0, "zoom": 1.25, "focus": "board"},
+    }))
+    camera_config_json = json.dumps({
+        "transition_sec": getattr(config, "CAMERA_TRANSITION_SEC", 0.40),
+        "drift_rot_max": getattr(config, "CAMERA_DRIFT_ROT_MAX", 0.35),
+        "punch_in_zoom": getattr(config, "CAMERA_PUNCH_IN_ZOOM", 1.16),
+        "punch_in_shake": getattr(config, "CAMERA_PUNCH_IN_SHAKE_PX", 1.5),
+        "rack_focus": getattr(config, "CAMERA_RACK_FOCUS_BLUR", {
+            "sharp": 0.0, "near_defocus": 2.2, "far_defocus": 3.8, "transition_frames": 10
+        }),
+    })
+    raw_wts = []
+    if word_timings:
+        for wt in word_timings:
+            w_str = getattr(wt, "word", None) or (wt.get("word") if isinstance(wt, dict) else "")
+            s_t = getattr(wt, "start_time", None) if hasattr(wt, "start_time") else (wt.get("start_time", wt.get("start", 0.0)) if isinstance(wt, dict) else 0.0)
+            e_t = getattr(wt, "end_time", None) if hasattr(wt, "end_time") else (wt.get("end_time", wt.get("end", s_t + 0.3)) if isinstance(wt, dict) else s_t + 0.3)
+            raw_wts.append({
+                "word": str(w_str),
+                "start_ms": int(float(s_t) * 1000),
+                "end_ms": int(float(e_t) * 1000),
+            })
+    word_timings_json = json.dumps(raw_wts)
+
     panel_backdrop_style = ""
     if theme == "night_studio":
         # Check code_editor_monitor.png backdrop inside board panel
@@ -275,6 +307,10 @@ def generate_whiteboard_html(
     result = result.replace("{{SPEAKER_GESTURE}}", speaker_gesture)
     result = result.replace("{{SPEAKER_SLOT_ID}}", speaker_slot_id)
     result = result.replace("{{LISTENER_SLOT_ID}}", listener_slot_id)
+    result = result.replace("{{CAMERA_PARALLAX_JSON}}", camera_parallax_json)
+    result = result.replace("{{CAMERA_PRESETS_JSON}}", camera_presets_json)
+    result = result.replace("{{CAMERA_CONFIG_JSON}}", camera_config_json)
+    result = result.replace("{{WORD_TIMINGS_JSON}}", word_timings_json)
     result = result.replace("{{TOTAL_DURATION_MS}}", str(total_duration_ms))
     result = result.replace("{{TIMELINE_CHAIN}}", timeline_chain)
     result = result.replace("{{SCRIPT_JS}}", script_js)

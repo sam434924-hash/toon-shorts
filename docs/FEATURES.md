@@ -59,10 +59,10 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 ## Render Plugins (`plugins/render`)
 
 ### `animejs`
-- **Description**: HTML5/SVG code-driven whiteboard animation engine with local Anime.js easing curves, bundled Rough.js progressive stroke-by-stroke drawing synced to Whisper word timings (underlines, keyword circles, inter-card arrows), dynamic 2D character pack loading into left and right slots (with mirrored right placement), loudness-driven mouth sync for active speaker, idle blinking/glancing for non-speaking listener, gesture resolution with style presets and scene overrides, 100% constant studio set and static camera across all scenes, safe area gesture boundaries (wave, point, explain, thumbs_up, shrug), and headless browser frame capture.
+- **Description**: HTML5/SVG code-driven whiteboard animation engine with local Anime.js easing curves, bundled Rough.js progressive stroke-by-stroke drawing synced to Whisper word timings (underlines, keyword circles, inter-card arrows), dynamic 2D character pack loading into left and right slots (with mirrored right placement), loudness-driven mouth sync for active speaker, idle blinking/glancing for non-speaking listener, gesture resolution with style presets and scene overrides, 4-layer multiplane depth layering (foreground, subject, board, deep background) with camera parallax factors (2.0, 1.0, 0.5, 0.12), camera presets (wide, boy_close, girl_close, board_close), deterministic frame-based camera drift and punch-in zoom with shake, rack focus blur, safe area gesture boundaries (wave, point, explain, thumbs_up, shrug), and headless browser frame capture.
 - **Files**: `src/toonshorts/plugins/render/animejs/`
-- **Config Flags**: `ANIME_JS_PATH`, `ROUGH_JS_PATH`, `VIDEO_WIDTH`, `VIDEO_HEIGHT`, `VIDEO_FPS`
-- **Tests**: `tests/contract/test_render_contract.py`, `tests/unit/test_animejs.py`
+- **Config Flags**: `ANIME_JS_PATH`, `ROUGH_JS_PATH`, `VIDEO_WIDTH`, `VIDEO_HEIGHT`, `VIDEO_FPS`, `CAMERA_PARALLAX_FACTORS`, `CAMERA_PRESETS`
+- **Tests**: `tests/contract/test_render_contract.py`, `tests/unit/test_animejs.py`, `tests/unit/test_depth_camera_parallax.py`
 
 ### `blender3d`
 - **Description**: Headless Blender 3D robot character renderer for RobotExpressive.glb with validated built-in actions (dance, idle, jump, running, wave, thumbs_up, etc.), clean 3-point lighting, and execution caps.
