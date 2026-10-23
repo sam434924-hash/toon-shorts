@@ -106,6 +106,7 @@ class AnimeJSRenderPlugin(RenderInterface):
         layout: str = "cards",
         visuals: Optional[List[Any]] = None,
         word_timings: Optional[List[Any]] = None,
+        theme: str = "whiteboard",
     ) -> Path:
         """
         Renders a fully animated MP4 video with easing transitions synced to an audio clip.
@@ -130,6 +131,7 @@ class AnimeJSRenderPlugin(RenderInterface):
             layout=layout,
             visuals=visuals,
             word_timings=word_timings,
+            theme=theme,
         )
 
     def render_all_scenes(
