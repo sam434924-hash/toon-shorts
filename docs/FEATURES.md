@@ -177,6 +177,13 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Capabilities**: Pre-cue lead-in scheduling, minimum hold enforcement, cue conflict dropping, clamp to scene bounds, wide-locked fallback for cue-less scenes, pure function of time seeking, and text timeline generation to `baseline/phase4b/`.
 - **Tests**: `tests/unit/test_camera_shot_planner.py`
 
+### Visual Style Profile (`core/style_profile`)
+- **Description**: Automated style profile extractor deriving 8-color palettes, stroke widths, outline colors, fill techniques, font family, and roughness from character SVGs with image prompt descriptions and contact sheet linkage.
+- **Files**: `src/toonshorts/core/style_profile.py`, `.agents/skills/toon-shorts-style/SKILL.md`
+- **Config Flags**: `ENABLE_STYLE_PROFILE`
+- **Capabilities**: Safe SVG parsing, hex color normalization, multi-character style distance calculation, and single-style-per-video enforcement.
+- **Tests**: `tests/unit/test_style_profile.py`
+
 ## 2D Layered Character System (`core/character2d`, `core/character_pack`)
 
 ### `presenter` (Whiteboard Presenter Character Pack)

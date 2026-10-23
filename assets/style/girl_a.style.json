@@ -1,0 +1,21 @@
+{
+  "pack_id": "girl_a",
+  "palette": [
+    "#2a1523",
+    "#3e1b12",
+    "#ffffff",
+    "#9e3108",
+    "#293f59",
+    "#f1b799",
+    "#6f3477",
+    "#fedbc3"
+  ],
+  "stroke_width": 4.5,
+  "outline_color": "#2a1523",
+  "fill_style": "flat_solid",
+  "roughness": 0.0,
+  "font_family": "Arial, sans-serif",
+  "highlight_color": "#3e1b12",
+  "style_description": "2D modern animated vector cartoon style with crisp 4.5px solid outlines in #2a1523, vibrant flat color fills with harmonic palette (#2a1523, #3e1b12, #ffffff, #9e3108, #293f59), subtle geometric shadows, zero sketchy roughness, expressive clean facial features, and electric highlight accents in #3e1b12.",
+  "reference_contact_sheet": "assets/2d/characters/girl_a/staging/girl_a_preview_sheet.png"
+}

@@ -1,0 +1,21 @@
+{
+  "pack_id": "boy_b",
+  "palette": [
+    "#1b1516",
+    "#2b1d1f",
+    "#ffffff",
+    "#3b689a",
+    "#3a4c5c",
+    "#482920",
+    "#361f19",
+    "#4f82ba"
+  ],
+  "stroke_width": 4.0,
+  "outline_color": "#1b1516",
+  "fill_style": "flat_solid",
+  "roughness": 0.0,
+  "font_family": "Arial, sans-serif",
+  "highlight_color": "#2b1d1f",
+  "style_description": "2D modern animated vector cartoon style with crisp 4.0px solid outlines in #1b1516, vibrant flat color fills with harmonic palette (#1b1516, #2b1d1f, #ffffff, #3b689a, #3a4c5c), subtle geometric shadows, zero sketchy roughness, expressive clean facial features, and electric highlight accents in #2b1d1f.",
+  "reference_contact_sheet": "assets/2d/characters/boy_b/staging/boy_b_preview_sheet.png"
+}

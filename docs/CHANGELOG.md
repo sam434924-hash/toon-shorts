@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-24: phase4b-2: style profile extractor, safe SVG palette parsing, single style per video enforcement, and toon-shorts-style skill.
+
 - 2026-10-24: phase4b-1: purposeful camera shot plan with lead-in moves, hold constraints, easeInOutCubic transitions, zero continuous drift, and timeline reporting.
 
 - 2026-10-23: Phase 4C: implemented word-aligned Rough.js annotations synchronized with speech timings, text content validation, and strict JSON/textContent XSS safety.

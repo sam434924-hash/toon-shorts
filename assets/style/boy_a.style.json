@@ -1,0 +1,21 @@
+{
+  "pack_id": "boy_a",
+  "palette": [
+    "#22120b",
+    "#5c382a",
+    "#ffffff",
+    "#e6a389",
+    "#3d2119",
+    "#e2e8f0",
+    "#150a06",
+    "#f8cba8"
+  ],
+  "stroke_width": 3.5,
+  "outline_color": "#22120b",
+  "fill_style": "flat_solid",
+  "roughness": 0.0,
+  "font_family": "Arial, sans-serif",
+  "highlight_color": "#5c382a",
+  "style_description": "2D modern animated vector cartoon style with crisp 3.5px solid outlines in #22120b, vibrant flat color fills with harmonic palette (#22120b, #5c382a, #ffffff, #e6a389, #3d2119), subtle geometric shadows, zero sketchy roughness, expressive clean facial features, and electric highlight accents in #5c382a.",
+  "reference_contact_sheet": "assets/2d/characters/boy_a/staging/boy_a_contact_sheet.png"
+}

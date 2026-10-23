@@ -1,0 +1,21 @@
+{
+  "pack_id": "presenter",
+  "palette": [
+    "#ffffff",
+    "#0f172a",
+    "#fed7aa",
+    "#1e40af",
+    "#1e293b",
+    "#881337",
+    "#fba785",
+    "#d97706"
+  ],
+  "stroke_width": 4.8,
+  "outline_color": "#0f172a",
+  "fill_style": "flat_solid",
+  "roughness": 0.0,
+  "font_family": "Arial, sans-serif",
+  "highlight_color": "#fed7aa",
+  "style_description": "2D modern animated vector cartoon style with crisp 4.8px solid outlines in #0f172a, vibrant flat color fills with harmonic palette (#ffffff, #0f172a, #fed7aa, #1e40af, #1e293b), subtle geometric shadows, zero sketchy roughness, expressive clean facial features, and electric highlight accents in #fed7aa.",
+  "reference_contact_sheet": ""
+}
