@@ -10,3 +10,4 @@ The codebase is structured around a plugin architecture with isolated core logic
 3. After any change: update the file headers, run tools/update_docs.py, update FEATURES.md, add one CHANGELOG line, run all tests.
 4. New voice engines, renderers, providers, and styles are plugins: follow docs/ARCHITECTURE.md.
 5. Never append history or logs to this file.
+6. Do not pull, poll, or check in changes until the entire task and work are fully finished and verified. Do not poll running background tasks.
