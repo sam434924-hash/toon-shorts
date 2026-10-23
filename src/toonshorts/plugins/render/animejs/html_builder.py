@@ -244,7 +244,7 @@ def generate_whiteboard_html(
         "board_close": {"x": 0.0, "y": 90.0, "zoom": 1.25, "focus": "board"},
     }))
     camera_config_json = json.dumps({
-        "transition_sec": getattr(config, "CAMERA_TRANSITION_SEC", 0.40),
+        "transition_sec": getattr(config, "CAMERA_TRANSITION_SEC", 0.80),
         "drift_rot_max": getattr(config, "CAMERA_DRIFT_ROT_MAX", 0.35),
         "punch_in_zoom": getattr(config, "CAMERA_PUNCH_IN_ZOOM", 1.16),
         "punch_in_shake": getattr(config, "CAMERA_PUNCH_IN_SHAKE_PX", 1.5),

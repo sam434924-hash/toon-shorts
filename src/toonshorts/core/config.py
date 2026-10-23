@@ -109,7 +109,7 @@ CAMERA_PRESETS = {
     "board_close": {"x": 0.0, "y": 90.0, "zoom": 1.25, "focus": "board"},
 }
 
-CAMERA_TRANSITION_SEC = 0.40  # 0.3 to 0.5s with easing
+CAMERA_TRANSITION_SEC = 0.80  # 0.3 to 0.5s with easing
 CAMERA_DRIFT_ROT_MAX = 0.35   # under 0.4 degrees
 CAMERA_PUNCH_IN_ZOOM = 1.16   # 1.12 to 1.18
 CAMERA_PUNCH_IN_SHAKE_PX = 1.5
