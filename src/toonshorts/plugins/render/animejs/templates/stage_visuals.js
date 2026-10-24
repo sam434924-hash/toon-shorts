@@ -647,12 +647,15 @@ window.updateBoardObjects = function(ms) {
     }
 
     // Enter styling: pop, slide_in, draw_on
-    if (obj.enter === "pop") {
-      const spring = p < 0.65 ? (p / 0.65) * 1.18 : 1.18 - ((p - 0.65) / 0.35) * 0.18;
+    if (obj.type === "custom") {
+      el.style.transform = "none";
+      el.style.opacity = String(pExit.toFixed(3));
+    } else if (obj.enter === "pop") {
+      const spring = p < 0.7 ? (p / 0.7) * 1.03 : 1.03 - ((p - 0.7) / 0.3) * 0.03;
       el.style.transform = "scale(" + Math.max(0, spring).toFixed(3) + ")";
       el.style.opacity = String(pExit.toFixed(3));
     } else if (obj.enter === "slide_in") {
-      const slideY = (1.0 - p) * -30.0;
+      const slideY = (1.0 - p) * -15.0;
       el.style.transform = "translateY(" + slideY.toFixed(2) + "px)";
       el.style.opacity = String((Math.min(1.0, p * 2.0) * pExit).toFixed(3));
     } else {
@@ -812,7 +815,7 @@ window.updateBoardObjects = function(ms) {
         } else if (preset === "fade_in") {
           customWrap.style.opacity = String(p.toFixed(3));
         } else if (preset === "pop" || preset === "bounce") {
-          const scale = p < 0.7 ? (p / 0.7) * 1.15 : 1.15 - ((p - 0.7) / 0.3) * 0.15;
+          const scale = p < 0.7 ? (p / 0.7) * 1.03 : 1.03 - ((p - 0.7) / 0.3) * 0.03;
           customWrap.style.transform = "scale(" + Math.max(0, scale).toFixed(3) + ")";
           customWrap.style.opacity = p > 0.05 ? "1" : String((p * 20).toFixed(2));
         } else if (preset === "slide_in") {

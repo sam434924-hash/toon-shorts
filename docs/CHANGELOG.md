@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-25: layout planned stills review: planned and rendered 7 scene stills for How_hackers_actually_break_into_systems_v3 using layout templates and board objects, resolved base64 asset encoding, verified zero layout violations and 10/10 visual review, and documented visual_review.md.
+
 - 2026-10-25: image asset planning, travel and wobble presets, and test isolation: wired image asset planning with library lookup first into pipeline, added travel and pop-with-wobble animation presets, generated real 2FA shield asset, and isolated fast preview test to temporary directory.
 
 - 2026-10-25: layout checks and comparison: extended layout verification with continuous beat-time sampling every 100ms and enter/exit, pairwise overlap, slot boundary containment, 3-element concurrency, horizontal visual balance warning, and check-visuals still-to-layout plan comparison.

@@ -1,0 +1,45 @@
+=======================================================
+        AUTOMATED LAYOUT & SAFE-ZONE REPORT
+=======================================================
+Directory:     c:\dev\toon-shorts\videos\How_hackers_actually_break_into_systems_v3
+Total Scenes:  7
+Overall Status: PASSED
+-------------------------------------------------------
+Scene  1 [PASS]: Board Y=[288, 808], Title Y=[0, 0]
+Scene  2 [PASS]: Board Y=[288, 808], Title Y=[0, 0]
+    - Scene 2 (t=400ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 2 (t=500ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 2 (t=600ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 2 (t=700ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 2 (t=800ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 2 (t=900ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 2 (t=1000ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 2 (t=1100ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 2 (t=1200ms) [BALANCE WARN]: Visual area is off-balance: 76.7% on left side (threshold: 70%).
+    - Scene 2 (t=1300ms) [BALANCE WARN]: Visual area is off-balance: 76.7% on left side (threshold: 70%).
+    - Scene 2 (t=1400ms) [BALANCE WARN]: Visual area is off-balance: 76.7% on left side (threshold: 70%).
+    - Scene 2 (t=1500ms) [BALANCE WARN]: Visual area is off-balance: 76.7% on left side (threshold: 70%).
+    - Scene 2 (t=1600ms) [BALANCE WARN]: Visual area is off-balance: 76.7% on left side (threshold: 70%).
+    - Scene 2 (t=1700ms) [BALANCE WARN]: Visual area is off-balance: 76.7% on left side (threshold: 70%).
+    - Scene 2 (t=1800ms) [BALANCE WARN]: Visual area is off-balance: 76.7% on left side (threshold: 70%).
+    - Scene 2 (t=1900ms) [BALANCE WARN]: Visual area is off-balance: 76.7% on left side (threshold: 70%).
+    - Scene 2 (t=2000ms) [BALANCE WARN]: Visual area is off-balance: 76.7% on left side (threshold: 70%).
+    - Scene 2 (t=2100ms) [BALANCE WARN]: Visual area is off-balance: 76.7% on left side (threshold: 70%).
+Scene  3 [PASS]: Board Y=[288, 808], Title Y=[0, 0]
+    - Scene 3 (t=400ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 3 (t=500ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 3 (t=600ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 3 (t=700ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 3 (t=800ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 3 (t=900ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 3 (t=1000ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 3 (t=1100ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+Scene  4 [PASS]: Board Y=[288, 808], Title Y=[0, 0]
+    - Scene 4 (t=400ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 4 (t=500ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 4 (t=600ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+    - Scene 4 (t=700ms) [BALANCE WARN]: Visual area is off-balance: 100.0% on left side (threshold: 70%).
+Scene  5 [PASS]: Board Y=[288, 808], Title Y=[0, 0]
+Scene  6 [PASS]: Board Y=[288, 808], Title Y=[0, 0]
+Scene  7 [PASS]: Board Y=[288, 808], Title Y=[0, 0]
+=======================================================

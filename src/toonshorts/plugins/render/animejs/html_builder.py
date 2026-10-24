@@ -138,45 +138,56 @@ def generate_whiteboard_html(
     title_start_ms = 100
     title_duration_ms = 420
 
+    has_layout_or_bo = bool(isinstance(layout, dict) or board_objects)
+    if has_layout_or_bo:
+        title_badge_html = '<div class="title-badge" id="wb-title" style="display: none;"></div>'
+    else:
+        title_badge_html = f'<div class="title-badge" id="wb-title">{safe_title}</div>'
+
     # Build fallback annotations if not provided
     if annotations is None:
-        annotations = [{
-            "id": "rough-title-underline",
-            "type": "underline",
-            "start_ms": 100,
-            "duration_ms": 380,
-        }]
-        for idx, w in enumerate(words):
-            s_ms = int(w.get("start_ms", title_start_ms + title_duration_ms + idx * 580))
-            annotations.append({
-                "id": f"rough-circle-{idx+1}",
-                "type": "circle",
-                "card_index": idx,
-                "start_ms": s_ms,
-                "duration_ms": 420,
-            })
-            if idx < len(words) - 1:
-                next_s = int(words[idx+1].get("start_ms", s_ms + 580))
-                arr_ms = (s_ms + next_s) // 2
+        if has_layout_or_bo:
+            annotations = []
+        else:
+            annotations = [{
+                "id": "rough-title-underline",
+                "type": "underline",
+                "start_ms": 100,
+                "duration_ms": 380,
+            }]
+            for idx, w in enumerate(words):
+                s_ms = int(w.get("start_ms", title_start_ms + title_duration_ms + idx * 580))
                 annotations.append({
-                    "id": f"rough-arrow-{idx+1}",
-                    "type": "arrow",
-                    "card_from": idx,
-                    "card_to": idx + 1,
-                    "start_ms": arr_ms,
-                    "duration_ms": 400,
+                    "id": f"rough-circle-{idx+1}",
+                    "type": "circle",
+                    "card_index": idx,
+                    "start_ms": s_ms,
+                    "duration_ms": 420,
                 })
+                if idx < len(words) - 1:
+                    next_s = int(words[idx+1].get("start_ms", s_ms + 580))
+                    arr_ms = (s_ms + next_s) // 2
+                    annotations.append({
+                        "id": f"rough-arrow-{idx+1}",
+                        "type": "arrow",
+                        "card_from": idx,
+                        "card_to": idx + 1,
+                        "start_ms": arr_ms,
+                        "duration_ms": 400,
+                    })
 
     # Anime.js timeline for title and cards entry
-    timeline_steps = [
-        f"""    .add({{
+    timeline_steps = []
+    if not has_layout_or_bo:
+        timeline_steps.append(
+            f"""    .add({{
       targets: '#wb-title',
       opacity: [0, 1],
       translateY: [-28, 0],
       duration: {title_duration_ms},
       easing: 'easeOutBack'
     }}, {title_start_ms})"""
-    ]
+        )
 
     card_colors = [
         ("#2563eb", "#eff6ff"),  # Vibrant Royal Blue
@@ -254,6 +265,10 @@ def generate_whiteboard_html(
         board_content = stage_markup
         stage_visuals_json = json.dumps(stage_descriptors)
         extra_stage_css = stage_css
+    elif board_objects or isinstance(layout, dict):
+        board_content = ""
+        card_timing_info = []
+        card_timing_json = "[]"
     else:
         board_content = f'    <div class="word-list">\n{cards_markup}\n    </div>'
 
@@ -521,7 +536,7 @@ def generate_whiteboard_html(
         <div id="layer-board" class="whiteboard-outer" data-depth-factor="0.5">
           <div class="panel-backdrop-dim" style="{{PANEL_BACKDROP_STYLE}}"></div>
           <svg id="rough-canvas" width="900" height="520"></svg>
-          <div class="title-badge" id="wb-title">{{TITLE}}</div>
+{{TITLE_BADGE_HTML}}
 {{BOARD_CONTENT}}
           <!-- Board Objects Layer (Phase 4B-4) -->
           <div id="board-objects-container" class="board-objects-container">
@@ -570,7 +585,7 @@ def generate_whiteboard_html(
       <div class="whiteboard-outer">
         <div class="panel-backdrop-dim" style="{{PANEL_BACKDROP_STYLE}}"></div>
         <svg id="rough-canvas" width="900" height="980"></svg>
-        <div class="title-badge" id="wb-title">{{TITLE}}</div>
+{{TITLE_BADGE_HTML}}
 {{BOARD_CONTENT}}
         <!-- Board Objects Layer (Phase 4B-4) -->
         <div id="board-objects-container" class="board-objects-container">
@@ -624,6 +639,7 @@ def generate_whiteboard_html(
     result = result.replace("{{PANEL_BACKDROP_STYLE}}", panel_backdrop_style)
     result = result.replace("{{WIDTH}}", str(width))
     result = result.replace("{{HEIGHT}}", str(height))
+    result = result.replace("{{TITLE_BADGE_HTML}}", title_badge_html)
     result = result.replace("{{TITLE}}", safe_title)
     result = result.replace("{{STYLE_CSS}}", formatted_css)
     result = result.replace("{{DYNAMIC_CSS}}", characters_dynamic_css)

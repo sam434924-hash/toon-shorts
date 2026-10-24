@@ -248,7 +248,22 @@ def validate_board_object_schema(
         if preset not in ALLOWED_IMAGE_PRESETS:
             preset = "slide_in_tilt"
         sanitized_data["preset"] = preset
-        sanitized_data["image_url"] = str(raw_data.get("image_url") or raw_data.get("src") or raw_data.get("path") or "")
+
+        img_src = str(raw_data.get("image_url") or raw_data.get("src") or raw_data.get("path") or "")
+        if img_src and not img_src.startswith("data:"):
+            from pathlib import Path
+            import base64
+            img_p = Path(img_src)
+            if not img_p.is_file():
+                cand = config.PROJECT_ROOT / img_src
+                if cand.is_file():
+                    img_p = cand
+            if img_p.is_file():
+                ext = img_p.suffix.lstrip(".").lower()
+                mime = "image/jpeg" if ext in ("jpg", "jpeg") else (f"image/{ext}" if ext in ("png", "webp", "gif") else "image/png")
+                b64 = base64.b64encode(img_p.read_bytes()).decode("utf-8")
+                img_src = f"data:{mime};base64,{b64}"
+        sanitized_data["image_url"] = img_src
         sanitized_data["alt"] = sanitize_board_text(raw_data.get("alt", ""))
         sanitized_data["highlight_region"] = raw_data.get("highlight_region") or [50, 50]
         sanitized_data["push_region"] = raw_data.get("push_region") or [50, 50]
