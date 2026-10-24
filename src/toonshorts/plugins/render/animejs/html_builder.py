@@ -2,7 +2,7 @@
 Purpose: Template assembly and HTML document generation for whiteboard scenes.
 Inputs: Scene metadata, character SVG rigs, timing cues, annotations, and stage visuals.
 Outputs: Self-contained HTML5 string embedding local script engines and CSS.
-Depends on: core.board_objects, core.camera, core.config, core.models, html, json, pathlib, plugins.render.animejs.cast, plugins.render.animejs.gestures, plugins.render.animejs.layout, plugins.render.animejs.visual_renderer, typing
+Depends on: core.board_objects, core.camera, core.config, core.layout_planner, core.models, html, json, pathlib, plugins.render.animejs.cast, plugins.render.animejs.gestures, plugins.render.animejs.layout, plugins.render.animejs.visual_renderer, typing
 Used by: plugins.render.animejs, plugins.render.animejs.capture, plugins.render.animejs.plugin
 Config keys: ANIME_JS_PATH, ENABLE_BOARD_OBJECTS, ENABLE_PARALLAX_BACKGROUND, ENABLE_PURPOSEFUL_CAMERA, ENABLE_SPLIT_CAMERA_ZONES, ROUGH_JS_PATH, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
 Tests: tests/unit/test_animejs.py, tests/unit/test_board_objects.py, tests/unit/test_split_camera_zones.py, tests/unit/test_word_annotations_security.py
@@ -39,6 +39,52 @@ from toonshorts.plugins.render.animejs.visual_renderer import (
 )
 
 TEMPLATES_DIR = Path(__file__).resolve().parent / "templates"
+
+
+def build_board_slots_markup(
+    layout: Any,
+    style_preset: Optional[Dict[str, Any]] = None,
+) -> str:
+    """Builds HTML markup for board slots based on the active layout template."""
+    from toonshorts.core.layout_planner import (
+        DEFAULT_LAYOUT_TEMPLATES,
+        canvas_to_board_relative_box,
+        load_layout_templates,
+    )
+
+    templates = load_layout_templates(style_preset)
+    tmpl_name = "hero"
+    if isinstance(layout, dict):
+        tmpl_name = layout.get("template", "hero")
+    elif isinstance(layout, str) and layout in templates:
+        tmpl_name = layout
+
+    tmpl = templates.get(tmpl_name, DEFAULT_LAYOUT_TEMPLATES.get("hero", {}))
+    padding = tmpl.get("padding", 16)
+    slots = tmpl.get("slots", {})
+
+    slot_divs = []
+    generated_slot_ids = set()
+
+    for s_name, s_box in slots.items():
+        rel = canvas_to_board_relative_box(s_box)
+        slot_id = f"board-slot-{s_name}"
+        generated_slot_ids.add(slot_id)
+        slot_divs.append(
+            f'            <div class="board-slot slot-{s_name}" id="{slot_id}" data-slot="{s_name}" '
+            f'style="position: absolute; left: {rel["left"]}px; top: {rel["top"]}px; '
+            f'width: {rel["width"]}px; height: {rel["height"]}px; padding: {padding}px; '
+            f'box-sizing: border-box; display: flex; align-items: center; justify-content: center; overflow: hidden;"></div>'
+        )
+
+    # Legacy fallback slots for backward compatibility
+    legacy = [("top", "slot-top"), ("mid", "slot-mid"), ("bottom", "slot-bottom"), ("center", "slot-center")]
+    for s_key, s_cls in legacy:
+        s_id = f"board-slot-{s_key}"
+        if s_id not in generated_slot_ids:
+            slot_divs.append(f'            <div class="board-slot {s_cls}" id="{s_id}"></div>')
+
+    return "\n".join(slot_divs)
 
 
 def generate_whiteboard_html(
@@ -201,7 +247,8 @@ def generate_whiteboard_html(
     # Determine layout mode content (cards vs stage)
     stage_visuals_json = "[]"
     extra_stage_css = ""
-    if layout == "stage" and visuals:
+    is_stage_mode = (layout == "stage") or isinstance(layout, dict)
+    if is_stage_mode and visuals:
         resolved_vis = resolve_visual_timings(visuals, word_timings or [], duration_sec, scene_number)
         stage_markup, stage_css, stage_descriptors = build_stage_elements(resolved_vis, scene_number)
         board_content = stage_markup
@@ -395,7 +442,7 @@ def generate_whiteboard_html(
                 word_timings=word_timings,
                 style_profile=style_profile,
             )
-        elif visuals and layout == "stage":
+        elif visuals and (layout == "stage" or isinstance(layout, dict)):
             resolved_bo = convert_visuals_to_board_objects(
                 visuals,
                 scene_number=scene_number,
@@ -465,6 +512,7 @@ def generate_whiteboard_html(
 
     # Format CSS
     formatted_css = style_css.replace("{{WIDTH}}", str(width)).replace("{{HEIGHT}}", str(height))
+    board_slots_html = build_board_slots_markup(layout, style_profile)
 
     if is_split_zones:
         main_content_layers = """    <!-- BOARD ZONE (Upper Area, Clipped) -->
@@ -477,10 +525,7 @@ def generate_whiteboard_html(
 {{BOARD_CONTENT}}
           <!-- Board Objects Layer (Phase 4B-4) -->
           <div id="board-objects-container" class="board-objects-container">
-            <div class="board-slot slot-top" id="board-slot-top"></div>
-            <div class="board-slot slot-mid" id="board-slot-mid"></div>
-            <div class="board-slot slot-bottom" id="board-slot-bottom"></div>
-            <div class="board-slot slot-center" id="board-slot-center"></div>
+{{BOARD_SLOTS_HTML}}
           </div>
           <div class="marker-tray">
             <div class="marker black"></div>
@@ -529,10 +574,7 @@ def generate_whiteboard_html(
 {{BOARD_CONTENT}}
         <!-- Board Objects Layer (Phase 4B-4) -->
         <div id="board-objects-container" class="board-objects-container">
-          <div class="board-slot slot-top" id="board-slot-top"></div>
-          <div class="board-slot slot-mid" id="board-slot-mid"></div>
-          <div class="board-slot slot-bottom" id="board-slot-bottom"></div>
-          <div class="board-slot slot-center" id="board-slot-center"></div>
+{{BOARD_SLOTS_HTML}}
         </div>
         <div class="marker-tray">
           <div class="marker black"></div>
@@ -565,6 +607,8 @@ def generate_whiteboard_html(
         <div class="desk-body"></div>
       </div>
     </div>"""
+
+    main_content_layers = main_content_layers.replace("{{BOARD_SLOTS_HTML}}", board_slots_html)
 
     # Replace placeholders in HTML template
     result = template_html

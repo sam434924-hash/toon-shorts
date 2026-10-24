@@ -43,6 +43,13 @@ ALLOWED_IMAGE_PRESETS = {
 ALLOWED_ENTER_STYLES = {"draw_on", "pop", "slide_in"}
 
 BOARD_SLOTS = ["slot_top", "slot_mid", "slot_bottom", "slot_center"]
+TEMPLATE_BOARD_SLOTS = {
+    "hero", "left", "right", "step_1", "step_2", "step_3",
+    "top", "mid", "bottom", "title", "card",
+    "slot_hero", "slot_left", "slot_right", "slot_title", "slot_card",
+    "slot_step_1", "slot_step_2", "slot_step_3",
+}
+ALL_BOARD_SLOTS = set(BOARD_SLOTS) | TEMPLATE_BOARD_SLOTS
 
 # Security & Design Hard Caps
 MAX_OBJECTS_PER_SCENE = 8
@@ -189,8 +196,8 @@ def validate_board_object_schema(
         enter_style = "draw_on" if obj_type in ("svg_draw", "diagram_flow") else "pop"
 
     # Board slot
-    raw_slot = str(raw_obj.get("board_slot", "")).strip()
-    slot = raw_slot if raw_slot in BOARD_SLOTS else BOARD_SLOTS[index % len(BOARD_SLOTS)]
+    raw_slot = str(raw_obj.get("board_slot", "")).strip().lower()
+    slot = raw_slot if raw_slot in ALL_BOARD_SLOTS else (raw_slot if raw_slot in BOARD_SLOTS else BOARD_SLOTS[index % len(BOARD_SLOTS)])
 
     # Validate data payload
     raw_data = raw_obj.get("data") or {}
@@ -278,7 +285,7 @@ def validate_board_object_schema(
 
     seed = derive_object_seed(scene_number, obj_id)
 
-    return {
+    ret_obj = {
         "id": obj_id,
         "type": obj_type,
         "start_ms": start_ms,
@@ -289,6 +296,10 @@ def validate_board_object_schema(
         "seed": seed,
         "data": sanitized_data,
     }
+    decl_ov = raw_obj.get("overlap") or raw_obj.get("declared_overlap")
+    if decl_ov:
+        ret_obj["overlap"] = decl_ov
+    return ret_obj
 
 
 def resolve_board_objects_for_scene(
@@ -323,12 +334,19 @@ def resolve_board_objects_for_scene(
         return []
 
     # Overlap resolution: ensure no two objects in the same slot overlap in time
-    slot_occupancy: Dict[str, List[Tuple[int, int]]] = {s: [] for s in BOARD_SLOTS}
+    slot_occupancy: Dict[str, List[Tuple[int, int]]] = {s: [] for s in ALL_BOARD_SLOTS}
 
     for obj in valid_objects:
         slot = obj["board_slot"]
         s_ms = obj["start_ms"]
         e_ms = obj["exit_ms"]
+
+        # Declared overlaps skip collision reallocation
+        if obj.get("overlap") or obj.get("declared_overlap"):
+            slot_occupancy.setdefault(slot, []).append((s_ms, e_ms))
+            continue
+
+        slot_occupancy.setdefault(slot, [])
 
         # Check collision with already allocated intervals in this slot
         collision = any(

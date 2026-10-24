@@ -32,6 +32,75 @@
     "target_move_interval_s": [3, 6]
   },
   "default_sound_effects": ["pop", "bell"],
+  "layout_templates": {
+    "hero": {
+      "padding": 16,
+      "min_gap": 20,
+      "slots": {
+        "hero": {"x": 80, "y": 308, "width": 860, "height": 480}
+      }
+    },
+    "split": {
+      "padding": 16,
+      "min_gap": 20,
+      "slots": {
+        "left": {"x": 80, "y": 308, "width": 415, "height": 480},
+        "right": {"x": 525, "y": 308, "width": 415, "height": 480}
+      }
+    },
+    "chain": {
+      "padding": 14,
+      "min_gap": 20,
+      "slots": {
+        "step_1": {"x": 80, "y": 308, "width": 266, "height": 480},
+        "step_2": {"x": 377, "y": 308, "width": 266, "height": 480},
+        "step_3": {"x": 674, "y": 308, "width": 266, "height": 480}
+      }
+    },
+    "stack": {
+      "padding": 14,
+      "min_gap": 16,
+      "slots": {
+        "top": {"x": 80, "y": 308, "width": 860, "height": 140},
+        "mid": {"x": 80, "y": 468, "width": 860, "height": 140},
+        "bottom": {"x": 80, "y": 628, "width": 860, "height": 140}
+      }
+    },
+    "title-card": {
+      "padding": 16,
+      "min_gap": 20,
+      "slots": {
+        "title": {"x": 80, "y": 308, "width": 860, "height": 95},
+        "card": {"x": 80, "y": 425, "width": 860, "height": 363}
+      }
+    }
+  },
+  "motion_presets": {
+    "pop": {
+      "easing": "easeOutBack",
+      "duration_ms": 500
+    },
+    "slide_in": {
+      "easing": "easeOutCubic",
+      "duration_ms": 600
+    },
+    "fade": {
+      "easing": "easeInOutQuad",
+      "duration_ms": 400
+    },
+    "draw_on": {
+      "easing": "easeOutQuad",
+      "duration_ms": 800
+    },
+    "travel": {
+      "easing": "easeInOutSine",
+      "duration_ms": 1200
+    },
+    "pop_with_wobble": {
+      "easing": "easeOutElastic(1, .5)",
+      "duration_ms": 700
+    }
+  },
   "avoid": [
     "photorealistic human skin",
     "dark chalkboard",

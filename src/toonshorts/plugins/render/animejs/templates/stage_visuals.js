@@ -302,8 +302,12 @@ window.initBoardObjects = function() {
   }
 
   objects.forEach(obj => {
-    const slotSuffix = (obj.board_slot || "slot_mid").replace("slot_", "");
-    const slotEl = document.getElementById("board-slot-" + slotSuffix);
+    const rawSlot = String(obj.board_slot || "slot_mid").toLowerCase().trim();
+    const slotSuffix = rawSlot.replace(/^slot_/, "");
+    let slotEl = document.getElementById("board-slot-" + slotSuffix) ||
+                 document.getElementById("board-slot-" + rawSlot) ||
+                 document.getElementById("board-slot-" + (slotSuffix === "hero" ? "center" : (slotSuffix === "card" ? "mid" : "center")));
+    if (!slotEl) slotEl = document.getElementById("board-objects-container");
     if (!slotEl) return;
 
     if (document.getElementById(obj.id)) return;
@@ -312,6 +316,31 @@ window.initBoardObjects = function() {
     el.id = obj.id;
     el.className = "board-object bo-" + obj.type.replace(/_/g, "-");
     el.style.opacity = "0";
+    el.style.boxSizing = "border-box";
+    el.style.maxWidth = "100%";
+    el.style.maxHeight = "100%";
+
+    // Handle declared overlap {badge or label on a card corner} with layer order
+    if (obj.overlap || obj.declared_overlap) {
+      const ov = obj.overlap || obj.declared_overlap;
+      el.classList.add("bo-declared-overlap");
+      el.style.position = "absolute";
+      el.style.zIndex = String(ov.layer_order || ov.layer || 2);
+      const corner = ov.corner || "top_right";
+      if (corner === "top_right") {
+        el.style.top = "8px";
+        el.style.right = "8px";
+      } else if (corner === "top_left") {
+        el.style.top = "8px";
+        el.style.left = "8px";
+      } else if (corner === "bottom_right") {
+        el.style.bottom = "8px";
+        el.style.right = "8px";
+      } else if (corner === "bottom_left") {
+        el.style.bottom = "8px";
+        el.style.left = "8px";
+      }
+    }
 
     const st = obj.style || {};
     const pal = st.palette || ["#1b1516", "#ffffff", "#38bdf8", "#818cf8"];

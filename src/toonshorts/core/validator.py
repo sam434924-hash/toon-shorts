@@ -2,7 +2,7 @@
 Purpose: Screenplay v1/v2 schema validation, directing rules enforcement, and plan adaptation.
 Inputs: ScriptPlan objects or raw dictionary representations of script plans.
 Outputs: Validated ScriptPlan instances or descriptive one-line validation errors.
-Depends on: core.models, core.visuals, re, typing
+Depends on: core.layout_planner, core.models, core.visuals, re, typing
 Used by: core.pipeline, plugins.llm.gemini
 Config keys: None
 Tests: tests/unit/test_validation.py, tests/unit/test_v2_validation.py, tests/unit/test_visual_templates.py
@@ -12,6 +12,7 @@ import math
 import re
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
+from toonshorts.core.layout_planner import validate_scene_layout
 from toonshorts.core.models import (
     Character,
     PlanValidationError,
@@ -241,7 +242,10 @@ def validate_plan(
             scene_cast = [sc.speaker]
 
         # Layout validation
-        if sc.layout not in ("cards", "stage"):
+        if isinstance(sc.layout, dict):
+            layout_errs = validate_scene_layout(sc.layout, scene_duration=sc_len, scene_number=sc.scene_number)
+            all_errors.extend(layout_errs)
+        elif sc.layout not in ("cards", "stage"):
             all_errors.append(
                 f"Scene {sc.scene_number}: layout: must be 'cards' or 'stage' (got '{sc.layout}')"
             )

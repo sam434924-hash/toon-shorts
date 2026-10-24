@@ -260,3 +260,11 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Files**: `src/toonshorts/core/images.py`, `src/toonshorts/core/board_objects.py`, `src/toonshorts/plugins/render/animejs/templates/stage_visuals.js`, `src/toonshorts/core/models.py`
 - **Capabilities**: Reference intake, theme draft generation, image safety checks, cutout generation with drop shadows, library index caching, and board object image presets.
 - **Tests**: `tests/unit/test_images_and_references.py`
+
+## Visual Layout System (`core/layout_planner`)
+
+### `layout_planning` (Board Visual Layout Planning System)
+- **Description**: Deterministic board layout system providing 5 core layout templates (`hero`, `split`, `chain`, `stack`, `title-card`) with bounded slot placement strictly within the board zone (y=288..808, x=60..960), minimum gap separation, lifecycle exit enforcement (shrink, slide, or fade before slot reuse), declared corner badge overlap validation, max 3 elements on screen at once, strictly one hero per beat, and horizontal visual balance checking.
+- **Files**: `src/toonshorts/core/layout_planner.py`, `src/toonshorts/core/models.py`, `src/toonshorts/core/validator.py`, `src/toonshorts/core/board_objects.py`, `src/toonshorts/plugins/render/animejs/html_builder.py`, `src/toonshorts/plugins/render/animejs/templates/stage_visuals.js`, `src/toonshorts/styles/night_studio.json`, `src/toonshorts/styles/whiteboard.json`
+- **Capabilities**: Schema validation of scene layout blocks, theme-based layout template discovery, slot coordinate resolution, element lifecycle transitions without overlap, declared corner badge validation, and visual balance diagnostics.
+- **Tests**: `tests/unit/test_layout_planner.py`
