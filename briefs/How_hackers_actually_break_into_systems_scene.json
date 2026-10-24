@@ -1,0 +1,301 @@
+{
+  "version": 2,
+  "title": "How_hackers_actually_break_into_systems",
+  "art_style": "night_studio",
+  "emotional_arc": "From common misconceptions about hacking to empowered cybersecurity defense",
+  "characters": [
+    {
+      "name": "boy_b",
+      "visual_description": "Boy in dark hoodie and sneakers",
+      "voice_id": "Puck"
+    },
+    {
+      "name": "girl_a",
+      "visual_description": "Girl in navy waistcoat with blonde hair",
+      "voice_id": "Aoede"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_number": 1,
+      "speaker": "boy_b",
+      "dialogue_line": "Wait, do movie hackers really smash keyboards to break into your account?",
+      "action": "Boy wonders about movie hackers with cross on weak passwords",
+      "pose": "idle",
+      "gesture": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "visuals": [
+        {
+          "type": "check_cross",
+          "trigger_word": "account",
+          "params": {
+            "icon": "cross",
+            "label": "password123",
+            "color": "red"
+          }
+        }
+      ],
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 4.5,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ]
+    },
+    {
+      "scene_number": 2,
+      "speaker": "girl_a",
+      "dialogue_line": "Not even close! Most breaches happen because people reuse simple passwords everywhere.",
+      "action": "Girl explains password reuse chain across platforms",
+      "pose": "idle",
+      "gesture": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "visuals": [
+        {
+          "type": "flow",
+          "trigger_word": "everywhere",
+          "params": {
+            "nodes": [
+              "Email",
+              "Social",
+              "Banking"
+            ],
+            "color": "red"
+          }
+        }
+      ],
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 6.0,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ]
+    },
+    {
+      "scene_number": 3,
+      "speaker": "boy_b",
+      "dialogue_line": "So if one random shopping site leaks, they get into everything?",
+      "action": "Boy is shocked realizing credential reuse risks",
+      "pose": "shocked",
+      "gesture": "idle",
+      "camera_move": "zoom_in",
+      "transition": "cut",
+      "is_punchline": false,
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "cards",
+      "shots": [
+        {
+          "start": 0.5,
+          "end": 4.8,
+          "type": "close_up",
+          "target": "boy_b",
+          "zoom": 1.18,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ]
+    },
+    {
+      "scene_number": 4,
+      "speaker": "girl_a",
+      "dialogue_line": "Exactly! That is why you need a password manager and high strength passphrases.",
+      "action": "Girl explains password strength with security meter and padlock drawing",
+      "pose": "idle",
+      "gesture": "idle",
+      "camera_move": "zoom_in",
+      "transition": "cut",
+      "is_punchline": false,
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "visuals": [
+        {
+          "type": "counter",
+          "trigger_word": "strength",
+          "params": {
+            "from_val": 12,
+            "to_val": 99,
+            "label": "Strength",
+            "suffix": "%",
+            "color": "green"
+          }
+        },
+        {
+          "type": "draw_svg",
+          "trigger_word": "manager",
+          "params": {
+            "svg_paths": [
+              "M 260 170 V 120 C 260 85, 340 85, 340 120 V 170",
+              "M 220 170 H 380 V 300 H 220 Z",
+              "M 300 215 V 255"
+            ],
+            "view_box": "0 0 600 380",
+            "stroke_color": "#38bdf8",
+            "stroke_width": 5,
+            "fill_color": "none"
+          }
+        }
+      ],
+      "shots": [
+        {
+          "start": 0.5,
+          "end": 5.5,
+          "type": "close_up",
+          "target": "girl_a",
+          "zoom": 1.18,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ]
+    },
+    {
+      "scene_number": 5,
+      "speaker": "girl_a",
+      "dialogue_line": "And always turn on two factor authentication! That puts an iron shield on your login.",
+      "action": "Girl shows two-factor defense with draw-on shield and active status",
+      "pose": "idle",
+      "gesture": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "visuals": [
+        {
+          "type": "draw_svg",
+          "trigger_word": "shield",
+          "params": {
+            "svg_paths": [
+              "M 300 60 L 400 95 V 190 C 400 270, 300 320, 300 320 C 300 320, 200 270, 200 190 V 95 Z",
+              "M 265 185 L 290 215 L 345 150"
+            ],
+            "view_box": "0 0 600 380",
+            "stroke_color": "#818cf8",
+            "stroke_width": 5,
+            "fill_color": "none"
+          }
+        },
+        {
+          "type": "check_cross",
+          "trigger_word": "authentication",
+          "params": {
+            "icon": "check",
+            "label": "2FA Active",
+            "color": "green"
+          }
+        }
+      ],
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 6.5,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ]
+    },
+    {
+      "scene_number": 6,
+      "speaker": "boy_b",
+      "dialogue_line": "So changing my password from password123 to password1234 did not save me?",
+      "action": "Boy realizes adding a number does not help with shocked laugh",
+      "pose": "laughing",
+      "gesture": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "visuals": [
+        {
+          "type": "step_ladder",
+          "trigger_word": "password123",
+          "params": {
+            "steps": [
+              "16+ Chars",
+              "Unique",
+              "2FA On"
+            ],
+            "color": "blue"
+          }
+        }
+      ],
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 5.5,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ]
+    },
+    {
+      "scene_number": 7,
+      "speaker": "girl_a",
+      "dialogue_line": "Definitely not! Make it long, make it unique, and lock it down!",
+      "action": "Girl delivers confident closing advice with bright thumbs up",
+      "pose": "laughing",
+      "gesture": "idle",
+      "camera_move": "static",
+      "transition": "fade",
+      "is_punchline": true,
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "cards",
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 4.5,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ]
+    }
+  ]
+}

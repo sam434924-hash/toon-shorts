@@ -3,7 +3,7 @@ Purpose: Central configuration, paths, model names, pricing, and limits.
 Inputs: Environment variables and optional .env file.
 Outputs: Path objects, model constants, hard caps, pricing dictionaries.
 Depends on: dotenv, os, pathlib, sys
-Used by: brief, cli, config, core, core.assembler, core.board_objects, core.camera, core.caps, core.character2d, core.character_pack, core.client, core.cost, core.pipeline, core.style_profile, inventory, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.render.animejs.audio_sync, plugins.render.animejs.capture, plugins.render.animejs.html_builder, plugins.render.animejs.layout, plugins.render.animejs.plugin, plugins.render.blender3d, plugins.render.cairo, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.gemini_tts, plugins.voice.piper, voice_utils
+Used by: brief, cli, config, core, core.assembler, core.board_objects, core.camera, core.caps, core.character2d, core.character_pack, core.client, core.cost, core.layout_checker, core.pipeline, core.style_profile, core.sync, inventory, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.render.animejs.audio_sync, plugins.render.animejs.capture, plugins.render.animejs.html_builder, plugins.render.animejs.layout, plugins.render.animejs.plugin, plugins.render.animejs.visual_renderer, plugins.render.blender3d, plugins.render.cairo, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.gemini_tts, plugins.voice.piper, voice_utils
 Config keys: ANIME_JS_PATH, BLENDER_PATH, ENABLE_BOARD_OBJECTS, ENABLE_PARALLAX_BACKGROUND, ENABLE_PARALLAX_CACHE, ENABLE_PURPOSEFUL_CAMERA, ENABLE_SPLIT_CAMERA_ZONES, ENABLE_STYLE_PROFILE, GEMINI_API_KEY, OneDrive, ROUGH_JS_PATH, TTS_CACHE_DIR
 Tests: tests/unit/test_board_objects.py, tests/unit/test_spend_cap.py, tests/unit/test_split_camera_zones.py, tests/unit/test_styles.py
 """
@@ -152,7 +152,7 @@ ENABLE_STYLE_PROFILE = True
 ENABLE_BOARD_OBJECTS = True
 
 # Phase 4C / Two Independent Camera Zones Layout (fixes cut-off speakers)
-ENABLE_SPLIT_CAMERA_ZONES = os.getenv("ENABLE_SPLIT_CAMERA_ZONES", "false").lower() in ("true", "1", "yes")
+ENABLE_SPLIT_CAMERA_ZONES = os.getenv("ENABLE_SPLIT_CAMERA_ZONES", "true").lower() in ("true", "1", "yes")
 LAYOUT_CAMERA_VERSION = "2.1.0_split_zones"
 
 # YouTube Shorts Safe Zones (clear of top 15%, bottom 25%, right 120px)
@@ -245,3 +245,7 @@ BLENDER_MAX_FRAMES = 720
 BLENDER_MAX_SECONDS_PER_RUN = 120.0
 BLENDER_MAX_RESOLUTION = (1920, 1920)
 BLENDER_RENDER_TIMEOUT_SECONDS = 300
+
+# Audio-Visual Word Sync and Fallback Caps
+MAX_SYNC_DIFFERENCE_MS = 150
+ALLOW_FALLBACK = os.getenv("ALLOW_FALLBACK", "false").lower() in ("true", "1", "yes")

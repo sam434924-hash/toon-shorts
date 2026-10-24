@@ -14,6 +14,8 @@ import logging
 import re
 from typing import Any, Dict, List, Optional, Tuple
 
+from toonshorts.core import config
+from toonshorts.core.errors import PipelineError
 from toonshorts.core.models import Visual, WordTiming
 from toonshorts.core.visuals import (
     ALLOWED_PALETTES,
@@ -29,10 +31,11 @@ def resolve_visual_timings(
     word_timings: List[WordTiming],
     duration_sec: float,
     scene_number: int,
+    allow_fallback: bool = True,
 ) -> List[Dict[str, Any]]:
     """
     Aligns each visual to the Whisper start time of its trigger_word.
-    If the word is not found in word_timings, logs a clear warning and distributes evenly.
+    If the word is not found in word_timings, raises PipelineError unless allow_fallback is True.
     """
     resolved = []
     total_duration_ms = int(duration_sec * 1000)
@@ -58,9 +61,16 @@ def resolve_visual_timings(
         if found_time is not None and found_time >= 0.0:
             start_ms = int(found_time * 1000)
         else:
+            allow_fallback_active = allow_fallback or getattr(config, "ALLOW_FALLBACK", False)
+            if not allow_fallback_active:
+                raise PipelineError(
+                    f"Audio-visual sync violation: Scene {scene_number} trigger word '{target_raw}' "
+                    f"not found in word timings. Even-spacing fallback is disabled. "
+                    f"Pass --allow-fallback to allow even spacing."
+                )
             # Not found: log a clear warning and place at even spacing
             logger.warning(
-                "Scene %d: Trigger word '%s' not found in word timings; using even spacing.",
+                "[FALLBACK USED] Scene %d: Trigger word '%s' not found in word timings; using even spacing.",
                 scene_number,
                 target_raw,
             )

@@ -26,14 +26,14 @@ Dialogue: 0,0:00:04.18,0:00:04.32,Default,,0,0,0,,you are {\c&H0000D8F6\b1}sitti
 Dialogue: 0,0:00:04.32,0:00:04.52,Default,,0,0,0,,you are sitting\N{\c&H0000D8F6\b1}at{\c&H00FFFFFF\b1} a restaurant.
 Dialogue: 0,0:00:04.52,0:00:04.64,Default,,0,0,0,,you are sitting\Nat {\c&H0000D8F6\b1}a{\c&H00FFFFFF\b1} restaurant.
 Dialogue: 0,0:00:04.64,0:00:04.82,Default,,0,0,0,,you are sitting\Nat a {\c&H0000D8F6\b1}restaurant.{\c&H00FFFFFF\b1}
-Dialogue: 0,0:00:05.71,0:00:06.43,Default,,0,0,0,,{\c&H0000D8F6\b1}You{\c&H00FFFFFF\b1} are the customer\Nand the kitchen is
-Dialogue: 0,0:00:06.43,0:00:06.71,Default,,0,0,0,,You {\c&H0000D8F6\b1}are{\c&H00FFFFFF\b1} the customer\Nand the kitchen is
-Dialogue: 0,0:00:06.71,0:00:06.79,Default,,0,0,0,,You are {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} customer\Nand the kitchen is
-Dialogue: 0,0:00:06.79,0:00:07.11,Default,,0,0,0,,You are the {\c&H0000D8F6\b1}customer{\c&H00FFFFFF\b1}\Nand the kitchen is
-Dialogue: 0,0:00:07.11,0:00:07.71,Default,,0,0,0,,You are the customer\N{\c&H0000D8F6\b1}and{\c&H00FFFFFF\b1} the kitchen is
-Dialogue: 0,0:00:07.71,0:00:07.93,Default,,0,0,0,,You are the customer\Nand {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} kitchen is
-Dialogue: 0,0:00:07.93,0:00:08.15,Default,,0,0,0,,You are the customer\Nand the {\c&H0000D8F6\b1}kitchen{\c&H00FFFFFF\b1} is
-Dialogue: 0,0:00:08.15,0:00:08.47,Default,,0,0,0,,You are the customer\Nand the kitchen {\c&H0000D8F6\b1}is{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:05.71,0:00:06.43,Default,,0,0,0,,{\c&H0000D8F6\b1}You{\c&H00FFFFFF\b1} are the customer,\Nand the kitchen is
+Dialogue: 0,0:00:06.43,0:00:06.71,Default,,0,0,0,,You {\c&H0000D8F6\b1}are{\c&H00FFFFFF\b1} the customer,\Nand the kitchen is
+Dialogue: 0,0:00:06.71,0:00:06.79,Default,,0,0,0,,You are {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} customer,\Nand the kitchen is
+Dialogue: 0,0:00:06.79,0:00:07.11,Default,,0,0,0,,You are the {\c&H0000D8F6\b1}customer,{\c&H00FFFFFF\b1}\Nand the kitchen is
+Dialogue: 0,0:00:07.11,0:00:07.71,Default,,0,0,0,,You are the customer,\N{\c&H0000D8F6\b1}and{\c&H00FFFFFF\b1} the kitchen is
+Dialogue: 0,0:00:07.71,0:00:07.93,Default,,0,0,0,,You are the customer,\Nand {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} kitchen is
+Dialogue: 0,0:00:07.93,0:00:08.15,Default,,0,0,0,,You are the customer,\Nand the {\c&H0000D8F6\b1}kitchen{\c&H00FFFFFF\b1} is
+Dialogue: 0,0:00:08.15,0:00:08.47,Default,,0,0,0,,You are the customer,\Nand the kitchen {\c&H0000D8F6\b1}is{\c&H00FFFFFF\b1}
 Dialogue: 0,0:00:08.47,0:00:08.75,Default,,0,0,0,,{\c&H0000D8F6\b1}a{\c&H00FFFFFF\b1} massive database\Nfull of delicious food.
 Dialogue: 0,0:00:08.75,0:00:09.13,Default,,0,0,0,,a {\c&H0000D8F6\b1}massive{\c&H00FFFFFF\b1} database\Nfull of delicious food.
 Dialogue: 0,0:00:09.13,0:00:09.71,Default,,0,0,0,,a massive {\c&H0000D8F6\b1}database{\c&H00FFFFFF\b1}\Nfull of delicious food.
@@ -41,28 +41,28 @@ Dialogue: 0,0:00:09.71,0:00:10.13,Default,,0,0,0,,a massive database\N{\c&H0000D
 Dialogue: 0,0:00:10.13,0:00:10.37,Default,,0,0,0,,a massive database\Nfull {\c&H0000D8F6\b1}of{\c&H00FFFFFF\b1} delicious food.
 Dialogue: 0,0:00:10.37,0:00:10.73,Default,,0,0,0,,a massive database\Nfull of {\c&H0000D8F6\b1}delicious{\c&H00FFFFFF\b1} food.
 Dialogue: 0,0:00:10.73,0:00:11.23,Default,,0,0,0,,a massive database\Nfull of delicious {\c&H0000D8F6\b1}food.{\c&H00FFFFFF\b1}
-Dialogue: 0,0:00:11.78,0:00:12.24,Default,,0,0,0,,{\c&H0000D8F6\b1}The{\c&H00FFFFFF\b1} API is your\Nfriendly waiter. It takes
-Dialogue: 0,0:00:12.24,0:00:12.66,Default,,0,0,0,,The {\c&H0000D8F6\b1}API{\c&H00FFFFFF\b1} is your\Nfriendly waiter. It takes
-Dialogue: 0,0:00:12.66,0:00:13.04,Default,,0,0,0,,The API {\c&H0000D8F6\b1}is{\c&H00FFFFFF\b1} your\Nfriendly waiter. It takes
-Dialogue: 0,0:00:13.04,0:00:13.20,Default,,0,0,0,,The API is {\c&H0000D8F6\b1}your{\c&H00FFFFFF\b1}\Nfriendly waiter. It takes
-Dialogue: 0,0:00:13.20,0:00:13.46,Default,,0,0,0,,The API is your\N{\c&H0000D8F6\b1}friendly{\c&H00FFFFFF\b1} waiter. It takes
-Dialogue: 0,0:00:13.46,0:00:13.88,Default,,0,0,0,,The API is your\Nfriendly {\c&H0000D8F6\b1}waiter.{\c&H00FFFFFF\b1} It takes
-Dialogue: 0,0:00:14.30,0:00:14.38,Default,,0,0,0,,The API is your\Nfriendly waiter. {\c&H0000D8F6\b1}It{\c&H00FFFFFF\b1} takes
-Dialogue: 0,0:00:14.38,0:00:14.58,Default,,0,0,0,,The API is your\Nfriendly waiter. It {\c&H0000D8F6\b1}takes{\c&H00FFFFFF\b1}
-Dialogue: 0,0:00:14.58,0:00:14.78,Default,,0,0,0,,{\c&H0000D8F6\b1}you{\c&H00FFFFFF\b1} request directly\Nto the chef.
-Dialogue: 0,0:00:14.78,0:00:15.18,Default,,0,0,0,,you {\c&H0000D8F6\b1}request{\c&H00FFFFFF\b1} directly\Nto the chef.
-Dialogue: 0,0:00:15.18,0:00:15.70,Default,,0,0,0,,you request {\c&H0000D8F6\b1}directly{\c&H00FFFFFF\b1}\Nto the chef.
-Dialogue: 0,0:00:15.70,0:00:15.98,Default,,0,0,0,,you request directly\N{\c&H0000D8F6\b1}to{\c&H00FFFFFF\b1} the chef.
-Dialogue: 0,0:00:15.98,0:00:16.06,Default,,0,0,0,,you request directly\Nto {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} chef.
-Dialogue: 0,0:00:16.06,0:00:16.32,Default,,0,0,0,,you request directly\Nto the {\c&H0000D8F6\b1}chef.{\c&H00FFFFFF\b1}
-Dialogue: 0,0:00:16.85,0:00:17.53,Default,,0,0,0,,{\c&H0000D8F6\b1}Whether{\c&H00FFFFFF\b1} forecasts, ride -sharing\Napps, and credit card
-Dialogue: 0,0:00:17.53,0:00:18.03,Default,,0,0,0,,Whether {\c&H0000D8F6\b1}forecasts,{\c&H00FFFFFF\b1} ride -sharing\Napps, and credit card
-Dialogue: 0,0:00:18.75,0:00:18.99,Default,,0,0,0,,Whether forecasts, {\c&H0000D8F6\b1}ride{\c&H00FFFFFF\b1} -sharing\Napps, and credit card
-Dialogue: 0,0:00:18.99,0:00:19.27,Default,,0,0,0,,Whether forecasts, ride {\c&H0000D8F6\b1}-sharing{\c&H00FFFFFF\b1}\Napps, and credit card
-Dialogue: 0,0:00:19.27,0:00:19.73,Default,,0,0,0,,Whether forecasts, ride -sharing\N{\c&H0000D8F6\b1}apps,{\c&H00FFFFFF\b1} and credit card
-Dialogue: 0,0:00:20.13,0:00:20.21,Default,,0,0,0,,Whether forecasts, ride -sharing\Napps, {\c&H0000D8F6\b1}and{\c&H00FFFFFF\b1} credit card
-Dialogue: 0,0:00:20.21,0:00:20.37,Default,,0,0,0,,Whether forecasts, ride -sharing\Napps, and {\c&H0000D8F6\b1}credit{\c&H00FFFFFF\b1} card
-Dialogue: 0,0:00:20.37,0:00:20.65,Default,,0,0,0,,Whether forecasts, ride -sharing\Napps, and credit {\c&H0000D8F6\b1}card{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:11.78,0:00:12.24,Default,,0,0,0,,{\c&H0000D8F6\b1}The{\c&H00FFFFFF\b1} API is your\Nfriendly waiter! It takes
+Dialogue: 0,0:00:12.24,0:00:12.66,Default,,0,0,0,,The {\c&H0000D8F6\b1}API{\c&H00FFFFFF\b1} is your\Nfriendly waiter! It takes
+Dialogue: 0,0:00:12.66,0:00:13.04,Default,,0,0,0,,The API {\c&H0000D8F6\b1}is{\c&H00FFFFFF\b1} your\Nfriendly waiter! It takes
+Dialogue: 0,0:00:13.04,0:00:13.20,Default,,0,0,0,,The API is {\c&H0000D8F6\b1}your{\c&H00FFFFFF\b1}\Nfriendly waiter! It takes
+Dialogue: 0,0:00:13.20,0:00:13.46,Default,,0,0,0,,The API is your\N{\c&H0000D8F6\b1}friendly{\c&H00FFFFFF\b1} waiter! It takes
+Dialogue: 0,0:00:13.46,0:00:13.88,Default,,0,0,0,,The API is your\Nfriendly {\c&H0000D8F6\b1}waiter!{\c&H00FFFFFF\b1} It takes
+Dialogue: 0,0:00:14.30,0:00:14.38,Default,,0,0,0,,The API is your\Nfriendly waiter! {\c&H0000D8F6\b1}It{\c&H00FFFFFF\b1} takes
+Dialogue: 0,0:00:14.38,0:00:14.58,Default,,0,0,0,,The API is your\Nfriendly waiter! It {\c&H0000D8F6\b1}takes{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:14.58,0:00:14.78,Default,,0,0,0,,{\c&H0000D8F6\b1}your{\c&H00FFFFFF\b1} request directly\Nto the chef.
+Dialogue: 0,0:00:14.78,0:00:15.18,Default,,0,0,0,,your {\c&H0000D8F6\b1}request{\c&H00FFFFFF\b1} directly\Nto the chef.
+Dialogue: 0,0:00:15.18,0:00:15.70,Default,,0,0,0,,your request {\c&H0000D8F6\b1}directly{\c&H00FFFFFF\b1}\Nto the chef.
+Dialogue: 0,0:00:15.70,0:00:15.98,Default,,0,0,0,,your request directly\N{\c&H0000D8F6\b1}to{\c&H00FFFFFF\b1} the chef.
+Dialogue: 0,0:00:15.98,0:00:16.06,Default,,0,0,0,,your request directly\Nto {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} chef.
+Dialogue: 0,0:00:16.06,0:00:16.32,Default,,0,0,0,,your request directly\Nto the {\c&H0000D8F6\b1}chef.{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:16.85,0:00:17.53,Default,,0,0,0,,{\c&H0000D8F6\b1}Weather{\c&H00FFFFFF\b1} forecasts, ride sharing\Napps, and credit card
+Dialogue: 0,0:00:17.53,0:00:18.03,Default,,0,0,0,,Weather {\c&H0000D8F6\b1}forecasts,{\c&H00FFFFFF\b1} ride sharing\Napps, and credit card
+Dialogue: 0,0:00:18.75,0:00:18.99,Default,,0,0,0,,Weather forecasts, {\c&H0000D8F6\b1}ride{\c&H00FFFFFF\b1} sharing\Napps, and credit card
+Dialogue: 0,0:00:18.99,0:00:19.27,Default,,0,0,0,,Weather forecasts, ride {\c&H0000D8F6\b1}sharing{\c&H00FFFFFF\b1}\Napps, and credit card
+Dialogue: 0,0:00:19.27,0:00:19.73,Default,,0,0,0,,Weather forecasts, ride sharing\N{\c&H0000D8F6\b1}apps,{\c&H00FFFFFF\b1} and credit card
+Dialogue: 0,0:00:20.13,0:00:20.21,Default,,0,0,0,,Weather forecasts, ride sharing\Napps, {\c&H0000D8F6\b1}and{\c&H00FFFFFF\b1} credit card
+Dialogue: 0,0:00:20.21,0:00:20.37,Default,,0,0,0,,Weather forecasts, ride sharing\Napps, and {\c&H0000D8F6\b1}credit{\c&H00FFFFFF\b1} card
+Dialogue: 0,0:00:20.37,0:00:20.65,Default,,0,0,0,,Weather forecasts, ride sharing\Napps, and credit {\c&H0000D8F6\b1}card{\c&H00FFFFFF\b1}
 Dialogue: 0,0:00:20.65,0:00:21.07,Default,,0,0,0,,{\c&H0000D8F6\b1}payments{\c&H00FFFFFF\b1} all\Ntalk through APIs.
 Dialogue: 0,0:00:21.07,0:00:21.59,Default,,0,0,0,,payments {\c&H0000D8F6\b1}all{\c&H00FFFFFF\b1}\Ntalk through APIs.
 Dialogue: 0,0:00:21.59,0:00:21.91,Default,,0,0,0,,payments all\N{\c&H0000D8F6\b1}talk{\c&H00FFFFFF\b1} through APIs.
@@ -79,17 +79,17 @@ Dialogue: 0,0:00:26.42,0:00:26.82,Default,,0,0,0,,They exchange structured JSON\
 Dialogue: 0,0:00:26.82,0:00:27.50,Default,,0,0,0,,{\c&H0000D8F6\b1}back{\c&H00FFFFFF\b1} and forth.
 Dialogue: 0,0:00:27.50,0:00:27.66,Default,,0,0,0,,back {\c&H0000D8F6\b1}and{\c&H00FFFFFF\b1} forth.
 Dialogue: 0,0:00:27.66,0:00:27.88,Default,,0,0,0,,back and {\c&H0000D8F6\b1}forth.{\c&H00FFFFFF\b1}
-Dialogue: 0,0:00:28.55,0:00:29.27,Default,,0,0,0,,{\c&H0000D8F6\b1}So,{\c&H00FFFFFF\b1} without APIs, the\Nmodern connected internet would
-Dialogue: 0,0:00:29.45,0:00:29.69,Default,,0,0,0,,So, {\c&H0000D8F6\b1}without{\c&H00FFFFFF\b1} APIs, the\Nmodern connected internet would
-Dialogue: 0,0:00:29.69,0:00:30.39,Default,,0,0,0,,So, without {\c&H0000D8F6\b1}APIs,{\c&H00FFFFFF\b1} the\Nmodern connected internet would
-Dialogue: 0,0:00:30.81,0:00:30.91,Default,,0,0,0,,So, without APIs, {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1}\Nmodern connected internet would
-Dialogue: 0,0:00:30.91,0:00:31.29,Default,,0,0,0,,So, without APIs, the\N{\c&H0000D8F6\b1}modern{\c&H00FFFFFF\b1} connected internet would
-Dialogue: 0,0:00:31.29,0:00:31.95,Default,,0,0,0,,So, without APIs, the\Nmodern {\c&H0000D8F6\b1}connected{\c&H00FFFFFF\b1} internet would
-Dialogue: 0,0:00:31.95,0:00:32.47,Default,,0,0,0,,So, without APIs, the\Nmodern connected {\c&H0000D8F6\b1}internet{\c&H00FFFFFF\b1} would
-Dialogue: 0,0:00:32.47,0:00:32.85,Default,,0,0,0,,So, without APIs, the\Nmodern connected internet {\c&H0000D8F6\b1}would{\c&H00FFFFFF\b1}
-Dialogue: 0,0:00:32.85,0:00:33.07,Default,,0,0,0,,{\c&H0000D8F6\b1}just{\c&H00FFFFFF\b1} be screaming\Nin the dark.
-Dialogue: 0,0:00:33.07,0:00:33.43,Default,,0,0,0,,just {\c&H0000D8F6\b1}be{\c&H00FFFFFF\b1} screaming\Nin the dark.
-Dialogue: 0,0:00:33.43,0:00:33.97,Default,,0,0,0,,just be {\c&H0000D8F6\b1}screaming{\c&H00FFFFFF\b1}\Nin the dark.
-Dialogue: 0,0:00:33.97,0:00:34.39,Default,,0,0,0,,just be screaming\N{\c&H0000D8F6\b1}in{\c&H00FFFFFF\b1} the dark.
-Dialogue: 0,0:00:34.39,0:00:34.49,Default,,0,0,0,,just be screaming\Nin {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} dark.
-Dialogue: 0,0:00:34.49,0:00:34.73,Default,,0,0,0,,just be screaming\Nin the {\c&H0000D8F6\b1}dark.{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:28.55,0:00:29.27,Default,,0,0,0,,{\c&H0000D8F6\b1}So{\c&H00FFFFFF\b1} without APIs, the\Nmodern connected internet would
+Dialogue: 0,0:00:29.45,0:00:29.69,Default,,0,0,0,,So {\c&H0000D8F6\b1}without{\c&H00FFFFFF\b1} APIs, the\Nmodern connected internet would
+Dialogue: 0,0:00:29.69,0:00:30.39,Default,,0,0,0,,So without {\c&H0000D8F6\b1}APIs,{\c&H00FFFFFF\b1} the\Nmodern connected internet would
+Dialogue: 0,0:00:30.81,0:00:30.91,Default,,0,0,0,,So without APIs, {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1}\Nmodern connected internet would
+Dialogue: 0,0:00:30.91,0:00:31.29,Default,,0,0,0,,So without APIs, the\N{\c&H0000D8F6\b1}modern{\c&H00FFFFFF\b1} connected internet would
+Dialogue: 0,0:00:31.29,0:00:31.95,Default,,0,0,0,,So without APIs, the\Nmodern {\c&H0000D8F6\b1}connected{\c&H00FFFFFF\b1} internet would
+Dialogue: 0,0:00:31.95,0:00:32.47,Default,,0,0,0,,So without APIs, the\Nmodern connected {\c&H0000D8F6\b1}internet{\c&H00FFFFFF\b1} would
+Dialogue: 0,0:00:32.47,0:00:32.85,Default,,0,0,0,,So without APIs, the\Nmodern connected internet {\c&H0000D8F6\b1}would{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:32.85,0:00:33.07,Default,,0,0,0,,{\c&H0000D8F6\b1}just{\c&H00FFFFFF\b1} be screaming\Nin the dark!
+Dialogue: 0,0:00:33.07,0:00:33.43,Default,,0,0,0,,just {\c&H0000D8F6\b1}be{\c&H00FFFFFF\b1} screaming\Nin the dark!
+Dialogue: 0,0:00:33.43,0:00:33.97,Default,,0,0,0,,just be {\c&H0000D8F6\b1}screaming{\c&H00FFFFFF\b1}\Nin the dark!
+Dialogue: 0,0:00:33.97,0:00:34.39,Default,,0,0,0,,just be screaming\N{\c&H0000D8F6\b1}in{\c&H00FFFFFF\b1} the dark!
+Dialogue: 0,0:00:34.39,0:00:34.49,Default,,0,0,0,,just be screaming\Nin {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} dark!
+Dialogue: 0,0:00:34.49,0:00:34.73,Default,,0,0,0,,just be screaming\Nin the {\c&H0000D8F6\b1}dark!{\c&H00FFFFFF\b1}

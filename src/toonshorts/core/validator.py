@@ -3,7 +3,7 @@ Purpose: Screenplay v1/v2 schema validation, directing rules enforcement, and pl
 Inputs: ScriptPlan objects or raw dictionary representations of script plans.
 Outputs: Validated ScriptPlan instances or descriptive one-line validation errors.
 Depends on: core.models, core.visuals, re, typing
-Used by: plugins.llm.gemini
+Used by: core.pipeline, plugins.llm.gemini
 Config keys: None
 Tests: tests/unit/test_validation.py, tests/unit/test_v2_validation.py, tests/unit/test_visual_templates.py
 """

@@ -216,6 +216,7 @@ def test_browser_camera_engine_pure_function_of_time(tmp_path: Path):
         word_timings=wts,
         visuals=vis,
         theme="night_studio",
+        enable_split_camera_zones=False,
     )
     test_html_file = tmp_path / "test_purity.html"
     test_html_file.write_text(html, encoding="utf-8")

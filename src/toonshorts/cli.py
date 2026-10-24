@@ -2,7 +2,7 @@
 Purpose: Command-line interface entry points for ToonShorts video pipeline.
 Inputs: CLI arguments for story topic, style preset, brief, and plugin overrides.
 Outputs: Executed pipeline runs and exit status codes.
-Depends on: argparse, brief, core.config, core.library, core.pipeline, inventory, logging, pathlib, plugins, sys
+Depends on: argparse, brief, core.config, core.layout_checker, core.library, core.pipeline, inventory, logging, pathlib, plugins, sys
 Used by: __main__
 Config keys: None
 Tests: tests/smoke/test_smoke_pipeline.py
@@ -59,6 +59,8 @@ def make_command(args: argparse.Namespace) -> int:
                 fast=getattr(args, "fast", False),
                 workers=workers,
                 overwrite=overwrite,
+                scene_source=getattr(args, "scene", None),
+                allow_fallback=getattr(args, "allow_fallback", False),
             )
             if getattr(args, "stills_only", False):
                 print("\n=======================================================")
@@ -110,6 +112,7 @@ def make_command(args: argparse.Namespace) -> int:
             fast=getattr(args, "fast", False),
             workers=workers,
             overwrite=overwrite,
+            allow_fallback=getattr(args, "allow_fallback", False),
         )
         if final_video:
             print("\n=======================================================")
@@ -145,6 +148,31 @@ def inventory_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def check_layout_command(args: argparse.Namespace) -> int:
+    """Verifies scene stills layout, bounding boxes, and safe zones using Playwright."""
+    from toonshorts.core.layout_checker import verify_video_layout
+    video_input = args.video_name
+    video_path = Path(video_input)
+    if not video_path.is_dir():
+        cand = config.VIDEOS_DIR / video_input
+        if cand.is_dir():
+            video_path = cand
+        else:
+            sys.stderr.write(f"Error: Video directory not found at '{video_input}' or '{cand}'.\n")
+            return 1
+    try:
+        report = verify_video_layout(video_path)
+        if getattr(args, "json", False):
+            print(json.dumps(report, indent=2))
+        else:
+            txt_report = (video_path / "layout_check.txt").read_text(encoding="utf-8")
+            print(txt_report)
+        return 0 if report.get("passed", False) else 1
+    except Exception as e:
+        sys.stderr.write(f"Layout check error: {e}\n")
+        return 1
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="toonshorts",
@@ -156,6 +184,7 @@ def main():
     make_parser.add_argument("--style", default=None, help="Art style (stickman, crayon, paper_cutout, pixel_art, chalkboard, whiteboard)")
     make_parser.add_argument("--topic", default=None, help="Story topic or comedy premise")
     make_parser.add_argument("--brief", default=None, help="Path or name of brief JSON file to build")
+    make_parser.add_argument("--scene", default=None, help="Explicit scene plan JSON file to build")
     make_parser.add_argument("--stills-only", action="store_true", help="Render key scene stills for approval first")
     make_parser.add_argument("--yes", "-y", action="store_true", help="Skip cost confirmation prompt")
     make_parser.add_argument("--mock", action="store_true", help="Run with offline mock generator for testing")
@@ -189,12 +218,17 @@ def main():
     make_parser.add_argument("--motion", default=None, help="Motion plugin to use (ffmpeg, static)")
     make_parser.add_argument("--output-dir", default=None, help="Custom output directory")
     make_parser.add_argument("--overwrite", action="store_true", default=False, help="Overwrite existing video directory if it already exists")
+    make_parser.add_argument("--allow-fallback", action="store_true", default=False, help="Allow fallback to proportional word timing and even spacing if Whisper alignment fails")
     make_parser.add_argument("--keep-temp", action="store_true", help="Retain intermediate render assets")
 
     clean_parser = subparsers.add_parser("clean-tmp", help="Remove lingering temporary build directories (.tmp-*) from videos/")
 
     inv_parser = subparsers.add_parser("inventory", help="Inspect installed characters, styles, voices, and animations")
     inv_parser.add_argument("--json", action="store_true", help="Output inventory as structured JSON")
+
+    check_layout_parser = subparsers.add_parser("check-layout", help="Verify scene stills layout, bounding boxes, and safe zones")
+    check_layout_parser.add_argument("video_name", help="Name of video folder inside videos/ or path to directory")
+    check_layout_parser.add_argument("--json", action="store_true", help="Output check results as structured JSON")
 
     args = parser.parse_args()
     if args.command == "make":
@@ -203,6 +237,8 @@ def main():
         sys.exit(clean_tmp_command(args))
     elif args.command == "inventory":
         sys.exit(inventory_command(args))
+    elif args.command == "check-layout":
+        sys.exit(check_layout_command(args))
 
 
 if __name__ == "__main__":

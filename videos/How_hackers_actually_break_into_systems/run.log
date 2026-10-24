@@ -1,0 +1,21 @@
+[18:50:35] INFO [toonshorts.pipeline]: Loaded pre-authored screenplay from videos/How_hackers_actually_break_into_systems/scene.json
+[18:50:36] INFO [toonshorts.pipeline]: Generating voice tracks using engine 'gemini_tts' (voice: Puck)...
+[18:50:38] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 0 (key: 6717b923fc2ae7b0134f9e03c256f2031db2483384022c8b3a5d48b01ce6280d)
+[18:50:41] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 1 (key: 5595f51abed0b9808d219b0fb11ede817d59f3c1bbebf4189fd6289224d714d1)
+[18:50:43] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 2 (key: dd751b34bdac6b40f6900ac4e87ec9c3986093fa58810d371380b85580cbb2bd)
+[18:50:46] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 3 (key: c0617ced08e3697a791e34a0a0bac9408cd630d534a25fa8d3d4119553adffa7)
+[18:50:49] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 4 (key: d69d7da3fa564c1520cb6c7d13eedb8ae2372c504f6165a24f3e415fccaafcd1)
+[18:50:52] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 5 (key: 8f0bb2215b3c3cbd17aa27db34a8ea71269db97dbd534dc0415b7955927833f9)
+[18:50:54] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 6 (key: 1481a8ac412687b950bd1b2c19499c74373ded49c5bf3762a95261fe2e14ca52)
+[18:50:56] INFO [toonshorts.sync]: Saved word timings to C:\dev\toon-shorts\videos\.tmp-How_hackers_actually_break_into_systems-e2b76821\word_timings.json
+[18:50:56] INFO [toonshorts.sync]: Updated scene manifest written to C:\dev\toon-shorts\videos\.tmp-How_hackers_actually_break_into_systems-e2b76821\scene.json
+[18:50:56] INFO [toonshorts.sync]: Wrote audio-visual sync report to C:\dev\toon-shorts\videos\.tmp-How_hackers_actually_break_into_systems-e2b76821\sync_report.txt
+[18:51:07] INFO [toonshorts.pipeline]: Rendered 7 scene stills: ['How_hackers_actually_break_into_systems_still_sc1.png', 'How_hackers_actually_break_into_systems_still_sc2.png', 'How_hackers_actually_break_into_systems_still_sc3.png', 'How_hackers_actually_break_into_systems_still_sc4.png', 'How_hackers_actually_break_into_systems_still_sc5.png', 'How_hackers_actually_break_into_systems_still_sc6.png', 'How_hackers_actually_break_into_systems_still_sc7.png']
+[18:51:07] INFO [toonshorts.pipeline]: Running automated layout and safe-zone check on all scene stills...
+[18:51:16] INFO [toonshorts.pipeline]: Automated layout check PASSED for all 7 scenes.
+[18:56:01] INFO [toonshorts.library]: Library HIT for SFX pop (47e9f275)
+[18:56:01] INFO [toonshorts.library]: Library HIT for SFX boing (1a844751)
+[18:56:01] INFO [toonshorts.library]: Library HIT for SFX whistle (f385dbe0)
+[18:56:01] INFO [toonshorts.assembler]: Concatenating all scenes into unified video stream...
+[18:56:01] INFO [toonshorts.assembler]: Burning in ASS word-level captions to final video...
+[18:56:13] INFO [toonshorts.assembler]: Successfully assembled video: C:\dev\toon-shorts\videos\.tmp-How_hackers_actually_break_into_systems-e2b76821\How_hackers_actually_break_into_systems.mp4

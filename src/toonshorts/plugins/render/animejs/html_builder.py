@@ -451,7 +451,7 @@ def generate_whiteboard_html(
         main_content_layers = """    <!-- BOARD ZONE (Upper Area, Clipped) -->
     <div id="zone-board" class="zone-container zone-board">
       <div id="board-camera-content" class="zone-camera-content">
-        <div class="whiteboard-outer">
+        <div id="layer-board" class="whiteboard-outer" data-depth-factor="0.5">
           <div class="panel-backdrop-dim" style="{{PANEL_BACKDROP_STYLE}}"></div>
           <svg id="rough-canvas" width="900" height="520"></svg>
           <div class="title-badge" id="wb-title">{{TITLE}}</div>
@@ -476,11 +476,11 @@ def generate_whiteboard_html(
     <!-- CHARACTER ZONE (Lower Area, Clipped) -->
     <div id="zone-character" class="zone-container zone-character">
       <div id="character-camera-content" class="zone-camera-content">
-        <div id="character-slots-container">
+        <div id="layer-subject" class="character-slots-container" data-depth-factor="1.0">
 {{CHARACTERS_HTML}}
         </div>
         <!-- Foreground Desk Props -->
-        <div class="desk-props">
+        <div id="layer-foreground" class="desk-props" data-depth-factor="2.0">
           <svg viewBox="0 0 1080 130" width="1080" height="130">
 {{DESK_PROPS}}
           </svg>

@@ -2,7 +2,7 @@
 Purpose: Pipeline runner orchestrating LLM, voice, render, and motion into self-contained video bundles.
 Inputs: Video production topic, style name, flags, and plugin selections.
 Outputs: Path to finalized vertical animation MP4 short inside dedicated video directory.
-Depends on: brief, core.assembler, core.camera, core.config, core.cost, core.errors, core.library, core.models, core.paths, core.registry, json, logging, pathlib, platform, shutil, subprocess, sys, time, typing, uuid
+Depends on: brief, core.assembler, core.camera, core.config, core.cost, core.errors, core.layout_checker, core.library, core.models, core.paths, core.registry, core.validator, json, logging, pathlib, platform, shutil, subprocess, sys, time, typing, uuid
 Used by: cli, core
 Config keys: DEFAULT_LLM, DEFAULT_MOTION, DEFAULT_RENDERER, DEFAULT_VOICE, STYLES_DIR, VIDEOS_DIR
 Tests: tests/smoke/test_smoke_pipeline.py, tests/unit/test_video_folders.py
@@ -37,6 +37,7 @@ from .cost import estimate_costs, confirm_cost_gate
 from .assembler import assemble_final_video, check_ffmpeg_subtitles_support
 from .registry import get_llm, get_voice, get_renderer, get_motion
 from .library import copy_library_asset, clean_temp_builds
+from .sync import enforce_and_prepare_word_timings, generate_sync_report, tidy_video_folder
 from toonshorts import brief as brief_module
 
 logger = logging.getLogger("toonshorts.pipeline")
@@ -132,6 +133,7 @@ def run_pipeline(
     fast: bool = False,
     workers: Optional[int] = None,
     overwrite: bool = False,
+    allow_fallback: bool = False,
 ) -> Optional[Path]:
     """Executes video generation pipeline into a single self-contained video folder."""
     config.check_cloud_sync_warning()
@@ -266,6 +268,20 @@ def run_pipeline(
                 if (paths.LIBRARY_TTS_DIR / f"{stem}.wav").is_file():
                     library_pieces_used.append(f"library/tts/{stem}.wav")
 
+        # Mandatory audio-visual word timing alignment and trigger resolution
+        enforce_and_prepare_word_timings(
+            plan=refined_plan,
+            scene_audios=scene_audios,
+            video_dir=build_dir,
+            allow_fallback=allow_fallback,
+        )
+        generate_sync_report(
+            plan=refined_plan,
+            output_path=build_dir / "sync_report.txt",
+            max_diff_ms=getattr(config, "MAX_SYNC_DIFFERENCE_MS", 150),
+            allow_fallback=allow_fallback,
+        )
+
         # 4. Scene Rendering
         logger.info("[4/6] Rendering scene images via %s...", renderer.name)
         t_render = time.time()
@@ -333,6 +349,7 @@ def run_pipeline(
             toon_logger.removeHandler(file_handler)
 
     if build_succeeded:
+        tidy_video_folder(build_dir)
         # Atomic rename build_dir to target_video_dir
         if target_video_dir.exists():
             shutil.rmtree(target_video_dir, ignore_errors=True)
@@ -357,6 +374,8 @@ def run_pipeline_from_brief(
     fast: bool = False,
     workers: Optional[int] = None,
     overwrite: bool = False,
+    scene_source: Optional[Union[str, Path, ScriptPlan, Dict[str, Any]]] = None,
+    allow_fallback: bool = False,
 ) -> Dict[str, Any]:
     """
     Executes the video build pipeline strictly driven by a validated VideoBrief.
@@ -415,17 +434,37 @@ def run_pipeline_from_brief(
             preset.setdefault("avoid", []).extend(brief.board_animations_avoid)
 
         # 2. Plan Screenplay fresh from story & brief (no silent reuse!)
-        llm_plugin = "fake" if mock else config.DEFAULT_LLM
-        try:
-            llm = get_llm(llm_plugin)
-            plan = llm.generate_plan(brief.story, brief.style, preset)
-        except Exception as l_err:
-            if not mock:
-                logger.warning("Live LLM failed (%s), falling back to offline planner for brief.", l_err)
-                llm = get_llm("fake")
-                plan = llm.generate_plan(brief.story, brief.style, preset)
+        if scene_source is None:
+            cand1 = config.PROJECT_ROOT / "briefs" / f"{video_name}_scene.json"
+            cand2 = paths.VIDEOS_DIR / f"{video_name}_scene.json"
+            if cand1.is_file():
+                scene_source = cand1
+            elif cand2.is_file():
+                scene_source = cand2
+
+        if scene_source is not None:
+            if isinstance(scene_source, ScriptPlan):
+                plan = scene_source
+            elif isinstance(scene_source, dict):
+                plan = ScriptPlan.model_validate(scene_source)
             else:
-                raise
+                p_path = Path(scene_source)
+                plan = ScriptPlan.model_validate(json.loads(p_path.read_text(encoding="utf-8")))
+            from toonshorts.core.validator import validate_plan
+            plan = validate_plan(plan)
+            logger.info("Loaded pre-authored screenplay from %s", scene_source)
+        else:
+            llm_plugin = "fake" if mock else config.DEFAULT_LLM
+            try:
+                llm = get_llm(llm_plugin)
+                plan = llm.generate_plan(brief.story, brief.style, preset)
+            except Exception as l_err:
+                if not mock:
+                    logger.warning("Live LLM failed (%s), falling back to offline planner for brief.", l_err)
+                    llm = get_llm("fake")
+                    plan = llm.generate_plan(brief.story, brief.style, preset)
+                else:
+                    raise
 
         plan.title = video_name
 
@@ -434,21 +473,27 @@ def run_pipeline_from_brief(
             if len(chars) < 2:
                 sec_name = "boy_b" if chars[0].name != "boy_b" else "girl_a"
                 chars.append(Character(name=sec_name, visual_description=f"Character {sec_name}"))
+            if plan.characters:
+                char_voice_map = {c.name.lower(): c.voice_id for c in plan.characters if getattr(c, "voice_id", None)}
+                for c in chars:
+                    if c.name.lower() in char_voice_map:
+                        c.voice_id = char_voice_map[c.name.lower()]
             plan.characters = chars
 
-        if brief.speaker and brief.speaker not in ("both", "all", "none"):
-            for sc in plan.scenes:
-                sc.speaker = brief.speaker
+        if scene_source is None:
+            if brief.speaker and brief.speaker not in ("both", "all", "none"):
+                for sc in plan.scenes:
+                    sc.speaker = brief.speaker
 
-        if brief.camera in ("fixed", "static"):
-            for sc in plan.scenes:
-                sc.camera_move = CameraMove.STATIC
-        elif brief.camera in ("zoom_speaker", "zoom on speaker"):
-            for idx, sc in enumerate(plan.scenes):
-                if idx in (1, len(plan.scenes) - 1):
-                    sc.camera_move = CameraMove.ZOOM_IN
-                else:
+            if brief.camera in ("fixed", "static"):
+                for sc in plan.scenes:
                     sc.camera_move = CameraMove.STATIC
+            elif brief.camera in ("zoom_speaker", "zoom on speaker"):
+                for idx, sc in enumerate(plan.scenes):
+                    if idx in (1, len(plan.scenes) - 1):
+                        sc.camera_move = CameraMove.ZOOM_IN
+                    else:
+                        sc.camera_move = CameraMove.STATIC
 
         # Save brief.json and scene.json inside video folder
         (build_dir / "brief.json").write_text(json.dumps(brief.model_dump(), indent=2), encoding="utf-8")
@@ -489,6 +534,20 @@ def run_pipeline_from_brief(
                 if (paths.LIBRARY_TTS_DIR / f"{stem}.wav").is_file():
                     library_pieces_used.append(f"library/tts/{stem}.wav")
 
+        # Mandatory audio-visual word timing alignment and trigger resolution
+        enforce_and_prepare_word_timings(
+            plan=plan,
+            scene_audios=scene_audios,
+            video_dir=build_dir,
+            allow_fallback=allow_fallback,
+        )
+        generate_sync_report(
+            plan=plan,
+            output_path=build_dir / "sync_report.txt",
+            max_diff_ms=getattr(config, "MAX_SYNC_DIFFERENCE_MS", 150),
+            allow_fallback=allow_fallback,
+        )
+
         # 4. Render key scene stills first
         renderer_name = "fake" if mock else (preset.get("renderer") or config.DEFAULT_RENDERER)
         if renderer_name == "auto":
@@ -496,11 +555,14 @@ def run_pipeline_from_brief(
 
         renderer = get_renderer(renderer_name)
         still_paths: List[Path] = []
-        key_indices = [0]
-        if len(plan.scenes) > 1:
-            punchline_idx = next((i for i, s in enumerate(plan.scenes) if s.is_punchline), len(plan.scenes) - 1)
-            if punchline_idx not in key_indices:
-                key_indices.append(punchline_idx)
+        if stills_only or renderer_name == "animejs":
+            key_indices = list(range(len(plan.scenes)))
+        else:
+            key_indices = [0]
+            if len(plan.scenes) > 1:
+                punchline_idx = next((i for i, s in enumerate(plan.scenes) if s.is_punchline), len(plan.scenes) - 1)
+                if punchline_idx not in key_indices:
+                    key_indices.append(punchline_idx)
 
         for s_idx in key_indices:
             sc = plan.scenes[s_idx]
@@ -514,7 +576,22 @@ def run_pipeline_from_brief(
             )
             still_paths.append(still_path)
 
-        logger.info("Rendered %d key scene stills: %s", len(still_paths), [p.name for p in still_paths])
+        logger.info("Rendered %d scene stills: %s", len(still_paths), [p.name for p in still_paths])
+
+        # Automated Layout & Safe-Zone Check on generated scene stills
+        html_still_files = list(build_dir.glob("scene_*_still.html"))
+        if html_still_files:
+            from toonshorts.core.layout_checker import verify_video_layout
+            logger.info("Running automated layout and safe-zone check on all scene stills...")
+            layout_report = verify_video_layout(build_dir)
+            if not layout_report.get("passed", False):
+                failed_msg = (
+                    f"Automated layout check FAILED for {len(layout_report.get('failed_scenes', []))} scene(s): "
+                    f"{'; '.join(layout_report.get('violations', []))}"
+                )
+                logger.error(failed_msg)
+                raise PipelineError(failed_msg)
+            logger.info("Automated layout check PASSED for all %d scenes.", layout_report.get("total_scenes", 0))
 
         # Write manifest before stills exit
         manifest = generate_manifest(
@@ -586,6 +663,7 @@ def run_pipeline_from_brief(
             toon_logger.removeHandler(file_handler)
 
     if build_succeeded:
+        tidy_video_folder(build_dir)
         if target_video_dir.exists():
             shutil.rmtree(target_video_dir, ignore_errors=True)
         shutil.move(str(build_dir), str(target_video_dir))

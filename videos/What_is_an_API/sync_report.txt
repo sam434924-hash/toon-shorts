@@ -1,0 +1,31 @@
+=======================================================
+           AUDIO-VISUAL SYNC VERIFICATION REPORT
+=======================================================
+Max Allowed Difference: 150 ms
+Fallback Allowed:       NO
+-------------------------------------------------------
+Scene 1:
+  (no discrete stage visual cues)
+Scene 2:
+  (no discrete stage visual cues)
+Scene 3:
+  - Cue [visual: flow]: trigger='API', spoken=460ms, scheduled=460ms, diff=0ms [PASS]
+  - Cue [camera: board_0]: trigger='API', spoken=460ms, scheduled=330ms, diff=130ms [PASS]
+Scene 4:
+  (no discrete stage visual cues)
+Scene 5:
+  - Cue [visual: request_response]: trigger='packets', spoken=2300ms, scheduled=2300ms, diff=0ms [PASS]
+  - Cue [camera: board_0]: trigger='packets', spoken=2300ms, scheduled=2170ms, diff=130ms [PASS]
+Scene 6:
+  - Cue [sfx: punchline]: trigger='dark!', spoken=5940ms, scheduled=5940ms, diff=0ms [PASS]
+-------------------------------------------------------
+Worst Difference per Scene:
+  Scene 1: 0 ms [PASS]
+  Scene 2: 0 ms [PASS]
+  Scene 3: 130 ms [PASS]
+  Scene 4: 0 ms [PASS]
+  Scene 5: 130 ms [PASS]
+  Scene 6: 0 ms [PASS]
+Overall Maximum Difference: 130 ms
+Overall Status: PASSED
+=======================================================

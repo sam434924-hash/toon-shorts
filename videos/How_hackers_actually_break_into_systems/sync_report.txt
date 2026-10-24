@@ -1,0 +1,41 @@
+=======================================================
+           AUDIO-VISUAL SYNC VERIFICATION REPORT
+=======================================================
+Max Allowed Difference: 150 ms
+Fallback Allowed:       NO
+-------------------------------------------------------
+Scene 1:
+  - Cue [visual: check_cross]: trigger='account', spoken=3980ms, scheduled=3980ms, diff=0ms [PASS]
+  - Cue [camera: board_0]: trigger='account', spoken=3980ms, scheduled=3850ms, diff=130ms [PASS]
+Scene 2:
+  - Cue [visual: flow]: trigger='everywhere', spoken=5420ms, scheduled=5420ms, diff=0ms [PASS]
+  - Cue [camera: board_0]: trigger='everywhere', spoken=5420ms, scheduled=5290ms, diff=130ms [PASS]
+Scene 3:
+  (no discrete stage visual cues)
+Scene 4:
+  - Cue [visual: counter]: trigger='strength', spoken=4100ms, scheduled=4100ms, diff=0ms [PASS]
+  - Cue [camera: board_0]: trigger='strength', spoken=4100ms, scheduled=3970ms, diff=130ms [PASS]
+  - Cue [visual: draw_svg]: trigger='manager', spoken=2580ms, scheduled=2580ms, diff=0ms [PASS]
+  - Cue [camera: board_1]: trigger='manager', spoken=2580ms, scheduled=2450ms, diff=130ms [PASS]
+Scene 5:
+  - Cue [visual: draw_svg]: trigger='shield', spoken=4360ms, scheduled=4360ms, diff=0ms [PASS]
+  - Cue [camera: board_0]: trigger='shield', spoken=4360ms, scheduled=4230ms, diff=130ms [PASS]
+  - Cue [visual: check_cross]: trigger='authentication', spoken=1340ms, scheduled=1340ms, diff=0ms [PASS]
+  - Cue [camera: board_1]: trigger='authentication', spoken=1340ms, scheduled=1210ms, diff=130ms [PASS]
+Scene 6:
+  - Cue [visual: step_ladder]: trigger='password123', spoken=1620ms, scheduled=1620ms, diff=0ms [PASS]
+  - Cue [camera: board_0]: trigger='password123', spoken=1620ms, scheduled=1490ms, diff=130ms [PASS]
+Scene 7:
+  - Cue [sfx: punchline]: trigger='down!', spoken=4820ms, scheduled=4820ms, diff=0ms [PASS]
+-------------------------------------------------------
+Worst Difference per Scene:
+  Scene 1: 130 ms [PASS]
+  Scene 2: 130 ms [PASS]
+  Scene 3: 0 ms [PASS]
+  Scene 4: 130 ms [PASS]
+  Scene 5: 130 ms [PASS]
+  Scene 6: 130 ms [PASS]
+  Scene 7: 0 ms [PASS]
+Overall Maximum Difference: 130 ms
+Overall Status: PASSED
+=======================================================

@@ -1,5 +1,11 @@
 # Changelog
 
+- 2026-10-24: audio-visual sync: enforced mandatory Whisper word timing with monotonic fuzzy script alignment, automatic trigger word resolution, 150ms sync verification report, explicit --allow-fallback flag, and work/ directory tidying.
+
+- 2026-10-24: layout and split camera zones: enabled split camera zones by default, neutralized board layer negative offset, and added automated safe-zone layout verification in pipeline and CLI.
+
+- 2026-10-24: test video pipeline: added pre-authored scene source option to CLI and pipeline, generated full-quality 1080x1920 test video 'How hackers actually break into systems' with Gemini TTS and night_studio style.
+
 - 2026-10-24: shared folder cleanup: removed legacy references to briefs/, output/, temp/, and cache/, archived legacy contents into _old_cleanup_20261024/, and redirected all output to self-contained video folders.
 
 - 2026-10-24: self-contained video folders: reorganized file handling into self-contained videos/<name>/ folders, library/ reusable asset cache, exists-guard, and clean failure recovery.

@@ -180,6 +180,11 @@ function computeCameraState(ms, frameIdx) {
         camY: charY,
         camZoom: charZoom,
       },
+      // Backward-compatibility aliases for single-camera inspection and edge-case contracts
+      camX: charX,
+      camY: charY,
+      camZoom: charZoom,
+      focus: (boardZoom > 1.05) ? 'board' : 'subject',
       driftX: 0.0,
       driftY: 0.0,
       driftRot: 0.0,

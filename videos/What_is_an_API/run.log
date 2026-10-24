@@ -1,26 +1,6 @@
-[15:44:04] INFO [toonshorts.pipeline]: [1/6] Planning screenplay for 'What is an API?' using fake...
-[15:44:04] INFO [toonshorts.pipeline]: Screenplay planned in 0.01s. Critic Score: 9.0/10
-[15:44:04] INFO [toonshorts.pipeline]: [3/6] Generating voice track via gemini_tts...
-[15:44:05] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 0 (key: e007ab6f301701c0ed7954e98eb4f534bde720fc9d23f745cd2ba9f18fddd4f3)
-[15:44:08] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 1 (key: d4f221c6c8a5f7641d7f25c4f3682af76ce7723a35a09d0234aaaf901f9369a1)
-[15:44:11] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 2 (key: dbfa809277602d8e2b11999769e4c88fc5b71a0a8f06674c62f6c485fb3fde20)
-[15:44:14] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 3 (key: 6ddc9c87cba7405b17744970e975ca7b8f8bc9d87f8ce53742e5b03649da3fa7)
-[15:44:16] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 4 (key: f182eb2847333ea09d4e82456f82bc33c2d0900026cdc64ea5cdb8701bc18694)
-[15:44:19] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 5 (key: 4a17d9ff238097036da86e433a31b624f620ba80a2f6a9f4308f0b604e620eb2)
-[15:44:21] INFO [toonshorts.pipeline]: Voice generated in 17.19s
-[15:44:21] INFO [toonshorts.pipeline]: [4/6] Rendering scene images via animejs...
-[15:44:21] WARNING [toonshorts.plugins.render.animejs.cast]: Character 'zack' not found in registry: Character 'zack' not found in registry
-[15:44:21] WARNING [toonshorts.plugins.render.animejs.cast]: Character 'zack' not found in registry: Character 'zack' not found in registry
-[15:44:21] WARNING [toonshorts.plugins.render.animejs.cast]: Character 'zack' not found in registry: Character 'zack' not found in registry
-[15:44:21] WARNING [toonshorts.plugins.render.animejs.cast]: Character 'zack' not found in registry: Character 'zack' not found in registry
-[15:44:21] WARNING [toonshorts.plugins.render.animejs.cast]: Character 'zack' not found in registry: Character 'zack' not found in registry
-[15:44:21] WARNING [toonshorts.plugins.render.animejs.cast]: Character 'zack' not found in registry: Character 'zack' not found in registry
-[15:44:58] INFO [toonshorts.pipeline]: Scenes rendered in 37.48s
-[15:44:58] INFO [toonshorts.pipeline]: [5/6] Assembling video using ffmpeg motion...
-[15:44:58] INFO [toonshorts.library]: Library HIT for SFX pop (47e9f275)
-[15:44:58] INFO [toonshorts.library]: Library HIT for SFX boing (1a844751)
-[15:44:58] INFO [toonshorts.library]: Library HIT for SFX whistle (f385dbe0)
-[15:44:59] INFO [toonshorts.assembler]: Concatenating all scenes into unified video stream...
-[15:44:59] INFO [toonshorts.assembler]: Burning in ASS word-level captions to final video...
-[15:45:00] INFO [toonshorts.assembler]: Successfully assembled video: C:\dev\toon-shorts\videos\.tmp-What_is_an_API-be20f916\What_is_an_API.mp4
-[15:45:00] INFO [toonshorts.pipeline]: Assembly completed in 2.01s
+[18:49:00] WARNING [toonshorts.plugins.render.animejs.cast]: Character 'zack' not found in registry: Character 'zack' not found in registry
+[18:49:00] WARNING [toonshorts.plugins.render.animejs.cast]: Character 'zack' not found in registry: Character 'zack' not found in registry
+[18:49:00] WARNING [toonshorts.plugins.render.animejs.cast]: Character 'zack' not found in registry: Character 'zack' not found in registry
+[18:49:00] WARNING [toonshorts.plugins.render.animejs.cast]: Character 'zack' not found in registry: Character 'zack' not found in registry
+[18:49:00] WARNING [toonshorts.plugins.render.animejs.cast]: Character 'zack' not found in registry: Character 'zack' not found in registry
+[18:49:00] WARNING [toonshorts.plugins.render.animejs.cast]: Character 'zack' not found in registry: Character 'zack' not found in registry
