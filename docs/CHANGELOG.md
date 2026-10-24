@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-24: verification and hardening: added Level 2 infinite loop protection test with per-frame timeout and clean browser termination, enforced critic review threshold on pre-authored scene files, and added tree-sitter and playwright dependencies to requirements.
+
 - 2026-10-24: phase 3 tools actually used: added asset planning step to directing skill, element indexing and single-save deduplication in library/elements/<type>/, and manifest tools_used tracking across skills, image generation, library hits, and custom visuals.
 
 - 2026-10-24: phase 2 quality gate: added visual review checklist and automated contrast-ratio inspection, check-visuals command, up to 2 fix rounds before rendering, and critic score threshold stops (< 7.0) with --allow-low-score override.

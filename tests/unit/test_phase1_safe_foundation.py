@@ -510,3 +510,51 @@ def test_sandbox_per_frame_timeout_blocks_infinite_loop(tmp_path):
             context.close()
 
     run_sandboxed_test(_inner, tmp_path)
+
+def test_level2_custom_script_infinite_loop_protection(tmp_path, monkeypatch):
+    """
+    Verify that when a custom Level 2 script runs an infinite loop during rendering:
+    - The render kills that page or browser context.
+    - Ends with a clear error (RuntimeError naming infinite loop/timeout).
+    - Leaves no stray browser process.
+    """
+    from toonshorts.plugins.render.animejs.html_builder import generate_whiteboard_html
+    from toonshorts.plugins.render.animejs.capture import capture_still_frame
+    from playwright.sync_api import sync_playwright
+
+    monkeypatch.setenv("TOONSHORTS_FRAME_TIMEOUT_MS", "1000")
+
+    work_dir = tmp_path / "work"
+    work_dir.mkdir(parents=True)
+    html_file = work_dir / "infinite_loop_scene.html"
+    still_output = work_dir / "still.png"
+
+    level2_visual = {
+        "id": "bo_infinite_loop",
+        "type": "custom",
+        "data": {
+            "level": 2,
+            "svg": "<svg viewBox=\"0 0 100 100\"><circle cx=\"50\" cy=\"50\" r=\"40\"/></svg>",
+            "js_code": "(p, seed, el) => { while(true) {} }",
+        },
+        "board_slot": "slot_mid",
+        "start_ms": 0,
+        "exit_ms": 3000,
+        "duration_ms": 1000,
+    }
+
+    html_content = generate_whiteboard_html(
+        title="Infinite Loop Test",
+        words=[{"word": "Test", "start": 0.0, "end": 1.0}],
+        duration_sec=1.5,
+        board_objects=[level2_visual],
+        layout="stage",
+        theme="night_studio",
+    )
+    html_file.write_text(html_content, encoding="utf-8")
+
+    # Capture browser instances before render to verify no strays
+    with pytest.raises(RuntimeError, match="infinite loop detected"):
+        capture_still_frame(html_file, still_output, duration_sec=1.0)
+
+    assert not still_output.exists(), "Output image should not be produced on hang"

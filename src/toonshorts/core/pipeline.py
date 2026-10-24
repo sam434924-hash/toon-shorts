@@ -580,6 +580,16 @@ def run_pipeline_from_brief(
             preset.setdefault("avoid", []).extend(brief.board_animations_avoid)
 
         # 2. Plan Screenplay fresh from story & brief (no silent reuse!)
+        llm_plugin = "fake" if mock else config.DEFAULT_LLM
+        try:
+            llm = get_llm(llm_plugin)
+        except Exception as l_err:
+            if not mock:
+                logger.warning("Live LLM failed (%s), falling back to offline planner for critic.", l_err)
+                llm = get_llm("fake")
+            else:
+                raise
+
         if scene_source is None:
             cand1 = config.PROJECT_ROOT / "briefs" / f"{video_name}_scene.json"
             cand2 = paths.VIDEOS_DIR / f"{video_name}_scene.json"
@@ -600,9 +610,7 @@ def run_pipeline_from_brief(
             plan = validate_plan(plan)
             logger.info("Loaded pre-authored screenplay from %s", scene_source)
         else:
-            llm_plugin = "fake" if mock else config.DEFAULT_LLM
             try:
-                llm = get_llm(llm_plugin)
                 plan = llm.generate_plan(brief.story, brief.style, preset)
             except Exception as l_err:
                 if not mock:
@@ -611,6 +619,20 @@ def run_pipeline_from_brief(
                     plan = llm.generate_plan(brief.story, brief.style, preset)
                 else:
                     raise
+
+        # Critic review MUST run on EVERY script, including pre-authored or hand-written scene files
+        logger.info("Running critic review on screenplay...")
+        refined_plan, review = llm.review_and_refine(plan, preset)
+        logger.info("Critic review score: %.1f/10", review.score)
+
+        if review.score < 7.0:
+            if not allow_low_score:
+                raise ValueError(
+                    f"Pipeline stopped: Critic score {review.score:.1f}/10 is under 7.0 after repair. Pass --allow-low-score to continue."
+                )
+            else:
+                logger.warning("Proceeding despite low critic score (%.1f/10) due to --allow-low-score flag.", review.score)
+        plan = refined_plan
 
         plan.title = video_name
 

@@ -416,6 +416,25 @@ def generate_whiteboard_html(
         .replace("&", "\\u0026")
     )
 
+    # Level 2 JavaScript Effects script generation
+    level2_blocks = ["window.__level2Effects = window.__level2Effects || {};"]
+    for bo in resolved_bo:
+        if bo.get("type") == "custom" and (bo.get("data") or {}).get("level") == 2:
+            bo_id = bo["id"]
+            js_code = (bo.get("data") or {}).get("js_code", "")
+            if js_code:
+                level2_blocks.append(f"""(function() {{
+  try {{
+    var effect = ({js_code});
+    if (typeof effect === 'function') {{
+      window.__level2Effects[{json.dumps(bo_id)}] = effect;
+    }}
+  }} catch(e) {{
+    console.error("Error defining Level 2 effect for " + {json.dumps(bo_id)}, e);
+  }}
+}})();""")
+    level2_effects_script = "\n".join(level2_blocks)
+
     panel_backdrop_style = ""
     if theme == "night_studio":
         # Check code_editor_monitor.png backdrop inside board panel
@@ -602,7 +621,7 @@ def generate_whiteboard_html(
     result = result.replace("{{IS_FAST}}", "true" if fast else "false")
     result = result.replace("{{ENABLE_BOARD_OBJECTS}}", "true" if enable_board_objects else "false")
     result = result.replace("{{BOARD_OBJECTS_JSON}}", board_objects_json)
-    result = result.replace("{{BOARD_OBJECTS_PAYLOAD_JSON}}", board_objects_payload_json)
+    result = result.replace("{{BOARD_OBJECTS_PAYLOAD_JSON}}", board_objects_payload_json).replace("{{LEVEL2_EFFECTS_SCRIPT}}", level2_effects_script)
     safe_text_payload = {
         "title": safe_title,
         "cards": [

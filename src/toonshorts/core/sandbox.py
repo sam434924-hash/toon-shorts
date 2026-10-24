@@ -17,7 +17,9 @@ import urllib.request
 
 logger = logging.getLogger("toonshorts.sandbox")
 
-DEFAULT_PER_FRAME_TIMEOUT_MS = 5000
+import os
+
+DEFAULT_PER_FRAME_TIMEOUT_MS = int(os.environ.get("TOONSHORTS_FRAME_TIMEOUT_MS", 5000))
 
 # Strict zero-network Content-Security-Policy
 STRICT_CSP_POLICY = (

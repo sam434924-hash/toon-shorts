@@ -85,6 +85,11 @@
   <!-- Safe JSON board objects payload for XSS-free textContent setting (Phase 4B-4) -->
   <script id="board-objects-payload" type="application/json">{{BOARD_OBJECTS_PAYLOAD_JSON}}</script>
 
+  <!-- Level 2 JavaScript Effects (AST scanned and sandboxed) -->
+  <script id="level2-effects-script">
+{{LEVEL2_EFFECTS_SCRIPT}}
+  </script>
+
   <!-- Local modular template scripts loaded in fixed order -->
   <script id="module-rough-draw">
 {{ROUGH_DRAW_JS}}

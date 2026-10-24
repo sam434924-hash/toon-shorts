@@ -155,3 +155,80 @@ def test_critic_low_score_stopping_and_allow_flag(tmp_path, monkeypatch):
     )
     assert result is not None
     assert result.is_file()
+
+def test_critic_runs_on_pre_authored_scene_files(tmp_path, monkeypatch):
+    """Verify critic runs on hand-written or pre-authored scene files and stops if score < 7.0 unless --allow-low-score."""
+    from toonshorts.plugins.llm.fake import FakeLLMPlugin
+    from toonshorts.core.models import CriticReview, ScriptPlan, Scene, Character, Pose, CameraMove, Transition
+    from toonshorts.core.pipeline import run_pipeline_from_brief
+    from toonshorts.brief import VideoBrief
+
+    base_dir = tmp_path / "videos"
+    base_dir.mkdir()
+
+    pre_authored_plan = ScriptPlan(
+        version=2,
+        title="pre_authored_test",
+        art_style="stickman",
+        emotional_arc="Pre-authored script test",
+        characters=[
+            Character(name="Pip", visual_description="Stickman", voice_id="v1"),
+            Character(name="Zack", visual_description="Stickman 2", voice_id="v2"),
+        ],
+        scenes=[
+            Scene(scene_number=1, speaker="Pip", dialogue_line="This is a hand-written scene.", action="Talks", pose=Pose.IDLE, camera_move=CameraMove.STATIC, transition=Transition.CUT, is_punchline=False, cast=["Pip", "Zack"], layout="cards"),
+            Scene(scene_number=2, speaker="Zack", dialogue_line="What is the scene about?", action="Questions", pose=Pose.IDLE, camera_move=CameraMove.STATIC, transition=Transition.CUT, is_punchline=False, cast=["Pip", "Zack"], layout="cards"),
+            Scene(scene_number=3, speaker="Pip", dialogue_line="It is about testing pre-authored scripts.", action="Explains", pose=Pose.WAVING, camera_move=CameraMove.STATIC, transition=Transition.CUT, is_punchline=False, cast=["Pip", "Zack"], layout="cards"),
+            Scene(scene_number=4, speaker="Zack", dialogue_line="And here is the punchline!", action="Laughs", pose=Pose.LAUGHING, camera_move=CameraMove.STATIC, transition=Transition.FADE, is_punchline=True, cast=["Pip", "Zack"], layout="cards"),
+        ],
+    )
+
+    brief = VideoBrief(
+        video_name="pre_authored_test",
+        story="Pre-authored story test",
+        format="comedy story",
+        style="stickman",
+        characters=["Pip", "Zack"],
+        speaker="both",
+        voice="fake",
+        voice_engine="fake",
+        camera="fixed",
+        length_seconds=10,
+    )
+
+    def mock_refine(self, plan, preset):
+        low_review = CriticReview(
+            score=6.2,
+            hook_strength=6.0,
+            joke_quality=6.0,
+            pacing=6.5,
+            variety=6.0,
+            weakest_scene_index=1,
+            revision_instructions="Pacing needs work",
+        )
+        return plan, low_review
+
+    monkeypatch.setattr(FakeLLMPlugin, "review_and_refine", mock_refine)
+
+    # 1. Pipeline MUST halt on low score even for pre-authored scene file
+    with pytest.raises(ValueError, match="Critic score 6.2/10 is under 7.0"):
+        run_pipeline_from_brief(
+            brief_source=brief,
+            output_dir=base_dir,
+            mock=True,
+            overwrite=True,
+            scene_source=pre_authored_plan,
+            allow_low_score=False,
+        )
+
+    # 2. Pipeline proceeds when allow_low_score=True
+    result = run_pipeline_from_brief(
+        brief_source=brief,
+        output_dir=base_dir,
+        mock=True,
+        overwrite=True,
+        scene_source=pre_authored_plan,
+        allow_low_score=True,
+    )
+    assert result is not None
+    assert (base_dir / "pre_authored_test" / "pre_authored_test.mp4").is_file()

@@ -722,7 +722,12 @@ window.updateBoardObjects = function(ms) {
       } else if (sLevel === 2) {
         if (window.__level2Effects && typeof window.__level2Effects[obj.id] === "function") {
           try {
-            window.__level2Effects[obj.id](p, obj.seed, customWrap);
+            const ret = window.__level2Effects[obj.id](p, obj.seed, customWrap);
+            if (ret && typeof ret === "object") {
+              if (ret.rotate !== undefined) customWrap.style.transform = "rotate(" + ret.rotate + "deg)";
+              if (ret.scale !== undefined) customWrap.style.transform = "scale(" + ret.scale + ")";
+              if (ret.opacity !== undefined) customWrap.style.opacity = String(ret.opacity);
+            }
           } catch (err) {
             console.error("Level 2 effect error for " + obj.id + " at t=" + p, err);
           }

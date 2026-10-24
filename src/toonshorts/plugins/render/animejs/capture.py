@@ -231,38 +231,78 @@ def capture_still_frame(
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        allowed_dirs = [
-            html_file.parent,
-            paths.LIBRARY_DIR,
-            paths.ASSETS_DIR,
-            paths.PROJECT_ROOT,
-        ]
-        context, page = create_sandboxed_context(
-            browser,
-            allowed_dirs=allowed_dirs,
-            viewport={"width": width, "height": height},
-            initial_html_path=html_file,
-        )
-        page_errors = []
-        page.on("pageerror", lambda err: page_errors.append(str(err)))
-        page.goto(html_file.resolve().as_uri())
-        if page_errors:
-            context.close()
-            browser.close()
-            raise RuntimeError(f"JavaScript execution error in {html_file.name}: {'; '.join(page_errors)}")
-        missing = evaluate_frame(
-            page,
-            "() => typeof window.__checkModulesLoaded === 'function' ? window.__checkModulesLoaded() : ['window.__checkModulesLoaded missing']",
-            timeout_ms=DEFAULT_PER_FRAME_TIMEOUT_MS,
-        )
-        if missing:
-            context.close()
-            browser.close()
-            raise RuntimeError(f"Missing required JS modules or functions in {html_file.name}: {', '.join(missing)}")
-        evaluate_frame(page, f"() => window.seekTo({int(duration_sec * 1000)})", timeout_ms=DEFAULT_PER_FRAME_TIMEOUT_MS)
-        page.screenshot(path=str(output_path), type="png")
-        context.close()
-        browser.close()
+        context = None
+        page = None
+        try:
+            allowed_dirs = [
+                html_file.parent,
+                paths.LIBRARY_DIR,
+                paths.ASSETS_DIR,
+                paths.PROJECT_ROOT,
+            ]
+            context, page = create_sandboxed_context(
+                browser,
+                allowed_dirs=allowed_dirs,
+                viewport={"width": width, "height": height},
+                initial_html_path=html_file,
+            )
+            page_errors = []
+            page.on("pageerror", lambda err: page_errors.append(str(err)))
+            try:
+                page.goto(html_file.resolve().as_uri(), timeout=DEFAULT_PER_FRAME_TIMEOUT_MS)
+            except Exception as nav_err:
+                try:
+                    page.close()
+                except Exception:
+                    pass
+                if context:
+                    try:
+                        context.close()
+                    except Exception:
+                        pass
+                raise RuntimeError(
+                    f"Still frame render failed: script execution timed out or failed loading {html_file.name} (infinite loop detected): {nav_err}"
+                ) from nav_err
+            if page_errors:
+                raise RuntimeError(f"JavaScript execution error in {html_file.name}: {'; '.join(page_errors)}")
+            missing = evaluate_frame(
+                page,
+                "() => typeof window.__checkModulesLoaded === 'function' ? window.__checkModulesLoaded() : ['window.__checkModulesLoaded missing']",
+                timeout_ms=DEFAULT_PER_FRAME_TIMEOUT_MS,
+            )
+            if missing:
+                raise RuntimeError(f"Missing required JS modules or functions in {html_file.name}: {', '.join(missing)}")
+            try:
+                evaluate_frame(page, f"() => window.seekTo({int(duration_sec * 1000)})", timeout_ms=DEFAULT_PER_FRAME_TIMEOUT_MS)
+            except Exception as eval_err:
+                try:
+                    page.close()
+                except Exception:
+                    pass
+                if context:
+                    try:
+                        context.close()
+                    except Exception:
+                        pass
+                raise RuntimeError(
+                    f"Still frame render failed: script execution timed out or failed evaluating {html_file.name} (infinite loop detected): {eval_err}"
+                ) from eval_err
+            page.screenshot(path=str(output_path), type="png")
+        finally:
+            if page:
+                try:
+                    page.close()
+                except Exception:
+                    pass
+            if context:
+                try:
+                    context.close()
+                except Exception:
+                    pass
+            try:
+                browser.close()
+            except Exception:
+                pass
     return output_path
 
 
@@ -351,6 +391,7 @@ def _render_job_with_browser(
     proc: Optional[subprocess.Popen] = None
     own_browser: Optional[Browser] = None
     context = None
+    page = None
 
     try:
         with open(log_file, "wb") as lf:
@@ -386,7 +427,22 @@ def _render_job_with_browser(
 
             page_errors = []
             page.on("pageerror", lambda err: page_errors.append(str(err)))
-            page.goto(html_file.as_uri())
+            try:
+                page.goto(html_file.as_uri(), timeout=DEFAULT_PER_FRAME_TIMEOUT_MS)
+            except Exception as nav_err:
+                logger.error("Navigation failed for scene %d: %s", job.scene_number, nav_err)
+                try:
+                    page.close()
+                except Exception:
+                    pass
+                if context:
+                    try:
+                        context.close()
+                    except Exception:
+                        pass
+                raise RuntimeError(
+                    f"Scene {job.scene_number} render failed: script execution timed out or failed loading {html_file.name} (infinite loop detected): {nav_err}"
+                ) from nav_err
 
             if page_errors:
                 raise RuntimeError(f"JavaScript execution error in {html_file.name}: {'; '.join(page_errors)}")
@@ -404,7 +460,22 @@ def _render_job_with_browser(
                     raise InterruptedError(f"Rendering cancelled for Scene {job.scene_number}")
 
                 t_ms = (frame_idx / job.fps) * 1000.0
-                evaluate_frame(page, f"() => window.seekTo({t_ms})", timeout_ms=DEFAULT_PER_FRAME_TIMEOUT_MS)
+                try:
+                    evaluate_frame(page, f"() => window.seekTo({t_ms})", timeout_ms=DEFAULT_PER_FRAME_TIMEOUT_MS)
+                except Exception as eval_err:
+                    logger.error("Frame evaluation failed at frame %d for scene %d: %s", frame_idx, job.scene_number, eval_err)
+                    try:
+                        page.close()
+                    except Exception:
+                        pass
+                    if context:
+                        try:
+                            context.close()
+                        except Exception:
+                            pass
+                    raise RuntimeError(
+                        f"Scene {job.scene_number} render failed: script execution timed out or failed evaluating frame {frame_idx} (infinite loop detected): {eval_err}"
+                    ) from eval_err
                 buf = page.screenshot(type="png")
 
                 try:
@@ -451,6 +522,12 @@ def _render_job_with_browser(
     finally:
         if active_procs is not None and job.scene_number in active_procs:
             active_procs.pop(job.scene_number, None)
+
+        if page:
+            try:
+                page.close()
+            except Exception:
+                pass
 
         if context:
             try:
