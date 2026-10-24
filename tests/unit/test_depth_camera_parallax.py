@@ -175,6 +175,111 @@ def test_background_layers_oversized_no_empty_edges_at_extreme_camera_states():
             assert eff_bottom >= screen_h, f"Empty bottom edge on {layer_name}: bottom={eff_bottom:.1f} < {screen_h}"
 
 
+def test_extreme_camera_states_of_every_scene_have_no_empty_edges():
+    """
+    Samples the extreme camera states of every scene across all scene files
+    and asserts that no empty background layer edge is ever visible on screen.
+    """
+    import json
+    from pathlib import Path
+    from toonshorts.core.camera import plan_scene_camera_shots, load_camera_config_for_style
+
+    screen_w = 1080.0
+    screen_h = 1920.0
+    layer_oversize_x = 300.0
+    layer_oversize_y = 300.0
+
+    scene_files = [
+        Path("briefs/octopus_facts_v2_scene.json"),
+        Path("tests/fixtures/what_is_an_api_v2_plan.json"),
+    ]
+
+    for sf in scene_files:
+        if not sf.exists():
+            continue
+        data = json.loads(sf.read_text(encoding="utf-8"))
+        theme = data.get("art_style", "night_studio")
+        cam_cfg = load_camera_config_for_style(theme)
+        depth_factors = config.BACKGROUND_PARALLAX_DEPTHS
+
+        for sc in data.get("scenes", []):
+            dur = 5.0
+            wts = sc.get("word_timings") or []
+            if wts:
+                dur = max(wts[-1].get("end_time", 5.0) + 0.5, 5.0)
+            vis = sc.get("visuals") or []
+            speaker = sc.get("speaker", "boy_b")
+            speaker_slot = "right" if speaker in ("girl_a", "girl") else "left"
+            speaker_id = "character-rig-right" if speaker_slot == "right" else "character-rig"
+
+            shots = plan_scene_camera_shots(
+                duration_sec=dur,
+                word_timings=wts,
+                visuals=vis,
+                speaker_id=speaker_id,
+                camera_config=cam_cfg,
+                speaker_slot=speaker_slot,
+                scene_number=sc.get("scene_number", 1),
+            )
+
+            # Sample key time points for this scene: 0, start/ends of moves, and 10 intervals
+            sample_ms_list = [0.0, dur * 1000.0]
+            for s in shots:
+                sample_ms_list.extend([float(s["t_start"]), float(s["t_end"]), (s["t_start"] + s["t_end"]) / 2.0])
+            for step in range(11):
+                sample_ms_list.append((dur * 1000.0) * (step / 10.0))
+
+            for ms in sample_ms_list:
+                # Target coordinates resolution
+                if not shots:
+                    target = "wide"
+                else:
+                    if ms < shots[0]["t_start"]:
+                        target = shots[0]["from_target"]
+                    else:
+                        target = shots[-1]["to_target"]
+                        for s in shots:
+                            if ms >= s["t_start"] and ms <= s["t_end"]:
+                                target = s["to_target"]
+                                break
+
+                # Presets
+                presets = config.CAMERA_PRESETS
+                if "speaker" in target:
+                    preset = presets["girl_close"] if speaker_slot == "right" else presets["boy_close"]
+                elif "board" in target:
+                    preset = presets["board_close"]
+                else:
+                    preset = presets["wide"]
+
+                frame_idx = int((ms / 1000.0) * 30)
+                drift_x = 2.5 * math.sin(frame_idx * 0.035)
+                drift_y = 1.8 * math.cos(frame_idx * 0.028)
+                cam_x = preset["x"]
+                cam_y = preset["y"]
+                cam_zoom = preset["zoom"]
+
+                for layer_name, depth in depth_factors.items():
+                    shift_x = (-cam_x * depth) + (drift_x * depth)
+                    shift_y = (-cam_y * depth) + (drift_y * depth)
+                    scale = 1.0 + (cam_zoom - 1.0) * min(1.2, depth)
+
+                    center_x = screen_w / 2.0
+                    center_y = screen_h / 2.0
+                    half_w = (screen_w + 2 * layer_oversize_x) / 2.0 * scale
+                    half_h = (screen_h + 2 * layer_oversize_y) / 2.0 * scale
+
+                    eff_left = (center_x + shift_x) - half_w
+                    eff_right = (center_x + shift_x) + half_w
+                    eff_top = (center_y + shift_y) - half_h
+                    eff_bottom = (center_y + shift_y) + half_h
+
+                    assert eff_left <= 0.0, f"Empty left edge in {sf.name} sc{sc.get('scene_number')} layer {layer_name}"
+                    assert eff_right >= screen_w, f"Empty right edge in {sf.name} sc{sc.get('scene_number')} layer {layer_name}"
+                    assert eff_top <= 0.0, f"Empty top edge in {sf.name} sc{sc.get('scene_number')} layer {layer_name}"
+                    assert eff_bottom >= screen_h, f"Empty bottom edge in {sf.name} sc{sc.get('scene_number')} layer {layer_name}"
+
+
 def test_parallax_fast_mode_blur_off(tmp_path):
     """Verifies that in fast mode, blur filter is strictly set to 'none' across all layers."""
     from playwright.sync_api import sync_playwright

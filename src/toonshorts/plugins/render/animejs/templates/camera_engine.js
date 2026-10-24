@@ -396,13 +396,21 @@ function applyMultiplaneParallax(camState) {
   const boardBlur = rf.near_defocus * (1.0 - f);
   const bgBlur = rf.far_defocus;
 
-  if (fgEl) fgEl.style.filter = 'blur(' + fgBlur.toFixed(2) + 'px)';
-  if (subjEl) subjEl.style.filter = 'blur(' + subjBlur.toFixed(2) + 'px)';
-  if (boardEl) boardEl.style.filter = 'blur(' + boardBlur.toFixed(2) + 'px)';
-  if (bgEl) bgEl.style.filter = 'blur(' + bgBlur.toFixed(2) + 'px)';
-  if (bgFarEl) bgFarEl.style.filter = 'blur(' + (bgBlur * 1.2).toFixed(2) + 'px)';
-  if (bgMidEl) bgMidEl.style.filter = 'blur(' + (bgBlur * 0.9).toFixed(2) + 'px)';
-  if (bgNearEl) bgNearEl.style.filter = 'blur(' + (rf.near_defocus).toFixed(2) + 'px)';
+  function setFilterIfChanged(el, filterStr) {
+    if (!el) return;
+    if (el.__lastFilter !== filterStr) {
+      el.style.filter = filterStr;
+      el.__lastFilter = filterStr;
+    }
+  }
+
+  setFilterIfChanged(fgEl, 'blur(' + fgBlur.toFixed(2) + 'px)');
+  setFilterIfChanged(subjEl, 'blur(' + subjBlur.toFixed(2) + 'px)');
+  setFilterIfChanged(boardEl, 'blur(' + boardBlur.toFixed(2) + 'px)');
+  setFilterIfChanged(bgEl, 'blur(' + bgBlur.toFixed(2) + 'px)');
+  setFilterIfChanged(bgFarEl, 'blur(' + (bgBlur * 1.2).toFixed(2) + 'px)');
+  setFilterIfChanged(bgMidEl, 'blur(' + (bgBlur * 0.9).toFixed(2) + 'px)');
+  setFilterIfChanged(bgNearEl, 'blur(' + (rf.near_defocus).toFixed(2) + 'px)');
 }
 
 window.smootherstep = smootherstep;

@@ -23,16 +23,23 @@ body {
   overflow: hidden;
 }
 
-/* Multiplane Depth Layers: generously oversized by 300px to guarantee zero border bleed at extreme camera states */
+/* Multiplane Depth Layers: -80px baseline in Phase 4, generously oversized by 300px when parallax is enabled */
 .depth-layer {
   position: absolute;
+  top: -80px;
+  left: -80px;
+  width: calc(100% + 160px);
+  height: calc(100% + 160px);
+  transform-origin: 50% 50%;
+  will-change: transform, filter;
+  pointer-events: none;
+}
+
+body.parallax-bg-enabled .depth-layer {
   top: -300px;
   left: -300px;
   width: calc(100% + 600px);
   height: calc(100% + 600px);
-  transform-origin: 50% 50%;
-  will-change: transform, filter;
-  pointer-events: none;
 }
 
 .depth-layer > * {

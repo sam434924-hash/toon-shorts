@@ -185,11 +185,11 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Tests**: `tests/unit/test_style_profile.py`
 
 ### Layered Background & Parallax (`render/animejs/layout`)
-- **Description**: 3-layer vector SVG multiplane background system (far, mid, near) oversized by 300px on all edges with distinct depth factors shifting only on purposeful camera moves and static between cues.
-- **Files**: `src/toonshorts/plugins/render/animejs/layout.py`, `src/toonshorts/plugins/render/animejs/templates/style.css`, `src/toonshorts/plugins/render/animejs/templates/camera_engine.js`
-- **Config Flags**: `ENABLE_PARALLAX_BACKGROUND`, `BACKGROUND_PARALLAX_DEPTHS`, `CAMERA_PARALLAX_FACTORS`
-- **Capabilities**: Zero empty edge guarantee across all extreme camera poses, vector SVG style matching, and blur disabled in fast mode.
-- **Tests**: `tests/unit/test_depth_camera_parallax.py`
+- **Description**: 3-layer vector SVG multiplane background system (far, mid, near) oversized by 300px on all edges with distinct depth factors shifting only on purposeful camera moves and static between cues. Includes single-render parallax layer image caching with content-hash naming and filter cache invalidation prevention.
+- **Files**: `src/toonshorts/plugins/render/animejs/layout.py`, `src/toonshorts/plugins/render/animejs/templates/style.css`, `src/toonshorts/plugins/render/animejs/templates/camera_engine.js`, `src/toonshorts/plugins/render/animejs/capture.py`, `src/toonshorts/plugins/render/animejs/html_builder.py`
+- **Config Flags**: `ENABLE_PARALLAX_BACKGROUND`, `ENABLE_PARALLAX_CACHE`, `BACKGROUND_PARALLAX_DEPTHS`, `CAMERA_PARALLAX_FACTORS`
+- **Capabilities**: Zero empty edge guarantee across all extreme camera poses, vector SVG style matching, blur disabled in fast mode, and pre-rendered layer caching in tempdir keyed by SHA-256 hash.
+- **Tests**: `tests/unit/test_depth_camera_parallax.py`, `tests/unit/test_scene_edge_cases.py`
 
 ### Board Objects and Animated Text (`core/board_objects`)
 - **Description**: Deterministic board object engine with a fixed menu of 6 types (`text_pop`, `text_typewriter`, `highlight_word`, `svg_draw`, `diagram_flow`, `icon_pop`), slot allocation across fixed layout slots (`slot_top`, `slot_mid`, `slot_bottom`, `slot_center`), overlap collision avoidance, auto-fit font sizing with minimum 28px for 1080x1920 mobile viewing, and wrapping of legacy graphics plugins and visual templates.

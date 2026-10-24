@@ -2,14 +2,15 @@
 Purpose: Playwright headless browser frame stepping, FFmpeg pipe video capture, and parallel worker pool.
 Inputs: Compiled whiteboard HTML, audio files, animation durations, target FPS, and scene jobs.
 Outputs: Generated MP4 scene clips and still preview PNG frames.
-Depends on: concurrent.futures, dataclasses, logging, pathlib, playwright, plugins.render.animejs.audio_sync, plugins.render.animejs.html_builder, shutil, subprocess, tempfile, threading, typing
+Depends on: concurrent.futures, dataclasses, hashlib, logging, pathlib, playwright, plugins.render.animejs.audio_sync, plugins.render.animejs.html_builder, plugins.render.animejs.layout, shutil, subprocess, tempfile, threading, typing
 Used by: plugins.render.animejs, plugins.render.animejs.plugin
-Config keys: VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
+Config keys: ENABLE_PARALLAX_BACKGROUND, ENABLE_PARALLAX_CACHE, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
 Tests: tests/unit/test_animejs.py
 """
 
 import concurrent.futures
 from dataclasses import dataclass
+import hashlib
 import logging
 from pathlib import Path
 import shutil
@@ -23,6 +24,7 @@ from playwright.sync_api import Browser, sync_playwright
 from toonshorts.core import config
 from toonshorts.plugins.render.animejs.audio_sync import compute_mouth_cues_from_audio
 from toonshorts.plugins.render.animejs.html_builder import generate_whiteboard_html
+from toonshorts.plugins.render.animejs.layout import build_parallax_background_layers
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +77,95 @@ class SceneRenderJob:
     rough_seed: Optional[int] = None
     fast: bool = False
     temp_dir: Optional[Path] = None
+    bg_layer_images: Optional[Dict[str, str]] = None
+
+
+_CACHE_LOCK = threading.Lock()
+
+
+def render_cached_parallax_layers(
+    themes: List[str],
+    cache_dir: Path,
+    browser: Optional[Browser] = None,
+) -> Dict[str, Dict[str, str]]:
+    """
+    Renders each vector SVG parallax layer (far, mid, near) ONCE per scene into a cached PNG image.
+    Keyed by a SHA-256 content hash with strictly no user text in any path.
+    Reuses existing cached PNGs when available.
+    Returns mapping: {theme: {"far": uri, "mid": uri, "near": uri}}.
+    """
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    results: Dict[str, Dict[str, str]] = {}
+
+    own_browser = False
+    p_inst = None
+    b_inst = browser
+
+    if b_inst is None:
+        try:
+            import asyncio
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = None
+
+        if loop is not None and loop.is_running():
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
+                return ex.submit(
+                    render_cached_parallax_layers,
+                    themes=themes,
+                    cache_dir=cache_dir,
+                    browser=None,
+                ).result()
+
+        p_inst = sync_playwright().start()
+        b_inst = p_inst.chromium.launch(headless=True)
+        own_browser = True
+
+    try:
+        with _CACHE_LOCK:
+            page = b_inst.new_page(viewport={"width": 1680, "height": 2520})
+            try:
+                for theme in themes:
+                    theme_results: Dict[str, str] = {}
+                    bg_layers = build_parallax_background_layers(theme=theme, style_profile=None)
+                    for layer_name in ("far", "mid", "near"):
+                        svg_content = bg_layers.get(layer_name, "")
+                        if not svg_content:
+                            continue
+                        content_hash = hashlib.sha256(svg_content.encode("utf-8")).hexdigest()[:16]
+                        png_path = cache_dir / f"bg_{theme}_{layer_name}_{content_hash}.png"
+                        if not png_path.exists():
+                            tmp_html = cache_dir / f"tmp_{theme}_{layer_name}_{threading.get_ident()}.html"
+                            tmp_html.write_text(
+                                f"<!DOCTYPE html><html><head><style>"
+                                f"* {{ margin: 0; padding: 0; box-sizing: border-box; }}"
+                                f"html, body {{ width: 1680px; height: 2520px; overflow: hidden; background: transparent; }}"
+                                f"svg {{ width: 1680px; height: 2520px; display: block; }}"
+                                f"</style></head><body>{svg_content}</body></html>",
+                                encoding="utf-8",
+                            )
+                            page.goto(tmp_html.resolve().as_uri())
+                            page.screenshot(path=str(png_path), type="png", omit_background=True)
+                            tmp_html.unlink(missing_ok=True)
+                        theme_results[layer_name] = png_path.resolve().as_uri()
+                    results[theme] = theme_results
+            finally:
+                page.close()
+    finally:
+        if own_browser:
+            if b_inst:
+                try:
+                    b_inst.close()
+                except Exception:
+                    pass
+            if p_inst:
+                try:
+                    p_inst.stop()
+                except Exception:
+                    pass
+
+    return results
 
 
 def capture_still_frame(
@@ -128,6 +219,7 @@ def _render_job_with_browser(
     browser: Optional[Browser] = None,
     cancel_event: Optional[threading.Event] = None,
     active_procs: Optional[Dict[int, subprocess.Popen]] = None,
+    shared_bg_cache_dir: Optional[Path] = None,
 ) -> Path:
     """
     Renders a single SceneRenderJob to output_path using Playwright and an FFmpeg stdin pipe.
@@ -143,6 +235,12 @@ def _render_job_with_browser(
 
     mouth_cues = compute_mouth_cues_from_audio(job.audio_path, fps=job.fps)
     rough_seed = job.rough_seed if job.rough_seed is not None else derive_scene_seed(job.scene_number)
+
+    if job.bg_layer_images is None and getattr(config, "ENABLE_PARALLAX_CACHE", True) and getattr(config, "ENABLE_PARALLAX_BACKGROUND", True):
+        bg_cache_dir = shared_bg_cache_dir or (work_dir / "bg_cache")
+        cached_bg = render_cached_parallax_layers([job.theme], cache_dir=bg_cache_dir, browser=browser)
+        if job.theme in cached_bg:
+            job.bg_layer_images = cached_bg[job.theme]
 
     html_content = generate_whiteboard_html(
         title=job.title,
@@ -162,6 +260,7 @@ def _render_job_with_browser(
         theme=job.theme,
         rough_seed=rough_seed,
         fast=job.fast,
+        bg_layer_images=job.bg_layer_images,
     )
 
     html_file = (work_dir / "whiteboard_scene.html").resolve()
@@ -386,6 +485,11 @@ def render_scenes_in_parallel(
     failed_scene: Optional[int] = None
     first_error: Optional[BaseException] = None
 
+    shared_bg_cache_dir: Optional[Path] = None
+    if getattr(config, "ENABLE_PARALLAX_CACHE", True) and getattr(config, "ENABLE_PARALLAX_BACKGROUND", True):
+        shared_bg_cache_dir = Path(tempfile.mkdtemp(prefix="toonshorts_bg_cache_"))
+        created_temp_dirs.append(shared_bg_cache_dir)
+
     tls = threading.local()
 
     def get_thread_browser() -> Browser:
@@ -486,6 +590,7 @@ def render_scenes_in_parallel(
             browser=thread_browser,
             cancel_event=cancel_event,
             active_procs=active_procs,
+            shared_bg_cache_dir=shared_bg_cache_dir,
         )
 
     actual_workers = min(num_workers, len(jobs))

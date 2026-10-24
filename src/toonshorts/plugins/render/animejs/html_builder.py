@@ -61,6 +61,7 @@ def generate_whiteboard_html(
     camera_shots: Optional[List[Dict[str, Any]]] = None,
     board_objects: Optional[List[Dict[str, Any]]] = None,
     style_profile: Optional[Dict[str, Any]] = None,
+    bg_layer_images: Optional[Dict[str, str]] = None,
 ) -> str:
     """
     Generates a high-contrast HTML5/SVG composition with Anime.js whiteboard animation,
@@ -254,10 +255,15 @@ def generate_whiteboard_html(
 
     enable_parallax_bg = getattr(config, "ENABLE_PARALLAX_BACKGROUND", True)
     if enable_parallax_bg:
-        bg_layers = build_parallax_background_layers(theme=theme, style_profile=None)
-        bg_far_content = bg_layers.get("far", "")
-        bg_mid_content = bg_layers.get("mid", "")
-        bg_near_content = bg_layers.get("near", "")
+        if bg_layer_images and "far" in bg_layer_images:
+            bg_far_content = f'<img src="{bg_layer_images["far"]}" class="bg-vector-svg" width="1680" height="2520" style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit:fill;" />'
+            bg_mid_content = f'<img src="{bg_layer_images["mid"]}" class="bg-vector-svg" width="1680" height="2520" style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit:fill;" />'
+            bg_near_content = f'<img src="{bg_layer_images["near"]}" class="bg-vector-svg" width="1680" height="2520" style="position: absolute; top:0; left:0; width:100%; height:100%; object-fit:fill;" />'
+        else:
+            bg_layers = build_parallax_background_layers(theme=theme, style_profile=None)
+            bg_far_content = bg_layers.get("far", "")
+            bg_mid_content = bg_layers.get("mid", "")
+            bg_near_content = bg_layers.get("near", "")
     else:
         bg_far_content = ""
         bg_mid_content = ""
@@ -382,6 +388,7 @@ def generate_whiteboard_html(
     # Replace placeholders in HTML template
     result = template_html
     result = result.replace("{{THEME_NAME}}", theme)
+    result = result.replace("{{PARALLAX_CLASS}}", " parallax-bg-enabled" if enable_parallax_bg else "")
     result = result.replace("{{PANEL_BACKDROP_STYLE}}", panel_backdrop_style)
     result = result.replace("{{WIDTH}}", str(width))
     result = result.replace("{{HEIGHT}}", str(height))

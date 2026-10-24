@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-24: phase4b-6: optimized render speed via pre-rendered parallax layer image caching and filter cache invalidation fix, verified camera moves, and added edge tests & scene edge-case test suite.
+
 - 2026-10-24: phase4b-5: Remotion trial spike comparing kinetic words & diagram flow overlay compositing, determinism, performance, and license evaluation.
 
 - 2026-10-24: phase4b-4: board objects engine with 6 fixed types, slot overlap allocation, strict security caps (8 objects, 80 chars, 6 nodes), Rough.js per-object seed, and textContent DOM injection.

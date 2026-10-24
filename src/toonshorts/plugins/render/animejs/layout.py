@@ -3,7 +3,7 @@ Purpose: Layout constants, safe area bounds, and studio room SVG decorations.
 Inputs: Scene identifiers, viewport dimensions, and gesture names.
 Outputs: Coordinate boundaries and static SVG decoration elements.
 Depends on: core.config, plugins.render.animejs.gestures, typing
-Used by: plugins.render.animejs, plugins.render.animejs.html_builder
+Used by: plugins.render.animejs, plugins.render.animejs.capture, plugins.render.animejs.html_builder
 Config keys: VIDEO_HEIGHT, VIDEO_WIDTH
 Tests: tests/unit/test_animejs.py
 """
