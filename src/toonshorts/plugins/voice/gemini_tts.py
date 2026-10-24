@@ -69,11 +69,11 @@ class GeminiTTSVoicePlugin(VoiceInterface):
         cache_key = compute_tts_cache_key(clean_text, voice_name, self.model_name)
         cached_file = self.cache_dir / f"{cache_key}.wav"
 
-        if not cached_file.is_file():
-            legacy_file = config.PROJECT_ROOT / "cache" / "tts" / f"{cache_key}.wav"
-            if legacy_file.is_file() and legacy_file.stat().st_size > 0:
-                self.cache_dir.mkdir(parents=True, exist_ok=True)
-                shutil.copyfile(legacy_file, cached_file)
+
+
+
+
+
 
         cache_hit_valid = False
         if cached_file.is_file() and cached_file.stat().st_size > 0:

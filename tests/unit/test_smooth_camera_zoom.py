@@ -99,7 +99,7 @@ def compute_camera_state_py(ms: float, frame_idx: int, speaker_is_right: bool, s
     }
 
 def test_camera_zoom_and_pan_frame_delta_limits():
-    brief_path = Path('briefs/octopus_facts_v2_scene.json')
+    brief_path = Path('videos/octopus_facts_v2/scene.json')
     assert brief_path.exists()
     scene_data = json.loads(brief_path.read_text(encoding='utf-8'))
     scenes = scene_data.get('scenes', [])[:4]
@@ -135,7 +135,7 @@ def test_camera_zoom_and_pan_frame_delta_limits():
         assert max_d_y <= 15.0, f'Scene {s_idx + 1} max delta panY {max_d_y} > 15.0 px'
 
 def test_camera_zoom_monotonic_during_preset_transitions():
-    brief_path = Path('briefs/octopus_facts_v2_scene.json')
+    brief_path = Path('videos/octopus_facts_v2/scene.json')
     scene_data = json.loads(brief_path.read_text(encoding='utf-8'))
     scenes = scene_data.get('scenes', [])[:4]
     fps = 30

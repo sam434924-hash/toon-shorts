@@ -20,7 +20,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 from toonshorts.core import config, paths
 from toonshorts.core.models import sanitize_video_name
 
-BRIEFS_DIR = paths.PROJECT_ROOT / "briefs"
+BRIEFS_DIR = paths.VIDEOS_DIR
 
 SAFE_NAME_REGEX = re.compile(r"^[a-zA-Z0-9_\-]+$")
 
@@ -174,9 +174,13 @@ def load_brief(brief_identifier: Union[str, Path], briefs_dir: Path = BRIEFS_DIR
             file_path = p
         else:
             name = str(brief_identifier).strip()
-            if not name.endswith(".json"):
-                name = f"{name}.json"
-            file_path = briefs_dir / name
+            video_brief = paths.VIDEOS_DIR / name / "brief.json"
+            if video_brief.is_file():
+                file_path = video_brief
+            else:
+                if not name.endswith(".json"):
+                    name = f"{name}.json"
+                file_path = briefs_dir / name
 
     if not file_path.is_file():
         raise FileNotFoundError(f"Brief file not found: {file_path}")
@@ -205,7 +209,7 @@ def get_last_brief(briefs_dir: Path = BRIEFS_DIR) -> Optional[VideoBrief]:
     if not briefs_dir.is_dir():
         return None
     brief_files = sorted(
-        briefs_dir.glob("*.json"),
+        list(briefs_dir.glob("*/brief.json")) + list(briefs_dir.glob("*.json")),
         key=lambda p: p.stat().st_mtime,
         reverse=True
     )

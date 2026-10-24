@@ -11,6 +11,7 @@ Tests: tests/unit/test_video_folders.py
 from pathlib import Path
 import pytest
 import shutil
+import uuid
 
 from toonshorts.core.models import (
     sanitize_video_name,
@@ -166,21 +167,25 @@ def test_library_reuse_and_copy(tmp_path):
         calls += 1
         p.write_bytes(b"RIFFdummydata")
 
-    unique_sfx_name = f"test_boing_{tmp_path.name}"
+    unique_sfx_name = f"test_boing_{uuid.uuid4().hex}"
     # Miss: renders and saves to library
     path1, is_hit1 = get_or_create_sfx(unique_sfx_name, make_sfx)
-    assert not is_hit1
-    assert calls == 1
-    assert path1.is_file()
+    try:
+        assert not is_hit1
+        assert calls == 1
+        assert path1.is_file()
 
-    # Hit: reuses from library without recalling maker
-    path2, is_hit2 = get_or_create_sfx(unique_sfx_name, make_sfx)
-    assert is_hit2
-    assert calls == 1
-    assert path1 == path2
+        # Hit: reuses from library without recalling maker
+        path2, is_hit2 = get_or_create_sfx(unique_sfx_name, make_sfx)
+        assert is_hit2
+        assert calls == 1
+        assert path1 == path2
 
-    # Plain copy into video destination
-    copied = copy_library_asset(path1, dest_file)
-    assert copied.is_file()
-    assert copied == dest_file
-    assert not copied.is_symlink()
+        # Plain copy into video destination
+        copied = copy_library_asset(path1, dest_file)
+        assert copied.is_file()
+        assert copied == dest_file
+        assert not copied.is_symlink()
+    finally:
+        if path1.exists():
+            path1.unlink()

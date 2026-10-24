@@ -33,7 +33,7 @@ def test_single_root_assets_hierarchy():
 
 def test_output_and_fixtures_paths():
     """Verify output and test fixture paths are isolated from assets."""
-    assert paths.OUTPUT_DIR == paths.PROJECT_ROOT / "output"
+    assert paths.OUTPUT_DIR == paths.VIDEOS_DIR
     assert paths.VIDEOS_DIR == paths.PROJECT_ROOT / "videos"
     assert paths.LIBRARY_DIR == paths.PROJECT_ROOT / "library"
     assert paths.LIBRARY_TTS_DIR == paths.LIBRARY_DIR / "tts"

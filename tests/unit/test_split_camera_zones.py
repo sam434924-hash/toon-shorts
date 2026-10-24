@@ -48,8 +48,8 @@ def test_split_zone_geometry_and_safe_zones():
 
 def test_speaker_bounding_box_inside_character_zone_all_scenes():
     """For every scene and every speaker, verify bounding box is inside character zone and safe zones."""
-    brief_path = Path("briefs/octopus_facts_v2_scene.json")
-    assert brief_path.exists(), "briefs/octopus_facts_v2_scene.json must exist"
+    brief_path = Path("videos/octopus_facts_v2/scene.json")
+    assert brief_path.exists(), "videos/octopus_facts_v2/scene.json must exist"
 
     with open(brief_path, "r", encoding="utf-8") as f:
         data = json.load(f)

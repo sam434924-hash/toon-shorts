@@ -2,7 +2,7 @@
 Unit tests for Fast Preview / Fast Draft Mode (--fast):
 1. Verifies non-supporting renderers raise PipelineError on --fast.
 2. Verifies fast mode produces 540x960 resolution at 15 fps on animejs renderer.
-3. Verifies output is written strictly into output/fast/ and never the normal output name.
+3. Verifies output is written strictly into videos/<name>/ and is self-contained.
 4. Verifies fast mode makes no Gemini API calls and reuses cached audio.
 """
 
@@ -51,7 +51,7 @@ def test_fast_mode_rejects_unsupported_renderer():
 
 @pytest.mark.slow
 def test_fast_preview_mode_pipeline(monkeypatch):
-    """Verifies fast draft generates 540x960 @ 15fps in output/fast/ on supported renderer."""
+    """Verifies fast draft generates 540x960 @ 15fps in self-contained video folder on supported renderer."""
     # Ensure no Gemini calls occur by sabotaging API client if invoked
     from toonshorts.core.client import GeminiClientWrapper
     def bomb_generate(*args, **kwargs):
@@ -60,9 +60,6 @@ def test_fast_preview_mode_pipeline(monkeypatch):
     monkeypatch.setattr(GeminiClientWrapper, "generate_speech_with_retry", bomb_generate)
     monkeypatch.setattr(GeminiClientWrapper, "generate_image_with_retry", bomb_generate)
 
-    # Protected file check
-    normal_output = config.OUTPUT_DIR / "What_is_an_API.mp4"
-    initial_mtime = normal_output.stat().st_mtime if normal_output.exists() else None
 
     # Run pipeline in fast mode with cached topic and animejs
     fast_video = run_pipeline(

@@ -16,12 +16,14 @@ PROJECT_ROOT = _current_file.parents[3]
 
 # Top-level directories
 ASSETS_DIR = PROJECT_ROOT / "assets"
-OUTPUT_DIR = PROJECT_ROOT / "output"
-TEMP_DIR = PROJECT_ROOT / "temp"
-CACHE_DIR = PROJECT_ROOT / "cache"
 TESTS_DIR = PROJECT_ROOT / "tests"
 VIDEOS_DIR = PROJECT_ROOT / "videos"
 LIBRARY_DIR = PROJECT_ROOT / "library"
+
+# Legacy directory aliases redirected to new layout
+OUTPUT_DIR = VIDEOS_DIR
+TEMP_DIR = PROJECT_ROOT / ".tmp"
+CACHE_DIR = LIBRARY_DIR
 
 # Library subdirectories
 LIBRARY_TTS_DIR = LIBRARY_DIR / "tts"

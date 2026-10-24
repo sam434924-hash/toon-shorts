@@ -177,8 +177,8 @@ class Blender3DRenderPlugin(RenderInterface):
             raise RuntimeError("Render aborted by user confirmation gate.")
 
         output_dir.mkdir(parents=True, exist_ok=True)
-        temp_json = config.TEMP_DIR / f"scene3d_payload_{os.getpid()}.json"
-        config.TEMP_DIR.mkdir(parents=True, exist_ok=True)
+        temp_json = output_dir / f"scene3d_payload_{os.getpid()}.json"
+
 
         payload_dict = scene_desc.model_dump()
         payload_dict["output_dir"] = str(output_dir.resolve())

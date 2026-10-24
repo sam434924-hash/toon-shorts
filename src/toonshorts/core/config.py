@@ -22,8 +22,8 @@ STYLES_DIR = _current_file.parents[1] / "styles"
 if not STYLES_DIR.exists() and (PROJECT_ROOT / "styles").exists():
     STYLES_DIR = PROJECT_ROOT / "styles"
 
-OUTPUT_DIR = PROJECT_ROOT / "output"
-TEMP_DIR = PROJECT_ROOT / "temp"
+OUTPUT_DIR = PROJECT_ROOT / "videos"
+TEMP_DIR = PROJECT_ROOT / ".tmp"
 VIDEOS_DIR = PROJECT_ROOT / "videos"
 LIBRARY_DIR = PROJECT_ROOT / "library"
 LIBRARY_TTS_DIR = LIBRARY_DIR / "tts"

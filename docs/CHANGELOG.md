@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-24: shared folder cleanup: removed legacy references to briefs/, output/, temp/, and cache/, archived legacy contents into _old_cleanup_20261024/, and redirected all output to self-contained video folders.
+
 - 2026-10-24: self-contained video folders: reorganized file handling into self-contained videos/<name>/ folders, library/ reusable asset cache, exists-guard, and clean failure recovery.
 
 - 2026-10-24: camera framing: corrected camera preset signs in config.py, added dynamic bounds safety clamp inside parallax engine, synchronized FK limb poses prior to clamp evaluation, and verified zero edge clipping across all scenes.

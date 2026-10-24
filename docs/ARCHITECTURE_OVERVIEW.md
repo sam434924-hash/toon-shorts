@@ -18,9 +18,9 @@ Entry point: `src/toonshorts/cli.py:main()` → `src/toonshorts/core/pipeline.py
 | 3 · Cost gate | `core/pipeline.py:confirm_cost_gate()` | estimated token/TTS cost | user confirmation or abort |
 | 4 · Voice | `plugins/voice/{engine}.py:generate_all_voices()` | refined plan + temp dir | `List[SceneAudio]` (WAV per scene) |
 | 5 · Render | `plugins/render/animejs/plugin.py:render_all_scenes()` | plan + style + scene audios | `List[Path]` (PNG/MP4 per scene via Playwright) |
-| 6 · Assemble | `core/assembler.py:assemble_final_video()` | scene images + scene audios + motion plugin | final `{title}.mp4` in output/ |
+| 6 · Assemble | `core/assembler.py:assemble_final_video()` | scene images + scene audios + motion plugin | final `{title}.mp4` in `videos/<name>/` |
 
-Brief-mode entry (`toonshorts make --brief brief.json`) goes through `run_pipeline_from_brief()` in the same file; it caches the generated scene JSON to `briefs/{name}_scene.json` and skips LLM if that file already exists.
+Brief-mode entry (`toonshorts make --brief brief.json`) goes through `run_pipeline_from_brief()` in the same file; it builds directly into a self-contained `videos/<name>/` folder without reusing stale scene files.
 
 ---
 
@@ -36,9 +36,10 @@ Brief-mode entry (`toonshorts make --brief brief.json`) goes through `run_pipeli
 | `src/toonshorts/assets/` | Vendored JS libs (anime.js 3.2.2, rough.js 4.6.6) |
 | `assets/2d/characters/` | Character packs (SVG layers + PNG rasters, see §6) |
 | `assets/3d/` | Blender 3D models and scripts |
-| `briefs/` | Input brief JSON files; cached scene JSONs saved here |
-| `output/` | Final MP4 files |
-| `temp/` | Pipeline intermediate renders (deleted unless --keep-temp) |
+| `videos/` | Self-contained video folders: brief.json, scene.json, voice/, stills/, visuals/, captions.ass, MP4, run.log, manifest.json |
+| `library/` | Reusable pre-rendered assets and shared cache (backgrounds, SFX, graphics, TTS) |
+
+
 | `tests/` | Full test suite (unit/, contract/, smoke/, fixtures/) |
 | `docs/` | CODEMAP.md, ARCHITECTURE.md, KNOWN_ISSUES.md, CHANGELOG.md, decisions/ |
 | `tools/` | update_docs.py — regenerates CODEMAP.md from source headers |

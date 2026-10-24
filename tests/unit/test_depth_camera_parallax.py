@@ -190,7 +190,7 @@ def test_extreme_camera_states_of_every_scene_have_no_empty_edges():
     layer_oversize_y = 300.0
 
     scene_files = [
-        Path("briefs/octopus_facts_v2_scene.json"),
+        Path("videos/octopus_facts_v2/scene.json"),
         Path("tests/fixtures/what_is_an_api_v2_plan.json"),
     ]
 
