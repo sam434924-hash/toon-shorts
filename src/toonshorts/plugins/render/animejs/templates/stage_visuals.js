@@ -489,6 +489,46 @@ window.initBoardObjects = function() {
         iconWrap.appendChild(itemEl);
       }
       el.appendChild(iconWrap);
+    } else if (obj.type === "custom") {
+      const customWrap = document.createElement("div");
+      customWrap.className = "bo-custom bo-custom-level-" + ((obj.data && obj.data.level) || 1);
+      customWrap.id = obj.id + "-container";
+      customWrap.style.width = "100%";
+      customWrap.style.display = "flex";
+      customWrap.style.justifyContent = "center";
+      customWrap.style.alignItems = "center";
+      customWrap.style.position = "relative";
+
+      const sLevel = (obj.data && obj.data.level) || 1;
+      if (obj.data && obj.data.svg) {
+        customWrap.innerHTML = obj.data.svg;
+        const svgEl = customWrap.querySelector("svg");
+        if (svgEl) {
+          svgEl.style.maxWidth = "100%";
+          svgEl.style.maxHeight = "400px";
+          svgEl.style.display = "block";
+          const paths = svgEl.querySelectorAll("path, line, polyline, polygon, rect, circle, ellipse");
+          paths.forEach((pEl) => {
+            if (typeof pEl.getTotalLength === "function") {
+              const len = Math.max(1, pEl.getTotalLength());
+              pEl.style.strokeDasharray = String(len);
+              pEl.style.strokeDashoffset = String(len);
+            }
+          });
+        }
+      }
+
+      if (sLevel === 2 && obj.data && obj.data.js_code) {
+        try {
+          window.__level2Effects = window.__level2Effects || {};
+          const factory = new Function("anime", "seed", "el", "return (" + obj.data.js_code + ")");
+          const effectFn = factory(window.anime, obj.seed, customWrap);
+          window.__level2Effects[obj.id] = effectFn;
+        } catch (err) {
+          console.error("Failed to initialize Level 2 effect for " + obj.id, err);
+        }
+      }
+      el.appendChild(customWrap);
     }
 
     slotEl.appendChild(el);
@@ -618,6 +658,65 @@ window.updateBoardObjects = function(ms) {
         } else {
           itemEl.style.opacity = "0";
           itemEl.style.transform = "scale(0)";
+        }
+      }
+    } else if (obj.type === "custom") {
+      const customWrap = document.getElementById(obj.id + "-container");
+      if (!customWrap) return;
+      const sLevel = (obj.data && obj.data.level) || 1;
+
+      if (sLevel === 1) {
+        const preset = (obj.data && obj.data.motion_preset ? obj.data.motion_preset : "draw_on").toLowerCase();
+        if (preset === "draw_on") {
+          const svgEl = customWrap.querySelector("svg");
+          if (svgEl) {
+            const paths = svgEl.querySelectorAll("path, line, polyline, polygon, rect, circle, ellipse");
+            paths.forEach(pEl => {
+              if (typeof pEl.getTotalLength === "function") {
+                const len = Math.max(1, pEl.getTotalLength());
+                pEl.style.strokeDashoffset = String((len * (1 - p)).toFixed(2));
+              }
+            });
+          }
+          customWrap.style.opacity = p > 0.05 ? "1" : String((p * 20).toFixed(2));
+        } else if (preset === "fade_in") {
+          customWrap.style.opacity = String(p.toFixed(3));
+        } else if (preset === "pop" || preset === "bounce") {
+          const scale = p < 0.7 ? (p / 0.7) * 1.15 : 1.15 - ((p - 0.7) / 0.3) * 0.15;
+          customWrap.style.transform = "scale(" + Math.max(0, scale).toFixed(3) + ")";
+          customWrap.style.opacity = p > 0.05 ? "1" : String((p * 20).toFixed(2));
+        } else if (preset === "slide_in") {
+          const ty = (1.0 - p) * 50;
+          customWrap.style.transform = "translateY(" + ty.toFixed(2) + "px)";
+          customWrap.style.opacity = String(p.toFixed(3));
+        } else if (preset === "pulse") {
+          const s = 1.0 + 0.08 * Math.sin(p * Math.PI * 4);
+          customWrap.style.transform = "scale(" + s.toFixed(3) + ")";
+          customWrap.style.opacity = "1";
+        } else if (preset === "spin" || preset === "rotate") {
+          customWrap.style.transform = "rotate(" + (p * 360).toFixed(1) + "deg)";
+          customWrap.style.opacity = "1";
+        }
+
+        const tl = obj.data && obj.data.timeline;
+        if (Array.isArray(tl) && tl.length > 0) {
+          for (let k = 0; k < tl.length; k++) {
+            const kf = tl[k];
+            if (typeof kf.at === "number" && p >= kf.at) {
+              if (kf.opacity !== undefined) customWrap.style.opacity = String(kf.opacity);
+              if (kf.scale !== undefined) customWrap.style.transform = "scale(" + kf.scale + ")";
+              if (kf.rotate !== undefined) customWrap.style.transform = "rotate(" + kf.rotate + "deg)";
+              if (kf.translateY !== undefined) customWrap.style.transform = "translateY(" + kf.translateY + "px)";
+            }
+          }
+        }
+      } else if (sLevel === 2) {
+        if (window.__level2Effects && typeof window.__level2Effects[obj.id] === "function") {
+          try {
+            window.__level2Effects[obj.id](p, obj.seed, customWrap);
+          } catch (err) {
+            console.error("Level 2 effect error for " + obj.id + " at t=" + p, err);
+          }
         }
       }
     }

@@ -24,6 +24,7 @@ ALLOWED_VISUAL_TYPES = {
     "octopus_vector",
     "hearts_pop",
     "blue_blood_drop",
+    "custom",
 }
 
 ALLOWED_PALETTES = {

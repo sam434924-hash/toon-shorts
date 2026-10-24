@@ -28,6 +28,7 @@ ALLOWED_TYPES = {
     "svg_draw",
     "diagram_flow",
     "icon_pop",
+    "custom",
 }
 
 ALLOWED_ENTER_STYLES = {"draw_on", "pop", "slide_in"}
@@ -218,6 +219,39 @@ def validate_board_object_schema(
         sanitized_data["icon"] = icon_name
         sanitized_data["count"] = min(5, max(1, int(raw_data.get("count", 3))))
 
+    elif obj_type == "custom":
+        level = int(raw_data.get("level", 1))
+        if level not in (1, 2):
+            level = 1
+        sanitized_data["level"] = level
+
+        raw_svg = raw_data.get("svg") or raw_obj.get("svg", "")
+        if raw_svg:
+            from toonshorts.core.sanitizer import sanitize_svg
+            sanitized_data["svg"] = sanitize_svg(raw_svg)
+        else:
+            sanitized_data["svg"] = ""
+
+        if level == 1:
+            timeline = raw_data.get("timeline") or []
+            if isinstance(timeline, (list, dict)):
+                sanitized_data["timeline"] = timeline
+            else:
+                sanitized_data["timeline"] = []
+            preset = str(raw_data.get("motion_preset") or raw_data.get("preset") or enter_style or "draw_on").strip().lower()
+            sanitized_data["motion_preset"] = preset
+            sanitized_data["label"] = sanitize_board_text(raw_data.get("label", ""))
+        elif level == 2:
+            js_code = str(raw_data.get("js_code") or raw_data.get("script") or raw_data.get("code") or "")
+            from toonshorts.core.ast_scanner import validate_level2_effect
+            is_valid, violations = validate_level2_effect(js_code)
+            if not is_valid:
+                v_msg = "; ".join(violations)
+                logger.error("Scene %d: Custom Level 2 JS failed AST scan: %s", scene_number, v_msg)
+                raise ValueError(f"Custom Level 2 effect rejected by AST scan: {v_msg}")
+            sanitized_data["js_code"] = js_code
+            sanitized_data["level2_effect_name"] = str(raw_data.get("effect_name") or f"custom_fx_{obj_id}")
+
     seed = derive_object_seed(scene_number, obj_id)
 
     return {
@@ -369,6 +403,16 @@ def convert_visuals_to_board_objects(
                 "enter": params.get("animation_type", "pop"),
                 "board_slot": "slot_mid",
                 "data": payload,
+            })
+
+        elif v_type == "custom":
+            raw_board_objs.append({
+                "id": obj_id,
+                "type": "custom",
+                "anchor": anchor,
+                "enter": params.get("enter", params.get("animation_type", "draw_on")),
+                "board_slot": params.get("board_slot", "slot_center"),
+                "data": params,
             })
 
         elif v_type == "typed_code":

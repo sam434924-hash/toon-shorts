@@ -342,4 +342,6 @@ class VideoManifest(BaseModel):
     voice: VoiceManifestItem
     library_pieces_used: List[str] = Field(default_factory=list)
     tool_versions: Dict[str, str] = Field(default_factory=dict)
+    level2_custom_visuals: List[Dict[str, Any]] = Field(default_factory=list)
+    tools_used: List[Any] = Field(default_factory=list)
 

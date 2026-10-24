@@ -9,6 +9,8 @@ __pycache__/
 .coverage
 htmlcov/
 _old_cleanup_*/
+_old_cleanup/
+old_cleanup*/
 temp/
 output/
 cache/

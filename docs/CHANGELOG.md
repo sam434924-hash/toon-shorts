@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-24: phase 1 safe foundation: deterministic background cache key without camera/split flags with library reuse, parse-based SVG sanitizer, custom board visuals (Level 1 presets & Level 2 AST scanner), and hardened Playwright render sandbox.
+
 - 2026-10-24: audio-visual sync: enforced mandatory Whisper word timing with monotonic fuzzy script alignment, automatic trigger word resolution, 150ms sync verification report, explicit --allow-fallback flag, and work/ directory tidying.
 
 - 2026-10-24: layout and split camera zones: enabled split camera zones by default, neutralized board layer negative offset, and added automated safe-zone layout verification in pipeline and CLI.

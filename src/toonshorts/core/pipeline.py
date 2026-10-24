@@ -107,6 +107,28 @@ def generate_manifest(
 
     unique_pieces = sorted(list(set(library_pieces_used or [])))
 
+    level2_visuals = []
+    if plan and getattr(plan, "scenes", None):
+        for sc in plan.scenes:
+            for bo in getattr(sc, "board_objects", []) or []:
+                if isinstance(bo, dict) and bo.get("type") == "custom":
+                    data = bo.get("data", {})
+                    if isinstance(data, dict) and data.get("level") == 2:
+                        level2_visuals.append({
+                            "scene": sc.scene_number,
+                            "id": bo.get("id"),
+                            "effect": data.get("level2_effect_name", "custom_js"),
+                        })
+            for vis in getattr(sc, "visuals", []) or []:
+                v_type = getattr(vis, "type", None) or (vis.get("type") if isinstance(vis, dict) else None)
+                v_params = getattr(vis, "params", None) or (vis.get("params") if isinstance(vis, dict) else {})
+                if v_type == "custom" and isinstance(v_params, dict) and v_params.get("level") == 2:
+                    level2_visuals.append({
+                        "scene": sc.scene_number,
+                        "id": getattr(vis, "id", f"vis_{sc.scene_number}"),
+                        "effect": v_params.get("level2_effect_name", "custom_js"),
+                    })
+
     return VideoManifest(
         video_name=video_name,
         created_at=created_at,
@@ -115,6 +137,7 @@ def generate_manifest(
         voice=voice_info,
         library_pieces_used=unique_pieces,
         tool_versions=tool_versions,
+        level2_custom_visuals=level2_visuals,
     )
 
 

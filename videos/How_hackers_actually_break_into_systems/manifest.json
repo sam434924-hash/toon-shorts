@@ -21,11 +21,8 @@
   },
   "library_pieces_used": [
     "library/backgrounds/bg_night_studio_far_4d150a9b86765f9b.png",
-    "library/backgrounds/bg_night_studio_far_9f0fbbfa6eed2d5d.png",
     "library/backgrounds/bg_night_studio_mid_29067dd85bd937bc.png",
-    "library/backgrounds/bg_night_studio_mid_d23e8ec41fe86ed1.png",
     "library/backgrounds/bg_night_studio_near_a2e85ed4052d2563.png",
-    "library/backgrounds/bg_night_studio_near_c3965f9c46cfa1b6.png",
     "library/sfx/sfx_boing_1a844751dcfca809.wav",
     "library/sfx/sfx_pop_47e9f275ccb62bb6.wav",
     "library/sfx/sfx_whistle_f385dbe00174d272.wav"

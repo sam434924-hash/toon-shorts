@@ -24,6 +24,9 @@ from playwright.sync_api import Browser, sync_playwright
 from toonshorts.core import config
 from toonshorts.plugins.render.animejs.audio_sync import compute_mouth_cues_from_audio
 from toonshorts.plugins.render.animejs.html_builder import generate_whiteboard_html
+from toonshorts.core import paths
+from toonshorts.core.sandbox import create_sandboxed_context, DEFAULT_PER_FRAME_TIMEOUT_MS, STRICT_CSP_POLICY
+from toonshorts.core.library import get_or_render_background, copy_library_asset
 from toonshorts.plugins.render.animejs.layout import build_parallax_background_layers
 
 logger = logging.getLogger(__name__)
@@ -92,12 +95,38 @@ def render_cached_parallax_layers(
 ) -> Dict[str, Dict[str, str]]:
     """
     Renders each vector SVG parallax layer (far, mid, near) ONCE per scene into a cached PNG image.
-    Keyed by a SHA-256 content hash with strictly no user text in any path.
-    Reuses existing cached PNGs when available.
+    Checks library/ before rendering and reuses on a hit.
+    Key is built strictly without camera or split-mode flags.
     Returns mapping: {theme: {"far": uri, "mid": uri, "near": uri}}.
     """
     cache_dir.mkdir(parents=True, exist_ok=True)
+    paths.LIBRARY_BACKGROUNDS_DIR.mkdir(parents=True, exist_ok=True)
     results: Dict[str, Dict[str, str]] = {}
+
+    missing_to_render: List[Any] = []
+    for theme in themes:
+        theme_results: Dict[str, str] = {}
+        bg_layers = build_parallax_background_layers(theme=theme, style_profile=None)
+        for layer_name in ("far", "mid", "near"):
+            svg_content = bg_layers.get(layer_name, "")
+            if not svg_content:
+                continue
+            lib_path, is_hit = get_or_render_background(
+                theme=theme,
+                layer_name=layer_name,
+                render_fn=None,
+            )
+            if is_hit and lib_path.is_file() and lib_path.stat().st_size > 0:
+                dest_path = cache_dir / lib_path.name
+                if dest_path != lib_path and not dest_path.exists():
+                    shutil.copyfile(str(lib_path), str(dest_path))
+                theme_results[layer_name] = dest_path.resolve().as_uri()
+            else:
+                missing_to_render.append((theme, layer_name, svg_content))
+        results[theme] = theme_results
+
+    if not missing_to_render:
+        return results
 
     own_browser = False
     p_inst = None
@@ -126,36 +155,37 @@ def render_cached_parallax_layers(
 
     try:
         with _CACHE_LOCK:
-            page = b_inst.new_page(viewport={"width": 1680, "height": 2520})
+            allowed_dirs = [cache_dir, paths.LIBRARY_DIR, paths.ASSETS_DIR, paths.PROJECT_ROOT]
+            context, page = create_sandboxed_context(b_inst, allowed_dirs=allowed_dirs, viewport={"width": 1680, "height": 2520})
             try:
-                for theme in themes:
-                    theme_results: Dict[str, str] = {}
-                    bg_layers = build_parallax_background_layers(theme=theme, style_profile=None)
-                    for layer_name in ("far", "mid", "near"):
-                        svg_content = bg_layers.get(layer_name, "")
-                        if not svg_content:
-                            continue
-                        layout_ver = getattr(config, "LAYOUT_CAMERA_VERSION", "2.1.0")
-                        split_mode = "split" if getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False) else "single"
-                        content_hash = hashlib.sha256(f"{layout_ver}:{split_mode}:{svg_content}".encode("utf-8")).hexdigest()[:16]
-                        png_path = cache_dir / f"bg_{theme}_{layer_name}_{content_hash}.png"
-                        if not png_path.exists():
-                            tmp_html = cache_dir / f"tmp_{theme}_{layer_name}_{threading.get_ident()}.html"
-                            tmp_html.write_text(
-                                f"<!DOCTYPE html><html><head><style>"
-                                f"* {{ margin: 0; padding: 0; box-sizing: border-box; }}"
-                                f"html, body {{ width: 1680px; height: 2520px; overflow: hidden; background: transparent; }}"
-                                f"svg {{ width: 1680px; height: 2520px; display: block; }}"
-                                f"</style></head><body>{svg_content}</body></html>",
-                                encoding="utf-8",
-                            )
-                            page.goto(tmp_html.resolve().as_uri())
-                            page.screenshot(path=str(png_path), type="png", omit_background=True)
-                            tmp_html.unlink(missing_ok=True)
-                        theme_results[layer_name] = png_path.resolve().as_uri()
-                    results[theme] = theme_results
+                for theme, layer_name, svg_content in missing_to_render:
+                    def render_cb(target_file: Path):
+                        tmp_html = cache_dir / f"tmp_{theme}_{layer_name}_{threading.get_ident()}.html"
+                        tmp_html.write_text(
+                            f"<!DOCTYPE html><html><head>"
+                            f'<meta http-equiv="Content-Security-Policy" content="{STRICT_CSP_POLICY}">'
+                            f"<style>"
+                            f"* {{ margin: 0; padding: 0; box-sizing: border-box; }}"
+                            f"html, body {{ width: 1680px; height: 2520px; overflow: hidden; background: transparent; }}"
+                            f"svg {{ width: 1680px; height: 2520px; display: block; }}"
+                            f"</style></head><body>{svg_content}</body></html>",
+                            encoding="utf-8",
+                        )
+                        page.goto(tmp_html.resolve().as_uri())
+                        page.screenshot(path=str(target_file), type="png", omit_background=True)
+                        tmp_html.unlink(missing_ok=True)
+
+                    cached_lib_path, _ = get_or_render_background(
+                        theme=theme,
+                        layer_name=layer_name,
+                        render_fn=render_cb,
+                    )
+                    dest_path = cache_dir / cached_lib_path.name
+                    if dest_path != cached_lib_path and not dest_path.exists():
+                        shutil.copyfile(str(cached_lib_path), str(dest_path))
+                    results[theme][layer_name] = dest_path.resolve().as_uri()
             finally:
-                page.close()
+                context.close()
     finally:
         if own_browser:
             if b_inst:
@@ -201,19 +231,36 @@ def capture_still_frame(
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        page = browser.new_page(viewport={"width": width, "height": height})
+        allowed_dirs = [
+            html_file.parent,
+            paths.LIBRARY_DIR,
+            paths.ASSETS_DIR,
+            paths.PROJECT_ROOT,
+        ]
+        context, page = create_sandboxed_context(
+            browser,
+            allowed_dirs=allowed_dirs,
+            viewport={"width": width, "height": height},
+            initial_html_path=html_file,
+        )
         page_errors = []
         page.on("pageerror", lambda err: page_errors.append(str(err)))
         page.goto(html_file.resolve().as_uri())
         if page_errors:
+            context.close()
             browser.close()
             raise RuntimeError(f"JavaScript execution error in {html_file.name}: {'; '.join(page_errors)}")
-        missing = page.evaluate("typeof window.__checkModulesLoaded === 'function' ? window.__checkModulesLoaded() : ['window.__checkModulesLoaded missing']")
+        missing = page.evaluate(
+            "typeof window.__checkModulesLoaded === 'function' ? window.__checkModulesLoaded() : ['window.__checkModulesLoaded missing']",
+            timeout=DEFAULT_PER_FRAME_TIMEOUT_MS,
+        )
         if missing:
+            context.close()
             browser.close()
             raise RuntimeError(f"Missing required JS modules or functions in {html_file.name}: {', '.join(missing)}")
-        page.evaluate(f"window.seekTo({int(duration_sec * 1000)})")
+        page.evaluate(f"window.seekTo({int(duration_sec * 1000)})", timeout=DEFAULT_PER_FRAME_TIMEOUT_MS)
         page.screenshot(path=str(output_path), type="png")
+        context.close()
         browser.close()
     return output_path
 
@@ -322,8 +369,19 @@ def _render_job_with_browser(
             else:
                 active_browser = browser
 
-            context = active_browser.new_context(viewport={"width": job.width, "height": job.height})
-            page = context.new_page()
+            allowed_dirs = [
+                work_dir,
+                job.output_path.parent,
+                paths.LIBRARY_DIR,
+                paths.ASSETS_DIR,
+                paths.PROJECT_ROOT,
+            ]
+            context, page = create_sandboxed_context(
+                active_browser,
+                allowed_dirs=allowed_dirs,
+                viewport={"width": job.width, "height": job.height},
+                initial_html_path=html_file,
+            )
 
             page_errors = []
             page.on("pageerror", lambda err: page_errors.append(str(err)))
@@ -333,7 +391,8 @@ def _render_job_with_browser(
                 raise RuntimeError(f"JavaScript execution error in {html_file.name}: {'; '.join(page_errors)}")
 
             missing = page.evaluate(
-                "typeof window.__checkModulesLoaded === 'function' ? window.__checkModulesLoaded() : ['window.__checkModulesLoaded missing']"
+                "typeof window.__checkModulesLoaded === 'function' ? window.__checkModulesLoaded() : ['window.__checkModulesLoaded missing']",
+                timeout=DEFAULT_PER_FRAME_TIMEOUT_MS,
             )
             if missing:
                 raise RuntimeError(f"Missing required JS modules or functions in {html_file.name}: {', '.join(missing)}")
@@ -343,7 +402,7 @@ def _render_job_with_browser(
                     raise InterruptedError(f"Rendering cancelled for Scene {job.scene_number}")
 
                 t_ms = (frame_idx / job.fps) * 1000.0
-                page.evaluate(f"window.seekTo({t_ms})")
+                page.evaluate(f"window.seekTo({t_ms})", timeout=DEFAULT_PER_FRAME_TIMEOUT_MS)
                 buf = page.screenshot(type="png")
 
                 try:

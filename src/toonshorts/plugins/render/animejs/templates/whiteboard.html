@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data: file:; style-src 'self' 'unsafe-inline' file:; script-src 'self' 'unsafe-inline' file:; font-src 'self' data: file:; media-src 'self' file:; connect-src 'none'; frame-src 'none'; object-src 'none'; form-action 'none';">
   <title>ToonShorts Whiteboard Studio</title>
   <style>
 {{STYLE_CSS}}
@@ -28,35 +29,48 @@
 {{BG_NEAR_CONTENT}}
     </div>
 
-    <!-- Layer 4: Deep Background (Wall, LED strips, window with city lights, shelf decor) -->
-    <div id="layer-deep-bg" class="depth-layer layer-deep-bg" data-depth-factor="0.12">
-      <div class="deep-bg-surface"></div>
-      <!-- Subtle Floating Particles Canvas -->
-      <canvas id="particles-canvas" width="{{WIDTH}}" height="{{HEIGHT}}"></canvas>
-      <!-- Studio Room Wall Details (Constant Set Across All Scenes) -->
-{{SHELF_DECOR}}
+    <!-- Main Whiteboard Content Layer (Depth: 0.5) -->
+    <div id="board-container" class="depth-layer layer-board" data-depth-factor="0.5">
+      <div id="board-card">
+        <div id="board-header">
+          <span id="title-badge">{{TITLE_BADGE_TEXT}}</span>
+        </div>
+        <div id="board-stage">
+          <!-- 4 Fixed Layout Slots for Stage Visuals & Board Objects (Phase 4B-4) -->
+          <div id="board-slot-top" class="board-slot"></div>
+          <div id="board-slot-center" class="board-slot">
+            <svg id="stage-svg" viewBox="0 0 760 385" width="760" height="385"></svg>
+            <div id="stage-visuals-container">
+{{STAGE_VISUALS_HTML}}
+            </div>
+          </div>
+          <div id="board-slot-mid" class="board-slot"></div>
+          <div id="board-slot-bottom" class="board-slot"></div>
+        </div>
+      </div>
     </div>
 
-{{MAIN_CONTENT_LAYERS}}
+    <!-- Active Speaker / Character Layer (Depth: 1.0) -->
+    <div id="characters-layer" class="depth-layer layer-subject" data-depth-factor="1.0">
+{{CHARACTER_RIG_HTML}}
+    </div>
 
-    <!-- Edge Vignette Filter -->
-    <div class="vignette-overlay"></div>
+    <!-- Foreground Elements Layer (Depth: 2.0) -->
+    <div id="foreground-layer" class="depth-layer layer-foreground" data-depth-factor="2.0">
+      <!-- Word synchronized cards container -->
+      <div id="words-container">
+{{WORD_CARDS_HTML}}
+      </div>
+    </div>
   </div>
 
+  <!-- Runtime Data Injections -->
   <script>
-    const fps = {{FPS}};
-    window.__fps = fps;
+    window.__totalDurationMs = {{TOTAL_DURATION_MS}};
+    window.__fps = {{FPS}};
     window.__mouthCues = {{MOUTH_CUES_JSON}};
-    window.__cardTimings = {{CARD_TIMING_JSON}};
     window.__annotations = {{ANNOTATIONS_JSON}};
     window.__stageVisuals = {{STAGE_VISUALS_JSON}};
-    window.__gestureTriggerMs = {{GESTURE_TRIGGER_MS_JSON}};
-    window.__gestureType = {{SPEAKER_GESTURE_JSON}};
-    window.__speakerSlotId = {{SPEAKER_SLOT_ID_JSON}};
-    window.__listenerSlotId = {{LISTENER_SLOT_ID_JSON}};
-    window.__cameraParallax = {{CAMERA_PARALLAX_JSON}};
-    window.__cameraPresets = {{CAMERA_PRESETS_JSON}};
-    window.__cameraConfig = {{CAMERA_CONFIG_JSON}};
     window.__cameraShotList = {{CAMERA_SHOT_LIST_JSON}};
     window.__enablePurposefulCamera = {{ENABLE_PURPOSEFUL_CAMERA}};
     window.__wordTimings = {{WORD_TIMINGS_JSON}};

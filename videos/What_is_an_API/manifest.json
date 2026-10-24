@@ -1,6 +1,6 @@
 {
   "video_name": "What_is_an_API",
-  "created_at": "2026-10-24T13:19:40Z",
+  "created_at": "2026-10-24T16:02:25Z",
   "style": "whiteboard",
   "characters": [
     {
@@ -21,10 +21,7 @@
   },
   "library_pieces_used": [
     "library/backgrounds/bg_whiteboard_far_142c5936d9b26248.png",
-    "library/backgrounds/bg_whiteboard_far_bcf6ddc21d6bfe58.png",
-    "library/backgrounds/bg_whiteboard_mid_6d8582e914804b11.png",
     "library/backgrounds/bg_whiteboard_mid_d3db225a83b95f7a.png",
-    "library/backgrounds/bg_whiteboard_near_73d00bd77e2cab30.png",
     "library/backgrounds/bg_whiteboard_near_daad40c3feafc29f.png",
     "library/sfx/sfx_boing_1a844751dcfca809.wav",
     "library/sfx/sfx_pop_47e9f275ccb62bb6.wav",
