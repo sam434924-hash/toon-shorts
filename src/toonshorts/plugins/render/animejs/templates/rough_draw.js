@@ -1,11 +1,50 @@
 // Store stroke drawing items for progressive animated line drawing
 window.__annotationDrawers = [];
 
+function wrapKeywordSpan(el, keyword) {
+  if (!el || !keyword) return null;
+  const cleanKw = keyword.toLowerCase().replace(/[^\w]/g, "");
+  if (!cleanKw) return null;
+
+  const fullText = el.textContent || "";
+  const regex = new RegExp(`\\b${cleanKw}\\b`, "i");
+  let match = fullText.match(regex);
+  if (!match) {
+    const subIdx = fullText.toLowerCase().indexOf(cleanKw);
+    if (subIdx !== -1) {
+      match = { index: subIdx, 0: fullText.substring(subIdx, subIdx + cleanKw.length) };
+    }
+  }
+  if (!match || match.index === undefined) return null;
+
+  const matchIdx = match.index;
+  const matchLen = match[0].length;
+  const beforeText = fullText.substring(0, matchIdx);
+  const matchedText = fullText.substring(matchIdx, matchIdx + matchLen);
+  const afterText = fullText.substring(matchIdx + matchLen);
+
+  el.textContent = "";
+  if (beforeText) el.appendChild(document.createTextNode(beforeText));
+  const span = document.createElement("span");
+  span.className = "wb-title-keyword";
+  span.textContent = matchedText;
+  el.appendChild(span);
+  if (afterText) el.appendChild(document.createTextNode(afterText));
+
+  return span;
+}
+
 // Initialize Rough.js Sketch Drawings with Fixed Deterministic Seeds
 function initRoughSketches() {
   const roughSvg = document.getElementById("rough-canvas");
   const wbEl = document.querySelector(".whiteboard-outer");
   if (!roughSvg || !wbEl || typeof rough === "undefined") return;
+
+  // 1. Idempotency: clear previous paths and reset drawers
+  while (roughSvg.firstChild) {
+    roughSvg.removeChild(roughSvg.firstChild);
+  }
+  window.__annotationDrawers = [];
 
   const rc = rough.svg(roughSvg);
   const canvasRect = roughSvg.getBoundingClientRect();
@@ -14,24 +53,69 @@ function initRoughSketches() {
   const roughnessMult = isFast ? 0.0 : 1.0;
   const bowingMult = isFast ? 0.0 : 1.0;
 
-  // 1. Hand-sketched underline under the title badge
+  // 2. Measure in resting position: temporarily reset animation transforms
   const titleEl = document.getElementById("wb-title");
+  let prevTitleTransform = "";
   if (titleEl) {
-    const tRect = titleEl.getBoundingClientRect();
-    const leftX = (tRect.left - canvasRect.left) + 16;
-    const rightX = (tRect.right - canvasRect.left) - 16;
-    const underY = (tRect.bottom - canvasRect.top) + 8;
-    const uLine = rc.line(leftX, underY, rightX, underY, {
-      seed: 101 + baseSeed, stroke: '#f59e0b', strokeWidth: 5.5, roughness: 1.3 * roughnessMult, bowing: 1.2 * bowingMult
-    });
-    uLine.id = 'rough-title-underline';
-    roughSvg.appendChild(uLine);
+    prevTitleTransform = titleEl.style.transform;
+    titleEl.style.transform = "none";
+  }
+
+  const cards = document.querySelectorAll(".word-card");
+  const prevCardTransforms = [];
+  cards.forEach(card => {
+    prevCardTransforms.push(card.style.transform);
+    card.style.transform = "none";
+  });
+
+  // 1. Hand-sketched underline under the title keyword (or fallback full-width)
+  if (titleEl) {
+    const uAnn = (window.__annotations || []).find(a => a.type === "underline" || a.id === "rough-title-underline");
+    const targetWord = uAnn ? uAnn.tied_word : null;
+    let keywordSpan = null;
+    if (targetWord) {
+      keywordSpan = wrapKeywordSpan(titleEl, targetWord);
+    }
+
+    const rects = keywordSpan ? keywordSpan.getClientRects() : null;
+    if (rects && rects.length > 0) {
+      // Underline specific keyword (supports per-line underlines if wrapped across lines)
+      const uGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      uGroup.id = "rough-title-underline";
+      Array.from(rects).forEach((r, rIdx) => {
+        const leftX = (r.left - canvasRect.left) - 2;
+        const rightX = (r.right - canvasRect.left) + 2;
+        const underY = (r.bottom - canvasRect.top) + 4;
+        const lineNode = rc.line(leftX, underY, rightX, underY, {
+          seed: 101 + baseSeed + rIdx * 7,
+          stroke: "#f59e0b",
+          strokeWidth: 4.5,
+          roughness: 1.3 * roughnessMult,
+          bowing: 1.2 * bowingMult,
+        });
+        uGroup.appendChild(lineNode);
+      });
+      roughSvg.appendChild(uGroup);
+    } else {
+      // Fallback: full-width underline across the title badge container
+      const tRect = titleEl.getBoundingClientRect();
+      const leftX = (tRect.left - canvasRect.left) + 16;
+      const rightX = (tRect.right - canvasRect.left) - 16;
+      const underY = (tRect.bottom - canvasRect.top) + 8;
+      const uLine = rc.line(leftX, underY, rightX, underY, {
+        seed: 101 + baseSeed,
+        stroke: "#f59e0b",
+        strokeWidth: 5.5,
+        roughness: 1.3 * roughnessMult,
+        bowing: 1.2 * bowingMult,
+      });
+      uLine.id = "rough-title-underline";
+      roughSvg.appendChild(uLine);
+    }
   }
 
   // 2. Hand-sketched circles around keyword text (NOT list numbers)
-  const cards = document.querySelectorAll(".word-card");
   const cardRects = [];
-
   cards.forEach((card, idx) => {
     const textEl = card.querySelector(".word-text") || card.querySelector(".word-text-wrapper") || card;
     const numEl = card.querySelector(".word-num");
@@ -111,6 +195,14 @@ function initRoughSketches() {
     }
   }
 
+  // Restore transforms after resting-position measurements
+  if (titleEl) {
+    titleEl.style.transform = prevTitleTransform;
+  }
+  cards.forEach((card, idx) => {
+    card.style.transform = prevCardTransforms[idx];
+  });
+
   // Prepare progressive drawing stroke-dasharray & stroke-dashoffset for each annotation
   if (window.__annotations) {
     window.__annotations.forEach(ann => {
@@ -144,6 +236,5 @@ function initRoughSketches() {
   });
 }
 
-// Call sketch initialization on page load
-initRoughSketches();
+// Export initialization function (invoked once on DOMContentLoaded / fonts ready)
 window.initRoughSketches = initRoughSketches;

@@ -30,8 +30,8 @@ function computeCameraState(ms, frameIdx) {
   const pFactors = window.__cameraParallax || { foreground: 2.0, subject: 1.0, board: 0.5, deep_bg: 0.12 };
   const presets = window.__cameraPresets || {
     wide: { x: 0.0, y: 0.0, zoom: 1.0, focus: 'subject' },
-    boy_close: { x: 130.0, y: -45.0, zoom: 1.18, focus: 'subject' },
-    girl_close: { x: -130.0, y: -45.0, zoom: 1.18, focus: 'subject' },
+    boy_close: { x: -130.0, y: -45.0, zoom: 1.18, focus: 'subject' },
+    girl_close: { x: 130.0, y: -45.0, zoom: 1.18, focus: 'subject' },
     board_close: { x: 0.0, y: 90.0, zoom: 1.25, focus: 'board' }
   };
   const cfg = window.__cameraConfig || {
@@ -197,6 +197,9 @@ function computeCameraState(ms, frameIdx) {
     function resolveTargetCoords(targetName) {
       if (!targetName || targetName === 'wide') {
         return { x: presets.wide.x, y: presets.wide.y, zoom: presets.wide.zoom, focus: 0.0 };
+      }
+      if (presets[targetName]) {
+        return { x: presets[targetName].x, y: presets[targetName].y, zoom: presets[targetName].zoom, focus: (presets[targetName].focus === 'board' ? 1.0 : 0.0) };
       }
       if (targetName === 'board_close' || targetName.indexOf('board_') === 0) {
         return { x: presets.board_close.x, y: presets.board_close.y, zoom: presets.board_close.zoom, focus: 1.0 };
@@ -501,6 +504,59 @@ function applyMultiplaneParallax(camState) {
     }
     return;
   }
+
+  // Safety Clamp: Ensure character real bounds (including swinging gesture arms) stay inside [margin, 1080 - margin]
+  const margin = 24.0;
+  const viewW = 1080.0;
+  const isSpeakerRight = (window.__speakerSlotId || 'character-rig') === 'character-rig-right';
+
+  const probeSubjEl = document.getElementById('layer-subject');
+  if (probeSubjEl) {
+    const fSubj = 1.0;
+    const testShiftX = (-camState.camX * fSubj) + (camState.driftX * fSubj);
+    const testShiftY = (-camState.camY * fSubj) + (camState.driftY * fSubj);
+    const testScale = 1.0 + (camState.camZoom - 1.0) * Math.min(1.2, fSubj);
+    probeSubjEl.style.transform = 'translate(' + testShiftX.toFixed(2) + 'px, ' + testShiftY.toFixed(2) + 'px) scale(' + testScale.toFixed(3) + ') rotate(' + camState.driftRot.toFixed(3) + 'deg)';
+
+    let adjustX = 0.0;
+    if (!isSpeakerRight) {
+      const boyRoot = document.querySelector('#character-rig #character_root') || document.getElementById('character-rig');
+      const boyArmL = document.querySelector('#character-rig #fk_arm_l');
+      let boyMinLeft = Infinity;
+      if (boyRoot) {
+        const r = boyRoot.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) boyMinLeft = Math.min(boyMinLeft, r.left);
+      }
+      if (boyArmL) {
+        const r = boyArmL.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) boyMinLeft = Math.min(boyMinLeft, r.left);
+      }
+      if (boyMinLeft < margin) {
+        adjustX = -(margin - boyMinLeft + 1.0);
+      }
+    } else {
+      const girlRoot = document.querySelector('#character-rig-right #character_root') || document.getElementById('character-rig-right');
+      const girlArmR = document.querySelector('#character-rig-right #fk_arm_r');
+      let girlMaxRight = -Infinity;
+      if (girlRoot) {
+        const r = girlRoot.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) girlMaxRight = Math.max(girlMaxRight, r.right);
+      }
+      if (girlArmR) {
+        const r = girlArmR.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) girlMaxRight = Math.max(girlMaxRight, r.right);
+      }
+      if (girlMaxRight > viewW - margin) {
+        adjustX = +(girlMaxRight - (viewW - margin) + 1.0);
+      }
+    }
+    if (typeof adjustX === 'number' && !isNaN(adjustX) && adjustX !== 0.0) {
+      camState.camX = Number(camState.camX) + adjustX;
+    }
+  }
+
+  window.__lastCameraState = camState;
+
   const p = camState.pFactors;
   const layers = [
     { id: 'bg-layer-far', factor: p.bg_far || 0.08 },

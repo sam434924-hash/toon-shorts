@@ -79,6 +79,7 @@ class SceneRenderJob:
     temp_dir: Optional[Path] = None
     bg_layer_images: Optional[Dict[str, str]] = None
     enable_split_camera_zones: Optional[bool] = None
+    subtitle_text: Optional[str] = None
 
 
 _CACHE_LOCK = threading.Lock()
@@ -265,6 +266,7 @@ def _render_job_with_browser(
         fast=job.fast,
         bg_layer_images=job.bg_layer_images,
         enable_split_camera_zones=job.enable_split_camera_zones,
+        subtitle_text=job.subtitle_text,
     )
 
     html_file = (work_dir / "whiteboard_scene.html").resolve()
@@ -425,6 +427,7 @@ def render_whiteboard_video(
     rough_seed: Optional[int] = None,
     fast: bool = False,
     enable_split_camera_zones: Optional[bool] = None,
+    subtitle_text: Optional[str] = None,
 ) -> Path:
     """
     Renders a fully animated MP4 video clip with mouth sync, camera moves, and Rough.js sketches.
@@ -451,6 +454,7 @@ def render_whiteboard_video(
         fast=fast,
         temp_dir=temp_dir,
         enable_split_camera_zones=enable_split_camera_zones,
+        subtitle_text=subtitle_text,
     )
     return _render_job_with_browser(job)
 

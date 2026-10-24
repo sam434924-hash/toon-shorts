@@ -305,3 +305,87 @@ def test_parallax_fast_mode_blur_off(tmp_path):
             assert blur_style == "none" or blur_style == "", f"Blur filter must be off in fast mode on {layer_id}"
         browser.close()
 
+
+def test_character_bounds_do_not_clip_at_preset_camera_values(tmp_path):
+    """
+    Verifies that speaker character bounds (including swinging gesture limbs)
+    strictly clear canvas borders with at least 24px safety margin during close-up camera presets.
+    Fails if boy_close or girl_close causes clipping past the viewport edge.
+    """
+    from playwright.sync_api import sync_playwright
+    from toonshorts.core.models import Scene
+    from toonshorts.plugins.render.animejs.cast import build_characters_data
+
+    # 1. Boy speaker at boy_close preset with explain gesture
+    scene_boy = Scene(scene_number=1, speaker="boy_b", dialogue_line="Testing bounds", action="Boy explains", gesture="explain")
+    chars_data_boy = build_characters_data(["boy_b", "girl_a"], scene=scene_boy)
+
+    html_boy = generate_whiteboard_html(
+        title="Bounds Test Boy",
+        words=[{"text": "Testing", "start_ms": 0, "end_ms": 1000}],
+        camera_shots=[{"t_start": 0, "t_end": 1000, "from_target": "boy_close", "to_target": "boy_close"}],
+        duration_sec=3.0,
+        scene_number=1,
+        characters_data=chars_data_boy,
+        theme="night_studio",
+    )
+    t_file_boy = tmp_path / "bounds_test_boy.html"
+    t_file_boy.write_text(html_boy, encoding="utf-8")
+
+    # 2. Girl speaker at girl_close preset with point gesture
+    scene_girl = Scene(scene_number=2, speaker="girl_a", dialogue_line="Testing bounds girl", action="Girl points", gesture="point")
+    chars_data_girl = build_characters_data(["boy_b", "girl_a"], scene=scene_girl)
+
+    html_girl = generate_whiteboard_html(
+        title="Bounds Test Girl",
+        words=[{"text": "Testing", "start_ms": 0, "end_ms": 1000}],
+        camera_shots=[{"t_start": 0, "t_end": 1000, "from_target": "girl_close", "to_target": "girl_close"}],
+        duration_sec=3.0,
+        scene_number=2,
+        characters_data=chars_data_girl,
+        theme="night_studio",
+    )
+    t_file_girl = tmp_path / "bounds_test_girl.html"
+    t_file_girl.write_text(html_girl, encoding="utf-8")
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page(viewport={"width": 1080, "height": 1920})
+
+        # Check boy bounds
+        page.goto(t_file_boy.resolve().as_uri())
+        page.evaluate("window.seekTo(500)")
+        boy_bounds = page.evaluate("""() => {
+            const boyRoot = document.querySelector('#character-rig #character_root') || document.getElementById('character-rig');
+            const boyArm = document.querySelector('#character-rig #fk_arm_l');
+            let bLeft = Infinity;
+            if (boyRoot) bLeft = Math.min(bLeft, boyRoot.getBoundingClientRect().left);
+            if (boyArm) bLeft = Math.min(bLeft, boyArm.getBoundingClientRect().left);
+            return {
+                boyLeft: bLeft,
+                camState: window.__lastCameraState
+            };
+        }""")
+        assert boy_bounds["boyLeft"] >= 24.0, f"Boy clipped on left edge: {boy_bounds['boyLeft']}px < 24px"
+        assert boy_bounds["boyLeft"] <= 1080.0, "Boy out of bounds"
+
+        # Check girl bounds
+        page.goto(t_file_girl.resolve().as_uri())
+        page.evaluate("window.seekTo(500)")
+        girl_bounds = page.evaluate("""() => {
+            const girlRoot = document.querySelector('#character-rig-right #character_root') || document.getElementById('character-rig-right');
+            const girlArm = document.querySelector('#character-rig-right #fk_arm_r');
+            let gRight = -Infinity;
+            if (girlRoot) gRight = Math.max(gRight, girlRoot.getBoundingClientRect().right);
+            if (girlArm) gRight = Math.max(gRight, girlArm.getBoundingClientRect().right);
+            return {
+                girlRight: gRight,
+                camState: window.__lastCameraState
+            };
+        }""")
+        assert girl_bounds["girlRight"] <= (1080.0 - 24.0), f"Girl clipped on right edge: {girl_bounds['girlRight']}px > 1056px"
+        assert girl_bounds["girlRight"] >= 0.0, "Girl out of bounds"
+
+        browser.close()
+
+

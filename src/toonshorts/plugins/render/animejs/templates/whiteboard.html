@@ -50,10 +50,10 @@
     window.__cardTimings = {{CARD_TIMING_JSON}};
     window.__annotations = {{ANNOTATIONS_JSON}};
     window.__stageVisuals = {{STAGE_VISUALS_JSON}};
-    window.__gestureTriggerMs = {{GESTURE_TRIGGER_MS}};
-    window.__gestureType = "{{SPEAKER_GESTURE}}";
-    window.__speakerSlotId = "{{SPEAKER_SLOT_ID}}";
-    window.__listenerSlotId = "{{LISTENER_SLOT_ID}}";
+    window.__gestureTriggerMs = {{GESTURE_TRIGGER_MS_JSON}};
+    window.__gestureType = {{SPEAKER_GESTURE_JSON}};
+    window.__speakerSlotId = {{SPEAKER_SLOT_ID_JSON}};
+    window.__listenerSlotId = {{LISTENER_SLOT_ID_JSON}};
     window.__cameraParallax = {{CAMERA_PARALLAX_JSON}};
     window.__cameraPresets = {{CAMERA_PRESETS_JSON}};
     window.__cameraConfig = {{CAMERA_CONFIG_JSON}};
@@ -102,8 +102,19 @@
   </script>
   <script>
     window.addEventListener("DOMContentLoaded", () => {
-      initRoughSketches();
-      window.seekTo(0);
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => {
+          if (typeof initRoughSketches === "function") {
+            initRoughSketches();
+          }
+          window.seekTo(0);
+        });
+      } else {
+        if (typeof initRoughSketches === "function") {
+          initRoughSketches();
+        }
+        window.seekTo(0);
+      }
     });
   </script>
 </body>

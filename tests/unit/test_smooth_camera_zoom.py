@@ -11,8 +11,8 @@ def smootherstep(t: float) -> float:
 def compute_camera_state_py(ms: float, frame_idx: int, speaker_is_right: bool, stage_visuals: list, word_timings: list, tau_ms: float = 800.0):
     presets = {
         'wide': {'x': 0.0, 'y': 0.0, 'zoom': 1.0, 'focus': 'subject'},
-        'boy_close': {'x': 130.0, 'y': -45.0, 'zoom': 1.18, 'focus': 'subject'},
-        'girl_close': {'x': -130.0, 'y': -45.0, 'zoom': 1.18, 'focus': 'subject'},
+        'boy_close': {'x': -130.0, 'y': -45.0, 'zoom': 1.18, 'focus': 'subject'},
+        'girl_close': {'x': 130.0, 'y': -45.0, 'zoom': 1.18, 'focus': 'subject'},
         'board_close': {'x': 0.0, 'y': 90.0, 'zoom': 1.25, 'focus': 'board'},
     }
     speaker_preset_key = 'girl_close' if speaker_is_right else 'boy_close'

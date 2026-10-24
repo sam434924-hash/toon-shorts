@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from toonshorts.core import config
-from toonshorts.core.models import Character, Scene, SceneAudio, ScriptPlan
+from toonshorts.core.models import Character, Scene, SceneAudio, ScriptPlan, strip_speaker_label
 from toonshorts.core.registry import RenderInterface, register_renderer
 from toonshorts.plugins.render.animejs.annotations import extract_whiteboard_content_and_annotations
 from toonshorts.plugins.render.animejs.capture import (
@@ -52,7 +52,12 @@ class AnimeJSRenderPlugin(RenderInterface):
         temp_dir.mkdir(parents=True, exist_ok=True)
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
-        duration_sec = 2.5
+        # Determine real duration from scene or word timings
+        duration_sec = getattr(scene, "duration_sec", None)
+        if duration_sec is None or duration_sec <= 0:
+            scene_wts = getattr(scene, "word_timings", None) or []
+            max_end = max((getattr(wt, "end_time", 0.0) if not isinstance(wt, dict) else wt.get("end_time", 0.0) for wt in scene_wts), default=0.0)
+            duration_sec = max(2.5, max_end + 0.5) if max_end > 0 else 2.5
         title, words_data, annotations = extract_whiteboard_content_and_annotations(scene, duration_sec)
 
         scene_gesture = getattr(scene, "gesture", None) or "idle"
@@ -86,6 +91,7 @@ class AnimeJSRenderPlugin(RenderInterface):
             theme=theme,
             rough_seed=rough_seed,
             enable_split_camera_zones=style_preset.get("split_camera_zones", getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False)) if style_preset else getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False),
+            subtitle_text=strip_speaker_label(scene.dialogue_line),
         )
 
         html_file = temp_dir / f"scene_{scene.scene_number}_still.html"
@@ -120,6 +126,7 @@ class AnimeJSRenderPlugin(RenderInterface):
         theme: str = "whiteboard",
         rough_seed: Optional[int] = None,
         fast: bool = False,
+        subtitle_text: Optional[str] = None,
     ) -> Path:
         """
         Renders a fully animated MP4 video with easing transitions synced to an audio clip.
@@ -148,6 +155,7 @@ class AnimeJSRenderPlugin(RenderInterface):
             rough_seed=rough_seed,
             fast=fast,
             enable_split_camera_zones=getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False),
+            subtitle_text=subtitle_text,
         )
 
     def render_all_scenes(
@@ -210,6 +218,7 @@ class AnimeJSRenderPlugin(RenderInterface):
                     rough_seed=rough_seed,
                     fast=fast,
                     enable_split_camera_zones=style_preset.get("split_camera_zones", getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False)) if style_preset else getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False),
+                    subtitle_text=strip_speaker_label(scene.dialogue_line),
                 )
                 jobs.append(job)
 

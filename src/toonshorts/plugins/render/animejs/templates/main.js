@@ -36,6 +36,13 @@ window.seekAnimation = function(ms) {
     window.__boardObjectsInitialized = true;
   }
 
+  if ((!window.__annotationDrawers || window.__annotationDrawers.length === 0) && typeof window.initRoughSketches === "function") {
+    const roughSvg = document.getElementById("rough-canvas");
+    if (roughSvg && !roughSvg.firstChild) {
+      window.initRoughSketches();
+    }
+  }
+
   if (window.__timeline) {
     window.__timeline.seek(ms);
   }
@@ -43,15 +50,15 @@ window.seekAnimation = function(ms) {
   const fps = window.__fps || 24;
   const frameIdx = Math.floor((ms / 1000.0) * fps);
 
+  // 1-4. Character animation, mouth sync, idle life & FK limb poses
+  if (typeof seekLimbAnimation === "function") {
+    seekLimbAnimation(ms, frameIdx);
+  }
+
   // 0. Compute deterministic multiplane camera state & parallax shifts
   if (typeof computeCameraState === "function" && typeof applyMultiplaneParallax === "function") {
     const camState = computeCameraState(ms, frameIdx);
     applyMultiplaneParallax(camState);
-  }
-
-  // 1-4. Character animation, mouth sync, idle life & FK limb poses
-  if (typeof seekLimbAnimation === "function") {
-    seekLimbAnimation(ms, frameIdx);
   }
 
   // 5. Progressive stroke-by-stroke drawing synced to speech

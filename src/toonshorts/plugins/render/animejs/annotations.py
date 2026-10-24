@@ -59,15 +59,26 @@ def validate_word_timings(
             logger.warning("Scene %s: word_timings[%s] has NaN/Inf timing; skipping annotations.", scene_number, idx)
             return None
 
-        if st < 0.0 or st > duration_sec or et < st:
+        if st < 0.0 or et < st:
             logger.warning(
-                "Scene %s: word_timings[%s] outside scene duration (st=%.2f, et=%.2f, dur=%.2f); skipping annotations.",
-                scene_number, idx, st, et, duration_sec
+                "Scene %s: word_timings[%s] has invalid timing order (st=%.2f, et=%.2f); skipping annotations.",
+                scene_number, idx, st, et
             )
             return None
 
+        if st > duration_sec:
+            logger.warning(
+                "Scene %s: word_timings[%s] starts outside scene duration (st=%.2f, dur=%.2f); skipping word.",
+                scene_number, idx, st, duration_sec
+            )
+            continue
+
         capped_word = w_text.strip()[:MAX_WORD_LENGTH]
         validated.append(WordTiming(word=capped_word, start_time=float(st), end_time=float(et)))
+
+    if not validated:
+        logger.warning("Scene %s: no valid word timings found within duration; skipping annotations.", scene_number)
+        return None
 
     return validated
 
@@ -84,12 +95,38 @@ def extract_whiteboard_content_and_annotations(
     """
     clean_dlg = strip_speaker_label(scene.dialogue_line)
     action_text = strip_speaker_label(scene.action or "").strip()
+    title = None
     if ":" in action_text:
         title_part, points_part = action_text.split(":", 1)
         title = title_part.strip()
         points = [p.strip() for p in points_part.replace(";", ",").split(",") if p.strip()]
-    elif action_text:
-        title = action_text[:45]
+    else:
+        # Extract short, clean topic heading (avoid slicing raw stage direction text)
+        m = re.search(
+            r"^(?:boy|girl|presenter|host|character)?\s*(?:explains|talks about|shows|discusses|reacts with|describes|presents|points to)\s+(.+?)(?:\s+(?:with|and|across|while)\b|$)",
+            action_text,
+            re.IGNORECASE,
+        )
+        if m:
+            candidate = m.group(1).strip()
+            if len(candidate) <= 30 and candidate.lower() not in ("shock", "curiosity", "surprise"):
+                title = candidate.title()
+
+        if not title and getattr(scene, "visuals", None):
+            for v in scene.visuals:
+                params = v.get("params", {}) if isinstance(v, dict) else getattr(v, "params", {})
+                lbl = params.get("label") or params.get("text")
+                if lbl and len(lbl) <= 25:
+                    title = lbl.strip()
+                    break
+
+        if not title:
+            words_dlg = clean_dlg.split()
+            if words_dlg:
+                title = " ".join(words_dlg[:3]).rstrip(".,!?;:").title()
+            else:
+                title = f"Scene {scene.scene_number}"
+
         words_dlg = clean_dlg.split()
         if len(words_dlg) >= 6:
             points = [
@@ -98,10 +135,7 @@ def extract_whiteboard_content_and_annotations(
                 " ".join(words_dlg[2 * len(words_dlg) // 3 :]),
             ]
         else:
-            points = [clean_dlg[:30]]
-    else:
-        title = f"Scene {scene.scene_number}"
-        points = ["Key Idea", "Implementation", "Result"]
+            points = [clean_dlg[:30]] if clean_dlg else ["Key Idea"]
 
     title = title[:MAX_TITLE_LENGTH]
     total_ms = int(duration_sec * 1000)
@@ -156,6 +190,11 @@ def extract_whiteboard_content_and_annotations(
         "start_ms": title_u_start_ms,
         "duration_ms": 380,
     })
+
+    # If layout is 'stage', word cards do not exist in the DOM; skip card circles & arrows
+    layout = getattr(scene, "layout", "cards") or "cards"
+    if layout == "stage":
+        return title, word_cards, annotations
 
     card_matched_timings: List[WordTiming] = []
     prev_timing_idx = 0

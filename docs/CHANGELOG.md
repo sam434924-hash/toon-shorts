@@ -1,5 +1,9 @@
 # Changelog
 
+- 2026-10-24: camera framing: corrected camera preset signs in config.py, added dynamic bounds safety clamp inside parallax engine, synchronized FK limb poses prior to clamp evaluation, and verified zero edge clipping across all scenes.
+
+- 2026-10-24: annotations: fixed underline alignment, resting position measurement, keyword-scoped wrapping, idempotent Rough.js init, clean topic headings, and subtitle escaping.
+
 - 2026-10-24: split camera zones: implemented independent board and character camera zones preventing cut-off speakers, bounding box containment and safe zone clearance verification, and peak zoom stills.
 
 - 2026-10-24: phase4b-6: optimized render speed via pre-rendered parallax layer image caching and filter cache invalidation fix, verified camera moves, and added edge tests & scene edge-case test suite.

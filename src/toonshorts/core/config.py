@@ -118,8 +118,8 @@ CAMERA_PARALLAX_FACTORS = {
 # Camera presets for deterministic framing
 CAMERA_PRESETS = {
     "wide": {"x": 0.0, "y": 0.0, "zoom": 1.0, "focus": "subject"},
-    "boy_close": {"x": 130.0, "y": -45.0, "zoom": 1.18, "focus": "subject"},
-    "girl_close": {"x": -130.0, "y": -45.0, "zoom": 1.18, "focus": "subject"},
+    "boy_close": {"x": -130.0, "y": -45.0, "zoom": 1.18, "focus": "subject"},
+    "girl_close": {"x": 130.0, "y": -45.0, "zoom": 1.18, "focus": "subject"},
     "board_close": {"x": 0.0, "y": 90.0, "zoom": 1.25, "focus": "board"},
 }
 

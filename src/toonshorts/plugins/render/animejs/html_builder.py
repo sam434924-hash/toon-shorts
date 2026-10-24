@@ -65,6 +65,7 @@ def generate_whiteboard_html(
     style_profile: Optional[Dict[str, Any]] = None,
     bg_layer_images: Optional[Dict[str, str]] = None,
     enable_split_camera_zones: Optional[bool] = None,
+    subtitle_text: Optional[str] = None,
 ) -> str:
     """
     Generates a high-contrast HTML5/SVG composition with Anime.js whiteboard animation,
@@ -85,6 +86,7 @@ def generate_whiteboard_html(
 
     clean_gesture = sanitize_gesture(gesture)
     safe_title = html.escape(title)
+    safe_subtitle = html.escape(subtitle_text) if subtitle_text is not None else safe_title
 
     total_duration_ms = int(duration_sec * 1000)
     title_start_ms = 100
@@ -183,12 +185,17 @@ def generate_whiteboard_html(
     # Clean annotations for JS serializing (remove non-JSON objects)
     serializable_annotations = []
     for a in annotations:
-        serializable_annotations.append({
+        ann_item = {
             "id": a["id"],
             "type": a.get("type", ""),
             "start_ms": int(a.get("start_ms", 0)),
             "duration_ms": int(a.get("duration_ms", 400)),
-        })
+        }
+        if "tied_word" in a and a["tied_word"]:
+            ann_item["tied_word"] = str(a["tied_word"])
+        if "card_index" in a:
+            ann_item["card_index"] = a["card_index"]
+        serializable_annotations.append(ann_item)
     annotations_json = json.dumps(serializable_annotations)
 
     # Determine layout mode content (cards vs stage)
@@ -224,6 +231,7 @@ def generate_whiteboard_html(
         if clean_gesture != "idle" and characters_data:
             characters_data[0]["gesture"] = clean_gesture
 
+    ALLOWED_SLOT_IDS = frozenset({"character-rig", "character-rig-right"})
     speaker_slot_id = "character-rig"
     listener_slot_id = ""
     speaker_gesture = "idle"
@@ -232,14 +240,15 @@ def generate_whiteboard_html(
 
     for cdata in characters_data:
         slot = cdata["slot"]
-        slot_id = "character-rig" if slot == "left" else "character-rig-right"
+        raw_slot_id = "character-rig" if slot == "left" else "character-rig-right"
+        slot_id = raw_slot_id if raw_slot_id in ALLOWED_SLOT_IDS else "character-rig"
         if cdata["is_speaker"]:
             speaker_slot_id = slot_id
-            speaker_gesture = cdata["gesture"]
+            speaker_gesture = sanitize_gesture(cdata.get("gesture"))
         else:
             listener_slot_id = slot_id
 
-        gest = cdata["gesture"]
+        gest = sanitize_gesture(cdata.get("gesture"))
         chars_css_rules.append(f"    #{slot_id} .arm-gesture {{ display: none; }}")
         chars_css_rules.append(f"    #{slot_id} #arm-gesture-{gest} {{ display: inline !important; }}")
 
@@ -329,8 +338,8 @@ def generate_whiteboard_html(
     }))
     camera_presets_json = json.dumps(getattr(config, "CAMERA_PRESETS", {
         "wide": {"x": 0.0, "y": 0.0, "zoom": 1.0, "focus": "subject"},
-        "boy_close": {"x": 130.0, "y": -45.0, "zoom": 1.18, "focus": "subject"},
-        "girl_close": {"x": -130.0, "y": -45.0, "zoom": 1.18, "focus": "subject"},
+        "boy_close": {"x": -130.0, "y": -45.0, "zoom": 1.18, "focus": "subject"},
+        "girl_close": {"x": 130.0, "y": -45.0, "zoom": 1.18, "focus": "subject"},
         "board_close": {"x": 0.0, "y": 90.0, "zoom": 1.25, "focus": "board"},
     }))
     enable_purposeful = getattr(config, "ENABLE_PURPOSEFUL_CAMERA", True)
@@ -546,7 +555,7 @@ def generate_whiteboard_html(
     result = result.replace("{{SPLIT_CAMERA_FRAMING_JSON}}", json.dumps(split_camera_framing))
     result = result.replace("{{SPLIT_CHAR_SHOTS_JSON}}", json.dumps(split_char_shots))
     result = result.replace("{{SPLIT_BOARD_SHOTS_JSON}}", json.dumps(split_board_shots))
-    result = result.replace("{{SUBTITLE_PREVIEW_TEXT}}", safe_title)
+    result = result.replace("{{SUBTITLE_PREVIEW_TEXT}}", safe_subtitle)
     result = result.replace("{{THEME_NAME}}", theme)
     result = result.replace("{{PARALLAX_CLASS}}", " parallax-bg-enabled" if enable_parallax_bg else "")
     result = result.replace("{{PANEL_BACKDROP_STYLE}}", panel_backdrop_style)
@@ -570,10 +579,19 @@ def generate_whiteboard_html(
     result = result.replace("{{CARD_TIMING_JSON}}", card_timing_json)
     result = result.replace("{{ANNOTATIONS_JSON}}", annotations_json)
     result = result.replace("{{STAGE_VISUALS_JSON}}", stage_visuals_json)
+    clean_speaker_slot = speaker_slot_id if speaker_slot_id in ALLOWED_SLOT_IDS else "character-rig"
+    clean_listener_slot = listener_slot_id if listener_slot_id in ALLOWED_SLOT_IDS else "character-rig-right"
+    clean_speaker_gesture = sanitize_gesture(speaker_gesture)
+
+    result = result.replace("{{GESTURE_TRIGGER_MS_JSON}}", json.dumps(gesture_trigger_ms))
+    result = result.replace("{{SPEAKER_GESTURE_JSON}}", json.dumps(clean_speaker_gesture))
+    result = result.replace("{{SPEAKER_SLOT_ID_JSON}}", json.dumps(clean_speaker_slot))
+    result = result.replace("{{LISTENER_SLOT_ID_JSON}}", json.dumps(clean_listener_slot))
+
     result = result.replace("{{GESTURE_TRIGGER_MS}}", str(gesture_trigger_ms))
-    result = result.replace("{{SPEAKER_GESTURE}}", speaker_gesture)
-    result = result.replace("{{SPEAKER_SLOT_ID}}", speaker_slot_id)
-    result = result.replace("{{LISTENER_SLOT_ID}}", listener_slot_id)
+    result = result.replace("{{SPEAKER_GESTURE}}", clean_speaker_gesture)
+    result = result.replace("{{SPEAKER_SLOT_ID}}", clean_speaker_slot)
+    result = result.replace("{{LISTENER_SLOT_ID}}", clean_listener_slot)
     result = result.replace("{{CAMERA_PARALLAX_JSON}}", camera_parallax_json)
     result = result.replace("{{CAMERA_PRESETS_JSON}}", camera_presets_json)
     result = result.replace("{{CAMERA_CONFIG_JSON}}", camera_config_json)
