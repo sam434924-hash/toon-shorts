@@ -14,7 +14,7 @@ import logging
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
-from .models import ScriptPlan, SceneAudio, sanitize_filename
+from .models import ScriptPlan, SceneAudio, sanitize_video_name
 from .subtitles import generate_ass_subtitles
 from .audio_effects import prepare_sound_effects
 from . import config
@@ -93,22 +93,24 @@ def assemble_final_video(
     output_dir: Path,
     motion_plugin: Optional[Any] = None,
     fast: bool = False,
+    video_name: Optional[str] = None,
+    library_tracker: Optional[List[str]] = None,
 ) -> Path:
     """Renders scenes, burns in ASS subtitles, and outputs finished vertical MP4."""
     check_ffmpeg_subtitles_support()
     temp_dir.mkdir(parents=True, exist_ok=True)
-    if fast:
+    if output_dir == config.OUTPUT_DIR and fast:
         output_dir = config.OUTPUT_DIR / "fast"
     output_dir.mkdir(parents=True, exist_ok=True)
-    safe_title = sanitize_filename(plan.title)
-    final_output_path = output_dir / (f"{safe_title}_fast.mp4" if fast else f"{safe_title}.mp4")
+    safe_title = sanitize_video_name(video_name or plan.title)
+    final_output_path = output_dir / f"{safe_title}.mp4"
 
     target_fps = 15 if fast else config.VIDEO_FPS
     target_width = 540 if fast else config.VIDEO_WIDTH
     target_height = 960 if fast else config.VIDEO_HEIGHT
 
     # 1. Prepare sound effects
-    sfx_map = prepare_sound_effects(temp_dir)
+    sfx_map = prepare_sound_effects(temp_dir, library_tracker=library_tracker)
     default_sfx = style_preset.get("default_sound_effects", ["pop", "boing"])
 
     # 2. Render each scene into an intermediate MP4 clip with camera motion and audio
@@ -226,6 +228,11 @@ def assemble_final_video(
     # 4. Generate ASS subtitles
     ass_path = temp_dir / "captions.ass"
     generate_ass_subtitles(plan, scene_audios, style_preset, ass_path)
+    if output_dir != temp_dir:
+        try:
+            shutil.copyfile(str(ass_path), str(output_dir / "captions.ass"))
+        except Exception:
+            pass
 
     # 5. Burn in subtitles using properly escaped path
     escaped_ass = escape_ffmpeg_subtitles_path(ass_path.resolve())

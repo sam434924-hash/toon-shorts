@@ -3,7 +3,7 @@ Purpose: Central path definitions for single-root assets and output directories.
 Inputs: Project root directory resolved from module location.
 Outputs: Strongly-typed Path objects for assets, sources, 2d, 3d, output, and fixtures.
 Depends on: pathlib
-Used by: brief, core.character2d, core.character_pack, inventory, plugins.render.blender3d
+Used by: brief, core.character2d, core.character_pack, core.library, core.models, core.pipeline, inventory, plugins.render.animejs.capture, plugins.render.blender3d
 Config keys: None
 Tests: tests/unit/test_paths.py
 """
@@ -20,6 +20,17 @@ OUTPUT_DIR = PROJECT_ROOT / "output"
 TEMP_DIR = PROJECT_ROOT / "temp"
 CACHE_DIR = PROJECT_ROOT / "cache"
 TESTS_DIR = PROJECT_ROOT / "tests"
+VIDEOS_DIR = PROJECT_ROOT / "videos"
+LIBRARY_DIR = PROJECT_ROOT / "library"
+
+# Library subdirectories
+LIBRARY_TTS_DIR = LIBRARY_DIR / "tts"
+LIBRARY_BACKGROUNDS_DIR = LIBRARY_DIR / "backgrounds"
+LIBRARY_SFX_DIR = LIBRARY_DIR / "sfx"
+LIBRARY_GRAPHICS_DIR = LIBRARY_DIR / "graphics"
+
+# Characters directory (hand-made packs)
+CHARACTERS_DIR = PROJECT_ROOT / "characters" if (PROJECT_ROOT / "characters").exists() else ASSETS_DIR / "2d" / "characters"
 
 # Assets single-root layout subdirectories
 ASSETS_SOURCES_DIR = ASSETS_DIR / "sources"
@@ -40,4 +51,4 @@ TESTS_FIXTURES_DIR = TESTS_DIR / "fixtures"
 TESTS_GOLDEN_DIR = TESTS_FIXTURES_DIR / "golden"
 
 # Cache subdirectories
-TTS_CACHE_DIR = CACHE_DIR / "tts"
+TTS_CACHE_DIR = LIBRARY_TTS_DIR

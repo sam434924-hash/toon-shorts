@@ -3,7 +3,7 @@ Purpose: Data schemas for screenplay direction, audio timing, and review.
 Inputs: Raw dictionary definitions or keyword arguments.
 Outputs: Validated Pydantic models, enums, dataclasses, and safe filenames.
 Depends on: dataclasses, enum, pathlib, pydantic, re, typing
-Used by: core, core.assembler, core.board_objects, core.client, core.cost, core.pipeline, core.registry, core.schemas, core.subtitles, core.validator, core.visuals, inventory, models, plugins.graphics.kinetic_words, plugins.llm.fake, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.motion.static, plugins.render.animejs.annotations, plugins.render.animejs.cast, plugins.render.animejs.html_builder, plugins.render.animejs.plugin, plugins.render.animejs.visual_renderer, plugins.render.blender3d, plugins.render.cairo, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.fake, plugins.voice.gemini_tts, plugins.voice.piper, plugins.voice.windows_sapi, voice, voice_utils
+Used by: brief, core, core.assembler, core.board_objects, core.client, core.cost, core.pipeline, core.registry, core.schemas, core.subtitles, core.validator, core.visuals, inventory, models, plugins.graphics.kinetic_words, plugins.llm.fake, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.motion.static, plugins.render.animejs.annotations, plugins.render.animejs.cast, plugins.render.animejs.html_builder, plugins.render.animejs.plugin, plugins.render.animejs.visual_renderer, plugins.render.blender3d, plugins.render.cairo, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.fake, plugins.voice.gemini_tts, plugins.voice.piper, plugins.voice.windows_sapi, voice, voice_utils
 Config keys: None
 Tests: tests/unit/test_sanitizing.py, tests/unit/test_validation.py, tests/unit/test_v2_validation.py
 """
@@ -271,3 +271,75 @@ def sanitize_filename(
         return default_name
 
     return clean
+
+
+SAFE_VIDEO_NAME_REGEX = re.compile(r"^[a-zA-Z0-9_\-]+$")
+
+
+def sanitize_video_name(name: str, max_length: int = 64) -> str:
+    """Sanitizes a video name strictly enforcing alphanumeric, dash, and underscore characters.
+
+    - Strips all special characters, directory traversal sequences, and path separators.
+    - Capped to max_length (default 64).
+    - Blocks Windows reserved device names.
+    - Rejects names that resolve to empty or invalid characters.
+    """
+    if not name or not isinstance(name, str):
+        raise ValueError("Video name cannot be empty")
+
+    clean = name.strip()
+    # Normalize path traversal and separators
+    clean = clean.replace("/", "_").replace("\\", "_")
+    # Replace whitespace and illegal characters with underscores
+    clean = re.sub(r"[^\w\-]", "_", clean)
+    clean = re.sub(r"_+", "_", clean)
+    clean = re.sub(r"-+", "-", clean).strip("_-")
+
+    if not clean:
+        raise ValueError("Video name cannot be empty or solely special characters")
+
+    if len(clean) > max_length:
+        clean = clean[:max_length].rstrip("_-")
+
+    if not clean or not SAFE_VIDEO_NAME_REGEX.match(clean):
+        raise ValueError(f"Invalid video name '{name}'. Only alphanumeric, dash, and underscore allowed.")
+
+    stem = clean.split(".")[0].upper()
+    if stem in WINDOWS_RESERVED_NAMES:
+        raise ValueError(f"Video name '{name}' is a reserved system name")
+
+    return clean
+
+
+def resolve_video_dir(name: str, base_dir: Optional[Path] = None) -> Path:
+    """Resolves video directory and ensures it strictly resides inside the base videos directory."""
+    from toonshorts.core import paths
+    target_base = (base_dir or paths.VIDEOS_DIR).resolve()
+    clean_name = sanitize_video_name(name)
+    target_dir = (target_base / clean_name).resolve()
+    if target_dir.parent != target_base:
+        raise ValueError(f"Video name '{name}' resolves outside target directory '{target_base}'")
+    return target_dir
+
+
+class CharacterManifestItem(BaseModel):
+    name: str
+    pack: Optional[str] = None
+    version: str = "1.0.0"
+
+
+class VoiceManifestItem(BaseModel):
+    engine: str
+    voice_name: str
+    model: Optional[str] = None
+
+
+class VideoManifest(BaseModel):
+    video_name: str
+    created_at: str
+    style: str
+    characters: List[CharacterManifestItem]
+    voice: VoiceManifestItem
+    library_pieces_used: List[str] = Field(default_factory=list)
+    tool_versions: Dict[str, str] = Field(default_factory=dict)
+

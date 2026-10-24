@@ -1,27 +1,42 @@
 """
-Purpose: Pipeline runner orchestrating LLM, voice, render, and motion.
+Purpose: Pipeline runner orchestrating LLM, voice, render, and motion into self-contained video bundles.
 Inputs: Video production topic, style name, flags, and plugin selections.
-Outputs: Path to finalized vertical animation MP4 short.
-Depends on: brief, core.assembler, core.camera, core.config, core.cost, core.errors, core.models, core.registry, json, logging, pathlib, shutil, subprocess, typing
+Outputs: Path to finalized vertical animation MP4 short inside dedicated video directory.
+Depends on: brief, core.assembler, core.camera, core.config, core.cost, core.errors, core.library, core.models, core.paths, core.registry, json, logging, pathlib, platform, shutil, subprocess, sys, time, typing, uuid
 Used by: cli, core
-Config keys: DEFAULT_LLM, DEFAULT_MOTION, DEFAULT_RENDERER, DEFAULT_VOICE, OUTPUT_DIR, STYLES_DIR, TEMP_DIR
-Tests: tests/smoke/test_smoke_pipeline.py
+Config keys: DEFAULT_LLM, DEFAULT_MOTION, DEFAULT_RENDERER, DEFAULT_VOICE, STYLES_DIR, VIDEOS_DIR
+Tests: tests/smoke/test_smoke_pipeline.py, tests/unit/test_video_folders.py
 """
 
 import json
 import logging
 from pathlib import Path
+import platform
 import shutil
 import subprocess
+import sys
+import time
 from typing import Dict, Any, List, Optional, Union
+import uuid
 
-from . import config
+from . import config, paths
 from .camera import validate_camera_config
 from .errors import PipelineError
-from .models import ScriptPlan, SceneAudio, Character, CameraMove
+from .models import (
+    ScriptPlan,
+    SceneAudio,
+    Character,
+    CameraMove,
+    sanitize_video_name,
+    resolve_video_dir,
+    CharacterManifestItem,
+    VoiceManifestItem,
+    VideoManifest,
+)
 from .cost import estimate_costs, confirm_cost_gate
 from .assembler import assemble_final_video, check_ffmpeg_subtitles_support
 from .registry import get_llm, get_voice, get_renderer, get_motion
+from .library import copy_library_asset, clean_temp_builds
 from toonshorts import brief as brief_module
 
 logger = logging.getLogger("toonshorts.pipeline")
@@ -54,6 +69,54 @@ def load_style_preset(style_name: str, styles_dir: Path = config.STYLES_DIR) -> 
     return preset
 
 
+def generate_manifest(
+    video_name: str,
+    style: str,
+    plan: ScriptPlan,
+    voice_plugin: Any,
+    brief: Optional[Any] = None,
+    library_pieces_used: Optional[List[str]] = None,
+) -> VideoManifest:
+    """Builds a structured manifest recording character packs, voice model, tools, and library assets."""
+    created_at = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+    characters = []
+    for c in plan.characters:
+        characters.append(
+            CharacterManifestItem(
+                name=c.name,
+                pack=c.name,
+                version="1.0.0",
+            )
+        )
+
+    voice_name = getattr(brief, "voice", None) or getattr(voice_plugin, "name", "unknown")
+    voice_model = getattr(voice_plugin, "model_name", None)
+    voice_info = VoiceManifestItem(
+        engine=getattr(voice_plugin, "name", "unknown"),
+        voice_name=voice_name,
+        model=voice_model,
+    )
+
+    tool_versions = {
+        "python": platform.python_version(),
+        "ffmpeg": "installed",
+        "toonshorts": "1.0.0",
+    }
+
+    unique_pieces = sorted(list(set(library_pieces_used or [])))
+
+    return VideoManifest(
+        video_name=video_name,
+        created_at=created_at,
+        style=style,
+        characters=characters,
+        voice=voice_info,
+        library_pieces_used=unique_pieces,
+        tool_versions=tool_versions,
+    )
+
+
 def run_pipeline(
     topic: str,
     style_name: str,
@@ -68,41 +131,20 @@ def run_pipeline(
     allow_noncommercial: bool = False,
     fast: bool = False,
     workers: Optional[int] = None,
+    overwrite: bool = False,
 ) -> Optional[Path]:
-    """Executes the full modular video generation pipeline."""
+    """Executes video generation pipeline into a single self-contained video folder."""
     config.check_cloud_sync_warning()
     check_ffmpeg_subtitles_support()
 
     style_clean = style_name.lower().strip()
     preset = load_style_preset(style_clean)
 
-    # Normalize engine aliases
-    resolved_voice = voice_name
-    if resolved_voice:
-        resolved_voice = resolved_voice.lower().strip()
-        if resolved_voice == "gemini":
-            resolved_voice = "gemini_tts"
-        elif resolved_voice == "sapi":
-            resolved_voice = "windows_sapi"
-
-    # Fast mode enforces offline cached/mock generation, zero Gemini calls, and auto-confirm
-    if fast:
-        llm_plugin_name = "fake"
-        auto_confirm = True
-        dest_output_dir = config.OUTPUT_DIR / "fast"
-    else:
-        llm_plugin_name = "fake" if mock else (llm_name or config.DEFAULT_LLM)
-        dest_output_dir = output_dir or config.OUTPUT_DIR
-
-    voice_plugin_name = "fake" if mock else (resolved_voice or preset.get("voice") or config.DEFAULT_VOICE)
-    motion_plugin_name = motion_name or config.DEFAULT_MOTION
-
     if renderer_name:
         render_plugin_name = renderer_name
     elif mock:
         render_plugin_name = "fake"
     else:
-        # Determine renderer from style preset if auto
         preset_renderer = preset.get("renderer", "gemini").lower()
         if preset_renderer in ("pillow", "cairo", "animejs", "blender3d"):
             render_plugin_name = preset_renderer
@@ -111,48 +153,122 @@ def run_pipeline(
         else:
             render_plugin_name = "gemini"
 
-    # Instantiate plugins from registry
-    llm = get_llm(llm_plugin_name)
-    try:
-        voice = get_voice(voice_plugin_name, allow_noncommercial=allow_noncommercial)
-    except TypeError:
-        voice = get_voice(voice_plugin_name)
-
-    if fast:
-        # Forbid live network API calls in fast mode
-        setattr(voice, "cache_only", True)
-
     renderer = get_renderer(render_plugin_name)
-    motion = get_motion(motion_plugin_name)
+    if fast and not getattr(renderer, "supports_fast", False):
+        raise PipelineError(
+            f"Renderer '{renderer.name}' does not support fast draft mode (--fast)."
+        )
 
-    temp_dir = config.TEMP_DIR / f"run_{style_clean}"
-    if temp_dir.exists():
-        shutil.rmtree(temp_dir, ignore_errors=True)
-    temp_dir.mkdir(parents=True, exist_ok=True)
-    dest_output_dir.mkdir(parents=True, exist_ok=True)
+    # 1. Video name resolution and security checks
+    video_name = sanitize_video_name(topic)
+    base_videos_dir = output_dir or paths.VIDEOS_DIR
+    target_video_dir = resolve_video_dir(video_name, base_dir=base_videos_dir)
+
+    # Exists-guard: stop and fail if directory already exists unless --overwrite
+    if target_video_dir.exists():
+        if not overwrite:
+            raise FileExistsError(
+                f"Video directory '{target_video_dir}' already exists. Choose a different name or use --overwrite."
+            )
+        logger.warning("Overwriting existing video directory: %s", target_video_dir)
+
+    # Clean failure build folder: build in .tmp-<name>-<id>
+    build_id = uuid.uuid4().hex[:8]
+    build_dir = base_videos_dir / f".tmp-{video_name}-{build_id}"
+    build_dir.mkdir(parents=True, exist_ok=True)
+    voice_dir = build_dir / "voice"
+    stills_dir = build_dir / "stills"
+    visuals_dir = build_dir / "visuals"
+    voice_dir.mkdir(exist_ok=True)
+    stills_dir.mkdir(exist_ok=True)
+    visuals_dir.mkdir(exist_ok=True)
+
+    # Set up dedicated run.log inside video folder
+    log_file = build_dir / "run.log"
+    file_handler = logging.FileHandler(str(log_file), encoding="utf-8")
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(
+        logging.Formatter("[%(asctime)s] %(levelname)s [%(name)s]: %(message)s", datefmt="%H:%M:%S")
+    )
+    toon_logger = logging.getLogger("toonshorts")
+    toon_logger.addHandler(file_handler)
+
+    library_pieces_used: List[str] = []
+    build_succeeded = False
 
     try:
-        # 1. Planning
+        # Normalize engine aliases
+        resolved_voice = voice_name
+        if resolved_voice:
+            resolved_voice = resolved_voice.lower().strip()
+            if resolved_voice == "gemini":
+                resolved_voice = "gemini_tts"
+            elif resolved_voice == "sapi":
+                resolved_voice = "windows_sapi"
+
+        if fast:
+            llm_plugin_name = "fake"
+            auto_confirm = True
+        else:
+            llm_plugin_name = "fake" if mock else (llm_name or config.DEFAULT_LLM)
+
+        voice_plugin_name = "fake" if mock else (resolved_voice or preset.get("voice") or config.DEFAULT_VOICE)
+        motion_plugin_name = motion_name or config.DEFAULT_MOTION
+
+        llm = get_llm(llm_plugin_name)
+        try:
+            voice = get_voice(voice_plugin_name, allow_noncommercial=allow_noncommercial)
+        except TypeError:
+            voice = get_voice(voice_plugin_name)
+
+        if fast:
+            setattr(voice, "cache_only", True)
+
+        renderer = get_renderer(render_plugin_name)
+        motion = get_motion(motion_plugin_name)
+
+        # 1. Planning Screenplay fresh (never silent reuse)
         logger.info("[1/6] Planning screenplay for '%s' using %s...", topic, llm.name)
+        t_start = time.time()
         plan: ScriptPlan = llm.generate_plan(topic, style_clean, preset)
-
-        # 2. Critic Review
-        logger.info("[2/6] Reviewing screenplay with critic loop...")
         refined_plan, review = llm.review_and_refine(plan, preset)
-        logger.info("Final Critic Score: %.1f/10", review.score)
+        logger.info("Screenplay planned in %.2fs. Critic Score: %.1f/10", time.time() - t_start, review.score)
 
-        # 3. Cost Gate
+        # Write self-contained brief.json and scene.json
+        brief_data = {
+            "video_name": video_name,
+            "story": topic,
+            "style": style_clean,
+            "characters": [c.name for c in refined_plan.characters],
+            "speaker": refined_plan.scenes[0].speaker if refined_plan.scenes else "all",
+            "voice": voice.name,
+            "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        }
+        (build_dir / "brief.json").write_text(json.dumps(brief_data, indent=2), encoding="utf-8")
+        (build_dir / "scene.json").write_text(json.dumps(refined_plan.model_dump(), indent=2), encoding="utf-8")
+
+        # 2. Cost Gate
         cost_est = estimate_costs(refined_plan, preset, rewrite_count=1)
         if not confirm_cost_gate(cost_est, auto_confirm=auto_confirm):
             return None
 
-        # 4. Voice First (Timing Spine)
+        # 3. Voice Generation into videos/<video>/voice/
         logger.info("[3/6] Generating voice track via %s...", voice.name)
-        scene_audios = voice.generate_all_voices(refined_plan, temp_dir)
+        t_voice = time.time()
+        scene_audios = voice.generate_all_voices(refined_plan, voice_dir)
+        logger.info("Voice generated in %.2fs", time.time() - t_voice)
 
+        # Track any TTS cached files used
+        for sa in scene_audios:
+            if sa.audio_path and sa.audio_path.is_file():
+                # Check if matching hash is in library/tts
+                stem = sa.audio_path.stem
+                if (paths.LIBRARY_TTS_DIR / f"{stem}.wav").is_file():
+                    library_pieces_used.append(f"library/tts/{stem}.wav")
 
-        # 5. Scene Rendering
+        # 4. Scene Rendering
         logger.info("[4/6] Rendering scene images via %s...", renderer.name)
+        t_render = time.time()
         render_kwargs: Dict[str, Any] = {}
         if getattr(renderer, "supports_scene_audios", False) and scene_audios:
             render_kwargs["scene_audios"] = scene_audios
@@ -162,35 +278,73 @@ def run_pipeline(
         if fast:
             if not getattr(renderer, "supports_fast", False):
                 raise PipelineError(
-                    f"Renderer '{renderer.name}' does not support fast draft mode (--fast). "
-                    f"Fast draft mode requires a renderer with supports_fast=True."
+                    f"Renderer '{renderer.name}' does not support fast draft mode (--fast)."
                 )
             render_kwargs["fast"] = True
 
         if workers is not None:
             render_kwargs["workers"] = workers
 
-        scene_images = renderer.render_all_scenes(refined_plan, preset, temp_dir, **render_kwargs)
+        scene_images = renderer.render_all_scenes(refined_plan, preset, build_dir, **render_kwargs)
+        logger.info("Scenes rendered in %.2fs", time.time() - t_render)
 
-        # 6. Assembly & Motion
+        # Copy background layers to visuals/ and track
+        if paths.LIBRARY_BACKGROUNDS_DIR.exists():
+            for bg_f in paths.LIBRARY_BACKGROUNDS_DIR.glob(f"bg_{style_clean}_*.png"):
+                dest_bg = visuals_dir / bg_f.name
+                if not dest_bg.exists():
+                    copy_library_asset(bg_f, dest_bg)
+                library_pieces_used.append(f"library/backgrounds/{bg_f.name}")
+
+        # 5. Assembly & Motion
         logger.info("[5/6] Assembling video using %s motion...", motion.name)
-        final_video = assemble_final_video(
+        t_assembly = time.time()
+        final_video_raw = assemble_final_video(
             plan=refined_plan,
             scene_images=scene_images,
             scene_audios=scene_audios,
             style_preset=preset,
-            temp_dir=temp_dir,
-            output_dir=dest_output_dir,
+            temp_dir=build_dir,
+            output_dir=build_dir,
             motion_plugin=motion,
             fast=fast,
+            video_name=video_name,
+            library_tracker=library_pieces_used,
         )
+        logger.info("Assembly completed in %.2fs", time.time() - t_assembly)
 
-        logger.info("Pipeline completed successfully: %s", final_video)
-        return final_video
+        # 6. Generate manifest.json
+        manifest = generate_manifest(
+            video_name=video_name,
+            style=style_clean,
+            plan=refined_plan,
+            voice_plugin=voice,
+            library_pieces_used=library_pieces_used,
+        )
+        (build_dir / "manifest.json").write_text(json.dumps(manifest.model_dump(), indent=2), encoding="utf-8")
+
+        build_succeeded = True
 
     finally:
-        if not keep_temp and temp_dir.exists():
-            shutil.rmtree(temp_dir, ignore_errors=True)
+        # Close and detach log file handler
+        if file_handler:
+            file_handler.flush()
+            file_handler.close()
+            toon_logger.removeHandler(file_handler)
+
+    if build_succeeded:
+        # Atomic rename build_dir to target_video_dir
+        if target_video_dir.exists():
+            shutil.rmtree(target_video_dir, ignore_errors=True)
+        shutil.move(str(build_dir), str(target_video_dir))
+        final_video_path = target_video_dir / f"{video_name}.mp4"
+        logger.info("Pipeline completed successfully: %s", final_video_path)
+        return final_video_path
+    else:
+        # On failure: keep the tmp folder with run.log and print its path
+        sys.stderr.write(f"\n[BUILD FAILED] Preserving temporary build directory: {build_dir}\n")
+        sys.stderr.flush()
+        return None
 
 
 def run_pipeline_from_brief(
@@ -202,11 +356,12 @@ def run_pipeline_from_brief(
     keep_temp: bool = False,
     fast: bool = False,
     workers: Optional[int] = None,
+    overwrite: bool = False,
 ) -> Dict[str, Any]:
     """
-    Executes the video build pipeline strictly driven by a validated VideoBrief file.
-    Renders stills of key scenes first for approval, then assembles the full MP4 into output/.
-    Fails with plain error message on failure without retry loops.
+    Executes the video build pipeline strictly driven by a validated VideoBrief.
+    Builds inside an isolated self-contained folder under videos/<video_name>/.
+    Never silently reuses old scene files.
     """
     if isinstance(brief_source, brief_module.VideoBrief):
         brief = brief_source
@@ -216,12 +371,41 @@ def run_pipeline_from_brief(
     config.check_cloud_sync_warning()
     check_ffmpeg_subtitles_support()
 
-    dest_output_dir = output_dir or config.OUTPUT_DIR
-    dest_output_dir.mkdir(parents=True, exist_ok=True)
-    temp_dir = config.TEMP_DIR / f"run_brief_{brief.video_name}"
-    if temp_dir.exists():
-        shutil.rmtree(temp_dir, ignore_errors=True)
-    temp_dir.mkdir(parents=True, exist_ok=True)
+    video_name = sanitize_video_name(brief.video_name)
+    base_videos_dir = output_dir or paths.VIDEOS_DIR
+    target_video_dir = resolve_video_dir(video_name, base_dir=base_videos_dir)
+
+    # Exists guard
+    if target_video_dir.exists():
+        if not overwrite:
+            raise FileExistsError(
+                f"Video directory '{target_video_dir}' already exists. Choose a different name or use --overwrite."
+            )
+        logger.warning("Overwriting existing video directory: %s", target_video_dir)
+
+    # Clean failure build folder
+    build_id = uuid.uuid4().hex[:8]
+    build_dir = base_videos_dir / f".tmp-{video_name}-{build_id}"
+    build_dir.mkdir(parents=True, exist_ok=True)
+    voice_dir = build_dir / "voice"
+    stills_dir = build_dir / "stills"
+    visuals_dir = build_dir / "visuals"
+    voice_dir.mkdir(exist_ok=True)
+    stills_dir.mkdir(exist_ok=True)
+    visuals_dir.mkdir(exist_ok=True)
+
+    # Set up dedicated run.log
+    log_file = build_dir / "run.log"
+    file_handler = logging.FileHandler(str(log_file), encoding="utf-8")
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(
+        logging.Formatter("[%(asctime)s] %(levelname)s [%(name)s]: %(message)s", datefmt="%H:%M:%S")
+    )
+    toon_logger = logging.getLogger("toonshorts")
+    toon_logger.addHandler(file_handler)
+
+    library_pieces_used: List[str] = []
+    build_succeeded = False
 
     try:
         # 1. Preset setup
@@ -230,58 +414,47 @@ def run_pipeline_from_brief(
         if brief.board_animations_avoid:
             preset.setdefault("avoid", []).extend(brief.board_animations_avoid)
 
-        # 2. Plan Screenplay from story & brief
-        scene_file_path = brief_module.BRIEFS_DIR / f"{brief.video_name}_scene.json"
-        brief_module.BRIEFS_DIR.mkdir(parents=True, exist_ok=True)
-        if scene_file_path.is_file():
-            plan_data = json.loads(scene_file_path.read_text(encoding="utf-8"))
-            plan = ScriptPlan.model_validate(plan_data)
-            logger.info("Loaded pre-existing scene file from: %s", scene_file_path)
-        else:
-            llm_plugin = "fake" if mock else config.DEFAULT_LLM
-            try:
-                llm = get_llm(llm_plugin)
+        # 2. Plan Screenplay fresh from story & brief (no silent reuse!)
+        llm_plugin = "fake" if mock else config.DEFAULT_LLM
+        try:
+            llm = get_llm(llm_plugin)
+            plan = llm.generate_plan(brief.story, brief.style, preset)
+        except Exception as l_err:
+            if not mock:
+                logger.warning("Live LLM failed (%s), falling back to offline planner for brief.", l_err)
+                llm = get_llm("fake")
                 plan = llm.generate_plan(brief.story, brief.style, preset)
-            except Exception as l_err:
-                if not mock:
-                    logger.warning("Live LLM failed (%s), falling back to offline planner for brief.", l_err)
-                    llm = get_llm("fake")
-                    plan = llm.generate_plan(brief.story, brief.style, preset)
+            else:
+                raise
+
+        plan.title = video_name
+
+        if brief.characters:
+            chars = [Character(name=c, visual_description=f"Character {c}") for c in brief.characters]
+            if len(chars) < 2:
+                sec_name = "boy_b" if chars[0].name != "boy_b" else "girl_a"
+                chars.append(Character(name=sec_name, visual_description=f"Character {sec_name}"))
+            plan.characters = chars
+
+        if brief.speaker and brief.speaker not in ("both", "all", "none"):
+            for sc in plan.scenes:
+                sc.speaker = brief.speaker
+
+        if brief.camera in ("fixed", "static"):
+            for sc in plan.scenes:
+                sc.camera_move = CameraMove.STATIC
+        elif brief.camera in ("zoom_speaker", "zoom on speaker"):
+            for idx, sc in enumerate(plan.scenes):
+                if idx in (1, len(plan.scenes) - 1):
+                    sc.camera_move = CameraMove.ZOOM_IN
                 else:
-                    raise
-
-            plan.title = brief.video_name
-
-            # Ensure cast matches brief
-            if brief.characters:
-                chars = [Character(name=c, visual_description=f"Character {c}") for c in brief.characters]
-                if len(chars) < 2:
-                    sec_name = "boy_b" if chars[0].name != "boy_b" else "girl_a"
-                    chars.append(Character(name=sec_name, visual_description=f"Character {sec_name}"))
-                plan.characters = chars
-
-            # Ensure speaker matches brief
-            if brief.speaker and brief.speaker not in ("both", "all", "none"):
-                for sc in plan.scenes:
-                    sc.speaker = brief.speaker
-
-            # Apply camera rules
-            if brief.camera in ("fixed", "static"):
-                for sc in plan.scenes:
                     sc.camera_move = CameraMove.STATIC
-            elif brief.camera in ("zoom_speaker", "zoom on speaker"):
-                for idx, sc in enumerate(plan.scenes):
-                    # Zoom on important emphasis/turn scenes, stay wide on others
-                    if idx in (1, len(plan.scenes) - 1):
-                        sc.camera_move = CameraMove.ZOOM_IN
-                    else:
-                        sc.camera_move = CameraMove.STATIC
 
-            # Save scene file directly from story and brief
-            scene_file_path.write_text(json.dumps(plan.model_dump(), indent=2), encoding="utf-8")
-            logger.info("Wrote validated scene file to: %s", scene_file_path)
+        # Save brief.json and scene.json inside video folder
+        (build_dir / "brief.json").write_text(json.dumps(brief.model_dump(), indent=2), encoding="utf-8")
+        (build_dir / "scene.json").write_text(json.dumps(plan.model_dump(), indent=2), encoding="utf-8")
 
-        # 3. Voice generation
+        # 3. Voice generation into voice_dir
         voice_engine = brief.voice_engine
         if not voice_engine:
             if brief.voice in config.GEMINI_VOICES:
@@ -295,18 +468,28 @@ def run_pipeline_from_brief(
             voice_engine = "fake"
 
         voice = get_voice(voice_engine, allow_noncommercial=True)
+        if fast:
+            setattr(voice, "cache_only", True)
+
         logger.info("Generating voice tracks using engine '%s' (voice: %s)...", voice.name, brief.voice)
         try:
-            scene_audios = voice.generate_all_voices(plan, temp_dir)
+            scene_audios = voice.generate_all_voices(plan, voice_dir)
         except Exception as v_err:
             if not mock:
                 logger.warning("Voice engine %s failed (%s), falling back to offline audio.", voice.name, v_err)
                 voice = get_voice("fake")
-                scene_audios = voice.generate_all_voices(plan, temp_dir)
+                scene_audios = voice.generate_all_voices(plan, voice_dir)
             else:
                 raise
 
-        # 4. Render key scene stills first for approval
+        # Track TTS cached audio used
+        for sa in scene_audios:
+            if sa.audio_path and sa.audio_path.is_file():
+                stem = sa.audio_path.stem
+                if (paths.LIBRARY_TTS_DIR / f"{stem}.wav").is_file():
+                    library_pieces_used.append(f"library/tts/{stem}.wav")
+
+        # 4. Render key scene stills first
         renderer_name = "fake" if mock else (preset.get("renderer") or config.DEFAULT_RENDERER)
         if renderer_name == "auto":
             renderer_name = "cairo" if brief.style == "stickman" else "animejs"
@@ -321,82 +504,109 @@ def run_pipeline_from_brief(
 
         for s_idx in key_indices:
             sc = plan.scenes[s_idx]
-            still_path = dest_output_dir / f"{brief.video_name}_still_sc{sc.scene_number}.png"
+            still_path = stills_dir / f"{video_name}_still_sc{sc.scene_number}.png"
             renderer.render_scene(
                 scene=sc,
                 characters=plan.characters,
                 style_preset=preset,
                 output_path=still_path,
-                temp_dir=temp_dir,
+                temp_dir=build_dir,
             )
             still_paths.append(still_path)
 
-        logger.info("Rendered %d key scene stills for approval: %s", len(still_paths), [p.name for p in still_paths])
+        logger.info("Rendered %d key scene stills: %s", len(still_paths), [p.name for p in still_paths])
 
+        # Write manifest before stills exit
+        manifest = generate_manifest(
+            video_name=video_name,
+            style=brief.style,
+            plan=plan,
+            voice_plugin=voice,
+            brief=brief,
+            library_pieces_used=library_pieces_used,
+        )
+        (build_dir / "manifest.json").write_text(json.dumps(manifest.model_dump(), indent=2), encoding="utf-8")
+
+        if stills_only:
+            build_succeeded = True
+        else:
+            # 5. Render all frames & Assemble full MP4
+            motion_name = preset.get("motion") or config.DEFAULT_MOTION
+            motion = get_motion(motion_name)
+
+            render_kwargs: Dict[str, Any] = {}
+            if getattr(renderer, "supports_scene_audios", False) and scene_audios:
+                render_kwargs["scene_audios"] = scene_audios
+            elif scene_audios:
+                logger.info("Renderer '%s' does not support scene_audios; generating still scene frames.", renderer.name)
+
+            if fast:
+                if not getattr(renderer, "supports_fast", False):
+                    raise PipelineError(
+                        f"Renderer '{renderer.name}' does not support fast draft mode (--fast)."
+                    )
+                render_kwargs["fast"] = True
+
+            if workers is not None:
+                render_kwargs["workers"] = workers
+
+            scene_images = renderer.render_all_scenes(plan, preset, build_dir, **render_kwargs)
+
+            # Copy background layers to visuals/
+            if paths.LIBRARY_BACKGROUNDS_DIR.exists():
+                for bg_f in paths.LIBRARY_BACKGROUNDS_DIR.glob(f"bg_{brief.style}_*.png"):
+                    dest_bg = visuals_dir / bg_f.name
+                    if not dest_bg.exists():
+                        copy_library_asset(bg_f, dest_bg)
+                    library_pieces_used.append(f"library/backgrounds/{bg_f.name}")
+
+            final_raw_video = assemble_final_video(
+                plan=plan,
+                scene_images=scene_images,
+                scene_audios=scene_audios,
+                style_preset=preset,
+                temp_dir=build_dir,
+                output_dir=build_dir,
+                motion_plugin=motion,
+                fast=fast,
+                video_name=video_name,
+                library_tracker=library_pieces_used,
+            )
+
+            # Update manifest with final library pieces used
+            manifest.library_pieces_used = sorted(list(set(library_pieces_used)))
+            (build_dir / "manifest.json").write_text(json.dumps(manifest.model_dump(), indent=2), encoding="utf-8")
+
+            build_succeeded = True
+
+    finally:
+        if file_handler:
+            file_handler.flush()
+            file_handler.close()
+            toon_logger.removeHandler(file_handler)
+
+    if build_succeeded:
+        if target_video_dir.exists():
+            shutil.rmtree(target_video_dir, ignore_errors=True)
+        shutil.move(str(build_dir), str(target_video_dir))
         if stills_only:
             return {
                 "status": "stills_ready",
-                "scene_file": scene_file_path,
-                "stills": still_paths,
+                "scene_file": target_video_dir / "scene.json",
+                "stills": [target_video_dir / "stills" / p.name for p in still_paths],
                 "video": None,
+                "video_dir": target_video_dir,
             }
-
-        # 5. Render all frames & Assemble full MP4
-        motion_name = preset.get("motion") or config.DEFAULT_MOTION
-        motion = get_motion(motion_name)
-
-        render_kwargs: Dict[str, Any] = {}
-        if getattr(renderer, "supports_scene_audios", False) and scene_audios:
-            render_kwargs["scene_audios"] = scene_audios
-        elif scene_audios:
-            logger.info("Renderer '%s' does not support scene_audios; generating still scene frames.", renderer.name)
-
-        if fast:
-            if not getattr(renderer, "supports_fast", False):
-                raise PipelineError(
-                    f"Renderer '{renderer.name}' does not support fast draft mode (--fast). "
-                    f"Fast draft mode requires a renderer with supports_fast=True."
-                )
-            render_kwargs["fast"] = True
-
-        if workers is not None:
-            render_kwargs["workers"] = workers
-
-        scene_images = renderer.render_all_scenes(plan, preset, temp_dir, **render_kwargs)
-
-        final_raw_video = assemble_final_video(
-            plan=plan,
-            scene_images=scene_images,
-            scene_audios=scene_audios,
-            style_preset=preset,
-            temp_dir=temp_dir,
-            output_dir=dest_output_dir,
-            motion_plugin=motion,
-            fast=fast,
-        )
-
-        target_video_name = f"{brief.video_name}_fast.mp4" if fast else f"{brief.video_name}.mp4"
-        final_video_path = dest_output_dir / target_video_name
-        if final_raw_video != final_video_path and final_raw_video.exists():
-            if final_video_path.exists():
-                final_video_path.unlink()
-            shutil.move(str(final_raw_video), str(final_video_path))
-        else:
-            final_video_path = final_raw_video
-
+        final_video_path = target_video_dir / f"{video_name}.mp4"
         logger.info("Full MP4 video generated successfully at: %s", final_video_path)
         return {
             "status": "complete",
-            "scene_file": scene_file_path,
-            "stills": still_paths,
+            "scene_file": target_video_dir / "scene.json",
+            "stills": [target_video_dir / "stills" / p.name for p in still_paths],
             "video": final_video_path,
+            "video_dir": target_video_dir,
         }
-
-    except Exception as exc:
-        logger.error("Pipeline brief run failed: %s", exc)
-        raise RuntimeError(f"Brief execution failed: {exc}") from exc
-
-    finally:
-        if not keep_temp and temp_dir.exists():
-            shutil.rmtree(temp_dir, ignore_errors=True)
-
+    else:
+        sys.stderr.write(f"\n[BUILD FAILED] Preserving temporary build directory: {build_dir}\n")
+        sys.stderr.flush()
+        raise RuntimeError(f"Brief execution failed. Temporary files preserved at: {build_dir}")

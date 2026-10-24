@@ -1,0 +1,33 @@
+{
+  "video_name": "octopus_facts_v2",
+  "created_at": "2026-10-24T13:27:00Z",
+  "style": "night_studio",
+  "characters": [
+    {
+      "name": "boy_b",
+      "pack": "boy_b",
+      "version": "1.0.0"
+    },
+    {
+      "name": "girl_a",
+      "pack": "girl_a",
+      "version": "1.0.0"
+    }
+  ],
+  "voice": {
+    "engine": "gemini_tts",
+    "voice_name": "Puck",
+    "model": "gemini-3.8-flash-tts"
+  },
+  "library_pieces_used": [
+    "library/tts/2ed2641bfadc373ebc658573559e3ea2c60df2a4d1e6a39bd079d466beaecdfb.wav",
+    "library/tts/f414ac3a6a890bb099289eb0ed830ba12d8f2456fa62363b34a49948b9f764be.wav",
+    "library/tts/9211282b7a6fe591054e948cb55a227860b8f75fcb4f068e1062f2a9ce5b234e.wav",
+    "library/tts/4dcdee49b17f4aa25a518aba4122843b574ff3fbc1f241dc8cccdf289bc4b75e.wav"
+  ],
+  "tool_versions": {
+    "python": "3.14.4",
+    "ffmpeg": "n7.1-latest",
+    "toonshorts": "1.0.0"
+  }
+}

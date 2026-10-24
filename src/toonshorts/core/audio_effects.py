@@ -2,7 +2,7 @@
 Purpose: Royalty-free sound effect generation for comedic punchlines.
 Inputs: SFX identifiers (boing, whistle, pop) and destination paths.
 Outputs: Synthesized standalone cartoon sound effect WAV files.
-Depends on: math, pathlib, struct, typing, wave
+Depends on: math, pathlib, struct, typing, wave, core.library
 Used by: core.assembler
 Config keys: None
 Tests: tests/unit/test_timing.py
@@ -12,7 +12,9 @@ import math
 import wave
 import struct
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List, Optional
+
+from toonshorts.core.library import get_or_create_sfx, copy_library_asset
 
 
 def create_synthesized_sfx(sfx_type: str, output_path: Path):
@@ -57,11 +59,20 @@ def create_synthesized_sfx(sfx_type: str, output_path: Path):
         wf.writeframes(raw)
 
 
-def prepare_sound_effects(temp_dir: Path) -> Dict[str, Path]:
-    """Generates standard comedic sound effect library in temp dir."""
+def prepare_sound_effects(
+    temp_dir: Path,
+    library_tracker: Optional[List[str]] = None,
+) -> Dict[str, Path]:
+    """Generates standard comedic sound effect library in temp dir using shared library cache."""
+    temp_dir.mkdir(parents=True, exist_ok=True)
     sfx_map = {}
     for name in ["pop", "boing", "whistle"]:
-        path = temp_dir / f"sfx_{name}.wav"
-        create_synthesized_sfx(name, path)
-        sfx_map[name] = path
+        dest_path = temp_dir / f"sfx_{name}.wav"
+        lib_path, is_hit = get_or_create_sfx(name, lambda p: create_synthesized_sfx(name, p))
+        if library_tracker is not None:
+            lib_entry = f"library/sfx/{lib_path.name}"
+            if lib_entry not in library_tracker:
+                library_tracker.append(lib_entry)
+        copy_library_asset(lib_path, dest_path)
+        sfx_map[name] = dest_path
     return sfx_map

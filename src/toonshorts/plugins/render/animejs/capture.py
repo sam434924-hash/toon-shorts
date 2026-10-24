@@ -497,8 +497,9 @@ def render_scenes_in_parallel(
 
     shared_bg_cache_dir: Optional[Path] = None
     if getattr(config, "ENABLE_PARALLAX_CACHE", True) and getattr(config, "ENABLE_PARALLAX_BACKGROUND", True):
-        shared_bg_cache_dir = Path(tempfile.mkdtemp(prefix="toonshorts_bg_cache_"))
-        created_temp_dirs.append(shared_bg_cache_dir)
+        from toonshorts.core import paths
+        shared_bg_cache_dir = paths.LIBRARY_BACKGROUNDS_DIR
+        shared_bg_cache_dir.mkdir(parents=True, exist_ok=True)
 
     tls = threading.local()
 

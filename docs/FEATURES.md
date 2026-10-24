@@ -7,8 +7,14 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 ### `make`
 - **Description**: Generates an end-to-end 9:16 vertical short animated video.
 - **Files**: `src/toonshorts/cli.py`, `src/toonshorts/core/pipeline.py`
-- **Config Flags / Options**: `--style`, `--topic`, `--yes`, `--mock`, `--fast`, `--workers`, `--llm`, `--voice`, `--voice-engine`, `--allow-noncommercial`, `--renderer`, `--motion`, `--output-dir`, `--keep-temp`
-- **Tests**: `tests/smoke/test_smoke_pipeline.py`, `tests/unit/test_fast_preview.py`, `tests/unit/test_parallel_render.py`
+- **Config Flags / Options**: `--style`, `--topic`, `--yes`, `--mock`, `--fast`, `--workers`, `--llm`, `--voice`, `--voice-engine`, `--allow-noncommercial`, `--renderer`, `--motion`, `--output-dir`, `--overwrite`, `--keep-temp`
+- **Tests**: `tests/smoke/test_smoke_pipeline.py`, `tests/unit/test_fast_preview.py`, `tests/unit/test_parallel_render.py`, `tests/unit/test_video_folders.py`
+
+### `clean-tmp`
+- **Description**: Deletes lingering temporary build directories (.tmp-*) from videos/.
+- **Files**: `src/toonshorts/cli.py`, `src/toonshorts/core/library.py`
+- **Config Flags / Options**: None
+- **Tests**: `tests/unit/test_video_folders.py`
 
 ---
 

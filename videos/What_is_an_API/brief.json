@@ -1,0 +1,12 @@
+{
+  "video_name": "What_is_an_API",
+  "story": "What is an API?",
+  "style": "whiteboard",
+  "characters": [
+    "Host",
+    "Zack"
+  ],
+  "speaker": "Host",
+  "voice": "gemini_tts",
+  "created_at": "2026-10-24T09:40:12Z"
+}

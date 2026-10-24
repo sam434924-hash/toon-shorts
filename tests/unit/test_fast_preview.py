@@ -70,16 +70,20 @@ def test_fast_preview_mode_pipeline(monkeypatch):
         style_name="whiteboard",
         renderer_name="animejs",
         fast=True,
+        overwrite=True,
     )
 
     assert fast_video is not None
     assert fast_video.is_file()
 
-    # 1. Output destination check: must be in output/fast/ and not normal output
-    assert fast_video.parent == config.OUTPUT_DIR / "fast"
-    assert fast_video.name != "What_is_an_API.mp4"
-    if normal_output.exists():
-        assert normal_output.stat().st_mtime == initial_mtime, "Normal output was overwritten!"
+    # 1. Output destination check: must be in videos/What_is_an_API/ and self-contained
+    video_dir = fast_video.parent
+    assert video_dir.name == "What_is_an_API"
+    assert (video_dir / "brief.json").is_file()
+    assert (video_dir / "scene.json").is_file()
+    assert (video_dir / "manifest.json").is_file()
+    assert (video_dir / "voice").is_dir()
+    assert (video_dir / "visuals").is_dir()
 
     # 2. Video property checks
     width, height, fps, duration = get_video_metadata(fast_video)

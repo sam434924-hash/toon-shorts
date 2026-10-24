@@ -1,0 +1,35 @@
+{
+  "video_name": "What_is_an_API",
+  "created_at": "2026-10-24T09:41:07Z",
+  "style": "whiteboard",
+  "characters": [
+    {
+      "name": "Host",
+      "pack": "Host",
+      "version": "1.0.0"
+    },
+    {
+      "name": "Zack",
+      "pack": "Zack",
+      "version": "1.0.0"
+    }
+  ],
+  "voice": {
+    "engine": "gemini_tts",
+    "voice_name": "gemini_tts",
+    "model": "gemini-3.8-flash-tts"
+  },
+  "library_pieces_used": [
+    "library/backgrounds/bg_whiteboard_far_142c5936d9b26248.png",
+    "library/backgrounds/bg_whiteboard_mid_d3db225a83b95f7a.png",
+    "library/backgrounds/bg_whiteboard_near_daad40c3feafc29f.png",
+    "library/sfx/sfx_boing_1a844751dcfca809.wav",
+    "library/sfx/sfx_pop_47e9f275ccb62bb6.wav",
+    "library/sfx/sfx_whistle_f385dbe00174d272.wav"
+  ],
+  "tool_versions": {
+    "python": "3.14.4",
+    "ffmpeg": "installed",
+    "toonshorts": "1.0.0"
+  }
+}

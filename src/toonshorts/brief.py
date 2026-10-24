@@ -2,7 +2,7 @@
 Purpose: Screenplay brief data model, inventory validation, and serialization.
 Inputs: User brief specifications or saved brief JSON files.
 Outputs: Validated VideoBrief models and saved brief JSON files.
-Depends on: json, pathlib, re, time, typing, pydantic, core.config, core.paths, inventory
+Depends on: json, pathlib, re, time, typing, pydantic, core.config, core.models, core.paths, inventory
 Used by: cli
 Config keys: None
 Tests: tests/unit/test_brief.py
@@ -18,6 +18,7 @@ from typing import Any, Dict, List, Literal, Optional, Set, Union
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from toonshorts.core import config, paths
+from toonshorts.core.models import sanitize_video_name
 
 BRIEFS_DIR = paths.PROJECT_ROOT / "briefs"
 
@@ -44,13 +45,14 @@ KNOWN_KEYS = frozenset({
 
 def validate_brief_filename(name: str) -> str:
     """Validates video name for path safety without shell or traversal characters."""
-    clean = re.sub(r"[^\w\-]", "_", name.strip())
-    clean = re.sub(r"_+", "_", clean).strip("_")
-    if not clean:
-        raise ValueError("Video name cannot be empty or solely special characters")
-    if not SAFE_NAME_REGEX.match(clean):
-        raise ValueError(f"Invalid video name '{clean}'. Only alphanumeric, dash, and underscore allowed.")
-    return clean
+    return sanitize_video_name(name)
+
+
+
+
+
+
+
 
 
 class VideoBrief(BaseModel):

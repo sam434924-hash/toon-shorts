@@ -24,7 +24,14 @@ if not STYLES_DIR.exists() and (PROJECT_ROOT / "styles").exists():
 
 OUTPUT_DIR = PROJECT_ROOT / "output"
 TEMP_DIR = PROJECT_ROOT / "temp"
-TTS_CACHE_DIR = PROJECT_ROOT / "cache" / "tts"
+VIDEOS_DIR = PROJECT_ROOT / "videos"
+LIBRARY_DIR = PROJECT_ROOT / "library"
+LIBRARY_TTS_DIR = LIBRARY_DIR / "tts"
+LIBRARY_BACKGROUNDS_DIR = LIBRARY_DIR / "backgrounds"
+LIBRARY_SFX_DIR = LIBRARY_DIR / "sfx"
+LIBRARY_GRAPHICS_DIR = LIBRARY_DIR / "graphics"
+CHARACTERS_DIR = PROJECT_ROOT / "characters" if (PROJECT_ROOT / "characters").exists() else PROJECT_ROOT / "assets" / "2d" / "characters"
+TTS_CACHE_DIR = LIBRARY_TTS_DIR
 ASSETS_DIR = PROJECT_ROOT / "assets"
 PIPER_VOICES_DIR = ASSETS_DIR / "voices" / "piper"
 VOICES_REGISTRY_PATH = PROJECT_ROOT / "voices.json"

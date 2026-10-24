@@ -2,7 +2,7 @@
 Purpose: Command-line interface entry points for ToonShorts video pipeline.
 Inputs: CLI arguments for story topic, style preset, brief, and plugin overrides.
 Outputs: Executed pipeline runs and exit status codes.
-Depends on: argparse, brief, core.config, core.pipeline, inventory, logging, pathlib, plugins, sys
+Depends on: argparse, brief, core.config, core.library, core.pipeline, inventory, logging, pathlib, plugins, sys
 Used by: __main__
 Config keys: None
 Tests: tests/smoke/test_smoke_pipeline.py
@@ -22,6 +22,7 @@ if __name__ == "__main__" and not __package__:
 
 from toonshorts.core import config
 from toonshorts.core.pipeline import run_pipeline, run_pipeline_from_brief, load_style_preset
+from toonshorts.core.library import clean_temp_builds
 from toonshorts import plugins
 from toonshorts.inventory import format_inventory_display, get_inventory
 from toonshorts.brief import load_brief
@@ -42,6 +43,7 @@ def make_command(args: argparse.Namespace) -> int:
         return 1
 
     output_dir = Path(args.output_dir) if args.output_dir else None
+    overwrite = getattr(args, "overwrite", False)
 
     # Brief mode execution
     if getattr(args, "brief", None):
@@ -56,6 +58,7 @@ def make_command(args: argparse.Namespace) -> int:
                 keep_temp=args.keep_temp,
                 fast=getattr(args, "fast", False),
                 workers=workers,
+                overwrite=overwrite,
             )
             if getattr(args, "stills_only", False):
                 print("\n=======================================================")
@@ -70,6 +73,7 @@ def make_command(args: argparse.Namespace) -> int:
             if final_video:
                 print("\n=======================================================")
                 print(f"  SUCCESS! Video created at: {final_video}")
+                print(f"  Self-contained folder: {final_video.parent}")
                 print("=======================================================\n")
                 return 0
             return 0
@@ -105,10 +109,12 @@ def make_command(args: argparse.Namespace) -> int:
             allow_noncommercial=args.allow_noncommercial,
             fast=getattr(args, "fast", False),
             workers=workers,
+            overwrite=overwrite,
         )
         if final_video:
             print("\n=======================================================")
             print(f"  SUCCESS! Video created at: {final_video}")
+            print(f"  Self-contained folder: {final_video.parent}")
             print("=======================================================\n")
             return 0
         return 0
@@ -116,6 +122,18 @@ def make_command(args: argparse.Namespace) -> int:
         logger.exception("Pipeline failed with error: %s", e)
         sys.stderr.write(f"\nPipeline Error: {e}\n")
         return 1
+
+
+def clean_tmp_command(args: argparse.Namespace) -> int:
+    """Deletes lingering temporary build folders from videos/."""
+    deleted = clean_temp_builds()
+    if deleted:
+        print(f"Cleaned {len(deleted)} temporary build folder(s):")
+        for d in deleted:
+            print(f" - {d.name}")
+    else:
+        print("No temporary build folders found.")
+    return 0
 
 
 def inventory_command(args: argparse.Namespace) -> int:
@@ -170,7 +188,10 @@ def main():
     make_parser.add_argument("--renderer", default=None, help="Renderer plugin to use (animejs, cairo, pillow, gemini, fake)")
     make_parser.add_argument("--motion", default=None, help="Motion plugin to use (ffmpeg, static)")
     make_parser.add_argument("--output-dir", default=None, help="Custom output directory")
+    make_parser.add_argument("--overwrite", action="store_true", default=False, help="Overwrite existing video directory if it already exists")
     make_parser.add_argument("--keep-temp", action="store_true", help="Retain intermediate render assets")
+
+    clean_parser = subparsers.add_parser("clean-tmp", help="Remove lingering temporary build directories (.tmp-*) from videos/")
 
     inv_parser = subparsers.add_parser("inventory", help="Inspect installed characters, styles, voices, and animations")
     inv_parser.add_argument("--json", action="store_true", help="Output inventory as structured JSON")
@@ -178,6 +199,8 @@ def main():
     args = parser.parse_args()
     if args.command == "make":
         sys.exit(make_command(args))
+    elif args.command == "clean-tmp":
+        sys.exit(clean_tmp_command(args))
     elif args.command == "inventory":
         sys.exit(inventory_command(args))
 
