@@ -736,3 +736,163 @@ body.parallax-bg-enabled .depth-layer {
   max-width: 90%;
   max-height: 320px;
 }
+
+
+/* Phase 4C: Two Independent Camera Zones Layout (Split Zones) */
+body.split-zones-active #zone-board {
+  position: absolute;
+  top: 288px;
+  left: 60px;
+  width: 900px;
+  height: 520px;
+  overflow: hidden;
+  z-index: 10;
+  border-radius: 28px;
+  box-shadow: 0 0 50px rgba(56, 189, 248, 0.20), 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+body.split-zones-active #zone-board #board-camera-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 900px;
+  height: 520px;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+body.split-zones-active #zone-board .whiteboard-outer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 900px;
+  height: 520px;
+  padding: 18px 28px;
+  border-radius: 28px;
+}
+
+body.split-zones-active #zone-board #rough-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 860px;
+  height: 500px;
+}
+
+body.split-zones-active #zone-board .word-list {
+  margin-top: 12px;
+  gap: 18px;
+}
+
+body.split-zones-active #zone-board .word-card {
+  padding: 10px 24px;
+  gap: 16px;
+}
+
+body.split-zones-active #zone-board .word-num {
+  font-size: 34px;
+}
+
+body.split-zones-active #zone-board .word-text {
+  font-size: 32px;
+}
+
+body.split-zones-active #zone-board .title-badge {
+  padding: 8px 32px;
+  font-size: 36px;
+}
+
+body.split-zones-active #zone-character {
+  position: absolute;
+  top: 820px;
+  left: 60px;
+  width: 900px;
+  height: 530px;
+  overflow: hidden;
+  z-index: 20;
+}
+
+body.split-zones-active #character-camera-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 900px;
+  height: 530px;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+body.split-zones-active .char-slot-left,
+body.split-zones-active #character-rig {
+  position: absolute;
+  top: 20px;
+  left: 60px;
+  width: 420px;
+  height: 480px;
+  z-index: 5;
+  transform-origin: 210px 460px;
+  filter: drop-shadow(0 20px 28px rgba(0, 0, 0, 0.65));
+}
+
+body.split-zones-active .char-slot-right,
+body.split-zones-active #character-rig-right {
+  position: absolute;
+  top: 20px;
+  left: 420px;
+  width: 420px;
+  height: 480px;
+  z-index: 5;
+  transform-origin: 210px 460px;
+  transform: scaleX(-1);
+  filter: drop-shadow(0 20px 28px rgba(0, 0, 0, 0.65));
+}
+
+body.split-zones-active #zone-character .desk-props {
+  position: absolute;
+  top: 360px;
+  left: -90px;
+  width: 1080px;
+  height: 130px;
+  z-index: 6;
+}
+
+body.split-zones-active #zone-character .desk-container {
+  position: absolute;
+  top: 470px;
+  left: -60px;
+  width: 1080px;
+  height: 150px;
+  z-index: 7;
+}
+
+body.split-zones-active #zone-subtitles {
+  position: absolute;
+  top: 1355px;
+  left: 60px;
+  width: 900px;
+  height: 80px;
+  overflow: hidden;
+  z-index: 100;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.split-zones-active #subtitles-content {
+  max-width: 92%;
+  text-align: center;
+  padding: 8px 24px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 2px solid rgba(56, 189, 248, 0.35);
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+body.split-zones-active #subtitles-text {
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}

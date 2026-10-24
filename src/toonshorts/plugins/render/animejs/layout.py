@@ -4,14 +4,17 @@ Inputs: Scene identifiers, viewport dimensions, and gesture names.
 Outputs: Coordinate boundaries and static SVG decoration elements.
 Depends on: core.config, plugins.render.animejs.gestures, typing
 Used by: plugins.render.animejs, plugins.render.animejs.capture, plugins.render.animejs.html_builder
-Config keys: VIDEO_HEIGHT, VIDEO_WIDTH
-Tests: tests/unit/test_animejs.py
+Config keys: ENABLE_SPLIT_CAMERA_ZONES, VIDEO_HEIGHT, VIDEO_WIDTH
+Tests: tests/unit/test_animejs.py, tests/unit/test_split_camera_zones.py
 """
 
-from typing import Dict, Tuple
+import logging
+from typing import Any, Dict, Optional, Tuple
 
 from toonshorts.core import config
 from toonshorts.plugins.render.animejs.gestures import sanitize_gesture
+
+logger = logging.getLogger(__name__)
 
 # Video composition layout & Safe Area boundaries (9:16 vertical 1080x1920)
 SAFE_AREA = {
@@ -358,3 +361,294 @@ def resolve_listener_glance_eye(
         return "eyes-screen_right" if screen_direction == "left" else "eyes-screen_left"
     else:
         return "eyes-screen_right" if screen_direction == "right" else "eyes-screen_left"
+
+
+
+def compute_speaker_bounding_box(
+    speaker_slot: str,
+    gesture: str = "idle",
+    padding: float = 20.0,
+    stage_anchors: Optional[Dict[str, Any]] = None,
+    zone: Optional[Dict[str, float]] = None,
+) -> Dict[str, float]:
+    """
+    Computes a speaker's full bounding box (head to torso/legs, plus a raised pointing hand),
+    with padding, inside the Character Zone local coordinate system.
+    Accounts for Character A (left, facing right) and Character B (right, mirrored facing left).
+    """
+    if zone is None:
+        zone = getattr(config, "SPLIT_CHARACTER_ZONE", {
+            "top": 820.0, "bottom": 1350.0, "left": 60.0, "right": 960.0,
+            "width": 900.0, "height": 530.0,
+        })
+    if stage_anchors is None:
+        stage_anchors = getattr(config, "SPLIT_STAGE_ANCHORS", {
+            "left": {"left": 60.0, "top": 20.0, "width": 420.0, "height": 480.0},
+            "right": {"left": 420.0, "top": 20.0, "width": 420.0, "height": 480.0},
+        })
+
+    is_right = speaker_slot in ("right", "girl_a", "girl_close", "speaker_right", "character-rig-right")
+    slot_key = "right" if is_right else "left"
+    anchor = stage_anchors.get(slot_key, stage_anchors["left"])
+
+    clean_gesture = sanitize_gesture(gesture)
+
+    # Base rig viewBox: 560 x 630
+    rig_vb_w = 560.0
+    rig_vb_h = 630.0
+    slot_w = float(anchor.get("width", 420.0))
+    slot_h = float(anchor.get("height", 480.0))
+    slot_x = float(anchor.get("left", 60.0 if not is_right else 420.0))
+    slot_y = float(anchor.get("top", 20.0))
+
+    scale_x = slot_w / rig_vb_w
+    scale_y = slot_h / rig_vb_h
+
+    # Head and torso/legs bounds in local rig coordinates (0..560, 0..630)
+    body_local_min_x = 90.0
+    body_local_max_x = 440.0
+    body_local_min_y = 20.0
+    body_local_max_y = 580.0
+
+    # Arm / hand extension bounds in local rig coordinates
+    if clean_gesture == "wave":
+        hand_local_min_x = 348.0
+        hand_local_max_x = 495.0
+        hand_local_min_y = 145.0
+        hand_local_max_y = 572.0
+    elif clean_gesture in ("point", "point_board"):
+        hand_local_min_x = 348.0
+        hand_local_max_x = 520.0
+        hand_local_min_y = 150.0
+        hand_local_max_y = 572.0
+    elif clean_gesture == "point_other":
+        hand_local_min_x = 348.0
+        hand_local_max_x = 515.0
+        hand_local_min_y = 200.0
+        hand_local_max_y = 572.0
+    elif clean_gesture in ("explain", "open_hand"):
+        hand_local_min_x = 348.0
+        hand_local_max_x = 518.0
+        hand_local_min_y = 300.0
+        hand_local_max_y = 572.0
+    elif clean_gesture == "thumbs_up":
+        hand_local_min_x = 348.0
+        hand_local_max_x = 475.0
+        hand_local_min_y = 260.0
+        hand_local_max_y = 572.0
+    elif clean_gesture == "shrug":
+        hand_local_min_x = 90.0
+        hand_local_max_x = 440.0
+        hand_local_min_y = 340.0
+        hand_local_max_y = 572.0
+    else:
+        hand_local_min_x = 120.0
+        hand_local_max_x = 405.0
+        hand_local_min_y = 360.0
+        hand_local_max_y = 572.0
+
+    # Combined rig local bounding box
+    local_min_x = min(body_local_min_x, hand_local_min_x)
+    local_max_x = max(body_local_max_x, hand_local_max_x)
+    local_min_y = min(body_local_min_y, hand_local_min_y)
+    local_max_y = max(body_local_max_y, hand_local_max_y)
+
+    if not is_right:
+        # Character A (left slot): unmirrored, facing right
+        box_min_x = slot_x + (local_min_x * scale_x) - padding
+        box_max_x = slot_x + (local_max_x * scale_x) + padding
+    else:
+        # Character B (right slot): mirrored via scaleX(-1) around slot center
+        box_min_x = slot_x + (slot_w - local_max_x * scale_x) - padding
+        box_max_x = slot_x + (slot_w - local_min_x * scale_x) + padding
+
+    box_min_y = slot_y + (local_min_y * scale_y) - padding
+    box_max_y = slot_y + (local_max_y * scale_y) + padding
+
+    box_w = max(1.0, box_max_x - box_min_x)
+    box_h = max(1.0, box_max_y - box_min_y)
+
+    zone_top = float(zone.get("top", 820.0))
+    zone_left = float(zone.get("left", 60.0))
+
+    return {
+        "min_x": float(box_min_x),
+        "max_x": float(box_max_x),
+        "min_y": float(box_min_y),
+        "max_y": float(box_max_y),
+        "width": float(box_w),
+        "height": float(box_h),
+        "screen_min_x": float(zone_left + box_min_x),
+        "screen_max_x": float(zone_left + box_max_x),
+        "screen_min_y": float(zone_top + box_min_y),
+        "screen_max_y": float(zone_top + box_max_y),
+    }
+
+
+def compute_character_camera_framing(
+    speaker_slot: str,
+    gesture: str = "idle",
+    requested_zoom: float = 1.18,
+    padding: float = 20.0,
+    stage_anchors: Optional[Dict[str, Any]] = None,
+    zone: Optional[Dict[str, float]] = None,
+) -> Dict[str, Any]:
+    """
+    Computes deterministic zoom and pan for the character camera conforming to framing rules:
+    1. Computes full speaker bounding box (head to torso/legs, plus raised hand), with padding.
+    2. Zoom = min(requested zoom, largest zoom that keeps that whole box inside the zone). Never exceeds 1.35x.
+    3. Clamps pan so the box stays inside the zone and clear of the right-edge button area (x <= 960).
+    4. If a speaker cannot fit at any useful zoom (zoom < 1.05), reports it and adjusts stage anchors inward.
+    5. Returns zoom, pan_x, pan_y, and transformed bounding boxes.
+    """
+    if zone is None:
+        zone = getattr(config, "SPLIT_CHARACTER_ZONE", {
+            "top": 820.0, "bottom": 1350.0, "left": 60.0, "right": 960.0,
+            "width": 900.0, "height": 530.0,
+        })
+    zone_w = float(zone["width"])
+    zone_h = float(zone["height"])
+    max_allowed_zoom = float(getattr(config, "CAMERA_MAX_ZOOM", 1.35))
+
+    current_anchors = dict(stage_anchors or getattr(config, "SPLIT_STAGE_ANCHORS", {
+        "left": {"left": 60.0, "top": 20.0, "width": 420.0, "height": 480.0},
+        "right": {"left": 420.0, "top": 20.0, "width": 420.0, "height": 480.0},
+    }))
+
+    bbox = compute_speaker_bounding_box(speaker_slot, gesture, padding, current_anchors, zone)
+    max_fit_zoom = min(zone_w / bbox["width"], zone_h / bbox["height"])
+
+    adjusted_inward = False
+    if max_fit_zoom < 1.05:
+        logger.warning(
+            "Speaker '%s' cannot fit at useful zoom (max_fit_zoom=%.2f < 1.05); adjusting stage anchor inward",
+            speaker_slot, max_fit_zoom
+        )
+        current_anchors = adjust_stage_anchors_inward(speaker_slot, current_anchors, shift_px=25.0)
+        adjusted_inward = True
+        bbox = compute_speaker_bounding_box(speaker_slot, gesture, padding, current_anchors, zone)
+        max_fit_zoom = min(zone_w / bbox["width"], zone_h / bbox["height"])
+
+    zoom = min(float(requested_zoom), float(max_fit_zoom), max_allowed_zoom)
+
+    # Ideal centering pan
+    ideal_cx = (bbox["min_x"] + bbox["max_x"]) / 2.0
+    ideal_cy = (bbox["min_y"] + bbox["max_y"]) / 2.0
+    cx = zone_w / 2.0
+    cy = zone_h / 2.0
+    ideal_pan_x = cx - ideal_cx
+    ideal_pan_y = cy - ideal_cy
+
+    # Pan limits to keep box inside [0, zone_w] and [0, zone_h] under transform:
+    min_pan_x = - (cx + (bbox["min_x"] - cx) * zoom)
+    max_pan_x = zone_w - (cx + (bbox["max_x"] - cx) * zoom)
+    if min_pan_x > max_pan_x:
+        min_pan_x, max_pan_x = max_pan_x, min_pan_x
+
+    clamped_pan_x = max(min_pan_x, min(max_pan_x, ideal_pan_x))
+
+    min_pan_y = - (cy + (bbox["min_y"] - cy) * zoom)
+    max_pan_y = zone_h - (cy + (bbox["max_y"] - cy) * zoom)
+    if min_pan_y > max_pan_y:
+        min_pan_y, max_pan_y = max_pan_y, min_pan_y
+
+    clamped_pan_y = max(min_pan_y, min(max_pan_y, ideal_pan_y))
+
+    # Transformed bounding box inside Character Zone
+    trans_min_x = cx + (bbox["min_x"] - cx) * zoom + clamped_pan_x
+    trans_max_x = cx + (bbox["max_x"] - cx) * zoom + clamped_pan_x
+    trans_min_y = cy + (bbox["min_y"] - cy) * zoom + clamped_pan_y
+    trans_max_y = cy + (bbox["max_y"] - cy) * zoom + clamped_pan_y
+
+    zone_left = float(zone.get("left", 60.0))
+    zone_top = float(zone.get("top", 820.0))
+
+    screen_min_x = zone_left + trans_min_x
+    screen_max_x = zone_left + trans_max_x
+    screen_min_y = zone_top + trans_min_y
+    screen_max_y = zone_top + trans_max_y
+
+    return {
+        "speaker_slot": speaker_slot,
+        "zoom": round(zoom, 4),
+        "pan_x": round(clamped_pan_x, 2),
+        "pan_y": round(clamped_pan_y, 2),
+        "max_fit_zoom": round(max_fit_zoom, 4),
+        "adjusted_inward": adjusted_inward,
+        "bbox": bbox,
+        "transformed_bbox": {
+            "min_x": round(trans_min_x, 2),
+            "max_x": round(trans_max_x, 2),
+            "min_y": round(trans_min_y, 2),
+            "max_y": round(trans_max_y, 2),
+        },
+        "screen_bbox": {
+            "min_x": round(screen_min_x, 2),
+            "max_x": round(screen_max_x, 2),
+            "min_y": round(screen_min_y, 2),
+            "max_y": round(screen_max_y, 2),
+        },
+    }
+
+
+def adjust_stage_anchors_inward(
+    speaker_slot: str,
+    stage_anchors: Dict[str, Any],
+    shift_px: float = 20.0,
+) -> Dict[str, Any]:
+    """Adjusts stage anchor inward towards screen center to ensure the speaker fits without cut-off."""
+    updated = {k: dict(v) for k, v in stage_anchors.items()}
+    is_right = speaker_slot in ("right", "girl_a", "girl_close", "speaker_right", "character-rig-right")
+    slot_key = "right" if is_right else "left"
+    if slot_key == "left":
+        updated["left"]["left"] += shift_px
+        updated["left"]["width"] = max(280.0, updated["left"]["width"] - shift_px)
+    else:
+        updated["right"]["left"] -= shift_px
+        updated["right"]["width"] = max(280.0, updated["right"]["width"] - shift_px)
+    return updated
+
+
+def verify_speaker_in_character_zone(
+    box: Dict[str, float],
+    zone: Optional[Dict[str, float]] = None,
+) -> bool:
+    """Verifies that the speaker's bounding box is strictly inside the character zone."""
+    if zone is None:
+        zone = getattr(config, "SPLIT_CHARACTER_ZONE", {
+            "width": 900.0, "height": 530.0,
+        })
+    zone_w = float(zone.get("width", 900.0))
+    zone_h = float(zone.get("height", 530.0))
+    eps = 0.5  # tolerance
+    return (
+        box["min_x"] >= -eps
+        and box["max_x"] <= zone_w + eps
+        and box["min_y"] >= -eps
+        and box["max_y"] <= zone_h + eps
+    )
+
+
+def verify_no_safe_zone_overlap(element_bounds: Dict[str, float]) -> bool:
+    """
+    Verifies that element screen bounds stay strictly clear of YouTube Shorts safe zones:
+    - Top 15% safe zone: y in [0, 288] (min_y >= 288)
+    - Bottom 25% safe zone: y in [1440, 1920] (max_y <= 1440)
+    - Right 120px safe zone: x in [960, 1080] (max_x <= 960)
+    """
+    top_limit = float(getattr(config, "SAFE_ZONE_TOP_PX", 288))
+    bottom_limit = float(getattr(config, "SAFE_ZONE_BOTTOM_PX", 1440))
+    right_limit = float(getattr(config, "SAFE_ZONE_RIGHT_BOUNDARY_PX", 960.0))
+    eps = 0.5
+
+    min_y = element_bounds.get("screen_min_y", element_bounds.get("min_y", 0.0))
+    max_y = element_bounds.get("screen_max_y", element_bounds.get("max_y", 0.0))
+    max_x = element_bounds.get("screen_max_x", element_bounds.get("max_x", 0.0))
+
+    if min_y < top_limit - eps:
+        return False
+    if max_y > bottom_limit + eps:
+        return False
+    if max_x > right_limit + eps:
+        return False
+    return True

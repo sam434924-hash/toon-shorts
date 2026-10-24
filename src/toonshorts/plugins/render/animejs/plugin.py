@@ -4,8 +4,8 @@ Inputs: Scene screenplay models, audio timing tracks, voice loudness cues, and s
 Outputs: Rendered MP4 video clips or PNG preview stills with synchronized mouth flapping.
 Depends on: core.config, core.models, core.registry, logging, pathlib, plugins.render.animejs.annotations, plugins.render.animejs.capture, plugins.render.animejs.cast, plugins.render.animejs.html_builder, typing
 Used by: plugins.render.animejs
-Config keys: VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
-Tests: tests/contract/test_render_contract.py, tests/unit/test_animejs.py
+Config keys: ENABLE_SPLIT_CAMERA_ZONES, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
+Tests: tests/contract/test_render_contract.py, tests/unit/test_animejs.py, tests/unit/test_split_camera_zones.py
 """
 
 import logging
@@ -85,6 +85,7 @@ class AnimeJSRenderPlugin(RenderInterface):
             word_timings=scene_word_timings,
             theme=theme,
             rough_seed=rough_seed,
+            enable_split_camera_zones=style_preset.get("split_camera_zones", getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False)) if style_preset else getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False),
         )
 
         html_file = temp_dir / f"scene_{scene.scene_number}_still.html"
@@ -146,6 +147,7 @@ class AnimeJSRenderPlugin(RenderInterface):
             theme=theme,
             rough_seed=rough_seed,
             fast=fast,
+            enable_split_camera_zones=getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False),
         )
 
     def render_all_scenes(
@@ -207,6 +209,7 @@ class AnimeJSRenderPlugin(RenderInterface):
                     theme=theme,
                     rough_seed=rough_seed,
                     fast=fast,
+                    enable_split_camera_zones=style_preset.get("split_camera_zones", getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False)) if style_preset else getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False),
                 )
                 jobs.append(job)
 

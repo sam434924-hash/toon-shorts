@@ -4,8 +4,8 @@ Inputs: Compiled whiteboard HTML, audio files, animation durations, target FPS, 
 Outputs: Generated MP4 scene clips and still preview PNG frames.
 Depends on: concurrent.futures, dataclasses, hashlib, logging, pathlib, playwright, plugins.render.animejs.audio_sync, plugins.render.animejs.html_builder, plugins.render.animejs.layout, shutil, subprocess, tempfile, threading, typing
 Used by: plugins.render.animejs, plugins.render.animejs.plugin
-Config keys: ENABLE_PARALLAX_BACKGROUND, ENABLE_PARALLAX_CACHE, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
-Tests: tests/unit/test_animejs.py
+Config keys: ENABLE_PARALLAX_BACKGROUND, ENABLE_PARALLAX_CACHE, ENABLE_SPLIT_CAMERA_ZONES, LAYOUT_CAMERA_VERSION, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
+Tests: tests/unit/test_animejs.py, tests/unit/test_split_camera_zones.py
 """
 
 import concurrent.futures
@@ -78,6 +78,7 @@ class SceneRenderJob:
     fast: bool = False
     temp_dir: Optional[Path] = None
     bg_layer_images: Optional[Dict[str, str]] = None
+    enable_split_camera_zones: Optional[bool] = None
 
 
 _CACHE_LOCK = threading.Lock()
@@ -133,7 +134,9 @@ def render_cached_parallax_layers(
                         svg_content = bg_layers.get(layer_name, "")
                         if not svg_content:
                             continue
-                        content_hash = hashlib.sha256(svg_content.encode("utf-8")).hexdigest()[:16]
+                        layout_ver = getattr(config, "LAYOUT_CAMERA_VERSION", "2.1.0")
+                        split_mode = "split" if getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False) else "single"
+                        content_hash = hashlib.sha256(f"{layout_ver}:{split_mode}:{svg_content}".encode("utf-8")).hexdigest()[:16]
                         png_path = cache_dir / f"bg_{theme}_{layer_name}_{content_hash}.png"
                         if not png_path.exists():
                             tmp_html = cache_dir / f"tmp_{theme}_{layer_name}_{threading.get_ident()}.html"
@@ -261,6 +264,7 @@ def _render_job_with_browser(
         rough_seed=rough_seed,
         fast=job.fast,
         bg_layer_images=job.bg_layer_images,
+        enable_split_camera_zones=job.enable_split_camera_zones,
     )
 
     html_file = (work_dir / "whiteboard_scene.html").resolve()
@@ -420,6 +424,7 @@ def render_whiteboard_video(
     theme: str = "whiteboard",
     rough_seed: Optional[int] = None,
     fast: bool = False,
+    enable_split_camera_zones: Optional[bool] = None,
 ) -> Path:
     """
     Renders a fully animated MP4 video clip with mouth sync, camera moves, and Rough.js sketches.
@@ -445,6 +450,7 @@ def render_whiteboard_video(
         rough_seed=rough_seed,
         fast=fast,
         temp_dir=temp_dir,
+        enable_split_camera_zones=enable_split_camera_zones,
     )
     return _render_job_with_browser(job)
 

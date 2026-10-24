@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-24: split camera zones: implemented independent board and character camera zones preventing cut-off speakers, bounding box containment and safe zone clearance verification, and peak zoom stills.
+
 - 2026-10-24: phase4b-6: optimized render speed via pre-rendered parallax layer image caching and filter cache invalidation fix, verified camera moves, and added edge tests & scene edge-case test suite.
 
 - 2026-10-24: phase4b-5: Remotion trial spike comparing kinetic words & diagram flow overlay compositing, determinism, performance, and license evaluation.

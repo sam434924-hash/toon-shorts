@@ -4,8 +4,8 @@ Inputs: Scene duration, word timings, visual cues, and camera configuration.
 Outputs: Deterministic shot list transitions, formatted timelines, and validated configs.
 Depends on: json, logging, math, pathlib, typing
 Used by: core, core.pipeline, plugins.render.animejs.html_builder
-Config keys: ENABLE_PURPOSEFUL_CAMERA
-Tests: tests/unit/test_camera_shot_planner.py
+Config keys: ENABLE_PURPOSEFUL_CAMERA, ENABLE_SPLIT_CAMERA_ZONES
+Tests: tests/unit/test_camera_shot_planner.py, tests/unit/test_split_camera_zones.py
 """
 
 import json
@@ -367,3 +367,134 @@ def save_camera_timelines(
     summary_file = output_dir / "camera_timelines.txt"
     summary_file.write_text("\n".join(combined_lines), encoding="utf-8")
     return summary_file
+
+
+
+def plan_split_camera_shots(
+    duration_sec: float,
+    word_timings: Optional[List[Any]] = None,
+    visuals: Optional[List[Any]] = None,
+    speaker_id: Optional[str] = None,
+    camera_config: Optional[Dict[str, Any]] = None,
+    speaker_slot: str = "left",
+    scene_number: int = 1,
+    gesture: str = "idle",
+) -> Dict[str, List[Dict[str, Any]]]:
+    """
+    Plans independent camera shot lists for the two zones:
+    - Character Camera: Zooms in on the active speaker at speech onset, holds for at least 1.2s, then eases out.
+    - Board Camera: Zooms in only on purposeful cues (key words or stage visuals), holds for at least 1.2s, then eases out.
+    Both cameras are completely independent: character moves do not affect the board, and board moves do not affect characters.
+    """
+    from toonshorts.core import config
+    cfg = validate_camera_config(camera_config)
+    total_duration_ms = max(0, int(round(duration_sec * 1000)))
+    lead_ms = cfg["lead_ms"]
+    min_hold_ms = max(int(getattr(config, "CAMERA_MIN_HOLD_SEC", 1.2) * 1000), cfg["min_hold_ms"])
+    trans_dur_ms = cfg["transition_duration_ms"]
+
+    speaker_target = f"speaker_{speaker_id}" if speaker_id else (
+        "speaker_right" if speaker_slot == "right" else "speaker_left"
+    )
+
+    # 1. Speech timing for character camera
+    char_shots: List[Dict[str, Any]] = []
+    norm_wts = []
+    if word_timings:
+        for wt in word_timings:
+            s_time = getattr(wt, "start_time", None) if hasattr(wt, "start_time") else (
+                wt.get("start_time", wt.get("start_ms", 0.0) / 1000.0 if "start_ms" in wt else 0.0)
+                if isinstance(wt, dict) else 0.0
+            )
+            e_time = getattr(wt, "end_time", None) if hasattr(wt, "end_time") else (
+                wt.get("end_time", wt.get("end_ms", 0.0) / 1000.0 if "end_ms" in wt else s_time + 0.3)
+                if isinstance(wt, dict) else s_time + 0.3
+            )
+            norm_wts.append((int(float(s_time) * 1000), int(float(e_time) * 1000)))
+
+    if norm_wts:
+        speech_start_ms = norm_wts[0][0]
+        speech_end_ms = norm_wts[-1][1]
+
+        desired_start_ms = max(0, speech_start_ms - lead_ms)
+        desired_end_ms = desired_start_ms + trans_dur_ms
+
+        if desired_start_ms < total_duration_ms:
+            desired_end_ms = min(total_duration_ms, desired_end_ms)
+            if desired_end_ms > desired_start_ms:
+                char_shots.append({
+                    "t_start": int(desired_start_ms),
+                    "t_end": int(desired_end_ms),
+                    "from_target": "wide",
+                    "to_target": speaker_target,
+                })
+
+                # Hold at peak zoom at least min_hold_ms (1.2s)
+                min_hold_end_ms = desired_end_ms + min_hold_ms
+                return_start_ms = max(min_hold_end_ms, speech_end_ms + 200)
+
+                if return_start_ms + trans_dur_ms <= total_duration_ms:
+                    char_shots.append({
+                        "t_start": int(return_start_ms),
+                        "t_end": int(return_start_ms + trans_dur_ms),
+                        "from_target": speaker_target,
+                        "to_target": "wide",
+                    })
+
+    # 2. Board visual / purposeful cues for board camera
+    board_shots: List[Dict[str, Any]] = []
+    board_cues: List[Tuple[int, int, str]] = []
+    if visuals:
+        for idx, vis in enumerate(visuals):
+            v_start = vis.get("start_ms") if isinstance(vis, dict) else getattr(vis, "start_ms", None)
+            if v_start is None:
+                v_start_sec = vis.get("start_time") if isinstance(vis, dict) else getattr(vis, "start_time", None)
+                v_start = int(v_start_sec * 1000) if v_start_sec is not None else 0
+            v_dur = vis.get("duration_ms") if isinstance(vis, dict) else getattr(vis, "duration_ms", 1000)
+            v_id = vis.get("dom_id") if isinstance(vis, dict) else getattr(vis, "dom_id", None)
+            if not v_id:
+                v_id = vis.get("id") if isinstance(vis, dict) else getattr(vis, "id", f"visual_{idx+1}")
+            target_name = f"board_{v_id}" if v_id else "board_close"
+            board_cues.append((int(v_start), int(v_dur or 1000), target_name))
+
+    board_cues.sort(key=lambda x: x[0])
+    cur_board_target = "wide"
+    last_board_end_ms = 0
+
+    for cue_start_ms, cue_dur_ms, b_target in board_cues:
+        b_move_start_ms = max(0, cue_start_ms - lead_ms)
+        if board_shots and (b_move_start_ms < last_board_end_ms + min_hold_ms):
+            continue
+        b_move_end_ms = b_move_start_ms + trans_dur_ms
+        if b_move_start_ms >= total_duration_ms:
+            break
+        b_move_end_ms = min(total_duration_ms, b_move_end_ms)
+        if b_move_end_ms <= b_move_start_ms:
+            continue
+
+        board_shots.append({
+            "t_start": int(b_move_start_ms),
+            "t_end": int(b_move_end_ms),
+            "from_target": cur_board_target,
+            "to_target": b_target,
+        })
+        cur_board_target = b_target
+        last_board_end_ms = b_move_end_ms
+
+        cue_exit_ms = cue_start_ms + cue_dur_ms
+        b_return_start_ms = max(last_board_end_ms + min_hold_ms, cue_exit_ms + 200)
+        b_return_end_ms = b_return_start_ms + trans_dur_ms
+        if b_return_end_ms <= total_duration_ms:
+            board_shots.append({
+                "t_start": int(b_return_start_ms),
+                "t_end": int(b_return_end_ms),
+                "from_target": cur_board_target,
+                "to_target": "wide",
+            })
+            cur_board_target = "wide"
+            last_board_end_ms = b_return_end_ms
+
+    return {
+        "character": char_shots,
+        "board": board_shots,
+    }

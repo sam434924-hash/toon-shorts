@@ -4,8 +4,8 @@ Inputs: Scene metadata, character SVG rigs, timing cues, annotations, and stage 
 Outputs: Self-contained HTML5 string embedding local script engines and CSS.
 Depends on: core.board_objects, core.camera, core.config, core.models, html, json, pathlib, plugins.render.animejs.cast, plugins.render.animejs.gestures, plugins.render.animejs.layout, plugins.render.animejs.visual_renderer, typing
 Used by: plugins.render.animejs, plugins.render.animejs.capture, plugins.render.animejs.plugin
-Config keys: ANIME_JS_PATH, ENABLE_BOARD_OBJECTS, ENABLE_PARALLAX_BACKGROUND, ENABLE_PURPOSEFUL_CAMERA, ROUGH_JS_PATH, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
-Tests: tests/unit/test_animejs.py, tests/unit/test_board_objects.py, tests/unit/test_word_annotations_security.py
+Config keys: ANIME_JS_PATH, ENABLE_BOARD_OBJECTS, ENABLE_PARALLAX_BACKGROUND, ENABLE_PURPOSEFUL_CAMERA, ENABLE_SPLIT_CAMERA_ZONES, ROUGH_JS_PATH, VIDEO_FPS, VIDEO_HEIGHT, VIDEO_WIDTH
+Tests: tests/unit/test_animejs.py, tests/unit/test_board_objects.py, tests/unit/test_split_camera_zones.py, tests/unit/test_word_annotations_security.py
 """
 
 import html
@@ -22,6 +22,7 @@ from toonshorts.core.camera import (
     format_camera_timeline,
     load_camera_config_for_style,
     plan_scene_camera_shots,
+    plan_split_camera_shots,
     save_camera_timelines,
 )
 from toonshorts.core.models import Scene
@@ -29,6 +30,7 @@ from toonshorts.plugins.render.animejs.cast import build_characters_data
 from toonshorts.plugins.render.animejs.gestures import sanitize_gesture
 from toonshorts.plugins.render.animejs.layout import (
     build_parallax_background_layers,
+    compute_character_camera_framing,
     generate_scene_decorations,
 )
 from toonshorts.plugins.render.animejs.visual_renderer import (
@@ -62,6 +64,7 @@ def generate_whiteboard_html(
     board_objects: Optional[List[Dict[str, Any]]] = None,
     style_profile: Optional[Dict[str, Any]] = None,
     bg_layer_images: Optional[Dict[str, str]] = None,
+    enable_split_camera_zones: Optional[bool] = None,
 ) -> str:
     """
     Generates a high-contrast HTML5/SVG composition with Anime.js whiteboard animation,
@@ -269,6 +272,57 @@ def generate_whiteboard_html(
         bg_mid_content = ""
         bg_near_content = ""
 
+    resolved_cam_cfg = camera_config or load_camera_config_for_style(theme)
+
+    if enable_split_camera_zones is None:
+        is_split_zones = getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False)
+    else:
+        is_split_zones = bool(enable_split_camera_zones)
+
+    if is_split_zones:
+        left_framing = compute_character_camera_framing(
+            "left",
+            gesture=speaker_gesture if speaker_slot_id == "character-rig" else "idle",
+            requested_zoom=getattr(config, "CAMERA_ZOOM_SPEAKER", 1.18),
+        )
+        right_framing = compute_character_camera_framing(
+            "right",
+            gesture=speaker_gesture if speaker_slot_id == "character-rig-right" else "idle",
+            requested_zoom=getattr(config, "CAMERA_ZOOM_SPEAKER", 1.18),
+        )
+        split_camera_framing = {
+            "speaker_left": {"x": left_framing["pan_x"], "y": left_framing["pan_y"], "zoom": left_framing["zoom"]},
+            "speaker_right": {"x": right_framing["pan_x"], "y": right_framing["pan_y"], "zoom": right_framing["zoom"]},
+            "speaker_boy_close": {"x": left_framing["pan_x"], "y": left_framing["pan_y"], "zoom": left_framing["zoom"]},
+            "speaker_girl_close": {"x": right_framing["pan_x"], "y": right_framing["pan_y"], "zoom": right_framing["zoom"]},
+            "speaker_character-rig": {"x": left_framing["pan_x"], "y": left_framing["pan_y"], "zoom": left_framing["zoom"]},
+            "speaker_character-rig-right": {"x": right_framing["pan_x"], "y": right_framing["pan_y"], "zoom": right_framing["zoom"]},
+        }
+        for cdata in (characters_data or []):
+            cid = cdata.get("id")
+            c_slot = cdata.get("slot")
+            c_framing = right_framing if c_slot == "right" else left_framing
+            if cid:
+                split_camera_framing[f"speaker_{cid}"] = {
+                    "x": c_framing["pan_x"], "y": c_framing["pan_y"], "zoom": c_framing["zoom"]
+                }
+        split_shots_dict = plan_split_camera_shots(
+            duration_sec=duration_sec,
+            word_timings=word_timings,
+            visuals=visuals,
+            speaker_id=speaker_slot_id,
+            camera_config=resolved_cam_cfg,
+            speaker_slot="right" if speaker_slot_id == "character-rig-right" else "left",
+            scene_number=scene_number,
+            gesture=speaker_gesture,
+        )
+        split_char_shots = split_shots_dict["character"]
+        split_board_shots = split_shots_dict["board"]
+    else:
+        split_camera_framing = {}
+        split_char_shots = []
+        split_board_shots = []
+
     # Multiplane Camera Motion & Depth Configuration from central config
     camera_parallax_json = json.dumps(getattr(config, "CAMERA_PARALLAX_FACTORS", {
         "foreground": 2.0, "subject": 1.0, "board": 0.5, "deep_bg": 0.12
@@ -280,7 +334,6 @@ def generate_whiteboard_html(
         "board_close": {"x": 0.0, "y": 90.0, "zoom": 1.25, "focus": "board"},
     }))
     enable_purposeful = getattr(config, "ENABLE_PURPOSEFUL_CAMERA", True)
-    resolved_cam_cfg = camera_config or load_camera_config_for_style(theme)
 
     if resolved_cam_cfg and enable_purposeful:
         if camera_shots is not None:
@@ -385,8 +438,115 @@ def generate_whiteboard_html(
     # Format CSS
     formatted_css = style_css.replace("{{WIDTH}}", str(width)).replace("{{HEIGHT}}", str(height))
 
+    if is_split_zones:
+        main_content_layers = """    <!-- BOARD ZONE (Upper Area, Clipped) -->
+    <div id="zone-board" class="zone-container zone-board">
+      <div id="board-camera-content" class="zone-camera-content">
+        <div class="whiteboard-outer">
+          <div class="panel-backdrop-dim" style="{{PANEL_BACKDROP_STYLE}}"></div>
+          <svg id="rough-canvas" width="900" height="520"></svg>
+          <div class="title-badge" id="wb-title">{{TITLE}}</div>
+{{BOARD_CONTENT}}
+          <!-- Board Objects Layer (Phase 4B-4) -->
+          <div id="board-objects-container" class="board-objects-container">
+            <div class="board-slot slot-top" id="board-slot-top"></div>
+            <div class="board-slot slot-mid" id="board-slot-mid"></div>
+            <div class="board-slot slot-bottom" id="board-slot-bottom"></div>
+            <div class="board-slot slot-center" id="board-slot-center"></div>
+          </div>
+          <div class="marker-tray">
+            <div class="marker black"></div>
+            <div class="marker blue"></div>
+            <div class="marker red"></div>
+            <div class="marker eraser"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARACTER ZONE (Lower Area, Clipped) -->
+    <div id="zone-character" class="zone-container zone-character">
+      <div id="character-camera-content" class="zone-camera-content">
+        <div id="character-slots-container">
+{{CHARACTERS_HTML}}
+        </div>
+        <!-- Foreground Desk Props -->
+        <div class="desk-props">
+          <svg viewBox="0 0 1080 130" width="1080" height="130">
+{{DESK_PROPS}}
+          </svg>
+        </div>
+        <!-- Desk Surface -->
+        <div class="desk-container">
+          <div class="desk-bevel"></div>
+          <div class="desk-top"></div>
+          <div class="desk-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBTITLES (Separate Top Layer, Outside Camera Zones) -->
+    <div id="zone-subtitles" class="zone-container zone-subtitles">
+      <div id="subtitles-content" class="subtitles-content">
+        <span id="subtitles-text">{{SUBTITLE_PREVIEW_TEXT}}</span>
+      </div>
+    </div>"""
+    else:
+        main_content_layers = """    <!-- Layer 3: Board (The board panel and its graphics) -->
+    <div id="layer-board" class="depth-layer layer-board" data-depth-factor="0.5">
+      <div class="whiteboard-outer">
+        <div class="panel-backdrop-dim" style="{{PANEL_BACKDROP_STYLE}}"></div>
+        <svg id="rough-canvas" width="900" height="980"></svg>
+        <div class="title-badge" id="wb-title">{{TITLE}}</div>
+{{BOARD_CONTENT}}
+        <!-- Board Objects Layer (Phase 4B-4) -->
+        <div id="board-objects-container" class="board-objects-container">
+          <div class="board-slot slot-top" id="board-slot-top"></div>
+          <div class="board-slot slot-mid" id="board-slot-mid"></div>
+          <div class="board-slot slot-bottom" id="board-slot-bottom"></div>
+          <div class="board-slot slot-center" id="board-slot-center"></div>
+        </div>
+        <div class="marker-tray">
+          <div class="marker black"></div>
+          <div class="marker blue"></div>
+          <div class="marker red"></div>
+          <div class="marker eraser"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layer 2: Subject (The two characters) -->
+    <div id="layer-subject" class="depth-layer layer-subject" data-depth-factor="1.0">
+      <!-- Character Slots (Left and Right) -->
+{{CHARACTERS_HTML}}
+    </div>
+
+    <!-- Layer 1: Foreground (Desk edge, lamp, mug, small card / laptop) -->
+    <div id="layer-foreground" class="depth-layer layer-foreground" data-depth-factor="2.0">
+      <!-- Foreground Desk Props (Constant Across All Scenes) -->
+      <div class="desk-props">
+        <svg viewBox="0 0 1080 130" width="1080" height="130">
+{{DESK_PROPS}}
+        </svg>
+      </div>
+
+      <!-- Desk Surface -->
+      <div class="desk-container">
+        <div class="desk-bevel"></div>
+        <div class="desk-top"></div>
+        <div class="desk-body"></div>
+      </div>
+    </div>"""
+
     # Replace placeholders in HTML template
     result = template_html
+    result = result.replace("{{MAIN_CONTENT_LAYERS}}", main_content_layers)
+    result = result.replace("{{SPLIT_ZONES_CLASS}}", " split-zones-active" if is_split_zones else "")
+    result = result.replace("{{ENABLE_SPLIT_CAMERA_ZONES}}", "true" if is_split_zones else "false")
+    result = result.replace("{{SPLIT_CAMERA_FRAMING_JSON}}", json.dumps(split_camera_framing))
+    result = result.replace("{{SPLIT_CHAR_SHOTS_JSON}}", json.dumps(split_char_shots))
+    result = result.replace("{{SPLIT_BOARD_SHOTS_JSON}}", json.dumps(split_board_shots))
+    result = result.replace("{{SUBTITLE_PREVIEW_TEXT}}", safe_title)
     result = result.replace("{{THEME_NAME}}", theme)
     result = result.replace("{{PARALLAX_CLASS}}", " parallax-bg-enabled" if enable_parallax_bg else "")
     result = result.replace("{{PANEL_BACKDROP_STYLE}}", panel_backdrop_style)

@@ -198,6 +198,13 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Capabilities**: Zero innerHTML injection, textContent DOM setting from safe JSON payload, speaker label stripping, hard caps (max 8 objects/scene, max 80 characters text with ellipsis, max 6 diagram nodes), Rough.js per-object seed, pure function of time seeking.
 - **Tests**: `tests/unit/test_board_objects.py`
 
+### Two Independent Camera Zones (`core/camera`, `plugins/render/animejs/layout`)
+- **Description**: Independent two-zone camera layout for 9:16 vertical video (1080x1920) separating upper board zone and lower character zone with dedicated cameras, preventing speaker cut-offs during zoom.
+- **Files**: `src/toonshorts/core/config.py`, `src/toonshorts/core/camera.py`, `src/toonshorts/plugins/render/animejs/layout.py`, `src/toonshorts/plugins/render/animejs/html_builder.py`, `src/toonshorts/plugins/render/animejs/templates/camera_engine.js`, `src/toonshorts/plugins/render/animejs/templates/style.css`
+- **Config Flags**: `ENABLE_SPLIT_CAMERA_ZONES`, `LAYOUT_CAMERA_VERSION`, `SAFE_ZONE_TOP_PX`, `SAFE_ZONE_BOTTOM_PX`, `SAFE_ZONE_RIGHT_BOUNDARY_PX`, `SPLIT_BOARD_ZONE`, `SPLIT_CHARACTER_ZONE`, `SPLIT_SUBTITLE_ZONE`, `CAMERA_MAX_ZOOM`, `CAMERA_MIN_HOLD_SEC`
+- **Capabilities**: Speaker full bounding box computation including raised pointing hands and padding, automatic zoom calculation capped at min(requested_zoom, max_fit_zoom) <= 1.35x, pan clamping within zone and clear of right-edge button safe zone, inward stage anchor adjustment fallback if fit zoom < 1.05x, independent zone transforms (board zoom does not move characters, character zoom does not move board), minimum hold >= 1.2s, cubic easing, and bit-exact backward compatibility when disabled.
+- **Tests**: `tests/unit/test_split_camera_zones.py`
+
 ## 2D Layered Character System (`core/character2d`, `core/character_pack`)
 
 ### `presenter` (Whiteboard Presenter Character Pack)

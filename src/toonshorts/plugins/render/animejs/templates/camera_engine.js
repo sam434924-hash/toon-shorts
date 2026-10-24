@@ -47,6 +47,149 @@ function computeCameraState(ms, frameIdx) {
   const speakerPreset = presets[speakerPresetKey] || presets.wide;
   const tau = ((cfg.transition_sec !== undefined) ? cfg.transition_sec : 0.80) * 1000.0;
 
+  // Phase 4C: Two Independent Camera Zones Engine
+  if (window.__enableSplitCameraZones === true) {
+    const charFraming = window.__splitCameraFraming || {};
+    const charShots = window.__splitCharShots || [];
+    const boardShots = window.__splitBoardShots || [];
+
+    function resolveCharCoords(targetName) {
+      if (!targetName || targetName === 'wide') {
+        return { x: 0.0, y: 0.0, zoom: 1.0 };
+      }
+      if (charFraming[targetName]) {
+        return { x: charFraming[targetName].x, y: charFraming[targetName].y, zoom: charFraming[targetName].zoom };
+      }
+      const isRight = targetName.indexOf('right') !== -1 || targetName.indexOf('girl') !== -1 ||
+        (isSpeakerRight && targetName.indexOf('left') === -1 && targetName.indexOf('boy') === -1);
+      const fallbackKey = isRight ? 'speaker_right' : 'speaker_left';
+      if (charFraming[fallbackKey]) {
+        return { x: charFraming[fallbackKey].x, y: charFraming[fallbackKey].y, zoom: charFraming[fallbackKey].zoom };
+      }
+      return { x: 0.0, y: 0.0, zoom: 1.0 };
+    }
+
+    let charX = 0.0;
+    let charY = 0.0;
+    let charZoom = 1.0;
+
+    if (charShots.length > 0) {
+      if (ms < charShots[0].t_start) {
+        const initC = resolveCharCoords(charShots[0].from_target);
+        charX = initC.x;
+        charY = initC.y;
+        charZoom = initC.zoom;
+      } else {
+        let found = false;
+        for (let i = 0; i < charShots.length; i++) {
+          const s = charShots[i];
+          if (ms >= s.t_start && ms <= s.t_end) {
+            const p = (s.t_end > s.t_start) ? ((ms - s.t_start) / (s.t_end - s.t_start)) : 1.0;
+            const ease = easeInOutCubic(p);
+            const fromC = resolveCharCoords(s.from_target);
+            const toC = resolveCharCoords(s.to_target);
+            charX = fromC.x + ease * (toC.x - fromC.x);
+            charY = fromC.y + ease * (toC.y - fromC.y);
+            charZoom = fromC.zoom + ease * (toC.zoom - fromC.zoom);
+            found = true;
+            break;
+          } else if (ms > s.t_end) {
+            const nextShot = (i + 1 < charShots.length) ? charShots[i + 1] : null;
+            if (!nextShot || ms < nextShot.t_start) {
+              const toC = resolveCharCoords(s.to_target);
+              charX = toC.x;
+              charY = toC.y;
+              charZoom = toC.zoom;
+              found = true;
+              break;
+            }
+          }
+        }
+        if (!found && charShots.length > 0) {
+          const lastShot = charShots[charShots.length - 1];
+          const toC = resolveCharCoords(lastShot.to_target);
+          charX = toC.x;
+          charY = toC.y;
+          charZoom = toC.zoom;
+        }
+      }
+    }
+
+    const boardZoomPreset = window.__boardZoomTarget || 1.25;
+    function resolveBoardCoords(targetName) {
+      if (!targetName || targetName === 'wide') {
+        return { x: 0.0, y: 0.0, zoom: 1.0 };
+      }
+      return { x: 0.0, y: 0.0, zoom: boardZoomPreset };
+    }
+
+    let boardX = 0.0;
+    let boardY = 0.0;
+    let boardZoom = 1.0;
+
+    if (boardShots.length > 0) {
+      if (ms < boardShots[0].t_start) {
+        const initB = resolveBoardCoords(boardShots[0].from_target);
+        boardX = initB.x;
+        boardY = initB.y;
+        boardZoom = initB.zoom;
+      } else {
+        let foundB = false;
+        for (let i = 0; i < boardShots.length; i++) {
+          const s = boardShots[i];
+          if (ms >= s.t_start && ms <= s.t_end) {
+            const p = (s.t_end > s.t_start) ? ((ms - s.t_start) / (s.t_end - s.t_start)) : 1.0;
+            const ease = easeInOutCubic(p);
+            const fromB = resolveBoardCoords(s.from_target);
+            const toB = resolveBoardCoords(s.to_target);
+            boardX = fromB.x + ease * (toB.x - fromB.x);
+            boardY = fromB.y + ease * (toB.y - fromB.y);
+            boardZoom = fromB.zoom + ease * (toB.zoom - fromB.zoom);
+            foundB = true;
+            break;
+          } else if (ms > s.t_end) {
+            const nextShot = (i + 1 < boardShots.length) ? boardShots[i + 1] : null;
+            if (!nextShot || ms < nextShot.t_start) {
+              const toB = resolveBoardCoords(s.to_target);
+              boardX = toB.x;
+              boardY = toB.y;
+              boardZoom = toB.zoom;
+              foundB = true;
+              break;
+            }
+          }
+        }
+        if (!foundB && boardShots.length > 0) {
+          const lastShot = boardShots[boardShots.length - 1];
+          const toB = resolveBoardCoords(lastShot.to_target);
+          boardX = toB.x;
+          boardY = toB.y;
+          boardZoom = toB.zoom;
+        }
+      }
+    }
+
+    const state = {
+      board: {
+        camX: boardX,
+        camY: boardY,
+        camZoom: boardZoom,
+      },
+      character: {
+        camX: charX,
+        camY: charY,
+        camZoom: charZoom,
+      },
+      driftX: 0.0,
+      driftY: 0.0,
+      driftRot: 0.0,
+      pFactors: {},
+      cfg: cfg,
+    };
+    window.__lastCameraState = state;
+    return state;
+  }
+
   // Phase 4B: Purposeful Camera Shot Plan (deterministic pure function of time)
   if (window.__enablePurposefulCamera !== false && (cfg.mode === 'purposeful_only' || window.__cameraShotList !== undefined)) {
     const shotList = window.__cameraShotList || [];
@@ -347,6 +490,17 @@ function computeCameraState(ms, frameIdx) {
 }
 
 function applyMultiplaneParallax(camState) {
+  if (window.__enableSplitCameraZones === true) {
+    const boardEl = document.getElementById('board-camera-content');
+    const charEl = document.getElementById('character-camera-content');
+    if (boardEl && camState.board) {
+      boardEl.style.transform = 'translate(' + camState.board.camX.toFixed(2) + 'px, ' + camState.board.camY.toFixed(2) + 'px) scale(' + camState.board.camZoom.toFixed(3) + ')';
+    }
+    if (charEl && camState.character) {
+      charEl.style.transform = 'translate(' + camState.character.camX.toFixed(2) + 'px, ' + camState.character.camY.toFixed(2) + 'px) scale(' + camState.character.camZoom.toFixed(3) + ')';
+    }
+    return;
+  }
   const p = camState.pFactors;
   const layers = [
     { id: 'bg-layer-far', factor: p.bg_far || 0.08 },

@@ -4,8 +4,8 @@ Inputs: Environment variables and optional .env file.
 Outputs: Path objects, model constants, hard caps, pricing dictionaries.
 Depends on: dotenv, os, pathlib, sys
 Used by: brief, cli, config, core, core.assembler, core.board_objects, core.camera, core.caps, core.character2d, core.character_pack, core.client, core.cost, core.pipeline, core.style_profile, inventory, plugins.llm.gemini, plugins.motion.ffmpeg, plugins.render.animejs.audio_sync, plugins.render.animejs.capture, plugins.render.animejs.html_builder, plugins.render.animejs.layout, plugins.render.animejs.plugin, plugins.render.blender3d, plugins.render.cairo, plugins.render.fake, plugins.render.gemini, plugins.render.pillow, plugins.voice.gemini_tts, plugins.voice.piper, voice_utils
-Config keys: ANIME_JS_PATH, BLENDER_PATH, ENABLE_BOARD_OBJECTS, ENABLE_PARALLAX_BACKGROUND, ENABLE_PARALLAX_CACHE, ENABLE_PURPOSEFUL_CAMERA, ENABLE_STYLE_PROFILE, GEMINI_API_KEY, OneDrive, ROUGH_JS_PATH, TTS_CACHE_DIR
-Tests: tests/unit/test_board_objects.py, tests/unit/test_spend_cap.py, tests/unit/test_styles.py
+Config keys: ANIME_JS_PATH, BLENDER_PATH, ENABLE_BOARD_OBJECTS, ENABLE_PARALLAX_BACKGROUND, ENABLE_PARALLAX_CACHE, ENABLE_PURPOSEFUL_CAMERA, ENABLE_SPLIT_CAMERA_ZONES, ENABLE_STYLE_PROFILE, GEMINI_API_KEY, OneDrive, ROUGH_JS_PATH, TTS_CACHE_DIR
+Tests: tests/unit/test_board_objects.py, tests/unit/test_spend_cap.py, tests/unit/test_split_camera_zones.py, tests/unit/test_styles.py
 """
 
 import os
@@ -143,6 +143,55 @@ CAMERA_EASE_DURATION_SEC = 0.50
 ENABLE_PURPOSEFUL_CAMERA = True
 ENABLE_STYLE_PROFILE = True
 ENABLE_BOARD_OBJECTS = True
+
+# Phase 4C / Two Independent Camera Zones Layout (fixes cut-off speakers)
+ENABLE_SPLIT_CAMERA_ZONES = os.getenv("ENABLE_SPLIT_CAMERA_ZONES", "false").lower() in ("true", "1", "yes")
+LAYOUT_CAMERA_VERSION = "2.1.0_split_zones"
+
+# YouTube Shorts Safe Zones (clear of top 15%, bottom 25%, right 120px)
+SAFE_ZONE_TOP_PERCENT = 0.15
+SAFE_ZONE_BOTTOM_PERCENT = 0.25
+SAFE_ZONE_RIGHT_PX = 120.0
+SAFE_ZONE_TOP_PX = int(VIDEO_HEIGHT * SAFE_ZONE_TOP_PERCENT)                # 288
+SAFE_ZONE_BOTTOM_PX = int(VIDEO_HEIGHT * (1.0 - SAFE_ZONE_BOTTOM_PERCENT))   # 1440
+SAFE_ZONE_RIGHT_BOUNDARY_PX = float(VIDEO_WIDTH - SAFE_ZONE_RIGHT_PX)       # 960.0
+
+# Split Zones Dimensions and Placement (9:16 vertical 1080x1920)
+SPLIT_BOARD_ZONE = {
+    "top": 288.0,
+    "bottom": 808.0,
+    "left": 60.0,
+    "right": 960.0,
+    "width": 900.0,
+    "height": 520.0,
+}
+
+SPLIT_CHARACTER_ZONE = {
+    "top": 820.0,
+    "bottom": 1350.0,
+    "left": 60.0,
+    "right": 960.0,
+    "width": 900.0,
+    "height": 530.0,
+}
+
+SPLIT_SUBTITLE_ZONE = {
+    "top": 1355.0,
+    "bottom": 1435.0,
+    "left": 60.0,
+    "right": 960.0,
+    "width": 900.0,
+    "height": 80.0,
+    "margin_v": 485,
+}
+
+SPLIT_STAGE_ANCHORS = {
+    "left": {"left": 60.0, "top": 20.0, "width": 420.0, "height": 480.0},
+    "right": {"left": 420.0, "top": 20.0, "width": 420.0, "height": 480.0},
+}
+
+CAMERA_MAX_ZOOM = 1.35
+CAMERA_MIN_HOLD_SEC = 1.2
 
 # Cost Estimator Pricing (USD, based on current Google GenAI API rates)
 PRICING = {
