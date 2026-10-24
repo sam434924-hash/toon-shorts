@@ -1,0 +1,179 @@
+{
+  "video_name": "How_hackers_actually_break_into_systems_v2",
+  "created_at": "2026-10-24T18:35:04Z",
+  "style": "night_studio",
+  "characters": [
+    {
+      "name": "boy_b",
+      "pack": "boy_b",
+      "version": "1.0.0"
+    },
+    {
+      "name": "girl_a",
+      "pack": "girl_a",
+      "version": "1.0.0"
+    }
+  ],
+  "voice": {
+    "engine": "gemini_tts",
+    "voice_name": "gemini_tts",
+    "model": "gemini-3.8-flash-tts"
+  },
+  "library_pieces_used": [
+    "library/sfx/sfx_boing_1a844751dcfca809.wav",
+    "library/sfx/sfx_pop_47e9f275ccb62bb6.wav",
+    "library/sfx/sfx_whistle_f385dbe00174d272.wav"
+  ],
+  "tool_versions": {
+    "python": "3.14.4",
+    "ffmpeg": "installed",
+    "toonshorts": "1.0.0"
+  },
+  "level2_custom_visuals": [
+    {
+      "scene": 3,
+      "id": "sc3_leak_particles",
+      "effect": "custom_js"
+    },
+    {
+      "scene": 6,
+      "id": "sc6_radar_pulse",
+      "effect": "custom_js"
+    }
+  ],
+  "tools_used": [
+    {
+      "name": "AnimeJSRenderPlugin",
+      "version": "1.0.0",
+      "type": "renderer"
+    },
+    {
+      "name": "PlaywrightChromium",
+      "version": "1.50.0",
+      "type": "headless_browser"
+    },
+    {
+      "name": "FFmpeg",
+      "version": "installed",
+      "type": "video_encoder"
+    },
+    {
+      "name": "TreeSitterASTValidator",
+      "version": "0.25.0",
+      "type": "js_sandbox"
+    },
+    {
+      "category": "skills",
+      "name": "toon-shorts-directing"
+    },
+    {
+      "category": "skills",
+      "name": "animejs-animation"
+    },
+    {
+      "category": "skills",
+      "name": "toon-shorts-visual-check"
+    },
+    {
+      "category": "skills",
+      "name": "toon-shorts-style"
+    },
+    {
+      "category": "library hits",
+      "name": "library/sfx/sfx_boing_1a844751dcfca809.wav"
+    },
+    {
+      "category": "library hits",
+      "name": "library/sfx/sfx_pop_47e9f275ccb62bb6.wav"
+    },
+    {
+      "category": "library hits",
+      "name": "library/sfx/sfx_whistle_f385dbe00174d272.wav"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 1,
+      "id": "sc1_myth_badge",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 1,
+      "id": "sc1_padlock",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 2,
+      "id": "sc2_reuse_chain",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 3,
+      "id": "sc3_leak_card",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 3,
+      "id": "sc3_leak_particles",
+      "level": 2,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 4,
+      "id": "sc4_vault_header",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 4,
+      "id": "sc4_strength_meter",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 5,
+      "id": "sc5_phone_2fa",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 5,
+      "id": "sc5_iron_shield",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 6,
+      "id": "sc6_pw_comparison",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 6,
+      "id": "sc6_radar_pulse",
+      "level": 2,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 7,
+      "id": "sc7_trio_defense",
+      "level": 1,
+      "effect": "custom_svg"
+    }
+  ],
+  "images": []
+}

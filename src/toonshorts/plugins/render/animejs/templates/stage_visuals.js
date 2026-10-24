@@ -556,17 +556,20 @@ window.initBoardObjects = function() {
           svgEl.style.maxWidth = "100%";
           svgEl.style.maxHeight = "400px";
           svgEl.style.display = "block";
-          const paths = svgEl.querySelectorAll("path, line, polyline, polygon, rect, circle, ellipse");
-          paths.forEach((pEl) => {
-            let len = 100;
-            try {
-              if (typeof pEl.getTotalLength === "function") {
-                len = Math.max(1, pEl.getTotalLength());
-              }
-            } catch (e) {}
-            pEl.style.strokeDasharray = String(len);
-            pEl.style.strokeDashoffset = String(len);
-          });
+          const preset = (obj.data && obj.data.motion_preset ? obj.data.motion_preset : "draw_on").toLowerCase();
+          if (preset === "draw_on") {
+            const paths = svgEl.querySelectorAll("path, line, polyline, polygon, rect, circle, ellipse");
+            paths.forEach((pEl) => {
+              let len = 100;
+              try {
+                if (typeof pEl.getTotalLength === "function") {
+                  len = Math.max(1, pEl.getTotalLength());
+                }
+              } catch (e) {}
+              pEl.style.strokeDasharray = String(len);
+              pEl.style.strokeDashoffset = String(len);
+            });
+          }
         }
       }
 
@@ -597,7 +600,7 @@ window.updateBoardObjects = function(ms) {
     const el = document.getElementById(obj.id);
     if (!el) return;
 
-    if (ms < obj.start_ms || ms >= obj.exit_ms) {
+    if (ms < obj.start_ms || ms > obj.exit_ms) {
       el.style.opacity = "0";
       el.style.display = "none";
       return;

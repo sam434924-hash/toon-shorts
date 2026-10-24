@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-24: re-rendered hackers v2: authored custom Level 1 board visuals and Level 2 particle/radar effects with timing persistence, generated 1080x1920 MP4 video in 328s with manifest tracking, and documented 2-round visual review.
+
 - 2026-10-24: images and references: added reference intake with purpose notes and theme analysis draft, strict guard against copying reference images, single-save library indexing in library/elements/images/, background removal cutouts with torn-paper edge masks and soft shadows, image safety checks, and 5 data-driven image animation presets.
 
 - 2026-10-24: verification and hardening: added Level 2 infinite loop protection test with per-frame timeout and clean browser termination, enforced critic review threshold on pre-authored scene files, and added tree-sitter and playwright dependencies to requirements.

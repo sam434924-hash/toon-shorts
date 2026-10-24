@@ -25,7 +25,7 @@ from toonshorts.core import config
 from toonshorts.plugins.render.animejs.audio_sync import compute_mouth_cues_from_audio
 from toonshorts.plugins.render.animejs.html_builder import generate_whiteboard_html
 from toonshorts.core import paths
-from toonshorts.core.sandbox import create_sandboxed_context, evaluate_frame, DEFAULT_PER_FRAME_TIMEOUT_MS, STRICT_CSP_POLICY
+from toonshorts.core.sandbox import create_sandboxed_context, evaluate_frame, DEFAULT_PER_FRAME_TIMEOUT_MS, DEFAULT_NAVIGATION_TIMEOUT_MS, STRICT_CSP_POLICY
 from toonshorts.core.library import get_or_render_background, copy_library_asset
 from toonshorts.plugins.render.animejs.layout import build_parallax_background_layers
 
@@ -83,6 +83,7 @@ class SceneRenderJob:
     bg_layer_images: Optional[Dict[str, str]] = None
     enable_split_camera_zones: Optional[bool] = None
     subtitle_text: Optional[str] = None
+    board_objects: Optional[List[Dict[str, Any]]] = None
 
 
 _CACHE_LOCK = threading.Lock()
@@ -249,7 +250,7 @@ def capture_still_frame(
             page_errors = []
             page.on("pageerror", lambda err: page_errors.append(str(err)))
             try:
-                page.goto(html_file.resolve().as_uri(), timeout=DEFAULT_PER_FRAME_TIMEOUT_MS)
+                page.goto(html_file.resolve().as_uri(), timeout=DEFAULT_NAVIGATION_TIMEOUT_MS)
             except Exception as nav_err:
                 try:
                     page.close()
@@ -273,7 +274,8 @@ def capture_still_frame(
             if missing:
                 raise RuntimeError(f"Missing required JS modules or functions in {html_file.name}: {', '.join(missing)}")
             try:
-                evaluate_frame(page, f"() => window.seekTo({int(duration_sec * 1000)})", timeout_ms=DEFAULT_PER_FRAME_TIMEOUT_MS)
+                seek_ms = max(0, int(duration_sec * 1000) - 200)
+                evaluate_frame(page, f"() => window.seekTo({seek_ms})", timeout_ms=DEFAULT_PER_FRAME_TIMEOUT_MS)
             except Exception as eval_err:
                 try:
                     page.close()
@@ -355,6 +357,7 @@ def _render_job_with_browser(
         bg_layer_images=job.bg_layer_images,
         enable_split_camera_zones=job.enable_split_camera_zones,
         subtitle_text=job.subtitle_text,
+        board_objects=job.board_objects,
     )
 
     html_file = (work_dir / "whiteboard_scene.html").resolve()
@@ -428,7 +431,7 @@ def _render_job_with_browser(
             page_errors = []
             page.on("pageerror", lambda err: page_errors.append(str(err)))
             try:
-                page.goto(html_file.as_uri(), timeout=DEFAULT_PER_FRAME_TIMEOUT_MS)
+                page.goto(html_file.as_uri(), timeout=DEFAULT_NAVIGATION_TIMEOUT_MS)
             except Exception as nav_err:
                 logger.error("Navigation failed for scene %d: %s", job.scene_number, nav_err)
                 try:
@@ -566,6 +569,7 @@ def render_whiteboard_video(
     fast: bool = False,
     enable_split_camera_zones: Optional[bool] = None,
     subtitle_text: Optional[str] = None,
+    board_objects: Optional[List[Dict[str, Any]]] = None,
 ) -> Path:
     """
     Renders a fully animated MP4 video clip with mouth sync, camera moves, and Rough.js sketches.
@@ -593,6 +597,7 @@ def render_whiteboard_video(
         temp_dir=temp_dir,
         enable_split_camera_zones=enable_split_camera_zones,
         subtitle_text=subtitle_text,
+        board_objects=board_objects,
     )
     return _render_job_with_browser(job)
 

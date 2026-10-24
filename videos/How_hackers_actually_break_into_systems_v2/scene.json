@@ -1,0 +1,1132 @@
+{
+  "version": 2,
+  "title": "How_hackers_actually_break_into_systems_v2",
+  "art_style": "night_studio",
+  "emotional_arc": "From common misconceptions about hacking to empowered cybersecurity defense",
+  "characters": [
+    {
+      "name": "boy_b",
+      "visual_description": "Character boy_b",
+      "voice_id": "Puck"
+    },
+    {
+      "name": "girl_a",
+      "visual_description": "Character girl_a",
+      "voice_id": "Aoede"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_number": 1,
+      "speaker": "boy_b",
+      "dialogue_line": "Wait, do movie hackers really smash keyboards to break into your account?",
+      "action": "Boy wonders about movie hackers with cross on weak passwords",
+      "pose": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "gesture": "idle",
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 4.5,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ],
+      "visuals": [
+        {
+          "type": "check_cross",
+          "trigger_word": "account",
+          "params": {
+            "icon": "cross",
+            "label": "password123",
+            "color": "red"
+          }
+        }
+      ],
+      "board_objects": [
+        {
+          "id": "sc1_myth_badge",
+          "type": "custom",
+          "data": {
+            "level": 1,
+            "svg": "<svg viewBox=\"0 0 500 120\" width=\"500\" height=\"120\">\n                <rect x=\"10\" y=\"10\" width=\"480\" height=\"100\" rx=\"14\" fill=\"#0f172a\" stroke=\"#38bdf8\" stroke-width=\"3\"/>\n                <text x=\"250\" y=\"50\" font-family=\"Arial, sans-serif\" font-size=\"24\" font-weight=\"bold\" fill=\"#38bdf8\" text-anchor=\"middle\">HACKING MYTH VS REALITY</text>\n                <text x=\"250\" y=\"85\" font-family=\"Consolas, monospace\" font-size=\"18\" fill=\"#94a3b8\" text-anchor=\"middle\">No keyboard smashing required</text>\n            </svg>",
+            "motion_preset": "pop",
+            "timeline": [
+              {
+                "at": 0.0,
+                "scale": 0.0,
+                "opacity": 0.0
+              },
+              {
+                "at": 0.3,
+                "scale": 1.12,
+                "opacity": 1.0
+              },
+              {
+                "at": 0.5,
+                "scale": 1.0,
+                "opacity": 1.0
+              }
+            ]
+          },
+          "board_slot": "slot_top",
+          "start_ms": 500,
+          "exit_ms": 10000
+        },
+        {
+          "id": "sc1_padlock",
+          "type": "custom",
+          "data": {
+            "level": 1,
+            "svg": "<svg viewBox=\"0 0 400 300\" width=\"400\" height=\"300\">\n                <!-- Shackle -->\n                <path d=\"M 150 140 V 90 C 150 55, 250 55, 250 90 V 140\" fill=\"none\" stroke=\"#818cf8\" stroke-width=\"14\" stroke-linecap=\"round\"/>\n                <!-- Lock Body -->\n                <rect x=\"110\" y=\"130\" width=\"180\" height=\"140\" rx=\"18\" fill=\"#1e293b\" stroke=\"#38bdf8\" stroke-width=\"5\"/>\n                <!-- Keyhole -->\n                <circle cx=\"200\" cy=\"185\" r=\"14\" fill=\"#38bdf8\"/>\n                <polygon points=\"193,190 207,190 204,225 196,225\" fill=\"#38bdf8\"/>\n                <!-- Weak Password Tag -->\n                <rect x=\"80\" y=\"240\" width=\"240\" height=\"40\" rx=\"8\" fill=\"#ef4444\" opacity=\"0.95\"/>\n                <text x=\"200\" y=\"266\" font-family=\"Consolas, monospace\" font-size=\"18\" font-weight=\"bold\" fill=\"#ffffff\" text-anchor=\"middle\">WEAK: password123</text>\n            </svg>",
+            "motion_preset": "bounce",
+            "timeline": [
+              {
+                "at": 0.0,
+                "scale": 0.0,
+                "rotate": 0,
+                "opacity": 0.0
+              },
+              {
+                "at": 0.2,
+                "scale": 1.15,
+                "rotate": 0,
+                "opacity": 1.0
+              },
+              {
+                "at": 0.25,
+                "rotate": -6
+              },
+              {
+                "at": 0.3,
+                "rotate": 6
+              },
+              {
+                "at": 0.35,
+                "scale": 1.0,
+                "rotate": 0
+              },
+              {
+                "at": 0.65,
+                "scale": 1.05,
+                "rotate": -8
+              },
+              {
+                "at": 0.85,
+                "scale": 1.0,
+                "rotate": 0
+              }
+            ]
+          },
+          "board_slot": "slot_mid",
+          "start_ms": 1500,
+          "exit_ms": 10000
+        }
+      ],
+      "word_timings": [
+        {
+          "word": "Wait,",
+          "start_time": 0.0,
+          "end_time": 0.5
+        },
+        {
+          "word": "do",
+          "start_time": 0.64,
+          "end_time": 0.8
+        },
+        {
+          "word": "movie",
+          "start_time": 0.8,
+          "end_time": 1.04
+        },
+        {
+          "word": "hackers",
+          "start_time": 1.04,
+          "end_time": 1.48
+        },
+        {
+          "word": "really",
+          "start_time": 1.48,
+          "end_time": 2.18
+        },
+        {
+          "word": "smash",
+          "start_time": 2.18,
+          "end_time": 2.7
+        },
+        {
+          "word": "keyboards",
+          "start_time": 2.7,
+          "end_time": 3.1
+        },
+        {
+          "word": "to",
+          "start_time": 3.1,
+          "end_time": 3.46
+        },
+        {
+          "word": "break",
+          "start_time": 3.46,
+          "end_time": 3.64
+        },
+        {
+          "word": "into",
+          "start_time": 3.64,
+          "end_time": 3.82
+        },
+        {
+          "word": "your",
+          "start_time": 3.82,
+          "end_time": 3.98
+        },
+        {
+          "word": "account?",
+          "start_time": 3.98,
+          "end_time": 4.24
+        }
+      ]
+    },
+    {
+      "scene_number": 2,
+      "speaker": "girl_a",
+      "dialogue_line": "Not even close! Most breaches happen because people reuse simple passwords everywhere.",
+      "action": "Girl explains password reuse chain across platforms",
+      "pose": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "gesture": "idle",
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 6.0,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ],
+      "visuals": [
+        {
+          "type": "flow",
+          "trigger_word": "everywhere",
+          "params": {
+            "nodes": [
+              "Email",
+              "Social",
+              "Banking"
+            ],
+            "color": "red"
+          }
+        }
+      ],
+      "board_objects": [
+        {
+          "id": "sc2_reuse_chain",
+          "type": "custom",
+          "data": {
+            "level": 1,
+            "svg": "<svg viewBox=\"0 0 650 280\" width=\"650\" height=\"280\">\n                <!-- Node 1: Email -->\n                <rect x=\"20\" y=\"80\" width=\"160\" height=\"90\" rx=\"14\" fill=\"#1e293b\" stroke=\"#38bdf8\" stroke-width=\"4\"/>\n                <text x=\"100\" y=\"125\" font-family=\"Arial, sans-serif\" font-size=\"20\" font-weight=\"bold\" fill=\"#ffffff\" text-anchor=\"middle\">EMAIL</text>\n                <text x=\"100\" y=\"150\" font-family=\"Consolas, monospace\" font-size=\"14\" fill=\"#38bdf8\" text-anchor=\"middle\">pass123</text>\n                <!-- Chain link 1-2 -->\n                <path d=\"M 180 125 H 245\" stroke=\"#ef4444\" stroke-width=\"8\" stroke-dasharray=\"10 6\"/>\n                <!-- Node 2: Social (Breached) -->\n                <rect x=\"245\" y=\"65\" width=\"160\" height=\"120\" rx=\"14\" fill=\"#3f1d24\" stroke=\"#ef4444\" stroke-width=\"5\"/>\n                <text x=\"325\" y=\"110\" font-family=\"Arial, sans-serif\" font-size=\"20\" font-weight=\"bold\" fill=\"#ef4444\" text-anchor=\"middle\">SOCIAL</text>\n                <text x=\"325\" y=\"135\" font-family=\"Consolas, monospace\" font-size=\"14\" fill=\"#fca5a5\" text-anchor=\"middle\">pass123</text>\n                <text x=\"325\" y=\"165\" font-family=\"Arial, sans-serif\" font-size=\"13\" font-weight=\"bold\" fill=\"#ef4444\" text-anchor=\"middle\">\u26a0 BREACHED</text>\n                <!-- Chain link 2-3 (Broken) -->\n                <path d=\"M 405 125 L 430 115 M 440 135 L 470 125\" stroke=\"#ef4444\" stroke-width=\"8\"/>\n                <!-- Node 3: Banking -->\n                <rect x=\"470\" y=\"80\" width=\"160\" height=\"90\" rx=\"14\" fill=\"#1e293b\" stroke=\"#f59e0b\" stroke-width=\"4\"/>\n                <text x=\"550\" y=\"125\" font-family=\"Arial, sans-serif\" font-size=\"20\" font-weight=\"bold\" fill=\"#ffffff\" text-anchor=\"middle\">BANK</text>\n                <text x=\"550\" y=\"150\" font-family=\"Consolas, monospace\" font-size=\"14\" fill=\"#f59e0b\" text-anchor=\"middle\">pass123</text>\n                <!-- Warning Subtitle -->\n                <text x=\"325\" y=\"235\" font-family=\"Arial, sans-serif\" font-size=\"18\" font-weight=\"bold\" fill=\"#fca5a5\" text-anchor=\"middle\">Same password everywhere = All doors unlock!</text>\n            </svg>",
+            "motion_preset": "slide_in",
+            "timeline": [
+              {
+                "at": 0.0,
+                "scale": 0.9,
+                "opacity": 0.0
+              },
+              {
+                "at": 0.2,
+                "scale": 1.0,
+                "opacity": 1.0
+              },
+              {
+                "at": 0.55,
+                "scale": 1.02
+              },
+              {
+                "at": 0.75,
+                "scale": 1.05
+              },
+              {
+                "at": 0.95,
+                "scale": 1.0
+              }
+            ]
+          },
+          "board_slot": "slot_mid",
+          "start_ms": 800,
+          "exit_ms": 10000
+        }
+      ],
+      "word_timings": [
+        {
+          "word": "Not",
+          "start_time": 0.0,
+          "end_time": 0.64
+        },
+        {
+          "word": "even",
+          "start_time": 0.64,
+          "end_time": 1.04
+        },
+        {
+          "word": "close!",
+          "start_time": 1.04,
+          "end_time": 1.64
+        },
+        {
+          "word": "Most",
+          "start_time": 2.06,
+          "end_time": 2.34
+        },
+        {
+          "word": "breaches",
+          "start_time": 2.34,
+          "end_time": 2.76
+        },
+        {
+          "word": "happen",
+          "start_time": 2.76,
+          "end_time": 3.16
+        },
+        {
+          "word": "because",
+          "start_time": 3.16,
+          "end_time": 3.6
+        },
+        {
+          "word": "people",
+          "start_time": 3.6,
+          "end_time": 4.06
+        },
+        {
+          "word": "reuse",
+          "start_time": 4.06,
+          "end_time": 4.66
+        },
+        {
+          "word": "simple",
+          "start_time": 4.66,
+          "end_time": 5.0
+        },
+        {
+          "word": "passwords",
+          "start_time": 5.0,
+          "end_time": 5.42
+        },
+        {
+          "word": "everywhere.",
+          "start_time": 5.42,
+          "end_time": 6.02
+        }
+      ]
+    },
+    {
+      "scene_number": 3,
+      "speaker": "boy_b",
+      "dialogue_line": "So if one random shopping site leaks, they get into everything?",
+      "action": "Boy is shocked realizing credential reuse risks",
+      "pose": "shocked",
+      "camera_move": "zoom_in",
+      "transition": "cut",
+      "is_punchline": false,
+      "gesture": "idle",
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "shots": [
+        {
+          "start": 0.5,
+          "end": 4.8,
+          "type": "close_up",
+          "target": "boy_b",
+          "zoom": 1.18,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ],
+      "visuals": null,
+      "board_objects": [
+        {
+          "id": "sc3_leak_card",
+          "type": "custom",
+          "data": {
+            "level": 1,
+            "svg": "<svg viewBox=\"0 0 500 160\" width=\"500\" height=\"160\">\n                <rect x=\"10\" y=\"10\" width=\"480\" height=\"140\" rx=\"16\" fill=\"#1e293b\" stroke=\"#f59e0b\" stroke-width=\"4\"/>\n                <text x=\"250\" y=\"55\" font-family=\"Arial, sans-serif\" font-size=\"22\" font-weight=\"bold\" fill=\"#f59e0b\" text-anchor=\"middle\">SHOPPING SITE DATA LEAK</text>\n                <text x=\"250\" y=\"90\" font-family=\"Consolas, monospace\" font-size=\"16\" fill=\"#cbd5e1\" text-anchor=\"middle\">Database Dump: user@email.com : pass123</text>\n                <rect x=\"140\" y=\"105\" width=\"220\" height=\"30\" rx=\"6\" fill=\"#ef4444\" opacity=\"0.85\"/>\n                <text x=\"250\" y=\"126\" font-family=\"Arial, sans-serif\" font-size=\"14\" font-weight=\"bold\" fill=\"#ffffff\" text-anchor=\"middle\">CREDENTIAL REUSE RISK</text>\n            </svg>",
+            "motion_preset": "pop",
+            "timeline": [
+              {
+                "at": 0.0,
+                "scale": 0.0,
+                "opacity": 0.0
+              },
+              {
+                "at": 0.3,
+                "scale": 1.1,
+                "opacity": 1.0
+              },
+              {
+                "at": 0.5,
+                "scale": 1.0,
+                "opacity": 1.0
+              }
+            ]
+          },
+          "board_slot": "slot_top",
+          "start_ms": 600,
+          "exit_ms": 10000
+        },
+        {
+          "id": "sc3_leak_particles",
+          "type": "custom",
+          "data": {
+            "level": 2,
+            "svg": "<svg viewBox=\"0 0 400 160\" width=\"400\" height=\"160\">\n                <circle cx=\"100\" cy=\"40\" r=\"6\" fill=\"#38bdf8\"/>\n                <circle cx=\"160\" cy=\"70\" r=\"8\" fill=\"#ef4444\"/>\n                <circle cx=\"230\" cy=\"30\" r=\"7\" fill=\"#f59e0b\"/>\n                <circle cx=\"290\" cy=\"80\" r=\"6\" fill=\"#38bdf8\"/>\n                <circle cx=\"340\" cy=\"45\" r=\"9\" fill=\"#818cf8\"/>\n                <text x=\"200\" y=\"130\" font-family=\"Consolas, monospace\" font-size=\"16\" fill=\"#94a3b8\" text-anchor=\"middle\">[AUTOMATED SCANNING SPRAY]</text>\n            </svg>",
+            "js_code": "function(t, seed, el) {\n                var p = t;\n                var dy = Math.sin(p * Math.PI * 4) * 8.0;\n                var op = 0.5 + 0.5 * Math.sin(p * Math.PI * 3);\n                return { translateY: dy.toFixed(2), opacity: op.toFixed(2) };\n            }",
+            "effect_name": "custom_fx_leak_particles"
+          },
+          "board_slot": "slot_mid",
+          "start_ms": 1200,
+          "exit_ms": 10000
+        }
+      ],
+      "word_timings": [
+        {
+          "word": "So",
+          "start_time": 0.0,
+          "end_time": 0.72
+        },
+        {
+          "word": "if",
+          "start_time": 0.72,
+          "end_time": 1.2
+        },
+        {
+          "word": "one",
+          "start_time": 1.2,
+          "end_time": 1.74
+        },
+        {
+          "word": "random",
+          "start_time": 1.74,
+          "end_time": 2.18
+        },
+        {
+          "word": "shopping",
+          "start_time": 2.18,
+          "end_time": 2.6
+        },
+        {
+          "word": "site",
+          "start_time": 2.6,
+          "end_time": 2.98
+        },
+        {
+          "word": "leaks,",
+          "start_time": 2.98,
+          "end_time": 3.32
+        },
+        {
+          "word": "they",
+          "start_time": 3.76,
+          "end_time": 3.78
+        },
+        {
+          "word": "get",
+          "start_time": 3.78,
+          "end_time": 3.98
+        },
+        {
+          "word": "into",
+          "start_time": 3.98,
+          "end_time": 4.32
+        },
+        {
+          "word": "everything?",
+          "start_time": 4.32,
+          "end_time": 4.9
+        }
+      ]
+    },
+    {
+      "scene_number": 4,
+      "speaker": "girl_a",
+      "dialogue_line": "Exactly! That is why you need a password manager and high strength passphrases.",
+      "action": "Girl explains password strength with security meter and padlock drawing",
+      "pose": "idle",
+      "camera_move": "zoom_in",
+      "transition": "cut",
+      "is_punchline": false,
+      "gesture": "idle",
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "shots": [
+        {
+          "start": 0.5,
+          "end": 5.5,
+          "type": "close_up",
+          "target": "girl_a",
+          "zoom": 1.18,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ],
+      "visuals": [
+        {
+          "type": "counter",
+          "trigger_word": "strength",
+          "params": {
+            "from_val": 12,
+            "to_val": 99,
+            "label": "Strength",
+            "suffix": "%",
+            "color": "green"
+          }
+        },
+        {
+          "type": "draw_svg",
+          "trigger_word": "manager",
+          "params": {
+            "svg_paths": [
+              "M 260 170 V 120 C 260 85, 340 85, 340 120 V 170",
+              "M 220 170 H 380 V 300 H 220 Z",
+              "M 300 215 V 255"
+            ],
+            "view_box": "0 0 600 380",
+            "stroke_color": "#38bdf8",
+            "stroke_width": 5,
+            "fill_color": "none"
+          }
+        }
+      ],
+      "board_objects": [
+        {
+          "id": "sc4_vault_header",
+          "type": "custom",
+          "data": {
+            "level": 1,
+            "svg": "<svg viewBox=\"0 0 520 110\" width=\"520\" height=\"110\">\n                <rect x=\"10\" y=\"10\" width=\"500\" height=\"90\" rx=\"14\" fill=\"#0f172a\" stroke=\"#818cf8\" stroke-width=\"3\"/>\n                <text x=\"260\" y=\"48\" font-family=\"Arial, sans-serif\" font-size=\"22\" font-weight=\"bold\" fill=\"#818cf8\" text-anchor=\"middle\">PASSWORD MANAGER DEFENSE</text>\n                <text x=\"260\" y=\"78\" font-family=\"Consolas, monospace\" font-size=\"16\" fill=\"#38bdf8\" text-anchor=\"middle\">Unique 20+ char phrases for every site</text>\n            </svg>",
+            "motion_preset": "pop",
+            "timeline": [
+              {
+                "at": 0.0,
+                "scale": 0.0,
+                "opacity": 0.0
+              },
+              {
+                "at": 0.3,
+                "scale": 1.1,
+                "opacity": 1.0
+              },
+              {
+                "at": 0.5,
+                "scale": 1.0,
+                "opacity": 1.0
+              }
+            ]
+          },
+          "board_slot": "slot_top",
+          "start_ms": 600,
+          "exit_ms": 10000
+        },
+        {
+          "id": "sc4_strength_meter",
+          "type": "custom",
+          "data": {
+            "level": 1,
+            "svg": "<svg viewBox=\"0 0 540 220\" width=\"540\" height=\"220\">\n                <!-- Outer Frame -->\n                <rect x=\"10\" y=\"10\" width=\"520\" height=\"200\" rx=\"16\" fill=\"#1e293b\" stroke=\"#38bdf8\" stroke-width=\"4\"/>\n                <text x=\"40\" y=\"55\" font-family=\"Arial, sans-serif\" font-size=\"20\" font-weight=\"bold\" fill=\"#ffffff\">PASSPHRASE STRENGTH:</text>\n                <!-- Meter Background -->\n                <rect x=\"40\" y=\"75\" width=\"440\" height=\"36\" rx=\"8\" fill=\"#0f172a\"/>\n                <!-- Segments: Red, Amber, Green -->\n                <rect x=\"42\" y=\"77\" width=\"140\" height=\"32\" rx=\"6\" fill=\"#ef4444\"/>\n                <rect x=\"186\" y=\"77\" width=\"140\" height=\"32\" rx=\"6\" fill=\"#f59e0b\"/>\n                <rect x=\"330\" y=\"77\" width=\"148\" height=\"32\" rx=\"6\" fill=\"#22c55e\"/>\n                <!-- Count-up Display -->\n                <text x=\"260\" y=\"150\" font-family=\"Consolas, monospace\" font-size=\"28\" font-weight=\"bold\" fill=\"#22c55e\" text-anchor=\"middle\">99% [IRONCLAD GREEN]</text>\n                <text x=\"260\" y=\"185\" font-family=\"Arial, sans-serif\" font-size=\"16\" fill=\"#94a3b8\" text-anchor=\"middle\">CorrectHorseBatteryStaple-2026!</text>\n            </svg>",
+            "motion_preset": "slide_in",
+            "timeline": [
+              {
+                "at": 0.0,
+                "scale": 0.9,
+                "opacity": 0.0
+              },
+              {
+                "at": 0.2,
+                "scale": 1.0,
+                "opacity": 1.0
+              },
+              {
+                "at": 0.5,
+                "scale": 1.03
+              },
+              {
+                "at": 0.85,
+                "scale": 1.0
+              }
+            ]
+          },
+          "board_slot": "slot_mid",
+          "start_ms": 1500,
+          "exit_ms": 10000
+        }
+      ],
+      "word_timings": [
+        {
+          "word": "Exactly!",
+          "start_time": 0.64,
+          "end_time": 1.16
+        },
+        {
+          "word": "That",
+          "start_time": 1.72,
+          "end_time": 1.92
+        },
+        {
+          "word": "is",
+          "start_time": 1.92,
+          "end_time": 2.12
+        },
+        {
+          "word": "why",
+          "start_time": 2.12,
+          "end_time": 2.22
+        },
+        {
+          "word": "you",
+          "start_time": 2.22,
+          "end_time": 2.34
+        },
+        {
+          "word": "need",
+          "start_time": 2.34,
+          "end_time": 2.58
+        },
+        {
+          "word": "a",
+          "start_time": 2.58,
+          "end_time": 2.76
+        },
+        {
+          "word": "password",
+          "start_time": 2.76,
+          "end_time": 3.04
+        },
+        {
+          "word": "manager",
+          "start_time": 3.04,
+          "end_time": 3.42
+        },
+        {
+          "word": "and",
+          "start_time": 3.42,
+          "end_time": 3.88
+        },
+        {
+          "word": "high",
+          "start_time": 3.88,
+          "end_time": 4.1
+        },
+        {
+          "word": "strength",
+          "start_time": 4.1,
+          "end_time": 4.36
+        },
+        {
+          "word": "passphrases.",
+          "start_time": 4.62,
+          "end_time": 4.94
+        }
+      ]
+    },
+    {
+      "scene_number": 5,
+      "speaker": "girl_a",
+      "dialogue_line": "And always turn on two factor authentication! That puts an iron shield on your login.",
+      "action": "Girl shows two-factor defense with draw-on shield and active status",
+      "pose": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "gesture": "idle",
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 6.5,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ],
+      "visuals": [
+        {
+          "type": "draw_svg",
+          "trigger_word": "shield",
+          "params": {
+            "svg_paths": [
+              "M 300 60 L 400 95 V 190 C 400 270, 300 320, 300 320 C 300 320, 200 270, 200 190 V 95 Z",
+              "M 265 185 L 290 215 L 345 150"
+            ],
+            "view_box": "0 0 600 380",
+            "stroke_color": "#818cf8",
+            "stroke_width": 5,
+            "fill_color": "none"
+          }
+        },
+        {
+          "type": "check_cross",
+          "trigger_word": "authentication",
+          "params": {
+            "icon": "check",
+            "label": "2FA Active",
+            "color": "green"
+          }
+        }
+      ],
+      "board_objects": [
+        {
+          "id": "sc5_phone_2fa",
+          "type": "custom",
+          "data": {
+            "level": 1,
+            "svg": "<svg viewBox=\"0 0 460 140\" width=\"460\" height=\"140\">\n                <rect x=\"10\" y=\"10\" width=\"440\" height=\"120\" rx=\"16\" fill=\"#1e293b\" stroke=\"#38bdf8\" stroke-width=\"3\"/>\n                <!-- Mini Phone Icon -->\n                <rect x=\"30\" y=\"25\" width=\"55\" height=\"90\" rx=\"8\" fill=\"#0f172a\" stroke=\"#38bdf8\" stroke-width=\"2\"/>\n                <circle cx=\"57\" cy=\"103\" r=\"4\" fill=\"#38bdf8\"/>\n                <text x=\"110\" y=\"55\" font-family=\"Arial, sans-serif\" font-size=\"20\" font-weight=\"bold\" fill=\"#ffffff\">TWO-FACTOR (2FA) PROMPT</text>\n                <rect x=\"110\" y=\"70\" width=\"200\" height=\"35\" rx=\"6\" fill=\"#0f172a\" stroke=\"#22c55e\" stroke-width=\"2\"/>\n                <text x=\"210\" y=\"94\" font-family=\"Consolas, monospace\" font-size=\"20\" font-weight=\"bold\" fill=\"#22c55e\" text-anchor=\"middle\">CODE: 482-901</text>\n                <text x=\"360\" y=\"94\" font-family=\"Arial, sans-serif\" font-size=\"20\" font-weight=\"bold\" fill=\"#22c55e\">\u2713 APPROVED</text>\n            </svg>",
+            "motion_preset": "pop",
+            "timeline": [
+              {
+                "at": 0.0,
+                "scale": 0.0,
+                "opacity": 0.0
+              },
+              {
+                "at": 0.25,
+                "scale": 1.12,
+                "opacity": 1.0
+              },
+              {
+                "at": 0.4,
+                "scale": 1.0,
+                "opacity": 1.0
+              }
+            ]
+          },
+          "board_slot": "slot_top",
+          "start_ms": 600,
+          "exit_ms": 10000
+        },
+        {
+          "id": "sc5_iron_shield",
+          "type": "custom",
+          "data": {
+            "level": 1,
+            "svg": "<svg viewBox=\"0 0 500 280\" width=\"500\" height=\"280\">\n                <!-- Attack arrows deflecting -->\n                <path d=\"M 50 80 L 170 120 M 170 120 L 140 100 M 170 120 L 145 135\" stroke=\"#ef4444\" stroke-width=\"5\" stroke-linecap=\"round\"/>\n                <path d=\"M 50 180 L 170 150 M 170 150 L 145 140 M 170 150 L 140 170\" stroke=\"#ef4444\" stroke-width=\"5\" stroke-linecap=\"round\"/>\n                <!-- Glow Aura -->\n                <path d=\"M 270 30 L 370 65 V 155 C 370 220, 270 260, 270 260 C 270 260, 170 220, 170 155 V 65 Z\" fill=\"#38bdf8\" opacity=\"0.2\"/>\n                <!-- Main Shield Body -->\n                <path d=\"M 270 40 L 360 70 V 150 C 360 210, 270 248, 270 248 C 270 248, 180 210, 180 150 V 70 Z\" fill=\"#1e293b\" stroke=\"#38bdf8\" stroke-width=\"6\"/>\n                <!-- Heraldic Check / Cross Emblem -->\n                <path d=\"M 240 145 L 260 170 L 310 115\" fill=\"none\" stroke=\"#22c55e\" stroke-width=\"10\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n                <!-- Blocked Stamp -->\n                <rect x=\"200\" y=\"210\" width=\"140\" height=\"35\" rx=\"8\" fill=\"#22c55e\"/>\n                <text x=\"270\" y=\"234\" font-family=\"Arial, sans-serif\" font-size=\"18\" font-weight=\"bold\" fill=\"#0f172a\" text-anchor=\"middle\">BLOCKED!</text>\n            </svg>",
+            "motion_preset": "bounce",
+            "timeline": [
+              {
+                "at": 0.0,
+                "scale": 0.0,
+                "rotate": -10,
+                "opacity": 0.0
+              },
+              {
+                "at": 0.25,
+                "scale": 1.22,
+                "rotate": 2,
+                "opacity": 1.0
+              },
+              {
+                "at": 0.4,
+                "scale": 1.0,
+                "rotate": 0,
+                "opacity": 1.0
+              },
+              {
+                "at": 0.65,
+                "scale": 1.08,
+                "rotate": -2
+              },
+              {
+                "at": 0.85,
+                "scale": 1.0,
+                "rotate": 0
+              }
+            ]
+          },
+          "board_slot": "slot_mid",
+          "start_ms": 2200,
+          "exit_ms": 10000
+        }
+      ],
+      "word_timings": [
+        {
+          "word": "And",
+          "start_time": 0.0,
+          "end_time": 0.72
+        },
+        {
+          "word": "always",
+          "start_time": 0.72,
+          "end_time": 1.1
+        },
+        {
+          "word": "turn",
+          "start_time": 1.1,
+          "end_time": 1.34
+        },
+        {
+          "word": "on",
+          "start_time": 1.34,
+          "end_time": 1.62
+        },
+        {
+          "word": "two",
+          "start_time": 1.62,
+          "end_time": 1.86
+        },
+        {
+          "word": "factor",
+          "start_time": 1.86,
+          "end_time": 2.14
+        },
+        {
+          "word": "authentication!",
+          "start_time": 2.14,
+          "end_time": 2.68
+        },
+        {
+          "word": "That",
+          "start_time": 3.36,
+          "end_time": 3.56
+        },
+        {
+          "word": "puts",
+          "start_time": 3.56,
+          "end_time": 3.8
+        },
+        {
+          "word": "an",
+          "start_time": 3.8,
+          "end_time": 4.1
+        },
+        {
+          "word": "iron",
+          "start_time": 4.1,
+          "end_time": 4.36
+        },
+        {
+          "word": "shield",
+          "start_time": 4.36,
+          "end_time": 4.64
+        },
+        {
+          "word": "on",
+          "start_time": 4.64,
+          "end_time": 4.92
+        },
+        {
+          "word": "your",
+          "start_time": 4.92,
+          "end_time": 5.08
+        },
+        {
+          "word": "login.",
+          "start_time": 5.08,
+          "end_time": 5.36
+        }
+      ]
+    },
+    {
+      "scene_number": 6,
+      "speaker": "boy_b",
+      "dialogue_line": "So changing my password from password123 to password1234 did not save me?",
+      "action": "Boy realizes adding a number does not help with shocked laugh",
+      "pose": "laughing",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "gesture": "idle",
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 5.5,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ],
+      "visuals": [
+        {
+          "type": "step_ladder",
+          "trigger_word": "password123",
+          "params": {
+            "steps": [
+              "16+ Chars",
+              "Unique",
+              "2FA On"
+            ],
+            "color": "blue"
+          }
+        }
+      ],
+      "board_objects": [
+        {
+          "id": "sc6_pw_comparison",
+          "type": "custom",
+          "data": {
+            "level": 1,
+            "svg": "<svg viewBox=\"0 0 540 180\" width=\"540\" height=\"180\">\n                <rect x=\"10\" y=\"10\" width=\"520\" height=\"160\" rx=\"16\" fill=\"#1e293b\" stroke=\"#ef4444\" stroke-width=\"4\"/>\n                <text x=\"40\" y=\"50\" font-family=\"Arial, sans-serif\" font-size=\"20\" font-weight=\"bold\" fill=\"#ffffff\">WHY ADDING +1 DOES NOT SAVE YOU:</text>\n                <text x=\"40\" y=\"90\" font-family=\"Consolas, monospace\" font-size=\"18\" fill=\"#fca5a5\">password123  \u2192 Crack Time: 0.1s \u2717</text>\n                <text x=\"40\" y=\"125\" font-family=\"Consolas, monospace\" font-size=\"18\" fill=\"#fca5a5\">password1234 \u2192 Crack Time: 0.4s \u2717</text>\n                <text x=\"270\" y=\"155\" font-family=\"Arial, sans-serif\" font-size=\"14\" font-weight=\"bold\" fill=\"#fca5a5\" text-anchor=\"middle\">Rule: Patterns are recognized instantly by automated scripts</text>\n            </svg>",
+            "motion_preset": "slide_in",
+            "timeline": [
+              {
+                "at": 0.0,
+                "scale": 0.9,
+                "opacity": 0.0
+              },
+              {
+                "at": 0.25,
+                "scale": 1.0,
+                "opacity": 1.0
+              },
+              {
+                "at": 0.85,
+                "scale": 1.0
+              }
+            ]
+          },
+          "board_slot": "slot_top",
+          "start_ms": 800,
+          "exit_ms": 10000
+        },
+        {
+          "id": "sc6_radar_pulse",
+          "type": "custom",
+          "data": {
+            "level": 2,
+            "svg": "<svg viewBox=\"0 0 400 160\" width=\"400\" height=\"160\">\n                <circle cx=\"200\" cy=\"80\" r=\"50\" fill=\"none\" stroke=\"#38bdf8\" stroke-width=\"3\" opacity=\"0.8\"/>\n                <circle cx=\"200\" cy=\"80\" r=\"30\" fill=\"none\" stroke=\"#818cf8\" stroke-width=\"3\" opacity=\"0.8\"/>\n                <line x1=\"140\" y1=\"80\" x2=\"260\" y2=\"80\" stroke=\"#38bdf8\" stroke-width=\"2\"/>\n                <line x1=\"200\" y1=\"20\" x2=\"200\" y2=\"140\" stroke=\"#38bdf8\" stroke-width=\"2\"/>\n                <text x=\"200\" y=\"150\" font-family=\"Consolas, monospace\" font-size=\"14\" fill=\"#38bdf8\" text-anchor=\"middle\">ANALYZING ENTROPY</text>\n            </svg>",
+            "js_code": "function(t, seed, el) {\n                var p = t;\n                var sc = 1.0 + 0.12 * Math.sin(p * Math.PI * 4);\n                var rot = p * 60.0;\n                return { scale: sc.toFixed(3), rotate: rot.toFixed(1) };\n            }",
+            "effect_name": "custom_fx_radar_pulse"
+          },
+          "board_slot": "slot_mid",
+          "start_ms": 2000,
+          "exit_ms": 10000
+        }
+      ],
+      "word_timings": [
+        {
+          "word": "So",
+          "start_time": 0.0,
+          "end_time": 1.02
+        },
+        {
+          "word": "changing",
+          "start_time": 1.04,
+          "end_time": 1.34
+        },
+        {
+          "word": "my",
+          "start_time": 1.34,
+          "end_time": 1.62
+        },
+        {
+          "word": "password",
+          "start_time": 1.62,
+          "end_time": 1.96
+        },
+        {
+          "word": "from",
+          "start_time": 1.96,
+          "end_time": 2.52
+        },
+        {
+          "word": "password123",
+          "start_time": 2.52,
+          "end_time": 2.88
+        },
+        {
+          "word": "to",
+          "start_time": 3.54,
+          "end_time": 3.8
+        },
+        {
+          "word": "password1234",
+          "start_time": 3.8,
+          "end_time": 4.14
+        },
+        {
+          "word": "did",
+          "start_time": 5.22,
+          "end_time": 5.6
+        },
+        {
+          "word": "not",
+          "start_time": 5.6,
+          "end_time": 6.02
+        },
+        {
+          "word": "save",
+          "start_time": 6.02,
+          "end_time": 6.24
+        },
+        {
+          "word": "me?",
+          "start_time": 6.24,
+          "end_time": 6.58
+        }
+      ]
+    },
+    {
+      "scene_number": 7,
+      "speaker": "girl_a",
+      "dialogue_line": "Definitely not! Make it long, make it unique, and lock it down!",
+      "action": "Girl delivers confident closing advice with bright thumbs up",
+      "pose": "laughing",
+      "camera_move": "static",
+      "transition": "fade",
+      "is_punchline": true,
+      "gesture": "idle",
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 4.5,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ],
+      "visuals": null,
+      "board_objects": [
+        {
+          "id": "sc7_trio_defense",
+          "type": "custom",
+          "data": {
+            "level": 1,
+            "svg": "<svg viewBox=\"0 0 560 260\" width=\"560\" height=\"260\">\n                <rect x=\"10\" y=\"10\" width=\"540\" height=\"240\" rx=\"18\" fill=\"#0f172a\" stroke=\"#22c55e\" stroke-width=\"5\"/>\n                <text x=\"280\" y=\"50\" font-family=\"Arial, sans-serif\" font-size=\"24\" font-weight=\"bold\" fill=\"#22c55e\" text-anchor=\"middle\">IRONCLAD DEFENSE CHECKLIST</text>\n                <!-- 3 Green Check Items -->\n                <circle cx=\"60\" cy=\"95\" r=\"16\" fill=\"#22c55e\"/>\n                <path d=\"M 52 95 L 58 102 L 70 88\" stroke=\"#0f172a\" stroke-width=\"4\" fill=\"none\"/>\n                <text x=\"90\" y=\"102\" font-family=\"Arial, sans-serif\" font-size=\"20\" font-weight=\"bold\" fill=\"#ffffff\">1. MAKE IT LONG (16+ Characters)</text>\n\n                <circle cx=\"60\" cy=\"145\" r=\"16\" fill=\"#22c55e\"/>\n                <path d=\"M 52 145 L 58 152 L 70 138\" stroke=\"#0f172a\" stroke-width=\"4\" fill=\"none\"/>\n                <text x=\"90\" y=\"152\" font-family=\"Arial, sans-serif\" font-size=\"20\" font-weight=\"bold\" fill=\"#ffffff\">2. MAKE IT UNIQUE (Never Reuse)</text>\n\n                <circle cx=\"60\" cy=\"195\" r=\"16\" fill=\"#22c55e\"/>\n                <path d=\"M 52 195 L 58 202 L 70 188\" stroke=\"#0f172a\" stroke-width=\"4\" fill=\"none\"/>\n                <text x=\"90\" y=\"202\" font-family=\"Arial, sans-serif\" font-size=\"20\" font-weight=\"bold\" fill=\"#ffffff\">3. LOCK IT DOWN (Always Turn On 2FA)</text>\n            </svg>",
+            "motion_preset": "pop",
+            "timeline": [
+              {
+                "at": 0.0,
+                "scale": 0.0,
+                "opacity": 0.0
+              },
+              {
+                "at": 0.25,
+                "scale": 1.12,
+                "opacity": 1.0
+              },
+              {
+                "at": 0.5,
+                "scale": 1.0,
+                "opacity": 1.0
+              },
+              {
+                "at": 0.8,
+                "scale": 1.05
+              },
+              {
+                "at": 0.95,
+                "scale": 1.0
+              }
+            ]
+          },
+          "board_slot": "slot_mid",
+          "start_ms": 600,
+          "exit_ms": 10000
+        }
+      ],
+      "word_timings": [
+        {
+          "word": "Definitely",
+          "start_time": 0.0,
+          "end_time": 0.82
+        },
+        {
+          "word": "not!",
+          "start_time": 0.82,
+          "end_time": 1.48
+        },
+        {
+          "word": "Make",
+          "start_time": 1.9,
+          "end_time": 2.08
+        },
+        {
+          "word": "it",
+          "start_time": 2.08,
+          "end_time": 2.28
+        },
+        {
+          "word": "long,",
+          "start_time": 2.28,
+          "end_time": 2.64
+        },
+        {
+          "word": "make",
+          "start_time": 3.02,
+          "end_time": 3.2
+        },
+        {
+          "word": "it",
+          "start_time": 3.2,
+          "end_time": 3.38
+        },
+        {
+          "word": "unique,",
+          "start_time": 3.38,
+          "end_time": 3.78
+        },
+        {
+          "word": "and",
+          "start_time": 4.3,
+          "end_time": 4.46
+        },
+        {
+          "word": "lock",
+          "start_time": 4.46,
+          "end_time": 4.62
+        },
+        {
+          "word": "it",
+          "start_time": 4.62,
+          "end_time": 4.82
+        },
+        {
+          "word": "down!",
+          "start_time": 4.82,
+          "end_time": 5.14
+        }
+      ]
+    }
+  ]
+}

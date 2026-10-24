@@ -163,19 +163,23 @@ def validate_board_object_schema(
         return None
 
     # Resolve timing
-    raw_anchor = raw_obj.get("anchor", index * 1000)
+    raw_anchor = raw_obj.get("anchor")
+    if raw_anchor is None:
+        raw_anchor = raw_obj.get("start_ms", index * 1000)
     start_ms = parse_anchor_time_ms(raw_anchor, word_timings, total_duration_ms)
     start_ms = max(0, min(start_ms, max(0, total_duration_ms - 300)))
 
     raw_exit = raw_obj.get("exit_time")
+    if raw_exit is None:
+        raw_exit = raw_obj.get("exit_ms")
     if raw_exit is not None:
         try:
             exit_val = float(raw_exit)
             exit_ms = int(exit_val * 1000) if exit_val < 60.0 else int(exit_val)
         except Exception:
-            exit_ms = start_ms + DEFAULT_HOLD_MS
+            exit_ms = total_duration_ms
     else:
-        exit_ms = start_ms + DEFAULT_HOLD_MS
+        exit_ms = total_duration_ms
 
     exit_ms = max(start_ms + 400, min(exit_ms, total_duration_ms))
 

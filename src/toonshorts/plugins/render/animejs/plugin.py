@@ -74,6 +74,7 @@ class AnimeJSRenderPlugin(RenderInterface):
         scene_word_timings = getattr(scene, "word_timings", None)
         rough_seed = derive_scene_seed(scene.scene_number)
 
+        board_objects = getattr(scene, "board_objects", None)
         html_str = generate_whiteboard_html(
             title=title,
             words=words_data,
@@ -92,6 +93,7 @@ class AnimeJSRenderPlugin(RenderInterface):
             rough_seed=rough_seed,
             enable_split_camera_zones=style_preset.get("split_camera_zones", getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False)) if style_preset else getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False),
             subtitle_text=strip_speaker_label(scene.dialogue_line),
+            board_objects=board_objects,
         )
 
         html_file = temp_dir / f"scene_{scene.scene_number}_still.html"
@@ -219,6 +221,7 @@ class AnimeJSRenderPlugin(RenderInterface):
                     fast=fast,
                     enable_split_camera_zones=style_preset.get("split_camera_zones", getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False)) if style_preset else getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False),
                     subtitle_text=strip_speaker_label(scene.dialogue_line),
+                    board_objects=getattr(scene, "board_objects", None),
                 )
                 jobs.append(job)
 

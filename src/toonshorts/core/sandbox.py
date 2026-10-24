@@ -20,6 +20,7 @@ logger = logging.getLogger("toonshorts.sandbox")
 import os
 
 DEFAULT_PER_FRAME_TIMEOUT_MS = int(os.environ.get("TOONSHORTS_FRAME_TIMEOUT_MS", 5000))
+DEFAULT_NAVIGATION_TIMEOUT_MS = int(os.environ.get("TOONSHORTS_NAV_TIMEOUT_MS", 30000))
 
 # Strict zero-network Content-Security-Policy
 STRICT_CSP_POLICY = (
