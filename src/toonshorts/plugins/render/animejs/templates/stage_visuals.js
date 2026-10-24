@@ -773,6 +773,19 @@ window.updateBoardObjects = function(ms) {
         const scale = 1.0 + p * 0.25;
         imgWrap.style.transform = "scale(" + scale.toFixed(3) + ")";
         imgWrap.style.opacity = "1";
+      } else if (preset === "travel") {
+        const tx = (p - 0.5) * 260;
+        const hop = -Math.abs(Math.sin(p * Math.PI * 5)) * 18;
+        const shadowBlur = (10 + Math.abs(hop) * 0.4).toFixed(1);
+        const shadowOffset = (14 - hop * 0.3).toFixed(1);
+        imgWrap.style.transform = "translateX(" + tx.toFixed(2) + "px) translateY(" + hop.toFixed(2) + "px)";
+        imgWrap.style.filter = "drop-shadow(0px " + shadowOffset + "px " + shadowBlur + "px rgba(0,0,0,0.45))";
+        imgWrap.style.opacity = p > 0.03 ? (p < 0.95 ? "1" : String(((1 - p) / 0.05).toFixed(2))) : String((p / 0.03).toFixed(2));
+      } else if (preset === "pop_with_wobble" || preset === "pop-with-wobble") {
+        const enterScale = p < 0.25 ? (p / 0.25) * 1.15 : 1.0 + 0.15 * Math.exp(-(p - 0.25) * 6);
+        const wobble = Math.sin((p - 0.1) * Math.PI * 8) * Math.exp(-p * 4) * 12;
+        imgWrap.style.transform = "scale(" + Math.max(0, enterScale).toFixed(3) + ") rotate(" + wobble.toFixed(2) + "deg)";
+        imgWrap.style.opacity = p > 0.03 ? "1" : String((p / 0.03).toFixed(2));
       }
 
     } else if (obj.type === "custom") {

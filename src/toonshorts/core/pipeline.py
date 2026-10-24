@@ -2,7 +2,7 @@
 Purpose: Pipeline runner orchestrating LLM, voice, render, and motion into self-contained video bundles.
 Inputs: Video production topic, style name, flags, and plugin selections.
 Outputs: Path to finalized vertical animation MP4 short inside dedicated video directory.
-Depends on: brief, core.assembler, core.camera, core.config, core.cost, core.errors, core.layout_checker, core.library, core.models, core.paths, core.registry, core.validator, core.visual_checker, json, logging, pathlib, platform, shutil, subprocess, sys, time, typing, uuid
+Depends on: brief, core.assembler, core.camera, core.config, core.cost, core.errors, core.images, core.layout_checker, core.library, core.models, core.paths, core.registry, core.validator, core.visual_checker, json, logging, pathlib, platform, shutil, subprocess, sys, time, typing, uuid
 Used by: cli, core
 Config keys: DEFAULT_LLM, DEFAULT_MOTION, DEFAULT_RENDERER, DEFAULT_VOICE, STYLES_DIR, VIDEOS_DIR
 Tests: tests/smoke/test_smoke_pipeline.py, tests/unit/test_video_folders.py
@@ -190,11 +190,16 @@ def generate_manifest(
 
 
 def register_plan_custom_elements(plan: ScriptPlan, style: str, library_tracker: List[str]) -> None:
-    """Registers any custom visual elements from the screenplay into library/elements/custom/."""
+    """Registers any custom visual elements and images from the screenplay into library/elements/."""
     from toonshorts.core.library import (
         compute_element_key,
         resolve_theme_tags,
         save_element_once,
+    )
+    from toonshorts.core.images import (
+        compute_image_key,
+        find_image_in_library,
+        save_image_to_library,
     )
     theme_tags = resolve_theme_tags(style)
     if not plan or not getattr(plan, "scenes", None):
@@ -202,25 +207,52 @@ def register_plan_custom_elements(plan: ScriptPlan, style: str, library_tracker:
 
     for sc in plan.scenes:
         for bo in getattr(sc, "board_objects", []) or []:
-            if isinstance(bo, dict) and bo.get("type") == "custom":
-                bo_data = bo.get("data") or {}
-                key = compute_element_key(
-                    element_type="custom",
-                    content=bo_data,
-                    theme_tags=theme_tags,
-                    source="code",
-                    animated=True,
-                )
-                elem_path, is_hit = save_element_once(
-                    element_type="custom",
-                    key=key,
-                    file_name=f"custom_{key[:16]}.json",
-                    content=bo_data,
-                    theme_tags=theme_tags,
-                    animated=True,
-                    source="code",
-                )
-                library_tracker.append(f"library/elements/custom/{elem_path.name}")
+            if isinstance(bo, dict):
+                b_type = bo.get("type")
+                if b_type == "custom":
+                    bo_data = bo.get("data") or {}
+                    key = compute_element_key(
+                        element_type="custom",
+                        content=bo_data,
+                        theme_tags=theme_tags,
+                        source="code",
+                        animated=True,
+                    )
+                    elem_path, is_hit = save_element_once(
+                        element_type="custom",
+                        key=key,
+                        file_name=f"custom_{key[:16]}.json",
+                        content=bo_data,
+                        theme_tags=theme_tags,
+                        animated=True,
+                        source="code",
+                    )
+                    library_tracker.append(f"library/elements/custom/{elem_path.name}")
+                elif b_type == "image":
+                    bo_data = bo.get("data") or {}
+                    prompt = bo_data.get("prompt") or bo.get("prompt") or ""
+                    img_path_str = bo_data.get("image_url") or bo_data.get("src") or bo_data.get("path") or ""
+                    if prompt:
+                        key = compute_image_key(prompt, style)
+                        hit = find_image_in_library(key)
+                        if hit:
+                            fpath = paths.LIBRARY_ELEMENTS_DIR / "images" / hit.get("file_name", "")
+                            bo_data["image_url"] = str(fpath)
+                            library_tracker.append(f"library/elements/images/{fpath.name}")
+                        elif img_path_str and Path(img_path_str).is_file():
+                            from PIL import Image as PILImage
+                            with PILImage.open(img_path_str) as p_img:
+                                saved_path, is_hit = save_image_to_library(
+                                    p_img,
+                                    prompt=prompt,
+                                    style=style,
+                                    source="generated",
+                                )
+                                bo_data["image_url"] = str(saved_path)
+                                library_tracker.append(f"library/elements/images/{saved_path.name}")
+                    elif img_path_str:
+                        library_tracker.append(f"library/elements/images/{Path(img_path_str).name}")
+
         for vis in getattr(sc, "visuals", []) or []:
             v_type = getattr(vis, "type", None) or (vis.get("type") if isinstance(vis, dict) else None)
             if v_type == "custom":
@@ -242,6 +274,30 @@ def register_plan_custom_elements(plan: ScriptPlan, style: str, library_tracker:
                     source="code",
                 )
                 library_tracker.append(f"library/elements/custom/{elem_path.name}")
+            elif v_type == "image":
+                v_params = getattr(vis, "params", None) or (vis.get("params") if isinstance(vis, dict) else {})
+                prompt = v_params.get("prompt") or ""
+                img_path_str = v_params.get("image_url") or v_params.get("src") or v_params.get("path") or ""
+                if prompt:
+                    key = compute_image_key(prompt, style)
+                    hit = find_image_in_library(key)
+                    if hit:
+                        fpath = paths.LIBRARY_ELEMENTS_DIR / "images" / hit.get("file_name", "")
+                        v_params["image_url"] = str(fpath)
+                        library_tracker.append(f"library/elements/images/{fpath.name}")
+                    elif img_path_str and Path(img_path_str).is_file():
+                        from PIL import Image as PILImage
+                        with PILImage.open(img_path_str) as p_img:
+                            saved_path, is_hit = save_image_to_library(
+                                p_img,
+                                prompt=prompt,
+                                style=style,
+                                source="generated",
+                            )
+                            v_params["image_url"] = str(saved_path)
+                            library_tracker.append(f"library/elements/images/{saved_path.name}")
+                elif img_path_str:
+                    library_tracker.append(f"library/elements/images/{Path(img_path_str).name}")
 
 
 def run_pipeline(

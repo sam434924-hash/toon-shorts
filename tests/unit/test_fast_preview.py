@@ -37,20 +37,21 @@ def get_video_metadata(video_path: Path):
     return width, height, fps, duration
 
 
-def test_fast_mode_rejects_unsupported_renderer():
+def test_fast_mode_rejects_unsupported_renderer(tmp_path):
     """Fast draft mode must raise an explicit PipelineError if renderer does not support it."""
     with pytest.raises(PipelineError, match="does not support fast draft mode"):
         run_pipeline(
             topic="What is an API?",
             style_name="stickman",
             renderer_name="cairo",
+            output_dir=tmp_path / "videos",
             mock=True,
             fast=True,
         )
 
 
 @pytest.mark.slow
-def test_fast_preview_mode_pipeline(monkeypatch):
+def test_fast_preview_mode_pipeline(monkeypatch, tmp_path):
     """Verifies fast draft generates 540x960 @ 15fps in self-contained video folder on supported renderer."""
     # Ensure no Gemini calls occur by sabotaging API client if invoked
     from toonshorts.core.client import GeminiClientWrapper
@@ -61,11 +62,12 @@ def test_fast_preview_mode_pipeline(monkeypatch):
     monkeypatch.setattr(GeminiClientWrapper, "generate_image_with_retry", bomb_generate)
 
 
-    # Run pipeline in fast mode with cached topic and animejs
+    # Run pipeline in fast mode with cached topic and animejs in isolated temp directory
     fast_video = run_pipeline(
         topic="What is an API?",
         style_name="whiteboard",
         renderer_name="animejs",
+        output_dir=tmp_path / "videos",
         fast=True,
         overwrite=True,
     )

@@ -3,7 +3,7 @@ Purpose: Reference image intake, style analysis, safe image validation, cutouts 
 Inputs: Image paths, purpose notes, theme names, prompts, dimensions, and allowed directories.
 Outputs: Theme draft dictionaries, sanitized images, cutout PNGs, and manifest image items.
 Depends on: hashlib, json, logging, math, os, pathlib, re, shutil, typing, PIL, core.config, core.library, core.paths, core.models
-Used by: core.board_objects
+Used by: core.board_objects, core.pipeline
 Config keys: None
 Tests: tests/unit/test_images_and_references.py
 """
@@ -43,6 +43,9 @@ ALLOWED_IMAGE_PRESETS = {
     "detail_highlight",
     "stamp_slam",
     "push_in",
+    "travel",
+    "pop_with_wobble",
+    "pop-with-wobble",
 }
 
 

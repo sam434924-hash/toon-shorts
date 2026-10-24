@@ -211,9 +211,18 @@ def test_image_manifest_tracking():
 
 
 def test_image_animation_presets_board_object_schema():
-    """Verify all 5 image animation presets pass board object validation and slot assignment."""
+    """Verify all image animation presets (including travel and pop_with_wobble) pass board object validation and slot assignment."""
     assert "image" in ALLOWED_TYPES
-    for preset in ["slide_in_tilt", "paper_tear_reveal", "detail_highlight", "stamp_slam", "push_in"]:
+    for preset in [
+        "slide_in_tilt",
+        "paper_tear_reveal",
+        "detail_highlight",
+        "stamp_slam",
+        "push_in",
+        "travel",
+        "pop_with_wobble",
+        "pop-with-wobble",
+    ]:
         assert preset in ALLOWED_IMAGE_PRESETS
 
         raw = {

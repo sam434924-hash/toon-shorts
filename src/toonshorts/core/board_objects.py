@@ -38,6 +38,9 @@ ALLOWED_IMAGE_PRESETS = {
     "detail_highlight",
     "stamp_slam",
     "push_in",
+    "travel",
+    "pop_with_wobble",
+    "pop-with-wobble",
 }
 
 ALLOWED_ENTER_STYLES = {"draw_on", "pop", "slide_in"}
