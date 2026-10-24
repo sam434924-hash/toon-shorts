@@ -211,7 +211,10 @@ function initRoughSketches() {
       const paths = node.querySelectorAll("path");
       const pathData = [];
       paths.forEach(p => {
-        const len = p.getTotalLength();
+        let len = 100;
+        try {
+          if (typeof p.getTotalLength === "function") len = p.getTotalLength() || 100;
+        } catch (e) {}
         p.style.strokeDasharray = len;
         p.style.strokeDashoffset = len;
         pathData.push({ el: p, len: len });
@@ -230,7 +233,10 @@ function initRoughSketches() {
 
   // Initialize stage visual SVG paths for progressive stroke reveal
   document.querySelectorAll(".flow-arrow-svg path, .rr-arrow-svg path, .cc-icon-svg path").forEach(p => {
-    const len = p.getTotalLength() || 60;
+    let len = 60;
+    try {
+      if (typeof p.getTotalLength === "function") len = p.getTotalLength() || 60;
+    } catch (e) {}
     p.style.strokeDasharray = String(len);
     p.style.strokeDashoffset = String(len);
   });

@@ -1,0 +1,73 @@
+{
+  "video_name": "Fast_Custom_Visual_Demo",
+  "created_at": "2026-10-24T17:13:23Z",
+  "style": "whiteboard",
+  "characters": [
+    {
+      "name": "boy_b",
+      "pack": "boy_b",
+      "version": "1.0.0"
+    },
+    {
+      "name": "girl_a",
+      "pack": "girl_a",
+      "version": "1.0.0"
+    }
+  ],
+  "voice": {
+    "engine": "fake",
+    "voice_name": "en_US-lessac-medium",
+    "model": null
+  },
+  "library_pieces_used": [
+    "library/backgrounds/bg_whiteboard_far_142c5936d9b26248.png",
+    "library/backgrounds/bg_whiteboard_mid_d3db225a83b95f7a.png",
+    "library/backgrounds/bg_whiteboard_near_daad40c3feafc29f.png",
+    "library/elements/custom/custom_3b7eff32a498ae4d.json",
+    "library/sfx/sfx_boing_1a844751dcfca809.wav",
+    "library/sfx/sfx_pop_47e9f275ccb62bb6.wav",
+    "library/sfx/sfx_whistle_f385dbe00174d272.wav"
+  ],
+  "tool_versions": {
+    "python": "3.14.4",
+    "ffmpeg": "installed",
+    "toonshorts": "1.0.0"
+  },
+  "level2_custom_visuals": [],
+  "tools_used": [
+    {
+      "category": "skills",
+      "name": "toon-shorts-directing"
+    },
+    {
+      "category": "skills",
+      "name": "animejs-animation"
+    },
+    {
+      "category": "skills",
+      "name": "toon-shorts-visual-check"
+    },
+    {
+      "category": "skills",
+      "name": "toon-shorts-style"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_3b7eff32a498ae4d.json"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 1,
+      "id": "bo_custom_1",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 1,
+      "id": "vis_1",
+      "level": 1,
+      "effect": "custom_svg"
+    }
+  ]
+}

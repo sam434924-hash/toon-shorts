@@ -1,0 +1,148 @@
+{
+  "version": 2,
+  "title": "Fast_Custom_Visual_Demo",
+  "art_style": "whiteboard",
+  "emotional_arc": "Introduction of custom vector animation to clarity",
+  "characters": [
+    {
+      "name": "boy_b",
+      "visual_description": "Boy in casual hoodie",
+      "voice_id": "voice_1"
+    },
+    {
+      "name": "girl_a",
+      "visual_description": "Girl in blue jacket",
+      "voice_id": "voice_2"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_number": 1,
+      "speaker": "boy_b",
+      "dialogue_line": "Check out this custom animated visual right on the board!",
+      "action": "Pointing to custom animated SVG element",
+      "pose": "idle",
+      "gesture": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "visuals": [
+        {
+          "type": "custom",
+          "trigger_word": "visual",
+          "params": {
+            "level": 1,
+            "svg": "<svg viewBox=\"0 0 200 200\" width=\"200\" height=\"200\"><circle cx=\"100\" cy=\"100\" r=\"80\" fill=\"#2563EB\" opacity=\"0.2\" stroke=\"#2563EB\" stroke-width=\"6\"/><polygon points=\"80,60 140,100 80,140\" fill=\"#2563EB\"/></svg>",
+            "timeline": {
+              "preset": "pop_in",
+              "duration_ms": 600
+            }
+          }
+        }
+      ],
+      "board_objects": [
+        {
+          "id": "bo_custom_1",
+          "type": "custom",
+          "slot": "center",
+          "data": {
+            "level": 1,
+            "svg": "<svg viewBox=\"0 0 200 200\" width=\"200\" height=\"200\"><circle cx=\"100\" cy=\"100\" r=\"80\" fill=\"#2563EB\" opacity=\"0.2\" stroke=\"#2563EB\" stroke-width=\"6\"/><polygon points=\"80,60 140,100 80,140\" fill=\"#2563EB\"/></svg>",
+            "timeline": {
+              "preset": "pop_in",
+              "duration_ms": 600
+            }
+          }
+        }
+      ],
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 2.5,
+          "type": "wide",
+          "target": null
+        }
+      ]
+    },
+    {
+      "scene_number": 2,
+      "speaker": "girl_a",
+      "dialogue_line": "That custom vector animation renders smoothly.",
+      "action": "Student admiring vector graphic",
+      "pose": "waving",
+      "gesture": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "visuals": [],
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 2.5,
+          "type": "wide",
+          "target": null
+        }
+      ]
+    },
+    {
+      "scene_number": 3,
+      "speaker": "boy_b",
+      "dialogue_line": "And it was saved once into the reusable library elements catalog.",
+      "action": "Explaining single-save deduplication",
+      "pose": "idle",
+      "gesture": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "visuals": [],
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 2.5,
+          "type": "wide",
+          "target": null
+        }
+      ]
+    },
+    {
+      "scene_number": 4,
+      "speaker": "girl_a",
+      "dialogue_line": "Every tool used is now logged in the manifest.",
+      "action": "Celebrating tools_used logging",
+      "pose": "laughing",
+      "gesture": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": true,
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "visuals": [],
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 2.5,
+          "type": "wide",
+          "target": null
+        }
+      ]
+    }
+  ]
+}

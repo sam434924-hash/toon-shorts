@@ -1,0 +1,33 @@
+[22:43:12] INFO [toonshorts.pipeline]: Loaded pre-authored screenplay from C:\dev\toon-shorts\briefs\Fast_Custom_Visual_Demo_scene.json
+[22:43:12] INFO [toonshorts.library]: Library HIT for element custom/custom_3b7eff32a498ae4d.json (3b7eff32)
+[22:43:12] INFO [toonshorts.library]: Library HIT for element custom/custom_3b7eff32a498ae4d.json (3b7eff32)
+[22:43:12] INFO [toonshorts.pipeline]: Generating voice tracks using engine 'fake' (voice: en_US-lessac-medium)...
+[22:43:12] INFO [toonshorts.library]: Library HIT for element custom/custom_3b7eff32a498ae4d.json (3b7eff32)
+[22:43:12] INFO [toonshorts.library]: Library HIT for element custom/custom_3b7eff32a498ae4d.json (3b7eff32)
+[22:43:12] INFO [toonshorts.sync]: Saved word timings to C:\dev\toon-shorts\videos\.tmp-Fast_Custom_Visual_Demo-cd35ad7d\word_timings.json
+[22:43:12] INFO [toonshorts.sync]: Updated scene manifest written to C:\dev\toon-shorts\videos\.tmp-Fast_Custom_Visual_Demo-cd35ad7d\scene.json
+[22:43:12] INFO [toonshorts.sync]: Wrote audio-visual sync report to C:\dev\toon-shorts\videos\.tmp-Fast_Custom_Visual_Demo-cd35ad7d\sync_report.txt
+[22:43:18] INFO [toonshorts.pipeline]: Rendered 4 scene stills: ['Fast_Custom_Visual_Demo_still_sc1.png', 'Fast_Custom_Visual_Demo_still_sc2.png', 'Fast_Custom_Visual_Demo_still_sc3.png', 'Fast_Custom_Visual_Demo_still_sc4.png']
+[22:43:18] INFO [toonshorts.pipeline]: Running automated layout and safe-zone check on all scene stills...
+[22:43:23] INFO [toonshorts.pipeline]: Automated layout check PASSED for all 4 scenes.
+[22:43:23] INFO [toonshorts.pipeline]: Running automated visual quality review on scene stills...
+[22:43:23] INFO [toonshorts.visual_checker]: Visual review saved to C:\dev\toon-shorts\videos\.tmp-Fast_Custom_Visual_Demo-cd35ad7d\visual_review.md (Score: 10.0/10 - PASSED)
+[22:43:23] INFO [toonshorts.pipeline]: Visual quality review PASSED (Score: 10.0/10). Proceeding to full render.
+[22:43:23] INFO [toonshorts.library]: Library HIT (existing) for background whiteboard far -> bg_whiteboard_far_142c5936d9b26248.png
+[22:43:23] INFO [toonshorts.library]: Library HIT (existing) for background whiteboard mid -> bg_whiteboard_mid_d3db225a83b95f7a.png
+[22:43:23] INFO [toonshorts.library]: Library HIT (existing) for background whiteboard far -> bg_whiteboard_far_142c5936d9b26248.png
+[22:43:23] INFO [toonshorts.library]: Library HIT (existing) for background whiteboard mid -> bg_whiteboard_mid_d3db225a83b95f7a.png
+[22:43:23] INFO [toonshorts.library]: Library HIT (existing) for background whiteboard near -> bg_whiteboard_near_daad40c3feafc29f.png
+[22:43:23] INFO [toonshorts.library]: Library HIT (existing) for background whiteboard near -> bg_whiteboard_near_daad40c3feafc29f.png
+[22:43:29] INFO [toonshorts.library]: Library HIT (existing) for background whiteboard far -> bg_whiteboard_far_142c5936d9b26248.png
+[22:43:29] INFO [toonshorts.library]: Library HIT (existing) for background whiteboard mid -> bg_whiteboard_mid_d3db225a83b95f7a.png
+[22:43:29] INFO [toonshorts.library]: Library HIT (existing) for background whiteboard near -> bg_whiteboard_near_daad40c3feafc29f.png
+[22:43:32] INFO [toonshorts.library]: Library HIT (existing) for background whiteboard far -> bg_whiteboard_far_142c5936d9b26248.png
+[22:43:32] INFO [toonshorts.library]: Library HIT (existing) for background whiteboard mid -> bg_whiteboard_mid_d3db225a83b95f7a.png
+[22:43:32] INFO [toonshorts.library]: Library HIT (existing) for background whiteboard near -> bg_whiteboard_near_daad40c3feafc29f.png
+[22:43:41] INFO [toonshorts.library]: Library HIT for SFX pop (47e9f275)
+[22:43:41] INFO [toonshorts.library]: Library HIT for SFX boing (1a844751)
+[22:43:41] INFO [toonshorts.library]: Library HIT for SFX whistle (f385dbe0)
+[22:43:41] INFO [toonshorts.assembler]: Concatenating all scenes into unified video stream...
+[22:43:41] INFO [toonshorts.assembler]: Burning in ASS word-level captions to final video...
+[22:43:42] INFO [toonshorts.assembler]: Successfully assembled video: C:\dev\toon-shorts\videos\.tmp-Fast_Custom_Visual_Demo-cd35ad7d\Fast_Custom_Visual_Demo.mp4

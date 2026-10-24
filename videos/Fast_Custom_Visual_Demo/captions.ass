@@ -1,0 +1,50 @@
+[Script Info]
+Title: ToonShorts Captions
+ScriptType: v4.00+
+WrapStyle: 0
+PlayResX: 1080
+PlayResY: 1920
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial,86,&H00FFFFFF,&H000000FF,&H000F172A,&H80000000,-1,0,0,0,100,100,0,0,1,7,3,2,60,60,580,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.40,Default,,0,0,0,,{\c&H0000D8F6\b1}Check{\c&H00FFFFFF\b1} out this custom\Nanimated visual right on
+Dialogue: 0,0:00:00.40,0:00:00.64,Default,,0,0,0,,Check {\c&H0000D8F6\b1}out{\c&H00FFFFFF\b1} this custom\Nanimated visual right on
+Dialogue: 0,0:00:00.64,0:00:00.96,Default,,0,0,0,,Check out {\c&H0000D8F6\b1}this{\c&H00FFFFFF\b1} custom\Nanimated visual right on
+Dialogue: 0,0:00:00.96,0:00:01.44,Default,,0,0,0,,Check out this {\c&H0000D8F6\b1}custom{\c&H00FFFFFF\b1}\Nanimated visual right on
+Dialogue: 0,0:00:01.44,0:00:02.08,Default,,0,0,0,,Check out this custom\N{\c&H0000D8F6\b1}animated{\c&H00FFFFFF\b1} visual right on
+Dialogue: 0,0:00:02.08,0:00:02.56,Default,,0,0,0,,Check out this custom\Nanimated {\c&H0000D8F6\b1}visual{\c&H00FFFFFF\b1} right on
+Dialogue: 0,0:00:02.56,0:00:02.96,Default,,0,0,0,,Check out this custom\Nanimated visual {\c&H0000D8F6\b1}right{\c&H00FFFFFF\b1} on
+Dialogue: 0,0:00:02.96,0:00:03.12,Default,,0,0,0,,Check out this custom\Nanimated visual right {\c&H0000D8F6\b1}on{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:03.12,0:00:03.36,Default,,0,0,0,,{\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} board!
+Dialogue: 0,0:00:03.36,0:00:04.00,Default,,0,0,0,,the {\c&H0000D8F6\b1}board!{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:04.35,0:00:04.57,Default,,0,0,0,,{\c&H0000D8F6\b1}That{\c&H00FFFFFF\b1} custom vector\Nanimation renders smoothly.
+Dialogue: 0,0:00:04.57,0:00:04.91,Default,,0,0,0,,That {\c&H0000D8F6\b1}custom{\c&H00FFFFFF\b1} vector\Nanimation renders smoothly.
+Dialogue: 0,0:00:04.91,0:00:05.24,Default,,0,0,0,,That custom {\c&H0000D8F6\b1}vector{\c&H00FFFFFF\b1}\Nanimation renders smoothly.
+Dialogue: 0,0:00:05.24,0:00:05.75,Default,,0,0,0,,That custom vector\N{\c&H0000D8F6\b1}animation{\c&H00FFFFFF\b1} renders smoothly.
+Dialogue: 0,0:00:05.75,0:00:06.14,Default,,0,0,0,,That custom vector\Nanimation {\c&H0000D8F6\b1}renders{\c&H00FFFFFF\b1} smoothly.
+Dialogue: 0,0:00:06.14,0:00:06.75,Default,,0,0,0,,That custom vector\Nanimation renders {\c&H0000D8F6\b1}smoothly.{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:07.10,0:00:07.33,Default,,0,0,0,,{\c&H0000D8F6\b1}And{\c&H00FFFFFF\b1} it was saved\Nonce into the reusable
+Dialogue: 0,0:00:07.33,0:00:07.49,Default,,0,0,0,,And {\c&H0000D8F6\b1}it{\c&H00FFFFFF\b1} was saved\Nonce into the reusable
+Dialogue: 0,0:00:07.49,0:00:07.72,Default,,0,0,0,,And it {\c&H0000D8F6\b1}was{\c&H00FFFFFF\b1} saved\Nonce into the reusable
+Dialogue: 0,0:00:07.72,0:00:08.10,Default,,0,0,0,,And it was {\c&H0000D8F6\b1}saved{\c&H00FFFFFF\b1}\Nonce into the reusable
+Dialogue: 0,0:00:08.10,0:00:08.41,Default,,0,0,0,,And it was saved\N{\c&H0000D8F6\b1}once{\c&H00FFFFFF\b1} into the reusable
+Dialogue: 0,0:00:08.41,0:00:08.72,Default,,0,0,0,,And it was saved\Nonce {\c&H0000D8F6\b1}into{\c&H00FFFFFF\b1} the reusable
+Dialogue: 0,0:00:08.72,0:00:08.95,Default,,0,0,0,,And it was saved\Nonce into {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} reusable
+Dialogue: 0,0:00:08.95,0:00:09.57,Default,,0,0,0,,And it was saved\Nonce into the {\c&H0000D8F6\b1}reusable{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:09.57,0:00:10.11,Default,,0,0,0,,{\c&H0000D8F6\b1}library{\c&H00FFFFFF\b1} elements catalog.
+Dialogue: 0,0:00:10.11,0:00:10.73,Default,,0,0,0,,library {\c&H0000D8F6\b1}elements{\c&H00FFFFFF\b1} catalog.
+Dialogue: 0,0:00:10.73,0:00:11.50,Default,,0,0,0,,library elements {\c&H0000D8F6\b1}catalog.{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:11.85,0:00:12.30,Default,,0,0,0,,{\c&H0000D8F6\b1}Every{\c&H00FFFFFF\b1} tool used is\Nnow logged in the
+Dialogue: 0,0:00:12.30,0:00:12.66,Default,,0,0,0,,Every {\c&H0000D8F6\b1}tool{\c&H00FFFFFF\b1} used is\Nnow logged in the
+Dialogue: 0,0:00:12.66,0:00:13.02,Default,,0,0,0,,Every tool {\c&H0000D8F6\b1}used{\c&H00FFFFFF\b1} is\Nnow logged in the
+Dialogue: 0,0:00:13.02,0:00:13.20,Default,,0,0,0,,Every tool used {\c&H0000D8F6\b1}is{\c&H00FFFFFF\b1}\Nnow logged in the
+Dialogue: 0,0:00:13.20,0:00:13.47,Default,,0,0,0,,Every tool used is\N{\c&H0000D8F6\b1}now{\c&H00FFFFFF\b1} logged in the
+Dialogue: 0,0:00:13.47,0:00:14.01,Default,,0,0,0,,Every tool used is\Nnow {\c&H0000D8F6\b1}logged{\c&H00FFFFFF\b1} in the
+Dialogue: 0,0:00:14.01,0:00:14.19,Default,,0,0,0,,Every tool used is\Nnow logged {\c&H0000D8F6\b1}in{\c&H00FFFFFF\b1} the
+Dialogue: 0,0:00:14.19,0:00:14.46,Default,,0,0,0,,Every tool used is\Nnow logged in {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:14.46,0:00:15.45,Default,,0,0,0,,{\c&H0000D8F6\b1}manifest.{\c&H00FFFFFF\b1}

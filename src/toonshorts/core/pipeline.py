@@ -77,6 +77,8 @@ def generate_manifest(
     voice_plugin: Any,
     brief: Optional[Any] = None,
     library_pieces_used: Optional[List[str]] = None,
+    tools_used: Optional[List[Any]] = None,
+    renderer_name: Optional[str] = None,
 ) -> VideoManifest:
     """Builds a structured manifest recording character packs, voice model, tools, and library assets."""
     created_at = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
@@ -108,12 +110,20 @@ def generate_manifest(
     unique_pieces = sorted(list(set(library_pieces_used or [])))
 
     level2_visuals = []
+    custom_visuals_list = []
     if plan and getattr(plan, "scenes", None):
         for sc in plan.scenes:
             for bo in getattr(sc, "board_objects", []) or []:
                 if isinstance(bo, dict) and bo.get("type") == "custom":
                     data = bo.get("data", {})
-                    if isinstance(data, dict) and data.get("level") == 2:
+                    lvl = data.get("level", 1) if isinstance(data, dict) else 1
+                    custom_visuals_list.append({
+                        "scene": sc.scene_number,
+                        "id": bo.get("id"),
+                        "level": lvl,
+                        "effect": data.get("level2_effect_name", "custom_svg") if lvl == 2 else "custom_svg",
+                    })
+                    if lvl == 2:
                         level2_visuals.append({
                             "scene": sc.scene_number,
                             "id": bo.get("id"),
@@ -122,12 +132,49 @@ def generate_manifest(
             for vis in getattr(sc, "visuals", []) or []:
                 v_type = getattr(vis, "type", None) or (vis.get("type") if isinstance(vis, dict) else None)
                 v_params = getattr(vis, "params", None) or (vis.get("params") if isinstance(vis, dict) else {})
-                if v_type == "custom" and isinstance(v_params, dict) and v_params.get("level") == 2:
-                    level2_visuals.append({
+                if v_type == "custom":
+                    lvl = v_params.get("level", 1) if isinstance(v_params, dict) else 1
+                    custom_visuals_list.append({
                         "scene": sc.scene_number,
                         "id": getattr(vis, "id", f"vis_{sc.scene_number}"),
-                        "effect": v_params.get("level2_effect_name", "custom_js"),
+                        "level": lvl,
+                        "effect": v_params.get("level2_effect_name", "custom_svg") if lvl == 2 else "custom_svg",
                     })
+                    if lvl == 2:
+                        level2_visuals.append({
+                            "scene": sc.scene_number,
+                            "id": getattr(vis, "id", f"vis_{sc.scene_number}"),
+                            "effect": v_params.get("level2_effect_name", "custom_js"),
+                        })
+
+    # Assemble tools_used: (skills, image generation, library hits, custom visuals)
+    tools_used_list: List[Dict[str, Any]] = list(tools_used or [])
+
+    # 1. Skills
+    for sk in ["toon-shorts-directing", "animejs-animation", "toon-shorts-visual-check", "toon-shorts-style"]:
+        if not any(isinstance(x, dict) and x.get("category") == "skills" and x.get("name") == sk for x in tools_used_list):
+            tools_used_list.append({"category": "skills", "name": sk})
+
+    # 2. Image generation
+    r_name = renderer_name or getattr(brief, "renderer", None) or "animejs"
+    if r_name in {"gemini", "pillow"}:
+        if not any(isinstance(x, dict) and x.get("category") == "image generation" for x in tools_used_list):
+            tools_used_list.append({"category": "image generation", "name": r_name})
+
+    # 3. Library hits
+    for piece in unique_pieces:
+        if not any(isinstance(x, dict) and x.get("category") == "library hits" and x.get("name") == piece for x in tools_used_list):
+            tools_used_list.append({"category": "library hits", "name": piece})
+
+    # 4. Custom visuals
+    for cv in custom_visuals_list:
+        tools_used_list.append({
+            "category": "custom visuals",
+            "scene": cv["scene"],
+            "id": cv["id"],
+            "level": cv["level"],
+            "effect": cv["effect"],
+        })
 
     return VideoManifest(
         video_name=video_name,
@@ -138,7 +185,63 @@ def generate_manifest(
         library_pieces_used=unique_pieces,
         tool_versions=tool_versions,
         level2_custom_visuals=level2_visuals,
+        tools_used=tools_used_list,
     )
+
+
+def register_plan_custom_elements(plan: ScriptPlan, style: str, library_tracker: List[str]) -> None:
+    """Registers any custom visual elements from the screenplay into library/elements/custom/."""
+    from toonshorts.core.library import (
+        compute_element_key,
+        resolve_theme_tags,
+        save_element_once,
+    )
+    theme_tags = resolve_theme_tags(style)
+    if not plan or not getattr(plan, "scenes", None):
+        return
+
+    for sc in plan.scenes:
+        for bo in getattr(sc, "board_objects", []) or []:
+            if isinstance(bo, dict) and bo.get("type") == "custom":
+                bo_data = bo.get("data") or {}
+                key = compute_element_key(
+                    element_type="custom",
+                    content=bo_data,
+                    theme_tags=theme_tags,
+                    source="code",
+                    animated=True,
+                )
+                elem_path, is_hit = save_element_once(
+                    element_type="custom",
+                    key=key,
+                    file_name=f"custom_{key[:16]}.json",
+                    content=bo_data,
+                    theme_tags=theme_tags,
+                    animated=True,
+                    source="code",
+                )
+                library_tracker.append(f"library/elements/custom/{elem_path.name}")
+        for vis in getattr(sc, "visuals", []) or []:
+            v_type = getattr(vis, "type", None) or (vis.get("type") if isinstance(vis, dict) else None)
+            if v_type == "custom":
+                v_params = getattr(vis, "params", None) or (vis.get("params") if isinstance(vis, dict) else {})
+                key = compute_element_key(
+                    element_type="custom",
+                    content=v_params,
+                    theme_tags=theme_tags,
+                    source="code",
+                    animated=True,
+                )
+                elem_path, is_hit = save_element_once(
+                    element_type="custom",
+                    key=key,
+                    file_name=f"custom_{key[:16]}.json",
+                    content=v_params,
+                    theme_tags=theme_tags,
+                    animated=True,
+                    source="code",
+                )
+                library_tracker.append(f"library/elements/custom/{elem_path.name}")
 
 
 def run_pipeline(
@@ -306,6 +409,9 @@ def run_pipeline(
                 if (paths.LIBRARY_TTS_DIR / f"{stem}.wav").is_file():
                     library_pieces_used.append(f"library/tts/{stem}.wav")
 
+        # Register any custom elements into library/elements/custom/
+        register_plan_custom_elements(refined_plan, style_clean, library_pieces_used)
+
         # Mandatory audio-visual word timing alignment and trigger resolution
         enforce_and_prepare_word_timings(
             plan=refined_plan,
@@ -404,6 +510,7 @@ def run_pipeline(
 
 def run_pipeline_from_brief(
     brief_source: Union[str, Path, brief_module.VideoBrief],
+    renderer_name: Optional[str] = None,
     output_dir: Optional[Path] = None,
     stills_only: bool = False,
     auto_confirm: bool = True,
@@ -538,6 +645,9 @@ def run_pipeline_from_brief(
         (build_dir / "brief.json").write_text(json.dumps(brief.model_dump(), indent=2), encoding="utf-8")
         (build_dir / "scene.json").write_text(json.dumps(plan.model_dump(), indent=2), encoding="utf-8")
 
+        # Register any custom elements into library/elements/custom/
+        register_plan_custom_elements(plan, brief.style, library_pieces_used)
+
         # 3. Voice generation into voice_dir
         voice_engine = brief.voice_engine
         if not voice_engine:
@@ -573,6 +683,9 @@ def run_pipeline_from_brief(
                 if (paths.LIBRARY_TTS_DIR / f"{stem}.wav").is_file():
                     library_pieces_used.append(f"library/tts/{stem}.wav")
 
+        # Register any custom elements into library/elements/custom/
+        register_plan_custom_elements(plan, brief.style, library_pieces_used)
+
         # Mandatory audio-visual word timing alignment and trigger resolution
         enforce_and_prepare_word_timings(
             plan=plan,
@@ -588,11 +701,11 @@ def run_pipeline_from_brief(
         )
 
         # 4. Render key scene stills first
-        renderer_name = "fake" if mock else (preset.get("renderer") or config.DEFAULT_RENDERER)
-        if renderer_name == "auto":
-            renderer_name = "cairo" if brief.style == "stickman" else "animejs"
+        active_renderer_name = renderer_name or getattr(brief, "renderer", None) or ("fake" if mock else (preset.get("renderer") or config.DEFAULT_RENDERER))
+        if active_renderer_name == "auto":
+            active_renderer_name = "cairo" if brief.style == "stickman" else "animejs"
 
-        renderer = get_renderer(renderer_name)
+        renderer = get_renderer(active_renderer_name)
         still_paths: List[Path] = []
         if stills_only or renderer_name == "animejs":
             key_indices = list(range(len(plan.scenes)))

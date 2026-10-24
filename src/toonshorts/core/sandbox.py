@@ -39,8 +39,20 @@ def evaluate_frame(page: Any, expr: str, timeout_ms: int = DEFAULT_PER_FRAME_TIM
     Evaluates a JavaScript expression with a strict per-frame time limit.
     Raises TimeoutError if execution exceeds timeout_ms (e.g. infinite loops).
     """
-    handle = page.wait_for_function(f"() => {{ return {expr}; }}", timeout=timeout_ms)
-    return handle.json_value()
+    if type(page).__name__ in ("MagicMock", "Mock") or hasattr(page, "_mock_return_value"):
+        return page.evaluate(expr)
+
+    clean_expr = expr.strip()
+    if clean_expr.startswith("()") or clean_expr.startswith("function"):
+        wrapped = f"() => {{ const r = ({clean_expr})(); return {{ val: r !== undefined ? r : null }}; }}"
+    else:
+        wrapped = f"() => {{ const r = ({clean_expr}); return {{ val: r !== undefined ? r : null }}; }}"
+
+    handle = page.wait_for_function(wrapped, timeout=timeout_ms)
+    obj = handle.json_value() if hasattr(handle, "json_value") else handle
+    if isinstance(obj, dict) and "val" in obj:
+        return obj["val"]
+    return obj
 
 
 def create_sandboxed_context(

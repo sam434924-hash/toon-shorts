@@ -3,7 +3,7 @@ Purpose: Parse-based SVG sanitizer and allowlist validator for agent-written SVG
 Inputs: Raw SVG strings.
 Outputs: Clean, valid, sanitized SVG strings, or ValueError on hostile input.
 Depends on: xml.etree.ElementTree, re, typing
-Used by: core.board_objects
+Used by: core.board_objects, core.visuals
 Config keys: None
 Tests: tests/unit/test_phase1_safe_foundation.py
 """

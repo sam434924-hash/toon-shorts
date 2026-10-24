@@ -1,0 +1,8 @@
+{
+  "level": 1,
+  "svg": "<svg viewBox=\"0 0 200 200\" width=\"200\" height=\"200\"><circle cx=\"100\" cy=\"100\" r=\"80\" fill=\"#2563EB\" opacity=\"0.2\" stroke=\"#2563EB\" stroke-width=\"6\"/><polygon points=\"80,60 140,100 80,140\" fill=\"#2563EB\"/></svg>",
+  "timeline": {
+    "preset": "pop_in",
+    "duration_ms": 600
+  }
+}

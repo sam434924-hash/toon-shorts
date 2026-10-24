@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-24: phase 3 tools actually used: added asset planning step to directing skill, element indexing and single-save deduplication in library/elements/<type>/, and manifest tools_used tracking across skills, image generation, library hits, and custom visuals.
+
 - 2026-10-24: phase 2 quality gate: added visual review checklist and automated contrast-ratio inspection, check-visuals command, up to 2 fix rounds before rendering, and critic score threshold stops (< 7.0) with --allow-low-score override.
 
 - 2026-10-24: phase 1 safe foundation: deterministic background cache key without camera/split flags with library reuse, parse-based SVG sanitizer, custom board visuals (Level 1 presets & Level 2 AST scanner), and hardened Playwright render sandbox.

@@ -1,0 +1,138 @@
+{
+  "video_dir": "C:\\dev\\toon-shorts\\videos\\.tmp-Fast_Custom_Visual_Demo-cd35ad7d",
+  "total_scenes": 4,
+  "passed": true,
+  "failed_scenes": [],
+  "violations_count": 0,
+  "violations": [],
+  "scene_results": [
+    {
+      "scene": 1,
+      "html_file": "scene_1_still.html",
+      "passed": true,
+      "violations": [],
+      "board_zone": {
+        "top": 288,
+        "bottom": 808,
+        "left": 60,
+        "right": 960,
+        "width": 900,
+        "height": 520,
+        "visible": true,
+        "scrollWidth": 900,
+        "scrollHeight": 520,
+        "clientWidth": 900,
+        "clientHeight": 520
+      },
+      "title_badge": {
+        "top": 304,
+        "bottom": 368,
+        "left": 351.58,
+        "right": 668.42,
+        "width": 316.84,
+        "height": 64,
+        "visible": false,
+        "scrollWidth": 317,
+        "scrollHeight": 64,
+        "clientWidth": 317,
+        "clientHeight": 64
+      }
+    },
+    {
+      "scene": 2,
+      "html_file": "scene_2_still.html",
+      "passed": true,
+      "violations": [],
+      "board_zone": {
+        "top": 288,
+        "bottom": 808,
+        "left": 60,
+        "right": 960,
+        "width": 900,
+        "height": 520,
+        "visible": true,
+        "scrollWidth": 900,
+        "scrollHeight": 520,
+        "clientWidth": 900,
+        "clientHeight": 520
+      },
+      "title_badge": {
+        "top": 304,
+        "bottom": 368,
+        "left": 308.59,
+        "right": 711.41,
+        "width": 402.81,
+        "height": 64,
+        "visible": false,
+        "scrollWidth": 403,
+        "scrollHeight": 64,
+        "clientWidth": 403,
+        "clientHeight": 64
+      }
+    },
+    {
+      "scene": 3,
+      "html_file": "scene_3_still.html",
+      "passed": true,
+      "violations": [],
+      "board_zone": {
+        "top": 288,
+        "bottom": 808,
+        "left": 60,
+        "right": 960,
+        "width": 900,
+        "height": 520,
+        "visible": true,
+        "scrollWidth": 900,
+        "scrollHeight": 520,
+        "clientWidth": 900,
+        "clientHeight": 520
+      },
+      "title_badge": {
+        "top": 304,
+        "bottom": 368,
+        "left": 383.73,
+        "right": 636.27,
+        "width": 252.53,
+        "height": 64,
+        "visible": false,
+        "scrollWidth": 253,
+        "scrollHeight": 64,
+        "clientWidth": 253,
+        "clientHeight": 64
+      }
+    },
+    {
+      "scene": 4,
+      "html_file": "scene_4_still.html",
+      "passed": true,
+      "violations": [],
+      "board_zone": {
+        "top": 288,
+        "bottom": 808,
+        "left": 60,
+        "right": 960,
+        "width": 900,
+        "height": 520,
+        "visible": true,
+        "scrollWidth": 900,
+        "scrollHeight": 520,
+        "clientWidth": 900,
+        "clientHeight": 520
+      },
+      "title_badge": {
+        "top": 304,
+        "bottom": 368,
+        "left": 341.14,
+        "right": 678.86,
+        "width": 337.72,
+        "height": 64,
+        "visible": false,
+        "scrollWidth": 338,
+        "scrollHeight": 64,
+        "clientWidth": 338,
+        "clientHeight": 64
+      }
+    }
+  ]
+}

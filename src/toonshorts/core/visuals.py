@@ -107,6 +107,10 @@ def get_visual_dimensions(visual_type: str, params: Dict[str, Any]) -> Tuple[flo
         return (720.0, 160.0)
     elif visual_type == "blue_blood_drop":
         return (720.0, 240.0)
+    elif visual_type == "custom":
+        w = float(params.get("width", 200.0))
+        h = float(params.get("height", 200.0))
+        return (w, h)
     return (600.0, 80.0)
 
 
@@ -135,12 +139,34 @@ def validate_visual_item(
         )
 
     # 3. Injection check
-    if check_script_injection(params) or check_script_injection(trigger_word):
-        errors.append(f"{prefix}: forbidden script, HTML, or SVG markup detected in visual params")
+    if check_script_injection(trigger_word):
+        errors.append(f"{prefix}: forbidden script, HTML, or SVG markup detected in visual trigger_word")
+
+    if v_type != "custom":
+        if check_script_injection(params):
+            errors.append(f"{prefix}: forbidden script, HTML, or SVG markup detected in visual params")
+    else:
+        # Validate Level 1 or Level 2 custom visual
+        level = params.get("level", 1)
+        if level == 1:
+            from toonshorts.core.sanitizer import sanitize_svg
+            svg_code = params.get("svg", "")
+            if svg_code:
+                try:
+                    sanitize_svg(svg_code)
+                except Exception as e:
+                    errors.append(f"{prefix}: custom visual Level 1 SVG rejected by sanitizer: {e}")
+        elif level == 2:
+            from toonshorts.core.ast_scanner import scan_js_code
+            js_code = params.get("js", "")
+            if js_code:
+                is_valid, violations = scan_js_code(js_code)
+                if not is_valid:
+                    errors.append(f"{prefix}: custom visual Level 2 JS security violations: {', '.join(violations)}")
 
     # 4. Color / style check
     color = params.get("color", "default")
-    if v_type not in ("kinetic_words", "draw_svg", "octopus_vector", "hearts_pop", "blue_blood_drop"):
+    if v_type not in ("kinetic_words", "draw_svg", "octopus_vector", "hearts_pop", "blue_blood_drop", "custom"):
         if color not in ALLOWED_PALETTES:
             errors.append(
                 f"{prefix}: color '{color}' is not in allowed palette: {sorted(list(ALLOWED_PALETTES.keys()))}"

@@ -20,7 +20,8 @@ window.updateStageVisuals = function(ms) {
       const pArrow = Math.min(1.0, p / 0.7);
       const arrowPaths = el.querySelectorAll(".flow-arrow-svg path");
       arrowPaths.forEach(pEl => {
-        const len = pEl.getTotalLength() || 60;
+        let len = 60;
+        try { if (typeof pEl.getTotalLength === 'function') len = pEl.getTotalLength() || 60; } catch (e) {}
         pEl.style.strokeDashoffset = String(len * (1 - pArrow));
       });
       const nodeBadges = el.querySelectorAll(".flow-node-badge");
@@ -31,7 +32,8 @@ window.updateStageVisuals = function(ms) {
     } else if (vis.type === "request_response") {
       const arrowPaths = el.querySelectorAll(".rr-arrow-svg path");
       arrowPaths.forEach(pEl => {
-        const len = pEl.getTotalLength() || 320;
+        let len = 320;
+        try { if (typeof pEl.getTotalLength === 'function') len = pEl.getTotalLength() || 320; } catch (e) {}
         pEl.style.strokeDashoffset = String(len * (1 - Math.min(1.0, p / 0.5)));
       });
       const boxBob = Math.sin((ms - vis.start_ms) * 0.003) * 2;
@@ -96,11 +98,13 @@ window.updateStageVisuals = function(ms) {
       const p1 = Math.min(1.0, p / 0.5);
       const p2 = Math.max(0.0, (p - 0.5) / 0.5);
       if (stroke1) {
-        const l1 = stroke1.getTotalLength() || 40;
+        let l1 = 40;
+        try { if (typeof stroke1.getTotalLength === 'function') l1 = stroke1.getTotalLength() || 40; } catch (e) {}
         stroke1.style.strokeDashoffset = String(l1 * (1 - p1));
       }
       if (stroke2) {
-        const l2 = stroke2.getTotalLength() || 40;
+        let l2 = 40;
+        try { if (typeof stroke2.getTotalLength === 'function') l2 = stroke2.getTotalLength() || 40; } catch (e) {}
         stroke2.style.strokeDashoffset = String(l2 * (1 - p2));
       }
       const iconBadge = el.querySelector(".cc-icon-badge");
@@ -509,11 +513,14 @@ window.initBoardObjects = function() {
           svgEl.style.display = "block";
           const paths = svgEl.querySelectorAll("path, line, polyline, polygon, rect, circle, ellipse");
           paths.forEach((pEl) => {
-            if (typeof pEl.getTotalLength === "function") {
-              const len = Math.max(1, pEl.getTotalLength());
-              pEl.style.strokeDasharray = String(len);
-              pEl.style.strokeDashoffset = String(len);
-            }
+            let len = 100;
+            try {
+              if (typeof pEl.getTotalLength === "function") {
+                len = Math.max(1, pEl.getTotalLength());
+              }
+            } catch (e) {}
+            pEl.style.strokeDasharray = String(len);
+            pEl.style.strokeDashoffset = String(len);
           });
         }
       }
@@ -672,10 +679,12 @@ window.updateBoardObjects = function(ms) {
           if (svgEl) {
             const paths = svgEl.querySelectorAll("path, line, polyline, polygon, rect, circle, ellipse");
             paths.forEach(pEl => {
-              if (typeof pEl.getTotalLength === "function") {
-                const len = Math.max(1, pEl.getTotalLength());
-                pEl.style.strokeDashoffset = String((len * (1 - p)).toFixed(2));
-              }
+              try {
+                if (typeof pEl.getTotalLength === "function") {
+                  const len = Math.max(1, pEl.getTotalLength());
+                  pEl.style.strokeDashoffset = String((len * (1 - p)).toFixed(2));
+                }
+              } catch (e) {}
             });
           }
           customWrap.style.opacity = p > 0.05 ? "1" : String((p * 20).toFixed(2));

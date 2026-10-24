@@ -1,0 +1,351 @@
+{
+  "version": 2,
+  "title": "Fast_Custom_Visual_Demo",
+  "art_style": "whiteboard",
+  "emotional_arc": "Introduction of custom vector animation to clarity",
+  "characters": [
+    {
+      "name": "boy_b",
+      "visual_description": "Character boy_b",
+      "voice_id": "voice_1"
+    },
+    {
+      "name": "girl_a",
+      "visual_description": "Character girl_a",
+      "voice_id": "voice_2"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_number": 1,
+      "speaker": "boy_b",
+      "dialogue_line": "Check out this custom animated visual right on the board!",
+      "action": "Pointing to custom animated SVG element",
+      "pose": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "gesture": "idle",
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 2.5,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ],
+      "visuals": [
+        {
+          "type": "custom",
+          "trigger_word": "visual",
+          "params": {
+            "level": 1,
+            "svg": "<svg viewBox=\"0 0 200 200\" width=\"200\" height=\"200\"><circle cx=\"100\" cy=\"100\" r=\"80\" fill=\"#2563EB\" opacity=\"0.2\" stroke=\"#2563EB\" stroke-width=\"6\"/><polygon points=\"80,60 140,100 80,140\" fill=\"#2563EB\"/></svg>",
+            "timeline": {
+              "preset": "pop_in",
+              "duration_ms": 600
+            }
+          }
+        }
+      ],
+      "board_objects": [
+        {
+          "id": "bo_custom_1",
+          "type": "custom",
+          "slot": "center",
+          "data": {
+            "level": 1,
+            "svg": "<svg viewBox=\"0 0 200 200\" width=\"200\" height=\"200\"><circle cx=\"100\" cy=\"100\" r=\"80\" fill=\"#2563EB\" opacity=\"0.2\" stroke=\"#2563EB\" stroke-width=\"6\"/><polygon points=\"80,60 140,100 80,140\" fill=\"#2563EB\"/></svg>",
+            "timeline": {
+              "preset": "pop_in",
+              "duration_ms": 600
+            }
+          }
+        }
+      ],
+      "word_timings": [
+        {
+          "word": "Check",
+          "start_time": 0.0,
+          "end_time": 0.4
+        },
+        {
+          "word": "out",
+          "start_time": 0.4,
+          "end_time": 0.64
+        },
+        {
+          "word": "this",
+          "start_time": 0.64,
+          "end_time": 0.96
+        },
+        {
+          "word": "custom",
+          "start_time": 0.96,
+          "end_time": 1.44
+        },
+        {
+          "word": "animated",
+          "start_time": 1.44,
+          "end_time": 2.08
+        },
+        {
+          "word": "visual",
+          "start_time": 2.08,
+          "end_time": 2.56
+        },
+        {
+          "word": "right",
+          "start_time": 2.56,
+          "end_time": 2.96
+        },
+        {
+          "word": "on",
+          "start_time": 2.96,
+          "end_time": 3.12
+        },
+        {
+          "word": "the",
+          "start_time": 3.12,
+          "end_time": 3.36
+        },
+        {
+          "word": "board!",
+          "start_time": 3.36,
+          "end_time": 4.0
+        }
+      ]
+    },
+    {
+      "scene_number": 2,
+      "speaker": "girl_a",
+      "dialogue_line": "That custom vector animation renders smoothly.",
+      "action": "Student admiring vector graphic",
+      "pose": "waving",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "gesture": "idle",
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 2.5,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ],
+      "visuals": [],
+      "board_objects": null,
+      "word_timings": [
+        {
+          "word": "That",
+          "start_time": 0.0,
+          "end_time": 0.22
+        },
+        {
+          "word": "custom",
+          "start_time": 0.22,
+          "end_time": 0.56
+        },
+        {
+          "word": "vector",
+          "start_time": 0.56,
+          "end_time": 0.89
+        },
+        {
+          "word": "animation",
+          "start_time": 0.89,
+          "end_time": 1.4
+        },
+        {
+          "word": "renders",
+          "start_time": 1.4,
+          "end_time": 1.79
+        },
+        {
+          "word": "smoothly.",
+          "start_time": 1.79,
+          "end_time": 2.4
+        }
+      ]
+    },
+    {
+      "scene_number": 3,
+      "speaker": "boy_b",
+      "dialogue_line": "And it was saved once into the reusable library elements catalog.",
+      "action": "Explaining single-save deduplication",
+      "pose": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "gesture": "idle",
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 2.5,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ],
+      "visuals": [],
+      "board_objects": null,
+      "word_timings": [
+        {
+          "word": "And",
+          "start_time": 0.0,
+          "end_time": 0.23
+        },
+        {
+          "word": "it",
+          "start_time": 0.23,
+          "end_time": 0.39
+        },
+        {
+          "word": "was",
+          "start_time": 0.39,
+          "end_time": 0.62
+        },
+        {
+          "word": "saved",
+          "start_time": 0.62,
+          "end_time": 1.0
+        },
+        {
+          "word": "once",
+          "start_time": 1.0,
+          "end_time": 1.31
+        },
+        {
+          "word": "into",
+          "start_time": 1.31,
+          "end_time": 1.62
+        },
+        {
+          "word": "the",
+          "start_time": 1.62,
+          "end_time": 1.85
+        },
+        {
+          "word": "reusable",
+          "start_time": 1.85,
+          "end_time": 2.47
+        },
+        {
+          "word": "library",
+          "start_time": 2.47,
+          "end_time": 3.01
+        },
+        {
+          "word": "elements",
+          "start_time": 3.01,
+          "end_time": 3.63
+        },
+        {
+          "word": "catalog.",
+          "start_time": 3.63,
+          "end_time": 4.4
+        }
+      ]
+    },
+    {
+      "scene_number": 4,
+      "speaker": "girl_a",
+      "dialogue_line": "Every tool used is now logged in the manifest.",
+      "action": "Celebrating tools_used logging",
+      "pose": "laughing",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": true,
+      "gesture": "idle",
+      "cast": [
+        "boy_b",
+        "girl_a"
+      ],
+      "layout": "stage",
+      "shots": [
+        {
+          "start": 0.0,
+          "end": 2.5,
+          "type": "wide",
+          "target": null,
+          "zoom": 1.0,
+          "ease_in": 0.5,
+          "ease_out": 0.5
+        }
+      ],
+      "visuals": [],
+      "board_objects": null,
+      "word_timings": [
+        {
+          "word": "Every",
+          "start_time": 0.0,
+          "end_time": 0.45
+        },
+        {
+          "word": "tool",
+          "start_time": 0.45,
+          "end_time": 0.81
+        },
+        {
+          "word": "used",
+          "start_time": 0.81,
+          "end_time": 1.17
+        },
+        {
+          "word": "is",
+          "start_time": 1.17,
+          "end_time": 1.35
+        },
+        {
+          "word": "now",
+          "start_time": 1.35,
+          "end_time": 1.62
+        },
+        {
+          "word": "logged",
+          "start_time": 1.62,
+          "end_time": 2.16
+        },
+        {
+          "word": "in",
+          "start_time": 2.16,
+          "end_time": 2.34
+        },
+        {
+          "word": "the",
+          "start_time": 2.34,
+          "end_time": 2.61
+        },
+        {
+          "word": "manifest.",
+          "start_time": 2.61,
+          "end_time": 3.6
+        }
+      ]
+    }
+  ]
+}

@@ -3,7 +3,7 @@ Purpose: AST security scanner for agent-written Level 2 JavaScript animation eff
 Inputs: JavaScript code string.
 Outputs: List of security violations (empty if clean), and validation helper.
 Depends on: tree_sitter, tree_sitter_javascript
-Used by: core.board_objects
+Used by: core.board_objects, core.visuals
 Config keys: None
 Tests: tests/unit/test_phase1_safe_foundation.py
 """

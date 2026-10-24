@@ -30,6 +30,15 @@ Whenever a story or video idea is provided:
    - After "go": generate the scene file from the story and brief, create voice audio, render stills of key scenes for approval, then render the full MP4 into `output/`.
    - If an error occurs, halt immediately and state the error in plain words. Do not retry in a loop.
 
+## Asset Planning (Mandatory Step)
+For every scene during directing and planning, the director must execute the **Asset Planning** step to designate the visual asset strategy before writing or rendering:
+1. **Library Asset**: Search existing indexed elements in `library/elements/<type>/index.json` or backgrounds in `library/backgrounds/`. If an asset exists matching the required theme tags and visual key, reuse it directly without regenerating.
+2. **Custom Animated SVG**: Author vector artwork and motion using sanitized SVG (Level 1) or sandboxed pure JavaScript (Level 2). When writing animation timelines and keyframed motion, use the **animejs-animation** skill.
+3. **Generated Image**: Use built-in image generation (such as Gemini Imagen or image-generator subagent). Check `library/elements/image/index.json` first before generating. Save newly generated images once into `library/elements/image/` and register them in the index.
+4. **Screen Recording**: Clean screen capture walkthroughs, UI recordings, or demo clips.
+
+Record all planned assets and their sources in the scene manifest under `tools_used`.
+
 ## Cast and staging
 - Max 2 speaking characters per scene. Character A stands LEFT and faces right. Character B stands RIGHT and faces left. Never swap sides inside a scene (180-degree rule).
 - Only the current speaker's mouth moves. The listener only blinks and glances toward the speaker. No arm or hand gestures.

@@ -51,6 +51,7 @@ def make_command(args: argparse.Namespace) -> int:
             brief = load_brief(args.brief)
             result = run_pipeline_from_brief(
                 brief_source=brief,
+                renderer_name=args.renderer,
                 output_dir=output_dir,
                 stills_only=getattr(args, "stills_only", False),
                 auto_confirm=args.yes,

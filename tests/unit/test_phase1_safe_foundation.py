@@ -295,195 +295,218 @@ def test_level2_ast_scanner_blocks_forbidden_apis():
 # 4. Sandbox Security Tests (Playwright Browser Context)
 # ----------------------------------------------------------------------
 
-@pytest.fixture(scope="function")
-def browser_instance():
-    try:
-        import asyncio
-        asyncio.set_event_loop(None)
-    except Exception:
-        pass
-    with sync_playwright() as pw:
-        browser = pw.chromium.launch(headless=True)
-        yield browser
-        browser.close()
+import concurrent.futures
 
 
-def test_sandbox_blocks_fetch(browser_instance, tmp_path):
+def run_sandboxed_test(test_fn, tmp_path):
+    """Runs Playwright sync test in a dedicated worker thread with no active asyncio event loop."""
+    def thread_target():
+        with sync_playwright() as pw:
+            browser = pw.chromium.launch(headless=True)
+            try:
+                test_fn(browser, tmp_path)
+            finally:
+                browser.close()
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
+        return ex.submit(thread_target).result()
+
+
+def test_sandbox_blocks_fetch(tmp_path):
     """Verify sandboxed page blocks fetch() via CSP and request routing."""
-    work_dir = tmp_path / "work"
-    work_dir.mkdir()
-    html_file = work_dir / "index.html"
-    html_file.write_text(
-        '<!DOCTYPE html><html><head>'
-        f'<meta http-equiv="Content-Security-Policy" content="{STRICT_CSP_POLICY}">'
-        '</head><body><script>'
-        'window.didFetchSucceed = false;'
-        'fetch("https://httpbin.org/get").then(() => { window.didFetchSucceed = true; }).catch(e => { window.fetchError = e.message; });'
-        '</script></body></html>',
-        encoding="utf-8",
-    )
-    context, page = create_sandboxed_context(browser_instance, allowed_dirs=[work_dir], initial_html_path=html_file)
-    try:
-        page.goto(html_file.resolve().as_uri())
-        page.wait_for_timeout(300)
-        succeeded = page.evaluate("window.didFetchSucceed")
-        assert not succeeded, "fetch() should have been blocked"
-    finally:
-        context.close()
+    def _inner(browser, tmp_path):
+        work_dir = tmp_path / "work"
+        work_dir.mkdir()
+        html_file = work_dir / "index.html"
+        html_file.write_text(
+            '<!DOCTYPE html><html><head>'
+            f'<meta http-equiv="Content-Security-Policy" content="{STRICT_CSP_POLICY}">'
+            '</head><body><script>'
+            'window.didFetchSucceed = false;'
+            'fetch("https://httpbin.org/get").then(() => { window.didFetchSucceed = true; }).catch(e => { window.fetchError = e.message; });'
+            '</script></body></html>',
+            encoding="utf-8",
+        )
+        context, page = create_sandboxed_context(browser, allowed_dirs=[work_dir], initial_html_path=html_file)
+        try:
+            page.goto(html_file.resolve().as_uri())
+            page.wait_for_timeout(300)
+            succeeded = page.evaluate("window.didFetchSucceed")
+            assert not succeeded, "fetch() should have been blocked"
+        finally:
+            context.close()
+
+    run_sandboxed_test(_inner, tmp_path)
 
 
-def test_sandbox_blocks_xhr(browser_instance, tmp_path):
+def test_sandbox_blocks_xhr(tmp_path):
     """Verify sandboxed page blocks XMLHttpRequest via CSP and request routing."""
-    work_dir = tmp_path / "work"
-    work_dir.mkdir()
-    html_file = work_dir / "index.html"
-    html_file.write_text(
-        '<!DOCTYPE html><html><head>'
-        f'<meta http-equiv="Content-Security-Policy" content="{STRICT_CSP_POLICY}">'
-        '</head><body><script>'
-        'window.xhrStatus = "none";'
-        'try {'
-        '  var xhr = new XMLHttpRequest();'
-        '  xhr.open("GET", "https://httpbin.org/get");'
-        '  xhr.send();'
-        '  window.xhrStatus = "sent";'
-        '} catch (e) {'
-        '  window.xhrStatus = "blocked: " + e.message;'
-        '}'
-        '</script></body></html>',
-        encoding="utf-8",
-    )
-    context, page = create_sandboxed_context(browser_instance, allowed_dirs=[work_dir], initial_html_path=html_file)
-    try:
-        page.goto(html_file.resolve().as_uri())
-        status = page.evaluate("window.xhrStatus")
-        assert "blocked" in status or status != "sent"
-    finally:
-        context.close()
+    def _inner(browser, tmp_path):
+        work_dir = tmp_path / "work"
+        work_dir.mkdir()
+        html_file = work_dir / "index.html"
+        html_file.write_text(
+            '<!DOCTYPE html><html><head>'
+            f'<meta http-equiv="Content-Security-Policy" content="{STRICT_CSP_POLICY}">'
+            '</head><body><script>'
+            'window.xhrStatus = "none";'
+            'try {'
+            '  var xhr = new XMLHttpRequest();'
+            '  xhr.open("GET", "https://httpbin.org/get");'
+            '  xhr.send();'
+            '  window.xhrStatus = "sent";'
+            '} catch (e) {'
+            '  window.xhrStatus = "blocked: " + e.message;'
+            '}'
+            '</script></body></html>',
+            encoding="utf-8",
+        )
+        context, page = create_sandboxed_context(browser, allowed_dirs=[work_dir], initial_html_path=html_file)
+        try:
+            page.goto(html_file.resolve().as_uri())
+            status = page.evaluate("window.xhrStatus")
+            assert "blocked" in status or status != "sent"
+        finally:
+            context.close()
+
+    run_sandboxed_test(_inner, tmp_path)
 
 
-def test_sandbox_blocks_websocket(browser_instance, tmp_path):
+def test_sandbox_blocks_websocket(tmp_path):
     """Verify sandboxed page blocks WebSocket via CSP."""
-    work_dir = tmp_path / "work"
-    work_dir.mkdir()
-    html_file = work_dir / "index.html"
-    html_file.write_text(
-        '<!DOCTYPE html><html><head>'
-        f'<meta http-equiv="Content-Security-Policy" content="{STRICT_CSP_POLICY}">'
-        '</head><body><script>'
-        'window.wsStatus = "none";'
-        'try {'
-        '  var ws = new WebSocket("wss://echo.websocket.org");'
-        '  window.wsStatus = "created";'
-        '} catch (e) {'
-        '  window.wsStatus = "blocked: " + e.message;'
-        '}'
-        '</script></body></html>',
-        encoding="utf-8",
-    )
-    context, page = create_sandboxed_context(browser_instance, allowed_dirs=[work_dir], initial_html_path=html_file)
-    try:
-        page.goto(html_file.resolve().as_uri())
-        status = page.evaluate("window.wsStatus")
-        assert "blocked" in status
-    finally:
-        context.close()
+    def _inner(browser, tmp_path):
+        work_dir = tmp_path / "work"
+        work_dir.mkdir()
+        html_file = work_dir / "index.html"
+        html_file.write_text(
+            '<!DOCTYPE html><html><head>'
+            f'<meta http-equiv="Content-Security-Policy" content="{STRICT_CSP_POLICY}">'
+            '</head><body><script>'
+            'window.wsStatus = "none";'
+            'try {'
+            '  var ws = new WebSocket("wss://echo.websocket.org");'
+            '  window.wsStatus = "created";'
+            '} catch (e) {'
+            '  window.wsStatus = "blocked: " + e.message;'
+            '}'
+            '</script></body></html>',
+            encoding="utf-8",
+        )
+        context, page = create_sandboxed_context(browser, allowed_dirs=[work_dir], initial_html_path=html_file)
+        try:
+            page.goto(html_file.resolve().as_uri())
+            status = page.evaluate("window.wsStatus")
+            assert "blocked" in status
+        finally:
+            context.close()
+
+    run_sandboxed_test(_inner, tmp_path)
 
 
-def test_sandbox_blocks_window_open(browser_instance, tmp_path):
+def test_sandbox_blocks_window_open(tmp_path):
     """Verify sandboxed page blocks window.open() popups."""
-    work_dir = tmp_path / "work"
-    work_dir.mkdir()
-    html_file = work_dir / "index.html"
-    html_file.write_text(
-        '<!DOCTYPE html><html><head></head><body><script>'
-        'window.popupResult = window.open("https://example.com");'
-        '</script></body></html>',
-        encoding="utf-8",
-    )
-    context, page = create_sandboxed_context(browser_instance, allowed_dirs=[work_dir], initial_html_path=html_file)
-    try:
-        page.goto(html_file.resolve().as_uri())
-        res = page.evaluate("window.popupResult")
-        assert res is None, "window.open should return null in sandbox"
-    finally:
-        context.close()
+    def _inner(browser, tmp_path):
+        work_dir = tmp_path / "work"
+        work_dir.mkdir()
+        html_file = work_dir / "index.html"
+        html_file.write_text(
+            '<!DOCTYPE html><html><head></head><body><script>'
+            'window.popupResult = window.open("https://example.com");'
+            '</script></body></html>',
+            encoding="utf-8",
+        )
+        context, page = create_sandboxed_context(browser, allowed_dirs=[work_dir], initial_html_path=html_file)
+        try:
+            page.goto(html_file.resolve().as_uri())
+            res = page.evaluate("window.popupResult")
+            assert res is None, "window.open should return null in sandbox"
+        finally:
+            context.close()
+
+    run_sandboxed_test(_inner, tmp_path)
 
 
-def test_sandbox_blocks_unauthorized_file_read(browser_instance, tmp_path):
+def test_sandbox_blocks_unauthorized_file_read(tmp_path):
     """Verify sandboxed page blocks file:// reads outside allowed directory."""
-    work_dir = tmp_path / "work"
-    work_dir.mkdir()
-    outside_dir = tmp_path / "secret"
-    outside_dir.mkdir()
-    secret_file = outside_dir / "secret.txt"
-    secret_file.write_text("SUPER_SECRET_TOKEN", encoding="utf-8")
+    def _inner(browser, tmp_path):
+        work_dir = tmp_path / "work"
+        work_dir.mkdir()
+        outside_dir = tmp_path / "secret"
+        outside_dir.mkdir()
+        secret_file = outside_dir / "secret.txt"
+        secret_file.write_text("SUPER_SECRET_TOKEN", encoding="utf-8")
 
-    html_file = work_dir / "index.html"
-    secret_uri = secret_file.resolve().as_uri()
-    html_file.write_text(
-        '<!DOCTYPE html><html><head></head><body><script>'
-        f'window.readResult = "pending";'
-        f'fetch("{secret_uri}").then(r => r.text()).then(t => {{ window.readResult = t; }}).catch(e => {{ window.readResult = "error: " + e.message; }});'
-        '</script></body></html>',
-        encoding="utf-8",
-    )
-    # Only work_dir is allowed, secret_file is outside
-    context, page = create_sandboxed_context(browser_instance, allowed_dirs=[work_dir], initial_html_path=html_file)
-    try:
-        page.goto(html_file.resolve().as_uri())
-        page.wait_for_timeout(300)
-        res = page.evaluate("window.readResult")
-        assert "error" in res or res != "SUPER_SECRET_TOKEN"
-    finally:
-        context.close()
+        html_file = work_dir / "index.html"
+        secret_uri = secret_file.resolve().as_uri()
+        html_file.write_text(
+            '<!DOCTYPE html><html><head></head><body><script>'
+            f'window.readResult = "pending";'
+            f'fetch("{secret_uri}").then(r => r.text()).then(t => {{ window.readResult = t; }}).catch(e => {{ window.readResult = "error: " + e.message; }});'
+            '</script></body></html>',
+            encoding="utf-8",
+        )
+        context, page = create_sandboxed_context(browser, allowed_dirs=[work_dir], initial_html_path=html_file)
+        try:
+            page.goto(html_file.resolve().as_uri())
+            page.wait_for_timeout(300)
+            res = page.evaluate("window.readResult")
+            assert "error" in res or res != "SUPER_SECRET_TOKEN"
+        finally:
+            context.close()
+
+    run_sandboxed_test(_inner, tmp_path)
 
 
-def test_sandbox_blocks_eval_built_fetch(browser_instance, tmp_path):
+def test_sandbox_blocks_eval_built_fetch(tmp_path):
     """Verify dynamic eval-built fetch is blocked by CSP connect-src 'none'."""
-    work_dir = tmp_path / "work"
-    work_dir.mkdir()
-    html_file = work_dir / "index.html"
-    html_file.write_text(
-        '<!DOCTYPE html><html><head>'
-        f'<meta http-equiv="Content-Security-Policy" content="{STRICT_CSP_POLICY}">'
-        '</head><body><script>'
-        'window.evalFetchBlocked = false;'
-        'try {'
-        '  var fn = window["fe" + "tch"];'
-        '  fn("https://httpbin.org/get").catch(e => { window.evalFetchBlocked = true; });'
-        '} catch (e) {'
-        '  window.evalFetchBlocked = true;'
-        '}'
-        '</script></body></html>',
-        encoding="utf-8",
-    )
-    context, page = create_sandboxed_context(browser_instance, allowed_dirs=[work_dir], initial_html_path=html_file)
-    try:
-        page.goto(html_file.resolve().as_uri())
-        page.wait_for_timeout(300)
-        blocked = page.evaluate("window.evalFetchBlocked")
-        assert blocked
-    finally:
-        context.close()
+    def _inner(browser, tmp_path):
+        work_dir = tmp_path / "work"
+        work_dir.mkdir()
+        html_file = work_dir / "index.html"
+        html_file.write_text(
+            '<!DOCTYPE html><html><head>'
+            f'<meta http-equiv="Content-Security-Policy" content="{STRICT_CSP_POLICY}">'
+            '</head><body><script>'
+            'window.evalFetchBlocked = false;'
+            'try {'
+            '  var fn = window["fe" + "tch"];'
+            '  fn("https://httpbin.org/get").catch(e => { window.evalFetchBlocked = true; });'
+            '} catch (e) {'
+            '  window.evalFetchBlocked = true;'
+            '}'
+            '</script></body></html>',
+            encoding="utf-8",
+        )
+        context, page = create_sandboxed_context(browser, allowed_dirs=[work_dir], initial_html_path=html_file)
+        try:
+            page.goto(html_file.resolve().as_uri())
+            page.wait_for_timeout(300)
+            blocked = page.evaluate("window.evalFetchBlocked")
+            assert blocked
+        finally:
+            context.close()
+
+    run_sandboxed_test(_inner, tmp_path)
 
 
-def test_sandbox_per_frame_timeout_blocks_infinite_loop(browser_instance, tmp_path):
+def test_sandbox_per_frame_timeout_blocks_infinite_loop(tmp_path):
     """Verify per-frame timeout terminates an infinite loop."""
     from toonshorts.core.sandbox import evaluate_frame
-    work_dir = tmp_path / "work"
-    work_dir.mkdir()
-    html_file = work_dir / "index.html"
-    html_file.write_text(
-        '<!DOCTYPE html><html><head></head><body><script>'
-        'window.hang = function() { while(true) {} };'
-        '</script></body></html>',
-        encoding="utf-8",
-    )
-    context, page = create_sandboxed_context(browser_instance, allowed_dirs=[work_dir], initial_html_path=html_file)
-    try:
-        page.goto(html_file.resolve().as_uri())
-        with pytest.raises(PlaywrightTimeoutError):
-            evaluate_frame(page, "window.hang()", timeout_ms=1000)
-    finally:
-        context.close()
+    def _inner(browser, tmp_path):
+        work_dir = tmp_path / "work"
+        work_dir.mkdir()
+        html_file = work_dir / "index.html"
+        html_file.write_text(
+            '<!DOCTYPE html><html><head></head><body><script>'
+            'window.hang = function() { while(true) {} };'
+            '</script></body></html>',
+            encoding="utf-8",
+        )
+        context, page = create_sandboxed_context(browser, allowed_dirs=[work_dir], initial_html_path=html_file)
+        try:
+            page.goto(html_file.resolve().as_uri())
+            with pytest.raises(PlaywrightTimeoutError):
+                evaluate_frame(page, "window.hang()", timeout_ms=1000)
+        finally:
+            context.close()
+
+    run_sandboxed_test(_inner, tmp_path)

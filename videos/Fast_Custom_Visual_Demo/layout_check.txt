@@ -1,0 +1,12 @@
+=======================================================
+        AUTOMATED LAYOUT & SAFE-ZONE REPORT
+=======================================================
+Directory:     C:\dev\toon-shorts\videos\.tmp-Fast_Custom_Visual_Demo-cd35ad7d
+Total Scenes:  4
+Overall Status: PASSED
+-------------------------------------------------------
+Scene  1 [PASS]: Board Y=[288, 808], Title Y=[304, 368]
+Scene  2 [PASS]: Board Y=[288, 808], Title Y=[304, 368]
+Scene  3 [PASS]: Board Y=[288, 808], Title Y=[304, 368]
+Scene  4 [PASS]: Board Y=[288, 808], Title Y=[304, 368]
+=======================================================
