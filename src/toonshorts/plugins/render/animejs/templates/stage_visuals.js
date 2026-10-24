@@ -493,6 +493,51 @@ window.initBoardObjects = function() {
         iconWrap.appendChild(itemEl);
       }
       el.appendChild(iconWrap);
+    } else if (obj.type === "image") {
+      const imgWrap = document.createElement("div");
+      imgWrap.id = obj.id + "-container";
+      imgWrap.className = "bo-image bo-image-" + (obj.data.preset || "slide_in_tilt").replace(/_/g, "-");
+      imgWrap.style.width = "100%";
+      imgWrap.style.display = "flex";
+      imgWrap.style.justifyContent = "center";
+      imgWrap.style.alignItems = "center";
+      imgWrap.style.position = "relative";
+
+      const imgEl = document.createElement("img");
+      imgEl.src = obj.data.image_url || "";
+      imgEl.alt = obj.data.alt || "";
+      imgEl.style.maxWidth = "80%";
+      imgEl.style.maxHeight = "360px";
+      imgEl.style.objectFit = "contain";
+      imgEl.style.borderRadius = "8px";
+      imgWrap.appendChild(imgEl);
+
+      if (obj.data.preset === "detail_highlight") {
+        const svgHl = createSvgEl("svg", {
+          viewBox: "0 0 100 100",
+          style: "position: absolute; width: 120px; height: 120px; pointer-events: none;",
+          id: obj.id + "-hl-svg"
+        });
+        const hx = (obj.data.highlight_region && obj.data.highlight_region[0]) || 50;
+        const hy = (obj.data.highlight_region && obj.data.highlight_region[1]) || 50;
+        const hlCircle = createSvgEl("circle", {
+          cx: "50",
+          cy: "50",
+          r: "35",
+          stroke: highlightCol || "#38bdf8",
+          "stroke-width": "6",
+          fill: "none",
+          class: "draw-path",
+          style: "stroke-dasharray: 240; stroke-dashoffset: 240;"
+        });
+        svgHl.appendChild(hlCircle);
+        svgHl.style.left = "calc(" + hx + "% - 60px)";
+        svgHl.style.top = "calc(" + hy + "% - 60px)";
+        imgWrap.appendChild(svgHl);
+      }
+
+      el.appendChild(imgWrap);
+
     } else if (obj.type === "custom") {
       const customWrap = document.createElement("div");
       customWrap.className = "bo-custom bo-custom-level-" + ((obj.data && obj.data.level) || 1);
@@ -667,6 +712,37 @@ window.updateBoardObjects = function(ms) {
           itemEl.style.transform = "scale(0)";
         }
       }
+    } else if (obj.type === "image") {
+      const imgWrap = document.getElementById(obj.id + "-container");
+      if (!imgWrap) return;
+      const preset = (obj.data && obj.data.preset) || "slide_in_tilt";
+
+      if (preset === "slide_in_tilt") {
+        const ty = (1.0 - p) * 60;
+        const tilt = (1.0 - p) * -8;
+        imgWrap.style.transform = "translateY(" + ty.toFixed(2) + "px) rotate(" + tilt.toFixed(2) + "deg)";
+        imgWrap.style.opacity = String(p.toFixed(3));
+      } else if (preset === "paper_tear_reveal") {
+        const clipProg = (p * 100).toFixed(1);
+        imgWrap.style.clipPath = "polygon(0 0, " + clipProg + "% 0, " + clipProg + "% 100%, 0 100%)";
+        imgWrap.style.opacity = "1";
+      } else if (preset === "detail_highlight") {
+        imgWrap.style.opacity = p > 0.05 ? "1" : "0";
+        const hlCircle = el.querySelector("#" + obj.id + "-hl-svg circle");
+        if (hlCircle) {
+          const hlProg = Math.max(0, Math.min(1.0, (p - 0.2) / 0.8));
+          hlCircle.style.strokeDashoffset = String((240 * (1 - hlProg)).toFixed(2));
+        }
+      } else if (preset === "stamp_slam") {
+        const scale = p < 0.6 ? 2.0 - (p / 0.6) * 1.05 : 0.95 + ((p - 0.6) / 0.4) * 0.05;
+        imgWrap.style.transform = "scale(" + Math.max(0, scale).toFixed(3) + ")";
+        imgWrap.style.opacity = p > 0.05 ? "1" : "0";
+      } else if (preset === "push_in") {
+        const scale = 1.0 + p * 0.25;
+        imgWrap.style.transform = "scale(" + scale.toFixed(3) + ")";
+        imgWrap.style.opacity = "1";
+      }
+
     } else if (obj.type === "custom") {
       const customWrap = document.getElementById(obj.id + "-container");
       if (!customWrap) return;

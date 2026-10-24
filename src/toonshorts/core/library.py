@@ -3,7 +3,7 @@ Purpose: Central reusable asset library for backgrounds, graphics, SFX, and TTS 
 Inputs: Content identifiers, style names, renderer versions, and creation callbacks.
 Outputs: Cached file paths, hit/miss indicators, and asset copy helpers.
 Depends on: hashlib, json, logging, pathlib, shutil, time, typing, core.config, core.paths
-Used by: cli, core.audio_effects, core.pipeline, plugins.render.animejs.capture, plugins.render.gemini
+Used by: cli, core.audio_effects, core.images, core.pipeline, plugins.render.animejs.capture, plugins.render.gemini
 Config keys: BACKGROUND_DESIGN_VERSION, RENDERER_VERSION
 Tests: tests/unit/test_phase1_safe_foundation.py, tests/unit/test_phase3_tools_used.py, tests/unit/test_video_folders.py
 """

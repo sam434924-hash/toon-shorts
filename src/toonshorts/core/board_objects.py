@@ -29,6 +29,15 @@ ALLOWED_TYPES = {
     "diagram_flow",
     "icon_pop",
     "custom",
+    "image",
+}
+
+ALLOWED_IMAGE_PRESETS = {
+    "slide_in_tilt",
+    "paper_tear_reveal",
+    "detail_highlight",
+    "stamp_slam",
+    "push_in",
 }
 
 ALLOWED_ENTER_STYLES = {"draw_on", "pop", "slide_in"}
@@ -218,6 +227,17 @@ def validate_board_object_schema(
         icon_name = str(raw_data.get("icon") or "heart")
         sanitized_data["icon"] = icon_name
         sanitized_data["count"] = min(5, max(1, int(raw_data.get("count", 3))))
+
+    elif obj_type == "image":
+        from toonshorts.core.images import ALLOWED_IMAGE_PRESETS
+        preset = str(raw_data.get("preset") or raw_data.get("motion_preset") or "slide_in_tilt").strip().lower()
+        if preset not in ALLOWED_IMAGE_PRESETS:
+            preset = "slide_in_tilt"
+        sanitized_data["preset"] = preset
+        sanitized_data["image_url"] = str(raw_data.get("image_url") or raw_data.get("src") or raw_data.get("path") or "")
+        sanitized_data["alt"] = sanitize_board_text(raw_data.get("alt", ""))
+        sanitized_data["highlight_region"] = raw_data.get("highlight_region") or [50, 50]
+        sanitized_data["push_region"] = raw_data.get("push_region") or [50, 50]
 
     elif obj_type == "custom":
         level = int(raw_data.get("level", 1))

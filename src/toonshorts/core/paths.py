@@ -3,7 +3,7 @@ Purpose: Central path definitions for single-root assets and output directories.
 Inputs: Project root directory resolved from module location.
 Outputs: Strongly-typed Path objects for assets, sources, 2d, 3d, output, and fixtures.
 Depends on: pathlib
-Used by: brief, core.character2d, core.character_pack, core.layout_checker, core.library, core.models, core.pipeline, inventory, plugins.render.animejs.capture, plugins.render.blender3d, plugins.render.gemini
+Used by: brief, core.character2d, core.character_pack, core.images, core.layout_checker, core.library, core.models, core.pipeline, inventory, plugins.render.animejs.capture, plugins.render.blender3d, plugins.render.gemini
 Config keys: None
 Tests: tests/unit/test_paths.py
 """

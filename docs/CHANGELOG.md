@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-24: images and references: added reference intake with purpose notes and theme analysis draft, strict guard against copying reference images, single-save library indexing in library/elements/images/, background removal cutouts with torn-paper edge masks and soft shadows, image safety checks, and 5 data-driven image animation presets.
+
 - 2026-10-24: verification and hardening: added Level 2 infinite loop protection test with per-frame timeout and clean browser termination, enforced critic review threshold on pre-authored scene files, and added tree-sitter and playwright dependencies to requirements.
 
 - 2026-10-24: phase 3 tools actually used: added asset planning step to directing skill, element indexing and single-save deduplication in library/elements/<type>/, and manifest tools_used tracking across skills, image generation, library hits, and custom visuals.
