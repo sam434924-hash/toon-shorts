@@ -1,8 +1,8 @@
 """
-Purpose: Automated bounding box and safe-zone layout verification using Playwright.
+Purpose: Automated bounding box, safe-zone layout, beat sampling, overlap, and balance verification using Playwright.
 Inputs: Rendered scene HTML files, video directories, camera zoom peak states.
 Outputs: Layout validation report with element bounding boxes and pass/fail diagnostics.
-Depends on: asyncio, json, logging, pathlib, typing, core.config, core.paths
+Depends on: asyncio, json, logging, math, pathlib, typing, core.config, core.layout_planner, core.paths
 Used by: cli, core.pipeline
 Config keys: SAFE_ZONE_TOP_PX, VIDEO_HEIGHT, VIDEO_WIDTH
 Tests: tests/unit/test_layout_checker.py
@@ -11,11 +11,13 @@ Tests: tests/unit/test_layout_checker.py
 import asyncio
 import json
 import logging
+import math
 from pathlib import Path
 import re
 from typing import Any, Dict, List, Optional, Tuple
 
 from toonshorts.core import config, paths
+from toonshorts.core.layout_planner import compute_board_visual_balance
 
 logger = logging.getLogger("toonshorts.layout_checker")
 
@@ -238,6 +240,218 @@ def validate_measurements(
     return violations
 
 
+def _evaluate_all_beat_samples_js() -> str:
+    return """
+    () => {
+        function getBox(el) {
+            if (!el) return null;
+            const r = el.getBoundingClientRect();
+            const style = window.getComputedStyle(el);
+            const isVis = style.display !== 'none' && style.visibility !== 'hidden' && parseFloat(style.opacity || '1') > 0.05;
+            return {
+                left: Math.round(r.left * 10) / 10,
+                right: Math.round(r.right * 10) / 10,
+                top: Math.round(r.top * 10) / 10,
+                bottom: Math.round(r.bottom * 10) / 10,
+                width: Math.round(r.width * 10) / 10,
+                height: Math.round(r.height * 10) / 10,
+                visible: isVis
+            };
+        }
+
+        // Determine total scene duration
+        let dur = 5000;
+        if (window.__timeline && window.__timeline.duration) {
+            dur = window.__timeline.duration;
+        } else if (window.__mainTimeline && window.__mainTimeline.duration) {
+            dur = window.__mainTimeline.duration;
+        }
+
+        const sampleTimesSet = new Set();
+        sampleTimesSet.add(0);
+        sampleTimesSet.add(dur);
+
+        // Add enter and exit times
+        if (window.__boardObjects && Array.isArray(window.__boardObjects)) {
+            window.__boardObjects.forEach(obj => {
+                if (typeof obj.start_ms === 'number') sampleTimesSet.add(Math.round(obj.start_ms));
+                if (typeof obj.exit_ms === 'number') sampleTimesSet.add(Math.round(obj.exit_ms));
+            });
+        }
+        if (window.__cardTimings && Array.isArray(window.__cardTimings)) {
+            window.__cardTimings.forEach(c => {
+                if (typeof c.start_ms === 'number') sampleTimesSet.add(Math.round(c.start_ms));
+                if (typeof c.end_ms === 'number') sampleTimesSet.add(Math.round(c.end_ms));
+            });
+        }
+        // Sample every 100ms
+        for (let t = 0; t <= dur; t += 100) {
+            sampleTimesSet.add(t);
+        }
+
+        const sampleTimes = Array.from(sampleTimesSet).sort((a, b) => a - b);
+        const allSamples = [];
+
+        for (const ms of sampleTimes) {
+            if (typeof window.seekAnimation === 'function') window.seekAnimation(ms);
+            if (window.__timeline) window.__timeline.seek(ms);
+            if (typeof window.updateBoardObjects === 'function') window.updateBoardObjects(ms);
+            if (typeof window.updateStageVisuals === 'function') window.updateStageVisuals(ms);
+
+            const visibleItems = [];
+            const candidates = document.querySelectorAll(
+                '#board-objects-container .board-object, .stage-container .stage-visual, .flow-visual, .cc-visual, .counter-visual, .code-visual, .word-card.active-speaking'
+            );
+
+            candidates.forEach((el, idx) => {
+                const b = getBox(el);
+                if (b && b.visible && b.width > 12 && b.height > 12) {
+                    const isOverlapBadge = el.classList.contains('bo-declared-overlap');
+                    const slotParent = el.closest('.board-slot');
+                    const slotBox = slotParent ? getBox(slotParent) : null;
+                    const isText = Boolean(el.querySelector('.bo-text-pop, .bo-typewriter, .bo-highlight-word, .word-text, .counter-label-text, .step-label') || el.classList.contains('bo-text-pop'));
+                    const isShape = Boolean(el.querySelector('svg, path, rect, circle, canvas'));
+                    const outside = slotBox ? (b.left < slotBox.left - 6 || b.right > slotBox.right + 6 || b.top < slotBox.top - 6 || b.bottom > slotBox.bottom + 6) : false;
+                    visibleItems.push({
+                        id: el.id || `item_${idx}`,
+                        box: b,
+                        slotId: slotParent ? (slotParent.id || slotParent.dataset.slot || '') : '',
+                        slotBox: slotBox,
+                        isDeclaredOverlap: isOverlapBadge,
+                        outsideSlot: Boolean(outside && !isOverlapBadge),
+                        isText: isText,
+                        isShape: isShape
+                    });
+                }
+            });
+
+            if (visibleItems.length > 0) {
+                allSamples.push({
+                    ms: ms,
+                    items: visibleItems
+                });
+            }
+        }
+
+        return allSamples;
+    }
+    """
+
+
+def validate_element_overlaps(
+    visible_items: List[Dict[str, Any]],
+    timestamp_ms: int,
+    scene_num: int,
+    min_gap: float = 16.0,
+) -> Tuple[List[str], List[str]]:
+    """
+    Validates board element against board element overlap and rules at a specific timestamp:
+    1. Max 3 elements visible at once -> Fail
+    2. Undeclared overlap between any two elements -> Fail
+    3. Minimum gap violated (< min_gap) between distinct elements -> Fail
+    4. Text over text collision -> Fail
+    5. Text over busy shapes (contrast check) -> Fail
+    6. Elements outside their slot boundary -> Fail
+    7. Balance check: Warn if > 70% of visible area is on one side.
+    Returns (violations, warnings).
+    """
+    violations: List[str] = []
+    warnings: List[str] = []
+
+    # 1. Max 3 visible at once
+    if len(visible_items) > 3:
+        ids = [it.get("id", "unknown") for it in visible_items]
+        violations.append(
+            f"Scene {scene_num} (t={timestamp_ms}ms): More than 3 board elements visible at once "
+            f"(found {len(visible_items)}: {ids})."
+        )
+
+    # 2. Elements outside their slot
+    for it in visible_items:
+        it_id = it.get("id", "element")
+        b = it.get("box") or {}
+        sb = it.get("slotBox")
+        is_ov = it.get("isDeclaredOverlap", False)
+        is_outside = it.get("outsideSlot", False)
+        if not is_outside and not is_ov and sb and sb.get("width", 0) > 0 and sb.get("height", 0) > 0:
+            if (
+                b.get("left", 0) < sb.get("left", 0) - 4.0
+                or b.get("right", 0) > sb.get("right", 0) + 4.0
+                or b.get("top", 0) < sb.get("top", 0) - 4.0
+                or b.get("bottom", 0) > sb.get("bottom", 0) + 4.0
+            ):
+                is_outside = True
+
+        if is_outside:
+            violations.append(
+                f"Scene {scene_num} (t={timestamp_ms}ms): Element '{it_id}' placed outside its slot boundary "
+                f"'{it.get('slotId', 'slot')}'."
+            )
+
+    # Check pair-wise overlaps and gaps
+    n = len(visible_items)
+    for i in range(n):
+        for j in range(i + 1, n):
+            it1 = visible_items[i]
+            it2 = visible_items[j]
+            id1 = it1.get("id", f"item_{i}")
+            id2 = it2.get("id", f"item_{j}")
+            b1 = it1.get("box") or {}
+            b2 = it2.get("box") or {}
+
+            # Calculate intersection
+            inter_w = max(0.0, min(b1.get("right", 0), b2.get("right", 0)) - max(b1.get("left", 0), b2.get("left", 0)))
+            inter_h = max(0.0, min(b1.get("bottom", 0), b2.get("bottom", 0)) - max(b1.get("top", 0), b2.get("top", 0)))
+            is_overlap = (inter_w > 2.0) and (inter_h > 2.0)
+
+            is_declared_1 = it1.get("isDeclaredOverlap", False)
+            is_declared_2 = it2.get("isDeclaredOverlap", False)
+            declared_pair = is_declared_1 or is_declared_2
+
+            if is_overlap:
+                if not declared_pair:
+                    violations.append(
+                        f"Scene {scene_num} (t={timestamp_ms}ms): Undeclared overlap between board elements "
+                        f"'{id1}' and '{id2}' (intersection {inter_w:.1f}x{inter_h:.1f}px)."
+                    )
+
+                # Text over text check
+                if it1.get("isText") and it2.get("isText"):
+                    violations.append(
+                        f"Scene {scene_num} (t={timestamp_ms}ms): Text over text collision between '{id1}' and '{id2}'."
+                    )
+
+                # Text over busy shapes check
+                if (it1.get("isText") and it2.get("isShape") and not is_declared_1) or (it2.get("isText") and it1.get("isShape") and not is_declared_2):
+                    violations.append(
+                        f"Scene {scene_num} (t={timestamp_ms}ms): Text over busy shapes (contrast check) failed between '{id1}' and '{id2}'."
+                    )
+
+            elif not declared_pair:
+                # Minimum gap check when not overlapping
+                dx = max(0.0, max(b1.get("left", 0) - b2.get("right", 0), b2.get("left", 0) - b1.get("right", 0)))
+                dy = max(0.0, max(b1.get("top", 0) - b2.get("bottom", 0), b2.get("top", 0) - b1.get("bottom", 0)))
+                dist = math.hypot(dx, dy)
+                if dist < min_gap - 1.0:
+                    violations.append(
+                        f"Scene {scene_num} (t={timestamp_ms}ms): Minimum gap violated between '{id1}' and '{id2}': "
+                        f"gap={dist:.1f}px < min_gap={min_gap}px."
+                    )
+
+    # Balance check: warn if more than 70% of visible area is on one side
+    boxes = [it.get("box") for it in visible_items if it.get("box")]
+    l_ratio, r_ratio, is_balanced = compute_board_visual_balance(boxes)
+    if not is_balanced:
+        heavy_side = "left" if l_ratio > 0.70 else "right"
+        ratio_pct = max(l_ratio, r_ratio) * 100.0
+        warnings.append(
+            f"Scene {scene_num} (t={timestamp_ms}ms) [BALANCE WARN]: Visual area is off-balance: "
+            f"{ratio_pct:.1f}% on {heavy_side} side (threshold: 70%)."
+        )
+
+    return violations, warnings
+
+
 def check_scene_html_layout(
     html_path: Path,
     scene_num: Optional[int] = None,
@@ -277,16 +491,31 @@ def check_scene_html_layout(
         peak_data = page.evaluate(_evaluate_dom_layout_js())
         peak_violations = validate_measurements(peak_data, f"zoom_peak_{peak_ms}ms", scene_num)
 
+        # 3. Continuous beat time sampling check (sample every 100 ms plus enter and exit)
+        all_samples = page.evaluate(_evaluate_all_beat_samples_js())
+        beat_violations: List[str] = []
+        beat_warnings: List[str] = []
+        for s_data in (all_samples or []):
+            v_list, w_list = validate_element_overlaps(
+                s_data.get("items", []),
+                timestamp_ms=int(s_data.get("ms", 0)),
+                scene_num=scene_num,
+            )
+            beat_violations.extend(v_list)
+            beat_warnings.extend(w_list)
+
         browser.close()
 
-    all_violations = resting_violations + peak_violations
+    all_violations = resting_violations + peak_violations + beat_violations
     return {
         "scene": scene_num,
         "html_file": html_path.name,
         "passed": len(all_violations) == 0,
         "violations": all_violations,
+        "warnings": beat_warnings,
         "resting_measurements": resting_data,
         "peak_measurements": peak_data,
+        "sample_count": len(all_samples) if all_samples else 0,
     }
 
 
@@ -321,6 +550,7 @@ def verify_video_layout(video_dir: Path) -> Dict[str, Any]:
     results: List[Dict[str, Any]] = []
     failed_scenes: List[int] = []
     all_violations: List[str] = []
+    all_warnings: List[str] = []
 
     for f in unique_htmls:
         res = check_scene_html_layout(f)
@@ -328,6 +558,7 @@ def verify_video_layout(video_dir: Path) -> Dict[str, Any]:
         if not res["passed"]:
             failed_scenes.append(res["scene"])
             all_violations.extend(res["violations"])
+        all_warnings.extend(res.get("warnings", []))
 
     passed = len(failed_scenes) == 0
 
@@ -338,12 +569,15 @@ def verify_video_layout(video_dir: Path) -> Dict[str, Any]:
         "failed_scenes": failed_scenes,
         "violations_count": len(all_violations),
         "violations": all_violations,
+        "warnings_count": len(all_warnings),
+        "warnings": all_warnings,
         "scene_results": [
             {
                 "scene": r["scene"],
                 "html_file": r["html_file"],
                 "passed": r["passed"],
                 "violations": r["violations"],
+                "warnings": r.get("warnings", []),
                 "board_zone": r["resting_measurements"].get("boardZone"),
                 "title_badge": r["resting_measurements"].get("titleBadge"),
             }
@@ -375,6 +609,8 @@ def verify_video_layout(video_dir: Path) -> Dict[str, Any]:
         )
         for v in r["violations"]:
             lines.append(f"    - ERROR: {v}")
+        for w in r.get("warnings", []):
+            lines.append(f"    - {w}")
 
     lines.append("=======================================================")
     txt_report = "\n".join(lines) + "\n"

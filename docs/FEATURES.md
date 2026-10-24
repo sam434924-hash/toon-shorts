@@ -268,3 +268,10 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Files**: `src/toonshorts/core/layout_planner.py`, `src/toonshorts/core/models.py`, `src/toonshorts/core/validator.py`, `src/toonshorts/core/board_objects.py`, `src/toonshorts/plugins/render/animejs/html_builder.py`, `src/toonshorts/plugins/render/animejs/templates/stage_visuals.js`, `src/toonshorts/styles/night_studio.json`, `src/toonshorts/styles/whiteboard.json`
 - **Capabilities**: Schema validation of scene layout blocks, theme-based layout template discovery, slot coordinate resolution, element lifecycle transitions without overlap, declared corner badge validation, and visual balance diagnostics.
 - **Tests**: `tests/unit/test_layout_planner.py`
+
+### `layout_verification` (Continuous Beat Sampling & Visual Review Gate)
+- **Description**: Automated layout collision and visual gate checking scene DOM layouts across every beat time (sampling every 100ms plus at each enter and exit) for undeclared overlaps, minimum slot gap violations (<16px), text-over-text collisions, text-over-busy-shapes contrast collisions, elements outside allocated slot bounds, more than 3 visible elements limit, horizontal visual balance warnings (>70% area on one side), and scene still verification against declared layout blocks.
+- **Files**: `src/toonshorts/core/layout_checker.py`, `src/toonshorts/core/visual_checker.py`, `src/toonshorts/cli.py`
+- **Capabilities**: Automated Playwright continuous timeline seek sampling, bounding box geometry collision detection, corner badge declared overlap exemptions, still-to-layout-block discrepancy diagnostics, and visual_review.md quality gate generation.
+- **Tests**: `tests/unit/test_layout_checker.py`, `tests/unit/test_phase2_quality_gate.py`
+

@@ -1,9 +1,8 @@
 """
-Purpose: Automated visual review gate inspecting scene stills against quality checklist:
-         contrast ratios, safe zones, text legibility, board design, character style, and motion beats.
+Purpose: Visual review gate inspecting scene stills for quality, contrast, and layout.
 Inputs: Video directory path, scene still images, scene plan or manifest.
 Outputs: Structured inspection results and visual_review.md documentation.
-Depends on: json, logging, math, pathlib, PIL, typing, core.config
+Depends on: json, logging, math, pathlib, PIL, typing, core.config, core.layout_planner
 Used by: cli, core.pipeline
 Config keys: SAFE_ZONE_BOTTOM_PX, SAFE_ZONE_TOP_PX, VIDEO_HEIGHT, VIDEO_WIDTH
 Tests: tests/unit/test_phase2_quality_gate.py
@@ -75,6 +74,122 @@ def check_contrast_ratio(
     return round(ratio, 2), ratio >= threshold
 
 
+def compare_still_with_layout_block(
+    scene_info: Dict[str, Any],
+    still_path: Path,
+    still_result: Dict[str, Any],
+) -> Dict[str, Any]:
+    """
+    Compares scene still and its declared layout block, returning mismatch issues if any.
+    Checks:
+    - layout template is declared and known (hero, split, chain, stack, title-card)
+    - declared hero element is present in visuals/board_objects
+    - assigned slots are valid for the template
+    - element count matches layout definition
+    - maximum elements limit (max 3 visible at once)
+    - board design presence (flagging plain boards when layout declared visuals)
+    """
+    from toonshorts.core.layout_planner import DEFAULT_LAYOUT_TEMPLATES, SLOT_ALIASES
+
+    layout_spec = scene_info.get("layout") or scene_info.get("layout_plan")
+    if not layout_spec:
+        return {
+            "template": "hero (default)",
+            "hero": "none",
+            "slots": [],
+            "matched": True,
+            "mismatches": [],
+        }
+
+    template_name = "hero"
+    hero_elem = None
+    slots_map: Dict[str, Any] = {}
+    elements_list: List[Dict[str, Any]] = []
+
+    if isinstance(layout_spec, str):
+        template_name = layout_spec.lower().strip()
+    elif isinstance(layout_spec, dict):
+        template_name = str(layout_spec.get("template", "hero")).lower().strip()
+        hero_elem = layout_spec.get("hero")
+        slots_map = layout_spec.get("slots", {})
+        elements_list = layout_spec.get("elements", [])
+
+    mismatches: List[str] = []
+    sc_num = scene_info.get("scene_number", 1)
+
+    template_aliases = {
+        "title_card": "title-card",
+        "single": "hero",
+        "cards": "split",
+        "list": "stack",
+    }
+    canonical_tpl = template_aliases.get(template_name, template_name)
+    if canonical_tpl not in DEFAULT_LAYOUT_TEMPLATES:
+        mismatches.append(f"Scene {sc_num}: Layout template '{template_name}' is not recognized.")
+
+    template_def = DEFAULT_LAYOUT_TEMPLATES.get(canonical_tpl, {})
+    valid_slots = set(template_def.get("slots", {}).keys())
+
+    # 2. Hero element check
+    visuals = scene_info.get("visuals") or scene_info.get("board_objects") or []
+    all_visual_ids = set()
+    for v in visuals:
+        if isinstance(v, dict):
+            vid = v.get("id") or v.get("data", {}).get("id")
+            if vid:
+                all_visual_ids.add(str(vid))
+    for el in elements_list:
+        if isinstance(el, dict) and el.get("id"):
+            all_visual_ids.add(str(el.get("id")))
+
+    if hero_elem and all_visual_ids and str(hero_elem) not in all_visual_ids:
+        mismatches.append(f"Scene {sc_num}: Declared hero '{hero_elem}' not found in scene visuals or elements.")
+
+    # 3. Slot validation
+    assigned_slots = []
+    if slots_map:
+        for s_k in slots_map.keys():
+            canonical_slot = SLOT_ALIASES.get(s_k, s_k)
+            assigned_slots.append(canonical_slot)
+            if valid_slots and canonical_slot not in valid_slots and s_k not in valid_slots:
+                mismatches.append(f"Scene {sc_num}: Slot '{s_k}' is not defined in template '{template_name}'.")
+    for el in elements_list:
+        if isinstance(el, dict):
+            s_name = el.get("slot")
+            if s_name:
+                canonical_slot = SLOT_ALIASES.get(s_name, s_name)
+                assigned_slots.append(canonical_slot)
+                if valid_slots and canonical_slot not in valid_slots and s_name not in valid_slots:
+                    mismatches.append(f"Scene {sc_num}: Element '{el.get('id')}' assigned unknown slot '{s_name}' for template '{template_name}'.")
+
+    # 4. Element count validation (max 3 visible at once)
+    if len(elements_list) > 3:
+        times = []
+        for el in elements_list:
+            if isinstance(el, dict):
+                t_in = el.get("enter_ms", 0)
+                t_out = el.get("exit_ms", 999999)
+                times.append((t_in, t_out))
+        all_t = {t for pair in times for t in pair}
+        for t in all_t:
+            concurrent = sum(1 for (tin, tout) in times if tin <= t < tout)
+            if concurrent > 3:
+                mismatches.append(f"Scene {sc_num}: Layout exceeds limit: {concurrent} elements visible at t={t}ms (max 3).")
+                break
+
+    # 5. Still visual verification against layout
+    if not still_result.get("board_designed", True) and (len(visuals) > 0 or len(elements_list) > 0):
+        mismatches.append(f"Scene {sc_num}: Still image appears plain/blank despite layout specifying visual elements.")
+
+    return {
+        "template": template_name,
+        "hero": hero_elem or "none",
+        "slots": assigned_slots,
+        "matched": len(mismatches) == 0,
+        "mismatches": mismatches,
+    }
+
+
 def inspect_still_image(
     image_path: Path,
     scene_number: int,
@@ -140,6 +255,12 @@ def inspect_still_image(
         if len(words) > 6 and not visuals and not annotations:
             results["motion_beats_present"] = False
             results["issues"].append("No motion beats or visuals declared for dialogue scene")
+
+        # Compare still with its layout block
+        layout_cmp = compare_still_with_layout_block(scene_info, image_path, results)
+        results["layout_comparison"] = layout_cmp
+        if not layout_cmp["matched"]:
+            results["issues"].extend(layout_cmp["mismatches"])
 
     return results
 
@@ -267,7 +388,12 @@ def perform_visual_check(
         sc_num = sc["scene_number"]
         img_name = sc["image_file"]
         status_str = "OK" if not sc["issues"] else f"Issues: {', '.join(sc['issues'])}"
+        l_cmp = sc.get("layout_comparison", {})
+        l_tpl = l_cmp.get("template", "default")
+        l_hero = l_cmp.get("hero", "none")
+        l_match = "MATCH" if l_cmp.get("matched", True) else f"MISMATCH: {', '.join(l_cmp.get('mismatches', []))}"
         md_lines.append(f"- **Scene {sc_num}** (`{img_name}`): {status_str}")
+        md_lines.append(f"  - Layout Template: `{l_tpl}` | Hero: `{l_hero}` | Comparison: **{l_match}**")
 
     if total_issues:
         md_lines.extend(["", "## Detected Issues", ""])

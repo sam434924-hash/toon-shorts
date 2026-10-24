@@ -3,7 +3,7 @@ Purpose: Board visual layout templates, slot placement, lifecycle validation, an
 Inputs: Theme style presets, scene layout blocks, element enter/exit timings, and board zone bounds.
 Outputs: Validated layout models, computed slot coordinates, timing overlap checks, and balance diagnostics.
 Depends on: json, logging, math, typing, core.config, core.models
-Used by: core.validator, plugins.render.animejs.html_builder
+Used by: core.layout_checker, core.validator, core.visual_checker, plugins.render.animejs.html_builder
 Config keys: VIDEO_HEIGHT, VIDEO_WIDTH
 Tests: tests/unit/test_layout_planner.py
 """

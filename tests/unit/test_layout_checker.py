@@ -1,5 +1,5 @@
 """
-Purpose: Unit tests for automated layout and safe-zone bounding box checker.
+Purpose: Unit tests for automated layout, safe-zone bounding box, beat sampling overlap, and balance checker.
 Inputs: Rendered HTML scene documents and camera zoom state configurations.
 Outputs: Assertion results verifying safe-area clearance and clipping detection.
 Depends on: json, pathlib, pytest, toonshorts.core.layout_checker, toonshorts.plugins.render.animejs.html_builder
@@ -15,7 +15,11 @@ import sys
 
 import pytest
 
-from toonshorts.core.layout_checker import check_scene_html_layout, verify_video_layout
+from toonshorts.core.layout_checker import (
+    check_scene_html_layout,
+    validate_element_overlaps,
+    verify_video_layout,
+)
 from toonshorts.plugins.render.animejs.html_builder import generate_whiteboard_html
 
 
@@ -124,3 +128,139 @@ def test_cli_check_layout_command(tmp_path: Path):
     assert proc.returncode == 0, f"CLI check-layout failed with stderr: {proc.stderr}"
     data = json.loads(proc.stdout)
     assert data["passed"] is True
+
+
+def test_layout_checker_detects_deliberate_overlap_padlock_over_99_percent():
+    """Verifies that an undeclared collision between a padlock and 99% label is detected and failed."""
+    items = [
+        {
+            "id": "padlock_icon",
+            "box": {"left": 250, "right": 450, "top": 350, "bottom": 550, "width": 200, "height": 200, "visible": True},
+            "isText": False,
+            "isShape": True,
+            "isDeclaredOverlap": False,
+            "outsideSlot": False,
+        },
+        {
+            "id": "meter_label_99_percent",
+            "box": {"left": 400, "right": 520, "top": 450, "bottom": 520, "width": 120, "height": 70, "visible": True},
+            "isText": True,
+            "isShape": False,
+            "isDeclaredOverlap": False,
+            "outsideSlot": False,
+        },
+    ]
+    violations, warnings = validate_element_overlaps(items, timestamp_ms=1200, scene_num=4)
+    assert len(violations) >= 1
+    assert any("Undeclared overlap" in v and "padlock_icon" in v and "meter_label_99_percent" in v for v in violations)
+    assert any("Text over busy shapes" in v for v in violations)
+
+
+def test_layout_checker_declared_corner_badge_passes():
+    """Verifies that declared badge/label on a card corner passes without undeclared overlap error."""
+    items = [
+        {
+            "id": "main_card",
+            "box": {"left": 200, "right": 600, "top": 350, "bottom": 650, "width": 400, "height": 300, "visible": True},
+            "isText": False,
+            "isShape": True,
+            "isDeclaredOverlap": False,
+            "outsideSlot": False,
+        },
+        {
+            "id": "corner_badge",
+            "box": {"left": 540, "right": 595, "top": 355, "bottom": 395, "width": 55, "height": 40, "visible": True},
+            "isText": True,
+            "isShape": False,
+            "isDeclaredOverlap": True,
+            "outsideSlot": False,
+        },
+    ]
+    violations, warnings = validate_element_overlaps(items, timestamp_ms=500, scene_num=1)
+    assert len(violations) == 0
+
+
+def test_layout_checker_minimum_gap_violation():
+    """Verifies that non-overlapping elements with gap < 16px fail minimum gap rule."""
+    items = [
+        {
+            "id": "elem_left",
+            "box": {"left": 100, "right": 300, "top": 350, "bottom": 550, "width": 200, "height": 200, "visible": True},
+            "isText": False,
+            "isShape": True,
+            "isDeclaredOverlap": False,
+            "outsideSlot": False,
+        },
+        {
+            "id": "elem_right",
+            "box": {"left": 308, "right": 508, "top": 350, "bottom": 550, "width": 200, "height": 200, "visible": True},
+            "isText": False,
+            "isShape": True,
+            "isDeclaredOverlap": False,
+            "outsideSlot": False,
+        },
+    ]
+    violations, warnings = validate_element_overlaps(items, timestamp_ms=800, scene_num=2, min_gap=16.0)
+    assert len(violations) == 1
+    assert "Minimum gap violated" in violations[0]
+    assert "gap=8.0px < min_gap=16.0px" in violations[0]
+
+
+def test_layout_checker_elements_outside_slot():
+    """Verifies that an element placed outside its slot boundary fails."""
+    items = [
+        {
+            "id": "overflowing_visual",
+            "box": {"left": 50, "right": 450, "top": 250, "bottom": 700, "width": 400, "height": 450, "visible": True},
+            "isText": False,
+            "isShape": True,
+            "isDeclaredOverlap": False,
+            "outsideSlot": True,
+        }
+    ]
+    violations, warnings = validate_element_overlaps(items, timestamp_ms=400, scene_num=3)
+    assert len(violations) == 1
+    assert "placed outside its slot boundary" in violations[0]
+
+
+def test_layout_checker_more_than_three_elements_visible():
+    """Verifies that having more than 3 elements visible simultaneously fails."""
+    items = [
+        {
+            "id": f"elem_{i}",
+            "box": {"left": 100 + i * 200, "right": 250 + i * 200, "top": 350, "bottom": 500, "width": 150, "height": 150, "visible": True},
+            "isText": False,
+            "isShape": True,
+            "isDeclaredOverlap": False,
+            "outsideSlot": False,
+        }
+        for i in range(4)
+    ]
+    violations, warnings = validate_element_overlaps(items, timestamp_ms=1000, scene_num=1)
+    assert any("More than 3 board elements visible" in v and "found 4" in v for v in violations)
+
+
+def test_layout_checker_visual_balance_warning():
+    """Verifies that when > 70% of visual area is on one side, a balance warning is emitted."""
+    items = [
+        {
+            "id": "heavy_left_block",
+            "box": {"left": 80, "right": 520, "top": 320, "bottom": 750, "width": 440, "height": 430, "visible": True},
+            "isText": False,
+            "isShape": True,
+            "isDeclaredOverlap": False,
+            "outsideSlot": False,
+        },
+        {
+            "id": "tiny_right_dot",
+            "box": {"left": 800, "right": 840, "top": 500, "bottom": 540, "width": 40, "height": 40, "visible": True},
+            "isText": False,
+            "isShape": True,
+            "isDeclaredOverlap": False,
+            "outsideSlot": False,
+        },
+    ]
+    violations, warnings = validate_element_overlaps(items, timestamp_ms=600, scene_num=2)
+    assert len(warnings) >= 1
+    assert any("[BALANCE WARN]" in w and "left side" in w for w in warnings)
+

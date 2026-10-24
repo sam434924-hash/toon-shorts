@@ -5,6 +5,7 @@ Purpose: Unit tests for Phase 2 Quality Gate:
          - Fix rounds recording in visual review
          - Critic score stop-and-ask gate with --allow-low-score override
          - CLI check-visuals command
+         - Layout block comparison and mismatch reporting
 Inputs: Mock scene stills, test video folders, color tokens.
 Outputs: Pytest assertions verifying quality gate enforcement.
 Depends on: pytest, PIL, toonshorts.core.visual_checker, toonshorts.cli, toonshorts.core.pipeline
@@ -232,3 +233,43 @@ def test_critic_runs_on_pre_authored_scene_files(tmp_path, monkeypatch):
     )
     assert result is not None
     assert (base_dir / "pre_authored_test" / "pre_authored_test.mp4").is_file()
+
+
+def test_visual_checker_compares_stills_with_layout_block(tmp_path):
+    """Verifies that check-visuals compares each still with its layout block and identifies mismatches."""
+    vid_dir = tmp_path / "layout_compare_video"
+    stills_dir = vid_dir / "stills"
+    stills_dir.mkdir(parents=True)
+
+    # Valid still image with sufficient visual range
+    from PIL import ImageDraw
+    img = Image.new("RGB", (1080, 1920), color=(15, 23, 42))
+    draw = ImageDraw.Draw(img)
+    draw.rectangle([200, 400, 500, 700], fill=(56, 189, 248))
+    img.save(stills_dir / "layout_compare_video_still_sc1.png")
+
+    # Mismatched layout: declares unknown template and non-existent hero
+    bad_scene_data = {
+        "art_style": "night_studio",
+        "scenes": [
+            {
+                "scene_number": 1,
+                "dialogue": "Notice the padlock graphic right here.",
+                "visuals": [{"id": "diff_elem", "type": "text_pop", "data": {"text": "Hello"}}],
+                "layout": {
+                    "template": "nonexistent_template",
+                    "hero": "missing_hero_padlock",
+                    "slots": {"invalid_slot": "diff_elem"},
+                },
+            }
+        ],
+    }
+    (vid_dir / "scene.json").write_text(json.dumps(bad_scene_data), encoding="utf-8")
+
+    result = perform_visual_check(vid_dir, round_num=1)
+    md_content = (vid_dir / "visual_review.md").read_text(encoding="utf-8")
+
+    assert "Layout template 'nonexistent_template' is not recognized" in md_content
+    assert "Declared hero 'missing_hero_padlock' not found" in md_content
+    assert any("not recognized" in iss for iss in result["issues"])
+

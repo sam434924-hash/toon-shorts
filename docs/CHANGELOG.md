@@ -1,5 +1,10 @@
 # Changelog
 
+- 2026-10-25: layout checks and comparison: extended layout verification with continuous beat-time sampling every 100ms and enter/exit, pairwise overlap, slot boundary containment, 3-element concurrency, horizontal visual balance warning, and check-visuals still-to-layout plan comparison.
+
+- 2026-10-25: board visual layout planning: implemented deterministic layout templates (hero, split, chain, stack, title-card) with slot bounds, element lifecycle, and declared corner badge overlap validation.
+
+
 - 2026-10-24: re-rendered hackers v2: authored custom Level 1 board visuals and Level 2 particle/radar effects with timing persistence, generated 1080x1920 MP4 video in 328s with manifest tracking, and documented 2-round visual review.
 
 - 2026-10-24: images and references: added reference intake with purpose notes and theme analysis draft, strict guard against copying reference images, single-save library indexing in library/elements/images/, background removal cutouts with torn-paper edge masks and soft shadows, image safety checks, and 5 data-driven image animation presets.
