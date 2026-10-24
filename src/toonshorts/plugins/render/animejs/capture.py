@@ -25,7 +25,7 @@ from toonshorts.core import config
 from toonshorts.plugins.render.animejs.audio_sync import compute_mouth_cues_from_audio
 from toonshorts.plugins.render.animejs.html_builder import generate_whiteboard_html
 from toonshorts.core import paths
-from toonshorts.core.sandbox import create_sandboxed_context, DEFAULT_PER_FRAME_TIMEOUT_MS, STRICT_CSP_POLICY
+from toonshorts.core.sandbox import create_sandboxed_context, evaluate_frame, DEFAULT_PER_FRAME_TIMEOUT_MS, STRICT_CSP_POLICY
 from toonshorts.core.library import get_or_render_background, copy_library_asset
 from toonshorts.plugins.render.animejs.layout import build_parallax_background_layers
 
@@ -250,15 +250,16 @@ def capture_still_frame(
             context.close()
             browser.close()
             raise RuntimeError(f"JavaScript execution error in {html_file.name}: {'; '.join(page_errors)}")
-        missing = page.evaluate(
-            "typeof window.__checkModulesLoaded === 'function' ? window.__checkModulesLoaded() : ['window.__checkModulesLoaded missing']",
-            timeout=DEFAULT_PER_FRAME_TIMEOUT_MS,
+        missing = evaluate_frame(
+            page,
+            "() => typeof window.__checkModulesLoaded === 'function' ? window.__checkModulesLoaded() : ['window.__checkModulesLoaded missing']",
+            timeout_ms=DEFAULT_PER_FRAME_TIMEOUT_MS,
         )
         if missing:
             context.close()
             browser.close()
             raise RuntimeError(f"Missing required JS modules or functions in {html_file.name}: {', '.join(missing)}")
-        page.evaluate(f"window.seekTo({int(duration_sec * 1000)})", timeout=DEFAULT_PER_FRAME_TIMEOUT_MS)
+        evaluate_frame(page, f"() => window.seekTo({int(duration_sec * 1000)})", timeout_ms=DEFAULT_PER_FRAME_TIMEOUT_MS)
         page.screenshot(path=str(output_path), type="png")
         context.close()
         browser.close()
@@ -390,9 +391,10 @@ def _render_job_with_browser(
             if page_errors:
                 raise RuntimeError(f"JavaScript execution error in {html_file.name}: {'; '.join(page_errors)}")
 
-            missing = page.evaluate(
-                "typeof window.__checkModulesLoaded === 'function' ? window.__checkModulesLoaded() : ['window.__checkModulesLoaded missing']",
-                timeout=DEFAULT_PER_FRAME_TIMEOUT_MS,
+            missing = evaluate_frame(
+                page,
+                "() => typeof window.__checkModulesLoaded === 'function' ? window.__checkModulesLoaded() : ['window.__checkModulesLoaded missing']",
+                timeout_ms=DEFAULT_PER_FRAME_TIMEOUT_MS,
             )
             if missing:
                 raise RuntimeError(f"Missing required JS modules or functions in {html_file.name}: {', '.join(missing)}")
@@ -402,7 +404,7 @@ def _render_job_with_browser(
                     raise InterruptedError(f"Rendering cancelled for Scene {job.scene_number}")
 
                 t_ms = (frame_idx / job.fps) * 1000.0
-                page.evaluate(f"window.seekTo({t_ms})", timeout=DEFAULT_PER_FRAME_TIMEOUT_MS)
+                evaluate_frame(page, f"() => window.seekTo({t_ms})", timeout_ms=DEFAULT_PER_FRAME_TIMEOUT_MS)
                 buf = page.screenshot(type="png")
 
                 try:

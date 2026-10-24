@@ -22,6 +22,12 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Config Flags / Options**: `video_dir`, `--fail-fast`
 - **Tests**: `tests/unit/test_layout_checker.py`
 
+### `check-visuals`
+- **Description**: Inspects rendered scene still frames against a 6-item quality checklist, safe zones (top 288px, bottom 1440px), WCAG contrast ratios, and outputs visual_review.md.
+- **Files**: `src/toonshorts/cli.py`, `src/toonshorts/core/visual_checker.py`, `src/toonshorts/core/pipeline.py`
+- **Config Flags / Options**: `video_name`, `--json`, `--allow-low-score`
+- **Tests**: `tests/unit/test_phase2_quality_gate.py`
+
 ---
 
 ## LLM Plugins (`plugins/llm`)

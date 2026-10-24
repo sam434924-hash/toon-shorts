@@ -295,13 +295,17 @@ def test_level2_ast_scanner_blocks_forbidden_apis():
 # 4. Sandbox Security Tests (Playwright Browser Context)
 # ----------------------------------------------------------------------
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def browser_instance():
-    pw = sync_playwright().start()
-    browser = pw.chromium.launch(headless=True)
-    yield browser
-    browser.close()
-    pw.stop()
+    try:
+        import asyncio
+        asyncio.set_event_loop(None)
+    except Exception:
+        pass
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch(headless=True)
+        yield browser
+        browser.close()
 
 
 def test_sandbox_blocks_fetch(browser_instance, tmp_path):

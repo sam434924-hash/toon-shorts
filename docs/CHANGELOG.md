@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-24: phase 2 quality gate: added visual review checklist and automated contrast-ratio inspection, check-visuals command, up to 2 fix rounds before rendering, and critic score threshold stops (< 7.0) with --allow-low-score override.
+
 - 2026-10-24: phase 1 safe foundation: deterministic background cache key without camera/split flags with library reuse, parse-based SVG sanitizer, custom board visuals (Level 1 presets & Level 2 AST scanner), and hardened Playwright render sandbox.
 
 - 2026-10-24: audio-visual sync: enforced mandatory Whisper word timing with monotonic fuzzy script alignment, automatic trigger word resolution, 150ms sync verification report, explicit --allow-fallback flag, and work/ directory tidying.

@@ -2,7 +2,7 @@
 Purpose: Command-line interface entry points for ToonShorts video pipeline.
 Inputs: CLI arguments for story topic, style preset, brief, and plugin overrides.
 Outputs: Executed pipeline runs and exit status codes.
-Depends on: argparse, brief, core.config, core.layout_checker, core.library, core.pipeline, inventory, logging, pathlib, plugins, sys
+Depends on: argparse, brief, core.config, core.layout_checker, core.library, core.pipeline, core.visual_checker, inventory, logging, pathlib, plugins, sys
 Used by: __main__
 Config keys: None
 Tests: tests/smoke/test_smoke_pipeline.py
@@ -61,6 +61,7 @@ def make_command(args: argparse.Namespace) -> int:
                 overwrite=overwrite,
                 scene_source=getattr(args, "scene", None),
                 allow_fallback=getattr(args, "allow_fallback", False),
+                allow_low_score=getattr(args, "allow_low_score", False),
             )
             if getattr(args, "stills_only", False):
                 print("\n=======================================================")
@@ -113,6 +114,7 @@ def make_command(args: argparse.Namespace) -> int:
             workers=workers,
             overwrite=overwrite,
             allow_fallback=getattr(args, "allow_fallback", False),
+            allow_low_score=getattr(args, "allow_low_score", False),
         )
         if final_video:
             print("\n=======================================================")
@@ -146,6 +148,31 @@ def inventory_command(args: argparse.Namespace) -> int:
     else:
         print(format_inventory_display())
     return 0
+
+
+def check_visuals_command(args: argparse.Namespace) -> int:
+    """Inspects scene stills against quality checklist, contrast ratios, and writes visual_review.md."""
+    from toonshorts.core.visual_checker import perform_visual_check
+    video_input = args.video_name
+    video_path = Path(video_input)
+    if not video_path.is_dir():
+        cand = config.VIDEOS_DIR / video_input
+        if cand.is_dir():
+            video_path = cand
+        else:
+            sys.stderr.write(f"Error: Video directory not found at '{video_input}' or '{cand}'.\n")
+            return 1
+    try:
+        report = perform_visual_check(video_path)
+        if getattr(args, "json", False):
+            print(json.dumps(report, indent=2))
+        else:
+            txt_report = (video_path / "visual_review.md").read_text(encoding="utf-8")
+            print(txt_report)
+        return 0 if report.get("passed", False) else 1
+    except Exception as e:
+        sys.stderr.write(f"Visual check error: {e}\n")
+        return 1
 
 
 def check_layout_command(args: argparse.Namespace) -> int:
@@ -219,6 +246,7 @@ def main():
     make_parser.add_argument("--output-dir", default=None, help="Custom output directory")
     make_parser.add_argument("--overwrite", action="store_true", default=False, help="Overwrite existing video directory if it already exists")
     make_parser.add_argument("--allow-fallback", action="store_true", default=False, help="Allow fallback to proportional word timing and even spacing if Whisper alignment fails")
+    make_parser.add_argument("--allow-low-score", action="store_true", default=False, help="Continue full video generation even if critic review score is below 7.0 after repair")
     make_parser.add_argument("--keep-temp", action="store_true", help="Retain intermediate render assets")
 
     clean_parser = subparsers.add_parser("clean-tmp", help="Remove lingering temporary build directories (.tmp-*) from videos/")
@@ -230,6 +258,10 @@ def main():
     check_layout_parser.add_argument("video_name", help="Name of video folder inside videos/ or path to directory")
     check_layout_parser.add_argument("--json", action="store_true", help="Output check results as structured JSON")
 
+    check_visuals_parser = subparsers.add_parser("check-visuals", help="Inspect scene stills against quality checklist and contrast ratios")
+    check_visuals_parser.add_argument("video_name", help="Name of video folder inside videos/ or path to directory")
+    check_visuals_parser.add_argument("--json", action="store_true", help="Output review as structured JSON")
+
     args = parser.parse_args()
     if args.command == "make":
         sys.exit(make_command(args))
@@ -239,6 +271,8 @@ def main():
         sys.exit(inventory_command(args))
     elif args.command == "check-layout":
         sys.exit(check_layout_command(args))
+    elif args.command == "check-visuals":
+        sys.exit(check_visuals_command(args))
 
 
 if __name__ == "__main__":

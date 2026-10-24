@@ -40,7 +40,8 @@ def test_board_object_allowed_types():
     assert "svg_draw" in ALLOWED_TYPES
     assert "diagram_flow" in ALLOWED_TYPES
     assert "icon_pop" in ALLOWED_TYPES
-    assert len(ALLOWED_TYPES) == 6
+    assert "custom" in ALLOWED_TYPES
+    assert len(ALLOWED_TYPES) == 7
 
 
 def test_sanitize_board_text_strips_speaker_labels():

@@ -2,7 +2,7 @@
 Purpose: Pipeline runner orchestrating LLM, voice, render, and motion into self-contained video bundles.
 Inputs: Video production topic, style name, flags, and plugin selections.
 Outputs: Path to finalized vertical animation MP4 short inside dedicated video directory.
-Depends on: brief, core.assembler, core.camera, core.config, core.cost, core.errors, core.layout_checker, core.library, core.models, core.paths, core.registry, core.validator, json, logging, pathlib, platform, shutil, subprocess, sys, time, typing, uuid
+Depends on: brief, core.assembler, core.camera, core.config, core.cost, core.errors, core.layout_checker, core.library, core.models, core.paths, core.registry, core.validator, core.visual_checker, json, logging, pathlib, platform, shutil, subprocess, sys, time, typing, uuid
 Used by: cli, core
 Config keys: DEFAULT_LLM, DEFAULT_MOTION, DEFAULT_RENDERER, DEFAULT_VOICE, STYLES_DIR, VIDEOS_DIR
 Tests: tests/smoke/test_smoke_pipeline.py, tests/unit/test_video_folders.py
@@ -157,6 +157,7 @@ def run_pipeline(
     workers: Optional[int] = None,
     overwrite: bool = False,
     allow_fallback: bool = False,
+    allow_low_score: bool = False,
 ) -> Optional[Path]:
     """Executes video generation pipeline into a single self-contained video folder."""
     config.check_cloud_sync_warning()
@@ -258,6 +259,20 @@ def run_pipeline(
         plan: ScriptPlan = llm.generate_plan(topic, style_clean, preset)
         refined_plan, review = llm.review_and_refine(plan, preset)
         logger.info("Screenplay planned in %.2fs. Critic Score: %.1f/10", time.time() - t_start, review.score)
+
+        if review.score < 7.0:
+            if not allow_low_score:
+                if not auto_confirm and sys.stdin.isatty():
+                    try:
+                        ans = input(f"Critic score {review.score:.1f}/10 is below 7.0. Continue anyway? (y/N): ").strip().lower()
+                        if ans != "y":
+                            raise ValueError(f"Pipeline stopped: Critic score {review.score:.1f}/10 is under 7.0. Pass --allow-low-score to continue.")
+                    except (EOFError, KeyboardInterrupt):
+                        raise ValueError(f"Pipeline stopped: Critic score {review.score:.1f}/10 is under 7.0. Pass --allow-low-score to continue.")
+                else:
+                    raise ValueError(f"Pipeline stopped: Critic score {review.score:.1f}/10 is under 7.0 after repair. Pass --allow-low-score to continue.")
+            else:
+                logger.warning("Proceeding despite low critic score (%.1f/10) due to --allow-low-score flag.", review.score)
 
         # Write self-contained brief.json and scene.json
         brief_data = {
@@ -399,6 +414,7 @@ def run_pipeline_from_brief(
     overwrite: bool = False,
     scene_source: Optional[Union[str, Path, ScriptPlan, Dict[str, Any]]] = None,
     allow_fallback: bool = False,
+    allow_low_score: bool = False,
 ) -> Dict[str, Any]:
     """
     Executes the video build pipeline strictly driven by a validated VideoBrief.
@@ -615,6 +631,39 @@ def run_pipeline_from_brief(
                 logger.error(failed_msg)
                 raise PipelineError(failed_msg)
             logger.info("Automated layout check PASSED for all %d scenes.", layout_report.get("total_scenes", 0))
+
+        # Automated Visual Review Gate & Contrast Check (up to 2 fix rounds)
+        from toonshorts.core.visual_checker import perform_visual_check
+        logger.info("Running automated visual quality review on scene stills...")
+        review_result = perform_visual_check(build_dir, plan=plan, round_num=1)
+
+        fix_round = 1
+        while not review_result.get("passed", False) and fix_round < 2:
+            fix_round += 1
+            logger.warning("Visual review Round %d FAILED (Score: %.1f). Re-rendering stills for Round %d...", fix_round - 1, review_result.get("score", 0), fix_round)
+            for s_idx in key_indices:
+                sc = plan.scenes[s_idx]
+                still_path = stills_dir / f"{video_name}_still_sc{sc.scene_number}.png"
+                renderer.render_scene(
+                    scene=sc,
+                    characters=plan.characters,
+                    style_preset=preset,
+                    output_path=still_path,
+                    temp_dir=build_dir,
+                )
+            review_result = perform_visual_check(build_dir, plan=plan, round_num=fix_round)
+
+        if not review_result.get("passed", False):
+            if not auto_confirm and sys.stdin.isatty():
+                ans = input(f"Visual review score {review_result.get('score', 0):.1f}/10 did not pass all checks. Approve full render anyway? (y/N): ").strip().lower()
+                if ans != "y":
+                    raise PipelineError(f"Full render halted: Visual review score {review_result.get('score', 0):.1f}/10 failed quality gate. See visual_review.md.")
+            elif not auto_confirm:
+                raise PipelineError(f"Full render halted: Visual review score {review_result.get('score', 0):.1f}/10 failed quality gate after {fix_round} round(s). See visual_review.md.")
+            else:
+                logger.warning("Visual review score %.1f/10 below threshold, but --yes/auto-confirm was set. Proceeding.", review_result.get("score", 0))
+        else:
+            logger.info("Visual quality review PASSED (Score: %.1f/10). Proceeding to full render.", review_result.get("score", 0))
 
         # Write manifest before stills exit
         manifest = generate_manifest(
