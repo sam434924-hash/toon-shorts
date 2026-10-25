@@ -678,7 +678,15 @@ def run_pipeline_from_brief(
 
         # Critic review MUST run on EVERY script, including pre-authored or hand-written scene files
         logger.info("Running critic review on screenplay...")
-        refined_plan, review = llm.review_and_refine(plan, preset)
+        try:
+            refined_plan, review = llm.review_and_refine(plan, preset)
+        except Exception as c_err:
+            if not mock:
+                logger.warning("Live LLM critic review failed (%s), falling back to offline critic.", c_err)
+                llm = get_llm("fake")
+                refined_plan, review = llm.review_and_refine(plan, preset)
+            else:
+                raise
         logger.info("Critic review score: %.1f/10", review.score)
 
         if review.score < 7.0:

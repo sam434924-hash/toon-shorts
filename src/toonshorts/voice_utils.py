@@ -420,10 +420,31 @@ def assign_character_voices(plan: ScriptPlan, voice_list: List[str]) -> Dict[str
         else:
             unassigned.append(c_name)
 
-    # 2. Assign remaining from voice_list
+    # 2. Assign remaining from voice_list, respecting gender hints if present
     available_voices = [v for v in voice_list if v not in used_voices]
     if not available_voices:
         available_voices = list(voice_list)
+
+    male_voices_pref = ["Puck", "Fenrir", "Charon", "Enceladus", "Zephyr", "david", "en_US-lessac-medium"]
+    female_voices_pref = ["Aoede", "Kore", "Leda", "zira", "hazel", "en_US-amy-medium"]
+
+    for c_name in list(unassigned):
+        chosen = None
+        if "boy" in c_name:
+            for mv in male_voices_pref:
+                if mv in available_voices:
+                    chosen = mv
+                    break
+        elif "girl" in c_name:
+            for fv in female_voices_pref:
+                if fv in available_voices:
+                    chosen = fv
+                    break
+        if chosen:
+            voice_map[c_name] = chosen
+            used_voices.add(chosen)
+            available_voices.remove(chosen)
+            unassigned.remove(c_name)
 
     for i, c_name in enumerate(unassigned):
         voice_map[c_name] = available_voices[i % len(available_voices)]

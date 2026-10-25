@@ -1,6 +1,6 @@
 {
   "video_name": "How_hackers_actually_break_into_systems_v4",
-  "created_at": "2026-10-25T01:18:24Z",
+  "created_at": "2026-10-25T01:57:43Z",
   "style": "night_studio",
   "characters": [
     {
@@ -15,9 +15,9 @@
     }
   ],
   "voice": {
-    "engine": "fake",
+    "engine": "gemini_tts",
     "voice_name": "Puck",
-    "model": null
+    "model": "gemini-3.8-flash-tts"
   },
   "library_pieces_used": [
     "library/backgrounds/bg_night_studio_far_107a32c3e87c65d5.png",

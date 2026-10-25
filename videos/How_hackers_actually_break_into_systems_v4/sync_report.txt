@@ -15,7 +15,7 @@ Scene 4:
 Scene 5:
   (no discrete stage visual cues)
 Scene 6:
-  - Cue [sfx: punchline]: trigger='me?', spoken=4430ms, scheduled=4430ms, diff=0ms [PASS]
+  - Cue [sfx: punchline]: trigger='me?', spoken=6240ms, scheduled=6240ms, diff=0ms [PASS]
 Scene 7:
   (no discrete stage visual cues)
 -------------------------------------------------------
