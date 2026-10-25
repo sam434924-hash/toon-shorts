@@ -271,6 +271,100 @@ def build_parallax_background_layers(
     return {"far": far_svg, "mid": mid_svg, "near": near_svg}
 
 
+_TOPIC_LAYER_CACHE: Dict[str, str] = {}
+
+
+def build_topic_background_layer(
+    topic: Optional[str] = None,
+    theme: str = "whiteboard",
+    style_profile: Optional[Dict[str, Any]] = None,
+) -> str:
+    """
+    Builds separate, cached, slowly moving background elements per topic as their own layer.
+    For security/hacking topics: faint code columns, small lock and shield icons drifting.
+    Low contrast, staying strictly under the board layer.
+    """
+    clean_topic = (topic or "").strip().lower()
+    cache_key = f"{theme}:{clean_topic}"
+    if cache_key in _TOPIC_LAYER_CACHE:
+        return _TOPIC_LAYER_CACHE[cache_key]
+
+    is_night = theme == "night_studio"
+    is_security = any(
+        kw in clean_topic
+        for kw in ("security", "hacker", "hack", "cyber", "password", "system", "auth", "crack", "breach", "leak", "2fa")
+    )
+
+    if is_security:
+        # Faint code columns, small lock and shield icons drifting
+        code_color = "#38bdf8" if is_night else "#2563EB"
+        icon_color = "#818cf8" if is_night else "#475569"
+
+        # Code column streams (faint binary & hex)
+        # Drifting lock and shield vector symbols
+        svg = f"""
+    <svg class="bg-vector-svg topic-drift-slow" viewBox="-300 -300 1680 2520" width="1680" height="2520" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <!-- Small Lock Symbol -->
+        <g id="topic-lock">
+          <rect x="-10" y="0" width="20" height="16" rx="3" fill="none" stroke="{icon_color}" stroke-width="2.2" opacity="0.10"/>
+          <path d="M -6 0 L -6 -6 A 6 6 0 0 1 6 -6 L 6 0" fill="none" stroke="{icon_color}" stroke-width="2.2" opacity="0.10"/>
+          <circle cx="0" cy="7" r="2" fill="{icon_color}" opacity="0.10"/>
+        </g>
+        <!-- Small Shield Symbol -->
+        <g id="topic-shield">
+          <path d="M 0 -10 L 10 -6 L 10 2 C 10 8 0 14 0 14 C 0 14 -10 8 -10 2 L -10 -6 Z" fill="none" stroke="{code_color}" stroke-width="2.0" opacity="0.10"/>
+          <path d="M 0 -7 L 6 -4 L 6 2 C 6 6 0 10 0 10 C 0 10 -6 6 -6 2 L -6 -4 Z" fill="none" stroke="{code_color}" stroke-width="1.2" opacity="0.08"/>
+        </g>
+      </defs>
+      <!-- Faint Code Columns (Vertical Streams) -->
+      <g opacity="0.07" fill="{code_color}" font-family="monospace" font-size="14" letter-spacing="2">
+        <text x="-160" y="100">01001000 01100001 01100011 01101011</text>
+        <text x="-160" y="130">0x7F4B 0x8A12 0x00FF 0xDE44 0x1122</text>
+        <text x="-160" y="160">HASH_SHA256: e3b0c44298fc1c149afb</text>
+        <text x="-160" y="190">AUTH_TOKEN:  Bearer eyJhbGciOiJIUz</text>
+        <text x="-160" y="220">01110011 01111001 01110011 01110100</text>
+        <text x="-160" y="250">0xDEAD 0xBEEF 0xCAFE 0xBABE 0x4242</text>
+
+        <text x="1100" y="200">01110000 01100001 01110011 01110011</text>
+        <text x="1100" y="230">0x5F37 0x59DF 0x1337 0x8899 0xA0F1</text>
+        <text x="1100" y="260">SALT_ROUNDS: 12 bcrypt pbkdf2</text>
+        <text x="1100" y="290">CIPHER: AES-256-GCM IV_NONCE_OK</text>
+        <text x="1100" y="320">01010011 01000101 01000011 01010101</text>
+        <text x="1100" y="350">PORT_SCAN: 22/tcp 443/tcp 8080/tcp</text>
+
+        <text x="200" y="1400">01000010 01010010 01000101 01000001</text>
+        <text x="200" y="1430">0xAA45 0x12FE 0x90B3 0x3344 0x5566</text>
+        <text x="750" y="1400">01010011 01001000 01001001 01000101</text>
+        <text x="750" y="1430">0x99AA 0xBBCC 0xDDEE 0xFF00 0x1122</text>
+      </g>
+      <!-- Small Drifting Lock and Shield Icons (Low Contrast, Faint) -->
+      <use href="#topic-lock" x="-80" y="380" transform="scale(1.4)"/>
+      <use href="#topic-shield" x="1220" y="450" transform="scale(1.5)"/>
+      <use href="#topic-lock" x="1180" y="900" transform="scale(1.2)"/>
+      <use href="#topic-shield" x="-100" y="950" transform="scale(1.3)"/>
+      <use href="#topic-shield" x="100" y="1320" transform="scale(1.2)"/>
+      <use href="#topic-lock" x="980" y="1340" transform="scale(1.3)"/>
+    </svg>"""
+    else:
+        # Subtle ambient grid/nodes for general topics
+        node_color = "#38bdf8" if is_night else "#94a3b8"
+        svg = f"""
+    <svg class="bg-vector-svg topic-drift-slow" viewBox="-300 -300 1680 2520" width="1680" height="2520" xmlns="http://www.w3.org/2000/svg">
+      <g opacity="0.06" stroke="{node_color}" stroke-width="1.5">
+        <circle cx="-50" cy="200" r="4" fill="{node_color}"/>
+        <circle cx="1150" cy="280" r="4" fill="{node_color}"/>
+        <circle cx="120" cy="1380" r="4" fill="{node_color}"/>
+        <circle cx="950" cy="1420" r="4" fill="{node_color}"/>
+        <line x1="-50" y1="200" x2="0" y2="280" stroke-dasharray="4 4"/>
+        <line x1="1150" y1="280" x2="1100" y2="360" stroke-dasharray="4 4"/>
+      </g>
+    </svg>"""
+
+    _TOPIC_LAYER_CACHE[cache_key] = svg
+    return svg
+
+
 def compute_gesture_bounds(
     gesture: str,
     width: int = config.VIDEO_WIDTH,

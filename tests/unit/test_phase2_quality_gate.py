@@ -273,3 +273,43 @@ def test_visual_checker_compares_stills_with_layout_block(tmp_path):
     assert "Declared hero 'missing_hero_padlock' not found" in md_content
     assert any("not recognized" in iss for iss in result["issues"])
 
+
+def test_calm_background_topic_layers_and_contrast_check(tmp_path):
+    """Verifies calm background design version 2, topic-aware ambient layer, and automatic contrast ratio >= 4.5:1."""
+    from toonshorts.core import config
+    from toonshorts.plugins.render.animejs.layout import build_topic_background_layer
+    from toonshorts.core.visual_checker import measure_board_pixel_contrast
+    from PIL import ImageDraw
+
+    # 1. Background design version bumped to 2
+    assert config.BACKGROUND_DESIGN_VERSION == 2
+
+    # 2. Topic-aware background elements layer
+    security_svg = build_topic_background_layer(topic="How hackers actually break into systems", theme="night_studio")
+    assert "topic-lock" in security_svg
+    assert "topic-shield" in security_svg
+    assert "topic-drift-slow" in security_svg
+
+    # 3. Automatic contrast ratio check on calm dark board with background layers on
+    test_still = tmp_path / "still_sc1.png"
+    still_img = Image.new("RGB", (1080, 1920), color=(5, 11, 20))
+    draw = ImageDraw.Draw(still_img)
+    # Draw faint ambient background details
+    draw.rectangle([60, 288, 960, 808], fill=(8, 14, 25))
+    # Draw card and white text
+    draw.rectangle([200, 400, 600, 600], fill=(30, 41, 59))
+    draw.text((250, 450), "Safe White Text", fill=(248, 250, 252))
+    # Draw thin cyan stroke
+    draw.line([250, 500, 550, 500], fill=(56, 189, 248), width=2)
+    still_img.save(test_still, format="PNG")
+
+    contrast = measure_board_pixel_contrast(
+        test_still,
+        board_rect=(60, 288, 960, 808),
+        text_color="#f8fafc",
+        thin_stroke_color="#38bdf8",
+    )
+    assert contrast["passed"] is True
+    assert contrast["text_contrast_ratio"] >= 4.5
+    assert contrast["thin_stroke_contrast_ratio"] >= 4.5
+

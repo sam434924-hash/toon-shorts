@@ -30,6 +30,7 @@ from toonshorts.plugins.render.animejs.cast import build_characters_data
 from toonshorts.plugins.render.animejs.gestures import sanitize_gesture
 from toonshorts.plugins.render.animejs.layout import (
     build_parallax_background_layers,
+    build_topic_background_layer,
     compute_character_camera_framing,
     generate_scene_decorations,
 )
@@ -116,6 +117,7 @@ def generate_whiteboard_html(
     bg_layer_images: Optional[Dict[str, str]] = None,
     enable_split_camera_zones: Optional[bool] = None,
     subtitle_text: Optional[str] = None,
+    topic: Optional[str] = None,
 ) -> str:
     """
     Generates a high-contrast HTML5/SVG composition with Anime.js whiteboard animation,
@@ -378,6 +380,9 @@ def generate_whiteboard_html(
         bg_far_content = ""
         bg_mid_content = ""
         bg_near_content = ""
+
+    topic_str = topic or safe_title or (style_profile or {}).get("topic", "")
+    bg_topic_content = build_topic_background_layer(topic=topic_str, theme=theme, style_profile=style_profile)
 
     resolved_cam_cfg = camera_config or load_camera_config_for_style(theme)
 
@@ -711,6 +716,7 @@ def generate_whiteboard_html(
     result = result.replace("{{BG_FAR_CONTENT}}", bg_far_content)
     result = result.replace("{{BG_MID_CONTENT}}", bg_mid_content)
     result = result.replace("{{BG_NEAR_CONTENT}}", bg_near_content)
+    result = result.replace("{{BG_TOPIC_CONTENT}}", bg_topic_content)
     result = result.replace("{{BOARD_CONTENT}}", board_content)
     result = result.replace("{{CARDS_MARKUP}}", cards_markup)
     result = result.replace("{{CHARACTERS_HTML}}", characters_html)

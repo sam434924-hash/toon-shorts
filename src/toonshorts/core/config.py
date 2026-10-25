@@ -152,7 +152,7 @@ ENABLE_STYLE_PROFILE = True
 ENABLE_BOARD_OBJECTS = True
 
 # Background design and caching versions
-BACKGROUND_DESIGN_VERSION = 1
+BACKGROUND_DESIGN_VERSION = 2
 RENDERER_VERSION = "2.1.0"
 
 # Phase 4C / Two Independent Camera Zones Layout (fixes cut-off speakers)

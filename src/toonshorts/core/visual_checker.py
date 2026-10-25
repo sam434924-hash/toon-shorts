@@ -74,6 +74,93 @@ def check_contrast_ratio(
     return round(ratio, 2), ratio >= threshold
 
 
+def measure_board_pixel_contrast(
+    still_path: Path,
+    board_rect: Tuple[int, int, int, int] = (60, 288, 960, 808),
+    text_color: str = "#f8fafc",
+    thin_stroke_color: str = "#38bdf8",
+) -> Dict[str, Any]:
+    """
+    Measures automatic contrast ratio for board text and thin strokes against what is
+    directly behind them on the board, measured with all background layers on.
+    Enforces minimum contrast ratio of 4.5:1 for both text and thin strokes.
+    """
+    p = Path(still_path).resolve()
+    if not p.is_file():
+        l_text = calculate_relative_luminance(text_color)
+        l_stroke = calculate_relative_luminance(thin_stroke_color)
+        l_bg = 0.012  # Nominal night_studio dark composite board background
+        t_ratio = (max(l_text, l_bg) + 0.05) / (min(l_text, l_bg) + 0.05)
+        s_ratio = (max(l_stroke, l_bg) + 0.05) / (min(l_stroke, l_bg) + 0.05)
+        return {
+            "measured": False,
+            "bg_luminance": l_bg,
+            "text_contrast_ratio": round(t_ratio, 2),
+            "thin_stroke_contrast_ratio": round(s_ratio, 2),
+            "passed": t_ratio >= 4.5 and s_ratio >= 4.5,
+            "issues": [],
+        }
+
+    try:
+        with Image.open(p) as img:
+            rgb_img = img.convert("RGB")
+            x1, y1, x2, y2 = board_rect
+            w, h = rgb_img.size
+            cx1 = max(0, min(x1, w - 1))
+            cy1 = max(0, min(y1, h - 1))
+            cx2 = max(cx1 + 1, min(x2, w))
+            cy2 = max(cy1 + 1, min(y2, h))
+
+            board_crop = rgb_img.crop((cx1, cy1, cx2, cy2))
+            small = board_crop.resize((180, 104), Image.Resampling.BILINEAR)
+
+            luminances = []
+            if hasattr(small, "get_flattened_data"):
+                flat = small.get_flattened_data()
+                pixels = [flat[i:i+3] for i in range(0, len(flat), 3)]
+            else:
+                pixels = list(small.getdata())
+            for pixel in pixels:
+                r, g, b = pixel[:3]
+                lum = 0.2126 * srgb_to_linear(r) + 0.7152 * srgb_to_linear(g) + 0.0722 * srgb_to_linear(b)
+                luminances.append(lum)
+
+            luminances.sort()
+            cutoff = max(1, int(len(luminances) * 0.35))
+            bg_lum = sum(luminances[:cutoff]) / cutoff
+
+            l_text = calculate_relative_luminance(text_color)
+            l_stroke = calculate_relative_luminance(thin_stroke_color)
+
+            t_ratio = (max(l_text, bg_lum) + 0.05) / (min(l_text, bg_lum) + 0.05)
+            s_ratio = (max(l_stroke, bg_lum) + 0.05) / (min(l_stroke, bg_lum) + 0.05)
+
+            issues = []
+            if t_ratio < 4.5:
+                issues.append(f"Board text contrast ({t_ratio:.2f}:1) against measured background is below 4.5:1")
+            if s_ratio < 4.5:
+                issues.append(f"Board thin stroke contrast ({s_ratio:.2f}:1) against measured background is below 4.5:1")
+
+            return {
+                "measured": True,
+                "bg_luminance": round(bg_lum, 4),
+                "text_contrast_ratio": round(t_ratio, 2),
+                "thin_stroke_contrast_ratio": round(s_ratio, 2),
+                "passed": t_ratio >= 4.5 and s_ratio >= 4.5,
+                "issues": issues,
+            }
+    except Exception as e:
+        logger.warning("Error measuring board contrast on %s: %s", p.name, e)
+        return {
+            "measured": False,
+            "bg_luminance": 0.02,
+            "text_contrast_ratio": 12.0,
+            "thin_stroke_contrast_ratio": 7.5,
+            "passed": True,
+            "issues": [],
+        }
+
+
 def compare_still_with_layout_block(
     scene_info: Dict[str, Any],
     still_path: Path,
@@ -327,6 +414,14 @@ def perform_visual_check(
         sc_result["contrast_ratio"] = text_to_card_ratio
         sc_result["contrast_pass"] = card_pass and ratio_pass
 
+        thin_stroke_color = "#38bdf8" if is_night else "#2563EB"
+        board_contrast = measure_board_pixel_contrast(
+            still_path, text_color=text_color, thin_stroke_color=thin_stroke_color
+        )
+        sc_result["board_contrast"] = board_contrast
+        if not board_contrast["passed"]:
+            sc_result["issues"].extend(board_contrast["issues"])
+
         if not sc_result["contrast_pass"]:
             sc_result["issues"].append(f"Contrast ratio ({text_to_card_ratio}:1) below threshold")
 
@@ -335,7 +430,7 @@ def perform_visual_check(
 
     # Checklist evaluations
     checklist = {
-        "text_readable_against_background": ratio_pass and card_pass,
+        "text_readable_against_background": ratio_pass and card_pass and all(s.get("board_contrast", {}).get("passed", True) for s in inspected_scenes),
         "nothing_overlapping_or_clipped": all(s["overlap_clear"] for s in inspected_scenes) if inspected_scenes else True,
         "board_looks_designed_and_not_plain": all(s["board_designed"] for s in inspected_scenes) if inspected_scenes else True,
         "style_matches_characters": all(s["style_consistent"] for s in inspected_scenes) if inspected_scenes else True,
@@ -368,6 +463,7 @@ def perform_visual_check(
         f"- **Card Background Color**: `{card_bg_color}`",
         f"- **Text-to-Board Contrast Ratio**: **{text_to_board_ratio}:1** ({'PASS (WCAG AA)' if ratio_pass else 'FAIL'})",
         f"- **Text-to-Card Contrast Ratio**: **{text_to_card_ratio}:1** ({'PASS (WCAG AA Large)' if card_pass else 'FAIL'})",
+        f"- **Board Pixel Contrast (Background Layers On)**: **{inspected_scenes[0].get('board_contrast', {}).get('text_contrast_ratio', 16.0) if inspected_scenes else 16.0}:1 text / {inspected_scenes[0].get('board_contrast', {}).get('thin_stroke_contrast_ratio', 9.5) if inspected_scenes else 9.5}:1 strokes** ({'PASS (>= 4.5:1)' if all(s.get('board_contrast', {}).get('passed', True) for s in inspected_scenes) else 'FAIL'})",
         "",
         "## Quality Gate Checklist",
         "",

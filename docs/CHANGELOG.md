@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-25: calm topic-aware background and pixel contrast check: created calm dimmed/blurred monitor variant, bumped BACKGROUND_DESIGN_VERSION to 2, archived legacy backgrounds, added cached slowly drifting topic-aware elements layer under board, and enforced automated contrast check (>= 4.5:1) for text and thin strokes.
+
 - 2026-10-25: register-image command, single-save indexing, and visual-check review: added register-image CLI validating formats (PNG/JPEG/WebP) and dimensions, re-encoding and stripping metadata, caching in library/elements/images/ by deterministic key, updated directing asset planning, and added registered image quality review to visual-check.
 
 - 2026-10-25: automatic layout planning and directing validation: added plan_scene_layout and plan_script_layouts with template rules (hero, split, chain, stack, title-card), updated toon-shorts-directing skill with mandatory layout blocks, enforced plan validation rejecting missing layouts or conflicting slot bounds, and verified parity against hackers v3 layouts.

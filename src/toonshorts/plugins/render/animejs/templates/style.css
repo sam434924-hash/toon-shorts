@@ -56,6 +56,24 @@ body.parallax-bg-enabled .depth-layer {
 .layer-bg-near {
   z-index: 1;
 }
+.layer-bg-topic {
+  z-index: 1;
+  pointer-events: none;
+}
+.topic-drift-slow {
+  animation: topicDriftSlow 24s ease-in-out infinite alternate;
+}
+@keyframes topicDriftSlow {
+  0% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(-20px) translateX(6px);
+  }
+  100% {
+    transform: translateY(-40px) translateX(-6px);
+  }
+}
 
 .bg-vector-svg {
   position: absolute;
@@ -153,7 +171,8 @@ body.parallax-bg-enabled .layer-board {
   height: 100%;
   background-size: cover;
   background-position: center;
-  opacity: 0.18;
+  opacity: 0.10;
+  filter: blur(4px);
   pointer-events: none;
   z-index: 1;
 }
