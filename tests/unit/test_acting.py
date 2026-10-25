@@ -136,3 +136,29 @@ def test_check_acting_tool(tmp_path: Path):
     report_bad = check_acting(tmp_path)
     assert report_bad["status"] == "FAIL"
     assert any("cartwheel" in e for e in report_bad["errors"])
+
+
+def test_check_acting_rejects_motionless_actor(tmp_path: Path):
+    """Verify check_acting fails when speaking actor is motionless for more than 2.0s."""
+    scenes = [
+        {
+            "scene_number": 1,
+            "speaker": "Speaker A",
+            "dialogue_line": "This is a sentence with a late gesture.",
+            "duration": 4.5,
+            "word_timings": [
+                {"word": "sentence", "start_time": 2.5, "end_time": 3.0},
+            ],
+        }
+    ]
+    plan = plan_acting_plan(scenes)
+    # Manually force late gesture start (> 2.0s)
+    plan["scenes"][0]["beats"][0]["gesture"]["start_ms"] = 2400
+    plan["scenes"][0]["beats"][0]["gesture"]["peak_ms"] = 2700
+    plan["scenes"][0]["beats"][0]["stressed_words"] = [{"word": "sentence", "start_sec": 2.5, "peak_sec": 2.7}]
+    save_acting_plan(plan, tmp_path / "acting_plan.json")
+
+    report = check_acting(tmp_path)
+    assert report["status"] == "FAIL"
+    assert any("motionless for more than 2.0s" in e for e in report["errors"])
+

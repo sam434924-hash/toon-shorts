@@ -89,9 +89,11 @@ def _pick_stressed_words(words: List[Any], duration_sec: float) -> List[Dict[str
             "peak_sec": round(st + 0.2, 3),
         }]
 
-    # Select the word with longest duration or key position (at most 1 per phrase)
-    candidates.sort(key=lambda c: c["duration"], reverse=True)
-    chosen = candidates[0]
+    # Prefer candidate words starting within first 1.9s so speaker gestures early
+    early_candidates = [c for c in candidates if c["start_sec"] <= 1.9]
+    pool = early_candidates if early_candidates else candidates
+    pool.sort(key=lambda c: c["duration"], reverse=True)
+    chosen = pool[0]
     return [{
         "word": chosen["word"],
         "word_index": chosen["word_index"],
@@ -124,9 +126,11 @@ def plan_acting_plan(
     cast_right = "girl_a"
     if characters:
         if len(characters) >= 1:
-            cast_left = getattr(characters[0], "id", None) or (characters[0].get("id") if isinstance(characters[0], dict) else str(characters[0]))
+            c0 = characters[0]
+            cast_left = getattr(c0, "name", None) or getattr(c0, "id", None) or (c0.get("name") or c0.get("id") if isinstance(c0, dict) else str(c0))
         if len(characters) >= 2:
-            cast_right = getattr(characters[1], "id", None) or (characters[1].get("id") if isinstance(characters[1], dict) else str(characters[1]))
+            c1 = characters[1]
+            cast_right = getattr(c1, "name", None) or getattr(c1, "id", None) or (c1.get("name") or c1.get("id") if isinstance(c1, dict) else str(c1))
 
     cast_names: List[str] = []
     for sc in scenes:
@@ -397,8 +401,8 @@ def check_acting(video_source: Union[str, Path]) -> Dict[str, Any]:
             # Motionless duration check: no actor motionless for > 2.0s
             if dur > 2.0:
                 g_start = gest.get("start_ms", 0) / 1000.0 if "start_ms" in gest else gest.get("start_sec", 0.0)
-                if g_start > 2.0 and not sw:
-                    errors.append(f"scene {sc_num} beat {b_id}: speaking actor motionless for more than 2.0s before gesture")
+                if g_start > 2.0:
+                    errors.append(f"scene {sc_num} beat {b_id}: speaking actor motionless for more than 2.0s before gesture ({g_start:.2f}s)")
 
             # Back-to-back repeat check
             if g_name != "idle" and last_gesture_by_speaker.get(spk) == g_name:

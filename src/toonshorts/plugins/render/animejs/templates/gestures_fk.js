@@ -158,7 +158,8 @@ function seekLimbAnimation(ms, frameIdx) {
     const otherMouths = listenerEl.querySelectorAll(".mouth-state:not(#mouth-closed)");
     otherMouths.forEach(el => el.style.display = "none");
 
-    const lBlink = (ms < 150) || (((ms + 1600) % 3200) < 140);
+    const isRxBlink = (activeReaction && activeReaction.type === "blink" && ms >= (activeReaction.time_sec || 0) * 1000 && ms < (activeReaction.time_sec || 0) * 1000 + 150);
+    const lBlink = (ms < 150) || (((ms + 1600) % 3200) < 140) || isRxBlink;
     const lGlance = ((ms + 800) % 4500) < 2200;
 
     // Check if board visual or card enters 150-300ms before or is currently active
@@ -243,18 +244,53 @@ function seekLimbAnimation(ms, frameIdx) {
     }
   }
 
+  // Listener reaction calculation (nod dip, head tilt, amused bounce)
+  let listenerRxY = 0.0;
+  let listenerRxRot = 0.0;
+  if (activeReaction && activeReaction.time_sec !== undefined) {
+    const rxMs = (activeReaction.time_sec || 0) * 1000;
+    const rxDur = 500;
+    if (ms >= rxMs && ms < rxMs + rxDur) {
+      const rxType = activeReaction.type || "nod";
+      const progress = (ms - rxMs) / rxDur;
+      const intensity = (activeReaction.intensity === "high") ? 1.5 : 1.0;
+      if (rxType === "nod") {
+        const wave = Math.sin(progress * Math.PI);
+        listenerRxY = wave * 4.5 * intensity;
+        listenerRxRot = wave * 2.2 * intensity;
+      } else if (rxType === "head_tilt") {
+        const wave = Math.sin(progress * Math.PI);
+        listenerRxRot = wave * 3.8 * intensity;
+      } else if (rxType === "amused") {
+        const wave = Math.sin(progress * 2 * Math.PI);
+        listenerRxY = wave * 3.0 * intensity;
+        listenerRxRot = wave * 2.0 * intensity;
+      } else if (rxType === "skeptical") {
+        const wave = Math.sin(progress * Math.PI);
+        listenerRxRot = -wave * 3.2 * intensity;
+      } else {
+        const wave = Math.sin(progress * Math.PI);
+        listenerRxY = wave * 3.5 * intensity;
+      }
+    }
+  }
+
   const charRig = document.getElementById("character-rig");
   if (charRig) {
     const turnRot = isLeftSpeaker ? turnLeanRot : 0;
     const turnX = isLeftSpeaker ? turnLeanX : 0;
-    charRig.style.transform = `translate(${turnX.toFixed(2)}px, ${breatheY.toFixed(2)}px) rotate(${(headTilt + turnRot).toFixed(2)}deg) ${leftSquash}`;
+    const rxY = (!isLeftSpeaker) ? listenerRxY : 0;
+    const rxRot = (!isLeftSpeaker) ? listenerRxRot : 0;
+    charRig.style.transform = `translate(${turnX.toFixed(2)}px, ${(breatheY + rxY).toFixed(2)}px) rotate(${(headTilt + turnRot + rxRot).toFixed(2)}deg) ${leftSquash}`;
   }
   const charRigRight = document.getElementById("character-rig-right");
   if (charRigRight) {
     const breatheYRight = Math.sin(((ms + 600) / 1500.0) * 2 * Math.PI) * 1.8;
     const turnRot = isRightSpeaker ? -turnLeanRot : 0;
     const turnX = isRightSpeaker ? -turnLeanX : 0;
-    charRigRight.style.transform = `scaleX(-1) translate(${turnX.toFixed(2)}px, ${breatheYRight.toFixed(2)}px) rotate(${(-headTilt + turnRot).toFixed(2)}deg) ${rightSquash}`;
+    const rxY = (!isRightSpeaker) ? listenerRxY : 0;
+    const rxRot = (!isRightSpeaker) ? -listenerRxRot : 0;
+    charRigRight.style.transform = `scaleX(-1) translate(${turnX.toFixed(2)}px, ${(breatheYRight + rxY).toFixed(2)}px) rotate(${(-headTilt + turnRot + rxRot).toFixed(2)}deg) ${rightSquash}`;
   }
 
   // 4a. Standalone arm element fallback (e.g. presenter pack)

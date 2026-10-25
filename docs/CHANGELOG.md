@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-25: camera & acting audit fix: connected listener reaction motion (nod, head tilt, amused bounce) and reaction blinks in gestures_fk.js, fixed character name extraction for dicts/models in plan_acting_plan, prioritized early stressed words to eliminate motionless actor delay, restored unbypassed 2.0s motionless actor check in check_acting, and integrated acting/camera validation gates into standard run_pipeline.
+
 - 2026-10-25: camera & acting hardening: fixed per-scene timing offset in animejs templates, implemented activeTurn lean/flip, listener board glance and speaker change blinks, hardened pipeline check gates, and added 2x slices for stick_hoodie.
 
 - 2026-10-25: part 4 roadmap: created docs/ROADMAP.md documenting remaining project steps and future milestones from Appendix D.

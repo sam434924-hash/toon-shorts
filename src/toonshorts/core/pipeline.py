@@ -482,6 +482,43 @@ def run_pipeline(
             allow_fallback=allow_fallback,
         )
 
+        # Mandatory acting plan generation
+        from toonshorts.core.acting import plan_acting_plan, save_acting_plan, check_acting
+        acting_plan_data = plan_acting_plan(
+            scenes=refined_plan.scenes,
+            characters=refined_plan.characters,
+            word_timings_map={s.scene_number: s.word_timings for s in refined_plan.scenes},
+            layout_blocks_map={s.scene_number: s.layout for s in refined_plan.scenes},
+        )
+        save_acting_plan(acting_plan_data, build_dir / "acting_plan.json")
+        acting_check = check_acting(build_dir)
+        if acting_check.get("status") != "PASS":
+            err_msg = f"Acting plan validation FAILED: {'; '.join(acting_check.get('errors', []))}"
+            logger.error(err_msg)
+            raise PipelineError(err_msg)
+
+        # Mandatory camera plan generation
+        from toonshorts.core.camera import plan_camera_plan, save_camera_plan, check_camera
+        acting_beats_map = {s["scene_number"]: (s["beats"][0] if s.get("beats") else {}) for s in acting_plan_data.get("scenes", [])}
+        camera_shots = plan_camera_plan(
+            scenes=refined_plan.scenes,
+            word_timings_map={s.scene_number: s.word_timings for s in refined_plan.scenes},
+            acting_beats_map=acting_beats_map,
+            layout_blocks_map={s.scene_number: s.layout for s in refined_plan.scenes},
+        )
+        save_camera_plan(camera_shots, build_dir / "camera_plan.json")
+        camera_check = check_camera(build_dir)
+        if camera_check.get("status") != "PASS":
+            err_msg = f"Camera plan validation FAILED: {'; '.join(camera_check.get('errors', []))}"
+            logger.error(err_msg)
+            raise PipelineError(err_msg)
+
+        # Attach to each scene so renderer has access to camera plan and acting plan
+        serialized_camera_shots = [s.to_dict() if hasattr(s, "to_dict") else s for s in camera_shots]
+        for sc in refined_plan.scenes:
+            setattr(sc, "camera_plan", serialized_camera_shots)
+            setattr(sc, "acting_plan", acting_plan_data)
+
         # 4. Scene Rendering
         logger.info("[4/6] Rendering scene images via %s...", renderer.name)
         t_render = time.time()
