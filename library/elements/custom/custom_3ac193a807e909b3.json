@@ -1,0 +1,22 @@
+{
+  "level": 1,
+  "svg": "<svg viewBox=\"0 0 660 310\" width=\"660\" height=\"310\"><rect width=\"660\" height=\"310\" rx=\"16\" fill=\"#1e293b\" stroke=\"#10b981\" stroke-width=\"3\"/><text x=\"330\" y=\"55\" font-family=\"Arial, sans-serif\" font-size=\"22\" font-weight=\"bold\" fill=\"#10b981\" text-anchor=\"middle\">1. Long Passphrase  |  2. Unique Per Site  |  3. 2FA</text><path d=\"M 300 170 V 125 C 300 95, 360 95, 360 125 V 170\" fill=\"none\" stroke=\"#10b981\" stroke-width=\"12\" stroke-linecap=\"round\"/><rect x=\"270\" y=\"165\" width=\"120\" height=\"90\" rx=\"12\" fill=\"#0f172a\" stroke=\"#10b981\" stroke-width=\"3\"/><circle cx=\"330\" cy=\"210\" r=\"8\" fill=\"#10b981\"/><text x=\"330\" y=\"285\" font-family=\"Consolas, monospace\" font-size=\"17\" font-weight=\"bold\" fill=\"#10b981\" text-anchor=\"middle\">LOCKED DOWN &amp; SECURED</text></svg>",
+  "motion_preset": "bounce",
+  "timeline": [
+    {
+      "at": 0.0,
+      "scale": 0.0,
+      "opacity": 0.0
+    },
+    {
+      "at": 0.3,
+      "scale": 1.0,
+      "opacity": 1.0
+    },
+    {
+      "at": 0.5,
+      "scale": 1.0,
+      "opacity": 1.0
+    }
+  ]
+}

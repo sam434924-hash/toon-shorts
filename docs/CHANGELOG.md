@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-25: full-quality v4 render with automatic layouts and calm background: rendered 1080x1920 How_hackers_actually_break_into_systems_v4 with automatic layouts, restored pop-in overshoot, registered 2FA image, verified 10/10 visual review, and documented per-scene visual_review.md.
+
 - 2026-10-25: calm topic-aware background and pixel contrast check: created calm dimmed/blurred monitor variant, bumped BACKGROUND_DESIGN_VERSION to 2, archived legacy backgrounds, added cached slowly drifting topic-aware elements layer under board, and enforced automated contrast check (>= 4.5:1) for text and thin strokes.
 
 - 2026-10-25: register-image command, single-save indexing, and visual-check review: added register-image CLI validating formats (PNG/JPEG/WebP) and dimensions, re-encoding and stripping metadata, caching in library/elements/images/ by deterministic key, updated directing asset planning, and added registered image quality review to visual-check.

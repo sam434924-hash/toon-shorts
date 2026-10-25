@@ -193,7 +193,7 @@ class CriticReview(BaseModel):
     pacing: float = Field(..., ge=1.0, le=10.0)
     variety: float = Field(..., ge=1.0, le=10.0)
     weakest_scene_index: Optional[int] = Field(default=None, ge=1, le=20)
-    revision_instructions: Optional[str] = Field(default=None, max_length=500)
+    revision_instructions: Optional[str] = Field(default=None, max_length=1500)
 
 
 @dataclass

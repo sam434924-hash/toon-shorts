@@ -161,7 +161,10 @@ Make sure each scene includes:
         if cleaned.endswith("```"):
             cleaned = cleaned[:-3]
         try:
-            review = CriticReview.model_validate(json.loads(cleaned.strip()))
+            parsed_critic = json.loads(cleaned.strip())
+            if isinstance(parsed_critic, dict) and isinstance(parsed_critic.get("revision_instructions"), str) and len(parsed_critic["revision_instructions"]) > 1500:
+                parsed_critic["revision_instructions"] = parsed_critic["revision_instructions"][:1500]
+            review = CriticReview.model_validate(parsed_critic)
             logger.info("Critic review successfully parsed and validated on first attempt.")
             return review
         except (json.JSONDecodeError, ValidationError, Exception) as first_err:
@@ -194,6 +197,8 @@ Make sure each scene includes:
                 if r_cleaned.endswith("```"):
                     r_cleaned = r_cleaned[:-3]
                 repaired_data = json.loads(r_cleaned.strip())
+                if isinstance(repaired_data, dict) and isinstance(repaired_data.get("revision_instructions"), str) and len(repaired_data["revision_instructions"]) > 1500:
+                    repaired_data["revision_instructions"] = repaired_data["revision_instructions"][:1500]
                 review = CriticReview.model_validate(repaired_data)
                 logger.info("Critic review successfully repaired and validated.")
                 return review

@@ -1,0 +1,17 @@
+{
+  "level": 1,
+  "svg": "<svg viewBox=\"0 0 760 120\" width=\"760\" height=\"120\"><rect width=\"760\" height=\"120\" rx=\"12\" fill=\"#1e293b\" stroke=\"#38bdf8\" stroke-width=\"2\"/><text x=\"380\" y=\"50\" font-family=\"Arial, sans-serif\" font-size=\"18\" font-weight=\"bold\" fill=\"#38bdf8\" text-anchor=\"middle\">PREDICTABLE SUFFIXES FAIL</text><text x=\"380\" y=\"90\" font-family=\"Consolas, monospace\" font-size=\"15\" fill=\"#f8fafc\" text-anchor=\"middle\">Use 4+ random unrelated words instead of single digit increments</text></svg>",
+  "motion_preset": "slide_in",
+  "timeline": [
+    {
+      "at": 0.0,
+      "opacity": 0.0,
+      "translateY": 25
+    },
+    {
+      "at": 0.3,
+      "opacity": 1.0,
+      "translateY": 0
+    }
+  ]
+}

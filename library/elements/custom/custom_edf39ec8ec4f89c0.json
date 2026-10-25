@@ -1,0 +1,22 @@
+{
+  "level": 1,
+  "svg": "<svg viewBox=\"0 0 380 370\" width=\"380\" height=\"370\"><rect width=\"380\" height=\"370\" rx=\"16\" fill=\"#0f172a\" stroke=\"#38bdf8\" stroke-width=\"3\"/><text x=\"190\" y=\"50\" font-family=\"Arial, sans-serif\" font-size=\"20\" font-weight=\"bold\" fill=\"#38bdf8\" text-anchor=\"middle\">STRENGTH METER</text><rect x=\"40\" y=\"150\" width=\"300\" height=\"35\" rx=\"8\" fill=\"#1e293b\"/><rect x=\"40\" y=\"150\" width=\"297\" height=\"35\" rx=\"8\" fill=\"#10b981\"/><text x=\"190\" y=\"240\" font-family=\"Arial, sans-serif\" font-size=\"36\" font-weight=\"bold\" fill=\"#10b981\" text-anchor=\"middle\">99% DEFENSE</text><text x=\"190\" y=\"320\" font-family=\"Consolas, monospace\" font-size=\"15\" fill=\"#94a3b8\" text-anchor=\"middle\">High-Entropy Passphrase</text></svg>",
+  "motion_preset": "pop",
+  "timeline": [
+    {
+      "at": 0.0,
+      "scale": 0.0,
+      "opacity": 0.0
+    },
+    {
+      "at": 0.3,
+      "scale": 1.0,
+      "opacity": 1.0
+    },
+    {
+      "at": 0.5,
+      "scale": 1.0,
+      "opacity": 1.0
+    }
+  ]
+}

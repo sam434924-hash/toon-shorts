@@ -1,0 +1,32 @@
+=======================================================
+           AUDIO-VISUAL SYNC VERIFICATION REPORT
+=======================================================
+Max Allowed Difference: 150 ms
+Fallback Allowed:       YES
+-------------------------------------------------------
+Scene 1:
+  (no discrete stage visual cues)
+Scene 2:
+  (no discrete stage visual cues)
+Scene 3:
+  (no discrete stage visual cues)
+Scene 4:
+  (no discrete stage visual cues)
+Scene 5:
+  (no discrete stage visual cues)
+Scene 6:
+  - Cue [sfx: punchline]: trigger='me?', spoken=4430ms, scheduled=4430ms, diff=0ms [PASS]
+Scene 7:
+  (no discrete stage visual cues)
+-------------------------------------------------------
+Worst Difference per Scene:
+  Scene 1: 0 ms [PASS]
+  Scene 2: 0 ms [PASS]
+  Scene 3: 0 ms [PASS]
+  Scene 4: 0 ms [PASS]
+  Scene 5: 0 ms [PASS]
+  Scene 6: 0 ms [PASS]
+  Scene 7: 0 ms [PASS]
+Overall Maximum Difference: 0 ms
+Overall Status: PASSED
+=======================================================

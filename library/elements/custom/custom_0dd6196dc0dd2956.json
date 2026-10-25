@@ -1,0 +1,22 @@
+{
+  "level": 1,
+  "svg": "<svg viewBox=\"0 0 760 120\" width=\"760\" height=\"120\"><rect width=\"760\" height=\"120\" rx=\"12\" fill=\"#0f172a\" stroke=\"#f59e0b\" stroke-width=\"3\"/><text x=\"380\" y=\"50\" font-family=\"Consolas, monospace\" font-size=\"20\" font-weight=\"bold\" fill=\"#f59e0b\" text-anchor=\"middle\">password1234  (Still Cracked in 0.2s - OPEN LOCK)</text><text x=\"380\" y=\"90\" font-family=\"Arial, sans-serif\" font-size=\"16\" fill=\"#f59e0b\" text-anchor=\"middle\">Automated attack dictionaries test predictable suffix variants instantly</text></svg>",
+  "motion_preset": "pop",
+  "timeline": [
+    {
+      "at": 0.0,
+      "scale": 0.0,
+      "opacity": 0.0
+    },
+    {
+      "at": 0.3,
+      "scale": 1.0,
+      "opacity": 1.0
+    },
+    {
+      "at": 0.5,
+      "scale": 1.0,
+      "opacity": 1.0
+    }
+  ]
+}

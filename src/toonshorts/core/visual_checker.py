@@ -115,12 +115,8 @@ def measure_board_pixel_contrast(
             small = board_crop.resize((180, 104), Image.Resampling.BILINEAR)
 
             luminances = []
-            if hasattr(small, "get_flattened_data"):
-                flat = small.get_flattened_data()
-                pixels = [flat[i:i+3] for i in range(0, len(flat), 3)]
-            else:
-                pixels = list(small.getdata())
-            for pixel in pixels:
+            flat = small.get_flattened_data() if hasattr(small, "get_flattened_data") else small.getdata()
+            for pixel in flat:
                 r, g, b = pixel[:3]
                 lum = 0.2126 * srgb_to_linear(r) + 0.7152 * srgb_to_linear(g) + 0.0722 * srgb_to_linear(b)
                 luminances.append(lum)

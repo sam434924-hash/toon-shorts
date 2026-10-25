@@ -1,0 +1,17 @@
+{
+  "level": 1,
+  "svg": "<svg viewBox=\"0 0 380 370\" width=\"380\" height=\"370\"><rect width=\"380\" height=\"370\" rx=\"16\" fill=\"#0f172a\" stroke=\"#f59e0b\" stroke-width=\"3\"/><text x=\"190\" y=\"50\" font-family=\"Arial, sans-serif\" font-size=\"20\" font-weight=\"bold\" fill=\"#f59e0b\" text-anchor=\"middle\">CREDENTIAL STUFFING</text><text x=\"190\" y=\"160\" font-size=\"64\" text-anchor=\"middle\">\u26a1</text><text x=\"190\" y=\"250\" font-family=\"Arial, sans-serif\" font-size=\"26\" font-weight=\"bold\" fill=\"#f59e0b\" text-anchor=\"middle\">ALL ACCOUNTS</text><text x=\"190\" y=\"320\" font-family=\"Consolas, monospace\" font-size=\"16\" fill=\"#94a3b8\" text-anchor=\"middle\">Compromised in Minutes</text></svg>",
+  "motion_preset": "slide_in",
+  "timeline": [
+    {
+      "at": 0.0,
+      "opacity": 0.0,
+      "translateY": 30
+    },
+    {
+      "at": 0.3,
+      "opacity": 1.0,
+      "translateY": 0
+    }
+  ]
+}

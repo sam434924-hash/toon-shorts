@@ -1,0 +1,89 @@
+[06:46:19] INFO [toonshorts.pipeline]: Loaded pre-authored screenplay from briefs/How_hackers_actually_break_into_systems_v4_scene.json
+[06:46:19] INFO [toonshorts.pipeline]: Running critic review on screenplay...
+[06:46:36] INFO [toonshorts.plugins.llm.gemini]: Critic review successfully parsed and validated on first attempt.
+[06:46:36] INFO [toonshorts.pipeline]: Critic review score: 7.0/10
+[06:46:36] INFO [toonshorts.library]: Library HIT for element custom/custom_936c172e56a59cc3.json (936c172e)
+[06:46:36] INFO [toonshorts.library]: Library HIT for element custom/custom_14d57c15e87451a4.json (14d57c15)
+[06:46:36] INFO [toonshorts.library]: Library HIT for element custom/custom_45956f77b15344cd.json (45956f77)
+[06:46:36] INFO [toonshorts.library]: Library HIT for element custom/custom_0610975c5cbd0847.json (0610975c)
+[06:46:36] INFO [toonshorts.library]: Library HIT for element custom/custom_af4749d9cdf16809.json (af4749d9)
+[06:46:36] INFO [toonshorts.library]: Library HIT for element custom/custom_45b9a2f5bd55ef5e.json (45b9a2f5)
+[06:46:36] INFO [toonshorts.library]: Library HIT for element custom/custom_edf5713bfabba5f5.json (edf5713b)
+[06:46:36] INFO [toonshorts.library]: Library HIT for element custom/custom_26a37d9734b9f199.json (26a37d97)
+[06:46:36] INFO [toonshorts.library]: Library HIT for element custom/custom_edf39ec8ec4f89c0.json (edf39ec8)
+[06:46:36] INFO [toonshorts.library]: Library HIT for element custom/custom_877016dba871955a.json (877016db)
+[06:46:36] INFO [toonshorts.library]: Library HIT for element custom/custom_421d2ed529bf54c6.json (421d2ed5)
+[06:46:36] INFO [toonshorts.library]: Library HIT for element custom/custom_0dd6196dc0dd2956.json (0dd6196d)
+[06:46:36] INFO [toonshorts.library]: Library HIT for element custom/custom_b6aa2cf38a0767fd.json (b6aa2cf3)
+[06:46:36] INFO [toonshorts.library]: Library HIT for element custom/custom_2356966ad4b42688.json (2356966a)
+[06:46:36] INFO [toonshorts.library]: Library HIT for element custom/custom_3ac193a807e909b3.json (3ac193a8)
+[06:46:37] INFO [toonshorts.pipeline]: Generating voice tracks using engine 'gemini_tts' (voice: Puck)...
+[06:46:39] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 0 (key: 2bd70be35d802ea4d91f9aae2f954f629a885c9b3797bf04a926460159f02f5d)
+[06:46:42] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 1 (key: 955ddc58686dca09de62ed6958181f83a51ff2fcb02603bb096b2e354aef5f6d)
+[06:46:44] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 2 (key: 24468a73c9991fd79db6c2076aada553103675cfe3b7952e96702414532b0e09)
+[06:46:47] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 3 (key: face1b0f4cab6e62faf7f0f5886680af0d5a8cd1acefd1f385be225b3825abc2)
+[06:46:49] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache MISS for scene 4 (key: 9fae2ec7aacc8a9962bf5d9406ac63f972fed00caff417a38687ffc58fa7b2e2) - synthesizing speech
+[06:46:49] WARNING [toonshorts.client]: Gemini TTS rate limited on attempt 1. Waiting 4.97s before retrying with limits...
+[06:46:55] WARNING [toonshorts.client]: Gemini TTS rate limited on attempt 2. Waiting 5.85s before retrying with limits...
+[06:47:01] WARNING [toonshorts.client]: Gemini TTS rate limited on attempt 3. Waiting 9.06s before retrying with limits...
+[06:47:11] WARNING [toonshorts.client]: Gemini TTS rate limited on attempt 4. Waiting 17.70s before retrying with limits...
+[06:47:29] WARNING [toonshorts.client]: Gemini TTS rate limited on attempt 5. Waiting 33.65s before retrying with limits...
+[06:48:03] ERROR [toonshorts.client]: Gemini TTS rate limit exceeded after 6 attempts: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 10, model: gemini-3.8-flash-tts, description: Generate content requests per day limit exceeded on Free Tier. See https://ai.google.dev/gemini-api/docs/rate-limits.\nPlease retry in 5h41m56.6381949s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'description': 'Generate content requests per day limit exceeded on Free Tier. See https://ai.google.dev/gemini-api/docs/rate-limits.', 'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.8-flash-tts'}, 'quotaValue': '10'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '20516s'}]}}
+[06:48:03] WARNING [toonshorts.pipeline]: Voice engine gemini_tts failed (Gemini TTS rate limit exceeded after 6 attempts: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 10, model: gemini-3.8-flash-tts, description: Generate content requests per day limit exceeded on Free Tier. See https://ai.google.dev/gemini-api/docs/rate-limits.\nPlease retry in 5h41m56.6381949s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'description': 'Generate content requests per day limit exceeded on Free Tier. See https://ai.google.dev/gemini-api/docs/rate-limits.', 'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.8-flash-tts'}, 'quotaValue': '10'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '20516s'}]}}. Missing audio line: 'And always turn on two factor authentication! That puts an iron shield on your login.' (voice: Puck)), falling back to offline audio.
+[06:48:04] INFO [toonshorts.library]: Library HIT for element custom/custom_936c172e56a59cc3.json (936c172e)
+[06:48:04] INFO [toonshorts.library]: Library HIT for element custom/custom_14d57c15e87451a4.json (14d57c15)
+[06:48:04] INFO [toonshorts.library]: Library HIT for element custom/custom_45956f77b15344cd.json (45956f77)
+[06:48:04] INFO [toonshorts.library]: Library HIT for element custom/custom_0610975c5cbd0847.json (0610975c)
+[06:48:04] INFO [toonshorts.library]: Library HIT for element custom/custom_af4749d9cdf16809.json (af4749d9)
+[06:48:04] INFO [toonshorts.library]: Library HIT for element custom/custom_45b9a2f5bd55ef5e.json (45b9a2f5)
+[06:48:04] INFO [toonshorts.library]: Library HIT for element custom/custom_edf5713bfabba5f5.json (edf5713b)
+[06:48:04] INFO [toonshorts.library]: Library HIT for element custom/custom_26a37d9734b9f199.json (26a37d97)
+[06:48:04] INFO [toonshorts.library]: Library HIT for element custom/custom_edf39ec8ec4f89c0.json (edf39ec8)
+[06:48:04] INFO [toonshorts.library]: Library HIT for element custom/custom_877016dba871955a.json (877016db)
+[06:48:04] INFO [toonshorts.library]: Library HIT for element custom/custom_421d2ed529bf54c6.json (421d2ed5)
+[06:48:04] INFO [toonshorts.library]: Library HIT for element custom/custom_0dd6196dc0dd2956.json (0dd6196d)
+[06:48:04] INFO [toonshorts.library]: Library HIT for element custom/custom_b6aa2cf38a0767fd.json (b6aa2cf3)
+[06:48:04] INFO [toonshorts.library]: Library HIT for element custom/custom_2356966ad4b42688.json (2356966a)
+[06:48:04] INFO [toonshorts.library]: Library HIT for element custom/custom_3ac193a807e909b3.json (3ac193a8)
+[06:48:04] INFO [toonshorts.sync]: Saved word timings to C:\dev\toon-shorts\videos\.tmp-How_hackers_actually_break_into_systems_v4-e7b0b5db\word_timings.json
+[06:48:04] INFO [toonshorts.sync]: Updated scene manifest written to C:\dev\toon-shorts\videos\.tmp-How_hackers_actually_break_into_systems_v4-e7b0b5db\scene.json
+[06:48:04] INFO [toonshorts.sync]: Wrote audio-visual sync report to C:\dev\toon-shorts\videos\.tmp-How_hackers_actually_break_into_systems_v4-e7b0b5db\sync_report.txt
+[06:48:15] INFO [toonshorts.pipeline]: Rendered 7 scene stills: ['How_hackers_actually_break_into_systems_v4_still_sc1.png', 'How_hackers_actually_break_into_systems_v4_still_sc2.png', 'How_hackers_actually_break_into_systems_v4_still_sc3.png', 'How_hackers_actually_break_into_systems_v4_still_sc4.png', 'How_hackers_actually_break_into_systems_v4_still_sc5.png', 'How_hackers_actually_break_into_systems_v4_still_sc6.png', 'How_hackers_actually_break_into_systems_v4_still_sc7.png']
+[06:48:15] INFO [toonshorts.pipeline]: Running automated layout and safe-zone check on all scene stills...
+[06:48:24] INFO [toonshorts.pipeline]: Automated layout check PASSED for all 7 scenes.
+[06:48:24] INFO [toonshorts.pipeline]: Running automated visual quality review on scene stills...
+[06:48:24] INFO [toonshorts.visual_checker]: Visual review saved to C:\dev\toon-shorts\videos\.tmp-How_hackers_actually_break_into_systems_v4-e7b0b5db\visual_review.md (Score: 10.0/10 - PASSED)
+[06:48:24] INFO [toonshorts.pipeline]: Visual quality review PASSED (Score: 10.0/10). Proceeding to full render.
+[06:48:25] INFO [toonshorts.library]: Library MISS for background night_studio far (107a32c3) - rendering into library
+[06:48:25] INFO [toonshorts.library]: Library MISS for background night_studio mid (276b98b4) - rendering into library
+[06:48:25] INFO [toonshorts.library]: Library MISS for background night_studio near (a4af961b) - rendering into library
+[06:48:25] INFO [toonshorts.library]: Library MISS for background night_studio far (107a32c3) - rendering into library
+[06:48:25] INFO [toonshorts.library]: Library MISS for background night_studio mid (276b98b4) - rendering into library
+[06:48:25] INFO [toonshorts.library]: Library MISS for background night_studio near (a4af961b) - rendering into library
+[06:48:25] INFO [toonshorts.library]: Library MISS for background night_studio far (107a32c3) - rendering into library
+[06:48:26] INFO [toonshorts.library]: Library MISS for background night_studio mid (276b98b4) - rendering into library
+[06:48:26] INFO [toonshorts.library]: Library MISS for background night_studio near (a4af961b) - rendering into library
+[06:48:26] INFO [toonshorts.library]: Library HIT for background night_studio far (107a32c3)
+[06:48:26] INFO [toonshorts.library]: Library HIT for background night_studio mid (276b98b4)
+[06:48:26] INFO [toonshorts.library]: Library HIT for background night_studio near (a4af961b)
+[06:49:55] INFO [toonshorts.library]: Library HIT for background night_studio far (107a32c3)
+[06:49:55] INFO [toonshorts.library]: Library HIT for background night_studio far (107a32c3)
+[06:49:55] INFO [toonshorts.library]: Library HIT for background night_studio mid (276b98b4)
+[06:49:55] INFO [toonshorts.library]: Library HIT for background night_studio mid (276b98b4)
+[06:49:55] INFO [toonshorts.library]: Library HIT for background night_studio near (a4af961b)
+[06:49:55] INFO [toonshorts.library]: Library HIT for background night_studio near (a4af961b)
+[06:51:17] INFO [toonshorts.library]: Library HIT for background night_studio far (107a32c3)
+[06:51:17] INFO [toonshorts.library]: Library HIT for background night_studio mid (276b98b4)
+[06:51:17] INFO [toonshorts.library]: Library HIT for background night_studio near (a4af961b)
+[06:51:30] INFO [toonshorts.library]: Library HIT for background night_studio far (107a32c3)
+[06:51:30] INFO [toonshorts.library]: Library HIT for background night_studio mid (276b98b4)
+[06:51:30] INFO [toonshorts.library]: Library HIT for background night_studio near (a4af961b)
+[06:53:08] INFO [toonshorts.library]: Library HIT for background night_studio far (107a32c3)
+[06:53:08] INFO [toonshorts.library]: Library HIT for background night_studio mid (276b98b4)
+[06:53:08] INFO [toonshorts.library]: Library HIT for background night_studio near (a4af961b)
+[06:54:26] INFO [toonshorts.library]: Library HIT for SFX pop (47e9f275)
+[06:54:26] INFO [toonshorts.library]: Library HIT for SFX boing (1a844751)
+[06:54:26] INFO [toonshorts.library]: Library HIT for SFX whistle (f385dbe0)
+[06:54:26] INFO [toonshorts.assembler]: Concatenating all scenes into unified video stream...
+[06:54:26] INFO [toonshorts.assembler]: Burning in ASS word-level captions to final video...
+[06:54:35] INFO [toonshorts.assembler]: Successfully assembled video: C:\dev\toon-shorts\videos\.tmp-How_hackers_actually_break_into_systems_v4-e7b0b5db\How_hackers_actually_break_into_systems_v4.mp4

@@ -1,0 +1,22 @@
+{
+  "level": 1,
+  "svg": "<svg viewBox=\"0 0 380 370\" width=\"380\" height=\"370\"><rect width=\"380\" height=\"370\" rx=\"16\" fill=\"#1e293b\" stroke=\"#ef4444\" stroke-width=\"3\"/><text x=\"190\" y=\"50\" font-family=\"Arial, sans-serif\" font-size=\"20\" font-weight=\"bold\" fill=\"#ef4444\" text-anchor=\"middle\">DATABASE LEAK</text><ellipse cx=\"190\" cy=\"130\" rx=\"90\" ry=\"30\" fill=\"#0f172a\" stroke=\"#ef4444\" stroke-width=\"3\"/><path d=\"M 100 130 V 230 C 100 260, 280 260, 280 230 V 130\" fill=\"none\" stroke=\"#ef4444\" stroke-width=\"3\"/><path d=\"M 140 180 L 240 210 M 150 210 L 220 180\" stroke=\"#ef4444\" stroke-width=\"3\" stroke-dasharray=\"6 4\"/><text x=\"190\" y=\"320\" font-family=\"Consolas, monospace\" font-size=\"16\" fill=\"#f8fafc\" text-anchor=\"middle\">1 Leaked Storefront</text></svg>",
+  "motion_preset": "pop",
+  "timeline": [
+    {
+      "at": 0.0,
+      "scale": 0.0,
+      "opacity": 0.0
+    },
+    {
+      "at": 0.3,
+      "scale": 1.0,
+      "opacity": 1.0
+    },
+    {
+      "at": 0.5,
+      "scale": 1.0,
+      "opacity": 1.0
+    }
+  ]
+}

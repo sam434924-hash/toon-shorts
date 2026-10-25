@@ -1,0 +1,17 @@
+{
+  "level": 1,
+  "svg": "<svg viewBox=\"0 0 760 120\" width=\"760\" height=\"120\"><rect width=\"760\" height=\"120\" rx=\"12\" fill=\"#1e293b\" stroke=\"#ef4444\" stroke-width=\"2\"/><text x=\"380\" y=\"50\" font-family=\"Consolas, monospace\" font-size=\"20\" font-weight=\"bold\" fill=\"#ef4444\" text-anchor=\"middle\">password123  (Cracked in 0.1s)</text><text x=\"380\" y=\"90\" font-family=\"Arial, sans-serif\" font-size=\"16\" fill=\"#94a3b8\" text-anchor=\"middle\">Top 10 most common breached passwords</text></svg>",
+  "motion_preset": "slide_in",
+  "timeline": [
+    {
+      "at": 0.0,
+      "opacity": 0.0,
+      "translateY": 25
+    },
+    {
+      "at": 0.3,
+      "opacity": 1.0,
+      "translateY": 0
+    }
+  ]
+}

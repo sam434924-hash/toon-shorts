@@ -1,0 +1,22 @@
+{
+  "level": 1,
+  "svg": "<svg viewBox=\"0 0 240 300\" width=\"240\" height=\"300\"><rect width=\"240\" height=\"300\" rx=\"14\" fill=\"#0f172a\" stroke=\"#f59e0b\" stroke-width=\"3\"/><text x=\"120\" y=\"45\" font-family=\"Arial, sans-serif\" font-size=\"18\" font-weight=\"bold\" fill=\"#f59e0b\" text-anchor=\"middle\">2. PASSWORD REUSE</text><circle cx=\"120\" cy=\"140\" r=\"45\" fill=\"#1e293b\" stroke=\"#f59e0b\" stroke-width=\"3\"/><text x=\"120\" y=\"150\" font-size=\"36\" text-anchor=\"middle\">\ud83d\udd01</text><text x=\"120\" y=\"240\" font-family=\"Consolas, monospace\" font-size=\"15\" fill=\"#f59e0b\" text-anchor=\"middle\">Same Everywhere!</text></svg>",
+  "motion_preset": "pop",
+  "timeline": [
+    {
+      "at": 0.0,
+      "scale": 0.0,
+      "opacity": 0.0
+    },
+    {
+      "at": 0.3,
+      "scale": 1.0,
+      "opacity": 1.0
+    },
+    {
+      "at": 0.5,
+      "scale": 1.0,
+      "opacity": 1.0
+    }
+  ]
+}

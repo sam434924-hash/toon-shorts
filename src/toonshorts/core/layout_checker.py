@@ -566,7 +566,10 @@ def verify_video_layout(video_dir: Path) -> Dict[str, Any]:
     """
     video_dir = Path(video_dir)
     html_files = sorted(
-        list(video_dir.glob("scene_*_still.html")) + list(video_dir.glob("*.html")),
+        list(video_dir.glob("scene_*_still.html"))
+        + list(video_dir.glob("work/scene_*_still.html"))
+        + list(video_dir.glob("*.html"))
+        + list(video_dir.glob("work/*.html")),
         key=lambda p: p.name,
     )
     # Deduplicate while preserving order

@@ -95,11 +95,27 @@ class GeminiClientWrapper:
                     response_mime_type="application/json" if response_schema else "text/plain",
                     response_schema=response_schema,
                 )
-                response = self.client.models.generate_content(
-                    model=model_name,
-                    contents=prompt,
-                    config=gen_config,
-                )
+                try:
+                    response = self.client.models.generate_content(
+                        model=model_name,
+                        contents=prompt,
+                        config=gen_config,
+                    )
+                except ValueError as ve:
+                    if "additionalProperties" in str(ve) and response_schema is not None:
+                        logger.warning("Gemini Developer API mode does not support additionalProperties in response_schema; retrying with application/json: %s", ve)
+                        gen_config = types.GenerateContentConfig(
+                            system_instruction=system_instruction,
+                            response_mime_type="application/json",
+                            response_schema=None,
+                        )
+                        response = self.client.models.generate_content(
+                            model=model_name,
+                            contents=prompt,
+                            config=gen_config,
+                        )
+                    else:
+                        raise
                 return response.text or ""
             except APIError as e:
                 status_code = getattr(e, "code", None)

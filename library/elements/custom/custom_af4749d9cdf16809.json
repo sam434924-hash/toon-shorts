@@ -1,0 +1,17 @@
+{
+  "level": 1,
+  "svg": "<svg viewBox=\"0 0 240 300\" width=\"240\" height=\"300\"><rect width=\"240\" height=\"300\" rx=\"14\" fill=\"#1e293b\" stroke=\"#ef4444\" stroke-width=\"2.5\"/><text x=\"120\" y=\"45\" font-family=\"Arial, sans-serif\" font-size=\"18\" font-weight=\"bold\" fill=\"#ef4444\" text-anchor=\"middle\">3. BANK ACCOUNT</text><circle cx=\"120\" cy=\"140\" r=\"45\" fill=\"#0f172a\" stroke=\"#ef4444\" stroke-width=\"3\"/><text x=\"120\" y=\"150\" font-size=\"36\" text-anchor=\"middle\">\ud83c\udfe6</text><text x=\"120\" y=\"240\" font-family=\"Consolas, monospace\" font-size=\"15\" fill=\"#f8fafc\" text-anchor=\"middle\">Breached via Reuse</text></svg>",
+  "motion_preset": "slide_in",
+  "timeline": [
+    {
+      "at": 0.0,
+      "opacity": 0.0,
+      "translateY": 40
+    },
+    {
+      "at": 0.25,
+      "opacity": 1.0,
+      "translateY": 0
+    }
+  ]
+}
