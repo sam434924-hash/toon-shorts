@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-25: camera visibility rules & zoom cap reduction: lowered default camera zoom cap from 1.9x to 1.35x (1.45x reaction peak), enforced >=70% board area visibility in board scenes, restricted close-ups to reaction shots <=1.5s, verified speaking character head-to-waist framing, added visibility verification engine to check_camera with unit tests, and re-rendered How_hackers_actually_break_into_systems_v6.
+
 - 2026-10-25: camera & acting audit fix: connected listener reaction motion (nod, head tilt, amused bounce) and reaction blinks in gestures_fk.js, fixed character name extraction for dicts/models in plan_acting_plan, prioritized early stressed words to eliminate motionless actor delay, restored unbypassed 2.0s motionless actor check in check_acting, and integrated acting/camera validation gates into standard run_pipeline.
 
 - 2026-10-25: camera & acting hardening: fixed per-scene timing offset in animejs templates, implemented activeTurn lean/flip, listener board glance and speaker change blinks, hardened pipeline check gates, and added 2x slices for stick_hoodie.

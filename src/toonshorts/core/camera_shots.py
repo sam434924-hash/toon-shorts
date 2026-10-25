@@ -16,7 +16,8 @@ from typing import Any, Dict, List, Optional, Tuple
 CANVAS_W = 1080
 CANVAS_H = 1920
 FPS = 30
-MAX_ZOOM_DEFAULT = 1.9   # character zone cap; raise only after a sharpness test
+MAX_ZOOM_DEFAULT = 1.35  # lowered zoom cap to keep scene and board readable
+MAX_ZOOM_SNAP = 1.45     # snap-zoom may peak at 1.45 only for short reaction beat
 SNAP_FRAMES = 7          # snap-zoom length (6 to 8 frames)
 
 SPEAKERS = ("A", "B", "BOTH", "REACTION")
@@ -51,18 +52,18 @@ class ShotPreset:
 PRESETS: Dict[str, ShotPreset] = {
     p.code: p
     for p in (
-        ShotPreset("CAM_01_WIDE_2SHOT", 35, 1.00, 1.08, (0.50, 0.52), 760, 2.0,
+        ShotPreset("CAM_01_WIDE_2SHOT", 35, 1.00, 1.05, (0.50, 0.50), 760, 2.0,
                    "Opening hook and full two-person context"),
-        ShotPreset("CAM_02_MED_BOARD", 50, 1.24, 1.36, (0.46, 0.48), 700, 4.5,
+        ShotPreset("CAM_02_MED_BOARD", 50, 1.18, 1.25, (0.48, 0.46), 700, 4.5,
                    "Explaining while the board changes"),
-        ShotPreset("CAM_03_OTS_SPEAKER_A", 58, 1.40, 1.48, (0.36, 0.50), 680, 8.0,
+        ShotPreset("CAM_03_OTS_SPEAKER_A", 58, 1.22, 1.28, (0.42, 0.48), 680, 8.0,
                    "Over the shoulder on speaker A"),
-        ShotPreset("CAM_04_CU_SPEAKER_B", 85, 1.72, 1.80, (0.68, 0.44), 640, 14.0,
+        ShotPreset("CAM_04_CU_SPEAKER_B", 85, 1.30, 1.35, (0.65, 0.50), 640, 14.0,
                    "Questions, challenges, deadpan reactions"),
-        ShotPreset("CAM_05_CU_SPEAKER_A", 85, 1.80, 1.90, (0.30, 0.54), 660, 14.0,
+        ShotPreset("CAM_05_CU_SPEAKER_A", 85, 1.30, 1.35, (0.35, 0.50), 660, 14.0,
                    "Hesitation or a realization"),
-        # ECU needs zoom above MAX_ZOOM_DEFAULT: only after a sharpness test.
-        ShotPreset("CAM_06_ECU_REACTION", 105, 2.15, 2.35, (0.68, 0.38), 610, 18.0,
+        # ECU peak for short reaction snap only
+        ShotPreset("CAM_06_ECU_REACTION", 105, 1.35, 1.45, (0.65, 0.48), 610, 18.0,
                    "Punchline eyes or a macro detail"),
     )
 }
@@ -132,9 +133,17 @@ class CameraShot:
             out.append(f"unknown entry {self.entry!r}")
         if self.eye_target not in EYE_TARGETS:
             out.append(f"unknown eye_target {self.eye_target!r}")
+        is_cu = (self.preset in ("CAM_04_CU_SPEAKER_B", "CAM_05_CU_SPEAKER_A", "CAM_06_ECU_REACTION") or "CU" in self.preset or "ECU" in self.preset)
+        if is_cu and self.duration() > 1.5 + 1e-4:
+            out.append(f"close-up duration {self.duration():.2f}s exceeds 1.5s limit")
+        is_snap_reaction = (self.motion == "SNAP_ZOOM" and self.duration() <= 1.5 + 1e-4)
+        effective_cap = MAX_ZOOM_SNAP if is_snap_reaction else max_zoom
         for name, z in (("zoom_start", self.zoom_start), ("zoom_end", self.zoom_end)):
-            if not 1.0 <= z <= max_zoom:
-                out.append(f"{name} {z} outside 1.0..{max_zoom}")
+            if not 1.0 <= z <= effective_cap:
+                out.append(f"{name} {z} outside 1.0..{effective_cap}")
+        if self.motion == "SNAP_ZOOM" and self.duration() > 1.5 + 1e-4:
+            if max(self.zoom_start, self.zoom_end) > max_zoom:
+                out.append(f"snap-zoom exceeding {max_zoom} only allowed for short reaction beat (max 1.5s)")
         for name, c in (("center_start", self.center_start), ("center_end", self.center_end)):
             if not (0.0 <= c[0] <= 1.0 and 0.0 <= c[1] <= 1.0):
                 out.append(f"{name} {c} must be inside 0..1")
@@ -247,11 +256,11 @@ def shot_from_preset(code: str, start_sec: float, end_sec: float, speaker: str,
     p = PRESETS[code]
     z0 = p.zoom_min
     if motion == "CREEP_IN":
-        z1 = z0 + amount
+        z1 = min(MAX_ZOOM_DEFAULT, round(z0 + amount, 4))
     elif motion == "SNAP_ZOOM":
-        z1 = z0 + 2 * amount
+        z1 = min(MAX_ZOOM_SNAP, round(z0 + 2 * amount, 4))
     elif motion == "PULL_BACK":
-        z0, z1 = z0 + amount, z0
+        z0, z1 = min(MAX_ZOOM_DEFAULT, round(z0 + amount, 4)), z0
     else:
         z1 = z0
     return CameraShot(start_sec, end_sec, speaker, code, z0, z1,
@@ -290,14 +299,14 @@ def timeline_problems(shots: List[CameraShot], total_sec: Optional[float] = None
 
 def _selftest() -> None:
     wide = shot_from_preset("CAM_01_WIDE_2SHOT", 0.0, 3.0, "BOTH", "CREEP_IN")
-    med = CameraShot(3.0, 5.0, "A", "CAM_02_MED_BOARD", 1.28, 1.32,
-                     (0.46, 0.48), (0.46, 0.48), "CREEP_IN", "CUT", "BOARD")
-    snap = CameraShot(5.0, 7.0, "B", "CAM_02_MED_BOARD", 1.28, 1.36,
-                      (0.48, 0.48), (0.48, 0.48), "SNAP_ZOOM", "CUT", "BOARD")
-    cu = shot_from_preset("CAM_04_CU_SPEAKER_B", 7.0, 9.0, "B", "HOLD")
+    med = CameraShot(3.0, 5.0, "A", "CAM_02_MED_BOARD", 1.18, 1.22,
+                     (0.48, 0.46), (0.48, 0.46), "CREEP_IN", "CUT", "BOARD")
+    snap = CameraShot(5.0, 6.2, "B", "CAM_02_MED_BOARD", 1.18, 1.28,
+                      (0.48, 0.46), (0.48, 0.46), "SNAP_ZOOM", "CUT", "BOARD")
+    cu = shot_from_preset("CAM_04_CU_SPEAKER_B", 6.2, 7.5, "B", "HOLD")
     shots = [wide, med, snap, cu]
 
-    assert timeline_problems(shots, total_sec=9.0) == [], timeline_problems(shots, 9.0)
+    assert timeline_problems(shots, total_sec=7.5) == [], timeline_problems(shots, 7.5)
 
     # same input, same output (deterministic)
     assert evaluate_camera(med, 120) == evaluate_camera(med, 120)
@@ -305,13 +314,13 @@ def _selftest() -> None:
     # creep rises smoothly; snap reaches its end zoom within the snap window
     zs = [evaluate_camera(wide, f)["zoom"] for f in range(0, 90, 10)]
     assert zs == sorted(zs) and zs[-1] > zs[0]
-    assert evaluate_camera(snap, int(5.0 * FPS) + SNAP_FRAMES)["zoom"] >= 1.35
+    assert evaluate_camera(snap, int(5.0 * FPS) + SNAP_FRAMES)["zoom"] >= 1.25
 
     # blur grows with zoom; planes exist; handheld off by default
     assert bg_blur_for_zoom(1.0) == 2.0 and bg_blur_for_zoom(1.8) == 14.0
-    st = evaluate_camera(cu, 8 * FPS)
+    st = evaluate_camera(cu, int(7.0 * FPS))
     assert set(st["planes"]) == set(DEFAULT_PLANES) and st["rotation_deg"] == 0.0
-    hh = evaluate_camera(cu, 8 * FPS, handheld=Handheld())
+    hh = evaluate_camera(cu, int(7.0 * FPS), handheld=Handheld())
     assert hh["rotation_deg"] != 0.0
 
     # cut timing
@@ -324,8 +333,8 @@ def _selftest() -> None:
     assert any("speaker" in m for m in msgs) and any("preset" in m for m in msgs)
     assert any("zoom_start" in m for m in msgs) and any("zoom_end" in m for m in msgs)
     assert any("center_start" in m for m in msgs)
-    gap = [wide, CameraShot(3.5, 5.0, "A", "CAM_02_MED_BOARD", 1.28, 1.28,
-                            (0.46, 0.48), (0.46, 0.48))]
+    gap = [wide, CameraShot(3.5, 5.0, "A", "CAM_02_MED_BOARD", 1.18, 1.18,
+                            (0.48, 0.46), (0.48, 0.46))]
     assert any("gap" in m for m in timeline_problems(gap))
     print("camera_shots selftest OK")
 

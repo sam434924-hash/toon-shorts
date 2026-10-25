@@ -1,0 +1,323 @@
+{
+  "cast": {
+    "left": "boy_b",
+    "right": "girl_a"
+  },
+  "scenes": [
+    {
+      "scene_number": 1,
+      "speaker": "A",
+      "listener": "B",
+      "duration_sec": 4.59,
+      "beats": [
+        {
+          "beat_id": "beat_1_1",
+          "tactic": "ask",
+          "energy": "medium",
+          "subtext": "Genuinely curious and wanting clarification",
+          "stressed_words": [
+            {
+              "word": "really",
+              "word_index": 4,
+              "start_sec": 1.48,
+              "peak_sec": 1.9
+            }
+          ],
+          "gesture": {
+            "name": "point_board",
+            "intensity": "medium",
+            "lead_frames": 3,
+            "start_ms": 1380,
+            "peak_ms": 1900,
+            "hold_ms": 1100,
+            "return_ms": 400
+          },
+          "gaze": {
+            "target": "BOARD",
+            "time_sec": 1.18
+          },
+          "turn": {
+            "type": "none",
+            "time_sec": 1.38
+          },
+          "listener_reaction": {
+            "type": "head_tilt",
+            "intensity": "subtle",
+            "time_sec": 2.525
+          },
+          "pointing_target_slot": "slot-hero"
+        }
+      ]
+    },
+    {
+      "scene_number": 2,
+      "speaker": "B",
+      "listener": "A",
+      "duration_sec": 6.37,
+      "beats": [
+        {
+          "beat_id": "beat_2_1",
+          "tactic": "explain",
+          "energy": "medium",
+          "subtext": "Breaking it down clearly",
+          "stressed_words": [
+            {
+              "word": "not",
+              "word_index": 0,
+              "start_sec": 0.0,
+              "peak_sec": 0.384
+            }
+          ],
+          "gesture": {
+            "name": "point_board",
+            "intensity": "medium",
+            "lead_frames": 3,
+            "start_ms": 0,
+            "peak_ms": 384,
+            "hold_ms": 1100,
+            "return_ms": 400
+          },
+          "gaze": {
+            "target": "BOARD",
+            "time_sec": 0.0
+          },
+          "turn": {
+            "type": "none",
+            "time_sec": 0.0
+          },
+          "listener_reaction": {
+            "type": "nod",
+            "intensity": "subtle",
+            "time_sec": 3.2
+          },
+          "pointing_target_slot": "slot-hero"
+        }
+      ]
+    },
+    {
+      "scene_number": 3,
+      "speaker": "A",
+      "listener": "B",
+      "duration_sec": 5.25,
+      "beats": [
+        {
+          "beat_id": "beat_3_1",
+          "tactic": "ask",
+          "energy": "medium",
+          "subtext": "Genuinely curious and wanting clarification",
+          "stressed_words": [
+            {
+              "word": "one",
+              "word_index": 2,
+              "start_sec": 1.2,
+              "peak_sec": 1.524
+            }
+          ],
+          "gesture": {
+            "name": "shrug",
+            "intensity": "medium",
+            "lead_frames": 3,
+            "start_ms": 1100,
+            "peak_ms": 1524,
+            "hold_ms": 1100,
+            "return_ms": 400
+          },
+          "gaze": {
+            "target": "PARTNER",
+            "time_sec": 0.9
+          },
+          "turn": {
+            "type": "none",
+            "time_sec": 1.1
+          },
+          "listener_reaction": {
+            "type": "head_tilt",
+            "intensity": "subtle",
+            "time_sec": 2.888
+          },
+          "pointing_target_slot": null
+        }
+      ]
+    },
+    {
+      "scene_number": 4,
+      "speaker": "B",
+      "listener": "A",
+      "duration_sec": 5.29,
+      "beats": [
+        {
+          "beat_id": "beat_4_1",
+          "tactic": "explain",
+          "energy": "medium",
+          "subtext": "Breaking it down clearly",
+          "stressed_words": [
+            {
+              "word": "exactly",
+              "word_index": 0,
+              "start_sec": 0.64,
+              "peak_sec": 0.952
+            }
+          ],
+          "gesture": {
+            "name": "explain",
+            "intensity": "medium",
+            "lead_frames": 3,
+            "start_ms": 540,
+            "peak_ms": 952,
+            "hold_ms": 1100,
+            "return_ms": 400
+          },
+          "gaze": {
+            "target": "PARTNER",
+            "time_sec": 0.34
+          },
+          "turn": {
+            "type": "none",
+            "time_sec": 0.54
+          },
+          "listener_reaction": {
+            "type": "nod",
+            "intensity": "subtle",
+            "time_sec": 2.91
+          },
+          "pointing_target_slot": null
+        }
+      ]
+    },
+    {
+      "scene_number": 5,
+      "speaker": "B",
+      "listener": "A",
+      "duration_sec": 5.71,
+      "beats": [
+        {
+          "beat_id": "beat_5_1",
+          "tactic": "explain",
+          "energy": "medium",
+          "subtext": "Breaking it down clearly",
+          "stressed_words": [
+            {
+              "word": "always",
+              "word_index": 1,
+              "start_sec": 0.72,
+              "peak_sec": 0.948
+            }
+          ],
+          "gesture": {
+            "name": "hands_on_hips",
+            "intensity": "medium",
+            "lead_frames": 3,
+            "start_ms": 620,
+            "peak_ms": 948,
+            "hold_ms": 1100,
+            "return_ms": 400
+          },
+          "gaze": {
+            "target": "PARTNER",
+            "time_sec": 0.42
+          },
+          "turn": {
+            "type": "none",
+            "time_sec": 0.62
+          },
+          "listener_reaction": {
+            "type": "nod",
+            "intensity": "subtle",
+            "time_sec": 3.141
+          },
+          "pointing_target_slot": null
+        }
+      ]
+    },
+    {
+      "scene_number": 6,
+      "speaker": "A",
+      "listener": "B",
+      "duration_sec": 6.93,
+      "beats": [
+        {
+          "beat_id": "beat_6_1",
+          "tactic": "punchline",
+          "energy": "high",
+          "subtext": "The surprising truth lands",
+          "stressed_words": [
+            {
+              "word": "password",
+              "word_index": 3,
+              "start_sec": 1.62,
+              "peak_sec": 1.824
+            }
+          ],
+          "gesture": {
+            "name": "point_board",
+            "intensity": "high",
+            "lead_frames": 3,
+            "start_ms": 1520,
+            "peak_ms": 1824,
+            "hold_ms": 1100,
+            "return_ms": 400
+          },
+          "gaze": {
+            "target": "BOARD",
+            "time_sec": 1.32
+          },
+          "turn": {
+            "type": "lean_in",
+            "time_sec": 1.52
+          },
+          "listener_reaction": {
+            "type": "amused",
+            "intensity": "high",
+            "time_sec": 3.2
+          },
+          "pointing_target_slot": "slot-hero"
+        }
+      ]
+    },
+    {
+      "scene_number": 7,
+      "speaker": "B",
+      "listener": "A",
+      "duration_sec": 5.49,
+      "beats": [
+        {
+          "beat_id": "beat_7_1",
+          "tactic": "explain",
+          "energy": "medium",
+          "subtext": "Breaking it down clearly",
+          "stressed_words": [
+            {
+              "word": "definitely",
+              "word_index": 0,
+              "start_sec": 0.0,
+              "peak_sec": 0.492
+            }
+          ],
+          "gesture": {
+            "name": "explain",
+            "intensity": "medium",
+            "lead_frames": 3,
+            "start_ms": 0,
+            "peak_ms": 492,
+            "hold_ms": 1100,
+            "return_ms": 400
+          },
+          "gaze": {
+            "target": "PARTNER",
+            "time_sec": 0.0
+          },
+          "turn": {
+            "type": "none",
+            "time_sec": 0.0
+          },
+          "listener_reaction": {
+            "type": "nod",
+            "intensity": "subtle",
+            "time_sec": 3.019
+          },
+          "pointing_target_slot": null
+        }
+      ]
+    }
+  ]
+}

@@ -65,11 +65,11 @@ def test_stick_hoodie_raster_slices_and_resolution_ceiling():
         tw, th = torso_img.size
         assert tw <= 256 and th <= 256, f"torso.png native resolution is {tw}x{th}"
 
-    # Verify peak zoom is 1.9x for character zone
-    max_zoom = float(getattr(config, "CAMERA_CHARACTER_MAX_ZOOM", 1.9))
-    assert max_zoom == 1.9
+    # Verify peak zoom is 1.35x for character zone
+    max_zoom = float(getattr(config, "CAMERA_CHARACTER_MAX_ZOOM", 1.35))
+    assert max_zoom == 1.35
 
-    # For vector packs (boy_a, boy_b, girl_a, presenter), 1.9x zoom is supported with zero blur.
+    # For vector packs (boy_a, boy_b, girl_a, presenter), 1.35x zoom is supported with zero blur.
     # For stick_hoodie raster pack, zoom above 1.25x requires re-export or causes slight softness.
 
 

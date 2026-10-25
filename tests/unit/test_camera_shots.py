@@ -1,10 +1,10 @@
 """
-Purpose: Comprehensive unit tests for camera shot language, Appendix A implementation, and check-camera CLI.
+Purpose: Comprehensive unit tests for camera shot language, Appendix A implementation, visibility validation, and check-camera CLI.
 Inputs: Synthetic scenes, camera shot presets, and camera plan files.
-Outputs: Assertion results for presets, parallax, transitions, zoom cap, and validation.
+Outputs: Assertion results for presets, parallax, transitions, zoom cap, visibility checks, and validation.
 Depends on: pytest, json, pathlib, toonshorts.core.camera_shots, toonshorts.core.camera, toonshorts.core.config
 Used by: tests
-Config keys: CAMERA_CHARACTER_MAX_ZOOM, CAMERA_BOARD_MAX_ZOOM
+Config keys: CAMERA_CHARACTER_MAX_ZOOM, CAMERA_SNAP_MAX_ZOOM, CAMERA_BOARD_MAX_ZOOM
 Tests: self
 """
 
@@ -28,6 +28,7 @@ from toonshorts.core.camera import (
     save_camera_plan,
     load_camera_plan,
     check_camera,
+    verify_camera_plan_visibility,
 )
 
 
@@ -53,7 +54,7 @@ def test_presets_exist_and_conform_to_appendix_a():
 
 
 def test_shot_transitions_and_zoom_cap():
-    """Verify hard cuts (0s), snap-zooms (6-8 frames), and creep pushes respect zoom cap 1.9."""
+    """Verify hard cuts (0s), snap-zooms (6-8 frames), and creep pushes respect zoom cap 1.35 / 1.45."""
     # 0s Hard cut with HOLD motion
     shot_cut = shot_from_preset("CAM_01_WIDE_2SHOT", start_sec=0.0, end_sec=2.5, speaker="BOTH", motion="HOLD", entry="CUT")
     assert shot_cut.entry == "CUT"
@@ -61,15 +62,15 @@ def test_shot_transitions_and_zoom_cap():
     assert shot_cut.zoom_start == 1.0
     assert shot_cut.zoom_end == 1.0
 
-    # Snap-zoom (punchline snap)
-    shot_snap = shot_from_preset("CAM_04_CU_SPEAKER_B", start_sec=2.5, end_sec=4.0, speaker="B", motion="SNAP_ZOOM", entry="CUT")
+    # Snap-zoom (punchline snap, <= 1.5s reaction beat)
+    shot_snap = shot_from_preset("CAM_04_CU_SPEAKER_B", start_sec=2.5, end_sec=3.8, speaker="B", motion="SNAP_ZOOM", entry="CUT")
     assert shot_snap.motion == "SNAP_ZOOM"
-    assert shot_snap.zoom_end <= 1.9
+    assert shot_snap.zoom_end <= 1.45
 
     # Creep in motion
-    shot_creep = shot_from_preset("CAM_02_MED_BOARD", start_sec=4.0, end_sec=7.0, speaker="A", motion="CREEP_IN", entry="CUT")
+    shot_creep = shot_from_preset("CAM_02_MED_BOARD", start_sec=3.8, end_sec=6.5, speaker="A", motion="CREEP_IN", entry="CUT")
     assert shot_creep.motion == "CREEP_IN"
-    assert shot_creep.zoom_end <= 1.9
+    assert shot_creep.zoom_end <= 1.35
     assert shot_creep.zoom_end > shot_creep.zoom_start
 
 
@@ -117,11 +118,11 @@ def test_cut_lead_frames():
 
 
 def test_timeline_validation():
-    """Verify timeline validator flags shots exceeding max duration or zoom cap 1.9."""
+    """Verify timeline validator flags shots exceeding max duration or zoom cap 1.35."""
     shots_too_long = [
         shot_from_preset("CAM_01_WIDE_2SHOT", start_sec=0.0, end_sec=8.5, speaker="BOTH", motion="HOLD"),  # >8.0s error
     ]
-    probs = timeline_problems(shots_too_long, total_sec=8.5, max_zoom=1.9)
+    probs = timeline_problems(shots_too_long, total_sec=8.5, max_zoom=1.35)
     assert any("longer than" in p for p in probs)
 
     shots_zoom_bad = [
@@ -131,7 +132,7 @@ def test_timeline_validation():
             speaker="A",
             preset="CAM_01_WIDE_2SHOT",
             zoom_start=1.0,
-            zoom_end=2.2,  # >1.9 error
+            zoom_end=1.8,  # >1.35 error
             center_start=(0.5, 0.5),
             center_end=(0.5, 0.5),
             motion="CREEP_IN",
@@ -139,8 +140,8 @@ def test_timeline_validation():
             eye_target="PARTNER",
         )
     ]
-    probs_zoom = timeline_problems(shots_zoom_bad, total_sec=2.0, max_zoom=1.9)
-    assert any("outside 1.0..1.9" in p for p in probs_zoom)
+    probs_zoom = timeline_problems(shots_zoom_bad, total_sec=2.0, max_zoom=1.35)
+    assert any("outside 1.0..1.35" in p for p in probs_zoom)
 
 
 def test_plan_save_load_camera_plan(tmp_path: Path):
@@ -165,8 +166,8 @@ def test_plan_save_load_camera_plan(tmp_path: Path):
     assert len(shots) >= 2
     for s in shots:
         assert s.duration() <= 6.0
-        assert s.zoom_start <= 1.9
-        assert s.zoom_end <= 1.9
+        assert s.zoom_start <= 1.45
+        assert s.zoom_end <= 1.45
 
     out_file = tmp_path / "camera_plan.json"
     save_camera_plan(shots, out_file)
@@ -183,14 +184,14 @@ def test_check_camera_cli_tool(tmp_path: Path):
     # Create valid camera_plan.json in tmp_path
     shots = [
         shot_from_preset("CAM_01_WIDE_2SHOT", start_sec=0.0, end_sec=2.5, speaker="BOTH", motion="HOLD"),
-        shot_from_preset("CAM_04_CU_SPEAKER_B", start_sec=2.5, end_sec=4.5, speaker="B", motion="HOLD"),
+        shot_from_preset("CAM_04_CU_SPEAKER_B", start_sec=2.5, end_sec=3.8, speaker="B", motion="HOLD"),
     ]
     save_camera_plan(shots, tmp_path / "camera_plan.json")
 
     report = check_camera(tmp_path)
     assert report["status"] == "PASS"
     assert report["shots_count"] == 2
-    assert report["peak_zoom"] <= 1.9
+    assert report["peak_zoom"] <= 1.35
     assert report["determinism_verified"] is True
     assert report["board_zone_independent"] is True
     assert len(report["errors"]) == 0
@@ -203,7 +204,7 @@ def test_check_camera_cli_tool(tmp_path: Path):
             speaker="A",
             preset="CAM_01_WIDE_2SHOT",
             zoom_start=1.0,
-            zoom_end=2.5,  # Exceeds 1.9
+            zoom_end=2.5,  # Exceeds 1.35
             center_start=(0.5, 0.5),
             center_end=(0.5, 0.5),
             motion="CREEP_IN",
@@ -214,4 +215,107 @@ def test_check_camera_cli_tool(tmp_path: Path):
     save_camera_plan(shots_invalid, tmp_path / "camera_plan.json")
     report_bad = check_camera(tmp_path)
     assert report_bad["status"] == "FAIL"
-    assert any("exceeds cap" in e for e in report_bad["errors"])
+    assert any("exceeds cap" in e or "zoom_cap_exceeded" in e for e in report_bad["errors"])
+
+
+def test_visibility_check_passing_plan():
+    """Verify visibility check passes when board >= 70% visible, speaker in frame, CU <= 1.5s."""
+    scenes = [
+        {
+            "scene_number": 1,
+            "speaker": "Speaker A",
+            "duration": 3.8,
+            "visuals": [{"id": "v1"}],
+        },
+        {
+            "scene_number": 2,
+            "speaker": "Speaker B",
+            "duration": 4.0,
+            "visuals": [{"id": "v2"}],
+        },
+    ]
+    shots = [
+        # Scene 1: Med board (0..3.8s) keeps board >= 70% visible and Character A inside
+        shot_from_preset("CAM_02_MED_BOARD", start_sec=0.0, end_sec=3.8, speaker="A", motion="HOLD"),
+        # Scene 2: Main shot Med board (3.8..6.5s)
+        shot_from_preset("CAM_02_MED_BOARD", start_sec=3.8, end_sec=6.5, speaker="B", motion="HOLD"),
+        # Scene 2: Short reaction CU (6.5..7.8s, duration 1.3s <= 1.5s)
+        shot_from_preset("CAM_04_CU_SPEAKER_B", start_sec=6.5, end_sec=7.8, speaker="B", motion="SNAP_ZOOM"),
+    ]
+    errs = verify_camera_plan_visibility(shots, scenes=scenes)
+    assert errs == [], f"Expected passing plan, got errors: {errs}"
+
+
+def test_visibility_check_failing_cropped_board():
+    """Verify visibility check flags board visibility < 70% in scenes using board."""
+    scenes = [
+        {
+            "scene_number": 1,
+            "speaker": "Speaker A",
+            "duration": 4.0,
+            "visuals": [{"id": "v1"}],
+        }
+    ]
+    # Center shifted far right (0.90, 0.50) with zoom 1.35 crops the board below 70%
+    bad_shot = CameraShot(
+        start_sec=0.0,
+        end_sec=4.0,
+        speaker="A",
+        preset="CAM_01_WIDE_2SHOT",
+        zoom_start=1.35,
+        zoom_end=1.35,
+        center_start=(0.90, 0.50),
+        center_end=(0.90, 0.50),
+        motion="HOLD",
+        entry="CUT",
+        eye_target="BOARD",
+    )
+    errs = verify_camera_plan_visibility([bad_shot], scenes=scenes)
+    assert any("board_visibility_under_70" in e for e in errs)
+    assert any("Scene 1" in e for e in errs)
+
+
+def test_visibility_check_failing_cropped_speaker():
+    """Verify visibility check flags speaking character cropped by visible rectangle."""
+    scenes = [
+        {
+            "scene_number": 1,
+            "speaker": "Speaker B",  # Speaker B is at X: 570..840
+            "duration": 3.0,
+            "visuals": [],
+        }
+    ]
+    # Camera centered far to the left (0.15, 0.50) at zoom 1.35 crops Speaker B
+    bad_shot = CameraShot(
+        start_sec=0.0,
+        end_sec=3.0,
+        speaker="B",
+        preset="CAM_02_MED_BOARD",
+        zoom_start=1.35,
+        zoom_end=1.35,
+        center_start=(0.15, 0.50),
+        center_end=(0.15, 0.50),
+        motion="HOLD",
+        entry="CUT",
+        eye_target="PARTNER",
+    )
+    errs = verify_camera_plan_visibility([bad_shot], scenes=scenes)
+    assert any("speaking_character_cropped" in e for e in errs)
+    assert any("Scene 1" in e for e in errs)
+
+
+def test_visibility_check_failing_long_closeup():
+    """Verify visibility check flags close-up shot with duration > 1.5s."""
+    scenes = [
+        {
+            "scene_number": 1,
+            "speaker": "Speaker B",
+            "duration": 4.0,
+            "visuals": [],
+        }
+    ]
+    # CU shot lasting 2.2s (> 1.5s)
+    bad_shot = shot_from_preset("CAM_04_CU_SPEAKER_B", start_sec=0.0, end_sec=2.2, speaker="B", motion="HOLD")
+    errs = verify_camera_plan_visibility([bad_shot], scenes=scenes)
+    assert any("closeup_duration_exceeded" in e for e in errs)
+    assert any("Scene 1" in e for e in errs)

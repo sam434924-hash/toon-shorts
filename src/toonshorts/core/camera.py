@@ -1,18 +1,18 @@
 """
-Purpose: Purposeful camera shot planning, easing, validation, and timeline formatting.
+Purpose: Purposeful camera shot planning, easing, visibility validation, and timeline formatting.
 Inputs: Scene duration, word timings, visual cues, and camera configuration.
-Outputs: Deterministic shot list transitions, formatted timelines, and validated configs.
+Outputs: Deterministic shot list transitions, formatted timelines, visibility verification, and validated configs.
 Depends on: json, logging, math, pathlib, typing, core.camera_shots
 Used by: cli, core, core.pipeline, plugins.render.animejs.html_builder
-Config keys: ENABLE_PURPOSEFUL_CAMERA, ENABLE_SPLIT_CAMERA_ZONES, CAMERA_CHARACTER_MAX_ZOOM, CAMERA_BOARD_MAX_ZOOM
-Tests: tests/unit/test_camera_shot_planner.py, tests/unit/test_split_camera_zones.py
+Config keys: ENABLE_PURPOSEFUL_CAMERA, ENABLE_SPLIT_CAMERA_ZONES, CAMERA_CHARACTER_MAX_ZOOM, CAMERA_SNAP_MAX_ZOOM, CAMERA_BOARD_MAX_ZOOM
+Tests: tests/unit/test_camera_shot_planner.py, tests/unit/test_split_camera_zones.py, tests/unit/test_camera_shots.py
 """
 
 import json
 import logging
 import math
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 logger = logging.getLogger("toonshorts.camera")
 
@@ -21,6 +21,7 @@ from .camera_shots import (
     CANVAS_H,
     FPS,
     MAX_ZOOM_DEFAULT,
+    MAX_ZOOM_SNAP,
     SNAP_FRAMES,
     SPEAKERS,
     MOTIONS,
@@ -526,6 +527,299 @@ def plan_split_camera_shots(
 
 
 
+BOARD_RECT: Tuple[float, float, float, float] = (60.0, 288.0, 960.0, 808.0)
+BOARD_AREA: float = (960.0 - 60.0) * (808.0 - 288.0)  # 468,000 px^2
+
+SPEAKER_BOXES: Dict[str, Tuple[float, float, float, float]] = {
+    "A": (180.0, 855.0, 450.0, 1160.0),
+    "B": (570.0, 855.0, 840.0, 1160.0),
+    "BOTH": (180.0, 855.0, 840.0, 1160.0),
+}
+
+
+def compute_visible_rect(zoom: float, center: Tuple[float, float]) -> Tuple[float, float, float, float]:
+    """Returns (v_left, v_top, v_right, v_bottom) in canvas pixels for a camera transform."""
+    cx, cy = center
+    z = max(0.001, float(zoom))
+    w_vis = CANVAS_W / z
+    h_vis = CANVAS_H / z
+    c_px_x = float(cx) * CANVAS_W
+    c_px_y = float(cy) * CANVAS_H
+    return (
+        c_px_x - w_vis / 2.0,
+        c_px_y - h_vis / 2.0,
+        c_px_x + w_vis / 2.0,
+        c_px_y + h_vis / 2.0,
+    )
+
+
+def compute_board_visibility_fraction(v_rect: Tuple[float, float, float, float]) -> float:
+    """Returns the fraction of board area (0.0 to 1.0) visible within v_rect."""
+    v_left, v_top, v_right, v_bottom = v_rect
+    b_left, b_top, b_right, b_bottom = BOARD_RECT
+    ix_min = max(b_left, v_left)
+    ix_max = min(b_right, v_right)
+    iy_min = max(b_top, v_top)
+    iy_max = min(b_bottom, v_bottom)
+    if ix_max <= ix_min or iy_max <= iy_min:
+        return 0.0
+    return ((ix_max - ix_min) * (iy_max - iy_min)) / BOARD_AREA
+
+
+def is_speaker_cropped(
+    v_rect: Tuple[float, float, float, float],
+    speaker: str,
+    tol: float = 2.0,
+    boxes: Optional[Dict[str, Tuple[float, float, float, float]]] = None,
+) -> bool:
+    """Returns True if designated speaker head-to-waist is cropped by v_rect beyond tol."""
+    v_left, v_top, v_right, v_bottom = v_rect
+    box_map = boxes or SPEAKER_BOXES
+    clean = (speaker or "").strip()
+    if clean in ("B", "boy_b", "speaker_b"):
+        box = box_map["B"]
+    elif clean in ("A", "girl_a", "speaker_a"):
+        box = box_map["A"]
+    else:
+        box = box_map["BOTH"]
+
+    s_left, s_top, s_right, s_bottom = box
+    if s_left < v_left - tol:
+        return True
+    if s_right > v_right + tol:
+        return True
+    if s_top < v_top - tol:
+        return True
+    if s_bottom > v_bottom + tol:
+        return True
+    return False
+
+
+def is_closeup_shot(shot: CameraShot) -> bool:
+    """Returns True if the shot preset represents a close-up or reaction close-up."""
+    preset = shot.preset or ""
+    return (
+        "CU" in preset
+        or "ECU" in preset
+        or preset in ("CAM_04_CU_SPEAKER_B", "CAM_05_CU_SPEAKER_A", "CAM_06_ECU_REACTION")
+        or shot.zoom_start > 1.28
+        or shot.zoom_end > 1.28
+    )
+
+
+def is_reaction_shot(shot: CameraShot) -> bool:
+    """Returns True if the shot is designed as a short reaction beat."""
+    preset = shot.preset or ""
+    return (
+        "REACTION" in preset
+        or preset == "CAM_06_ECU_REACTION"
+        or shot.motion == "SNAP_ZOOM"
+        or (is_closeup_shot(shot) and shot.duration() <= 1.5 + 1e-4)
+    )
+
+
+def verify_camera_plan_visibility(
+    shots: List[CameraShot],
+    scenes: Optional[List[Any]] = None,
+    fps: int = FPS,
+    board_rect: Tuple[float, float, float, float] = BOARD_RECT,
+    speaker_boxes: Optional[Dict[str, Tuple[float, float, float, float]]] = None,
+    max_zoom_default: float = MAX_ZOOM_DEFAULT,
+    max_zoom_snap: float = MAX_ZOOM_SNAP,
+) -> List[str]:
+    """
+    Computes visible rectangle per shot/frame and verifies:
+    - Close-up duration <= 1.5s (rule 'closeup_duration_exceeded')
+    - Close-up never main shot of scene (rule 'closeup_as_main_shot')
+    - In scenes using board, every shot keeps >= 70% board area visible except a single reaction shot per scene (rule 'board_visibility_under_70')
+    - Speaking character head/body fully inside visible frame, head to waist at least (rule 'speaking_character_cropped')
+    - Zoom <= max_zoom_default (1.35) or snap-zoom <= max_zoom_snap (1.45) on short reaction beat <= 1.5s (rule 'zoom_cap_exceeded')
+    Returns list of formatted error strings:
+    "Scene {sc_num}, time {t:.2f}s: rule '{rule_name}' failed: ..."
+    """
+    if not shots:
+        return ["camera plan has no shots"]
+
+    boxes = speaker_boxes or SPEAKER_BOXES
+    errors: List[str] = []
+
+    # Build scene definitions
+    scene_defs: List[Dict[str, Any]] = []
+    if scenes:
+        curr_t = 0.0
+        for idx, sc in enumerate(scenes):
+            sc_num = getattr(sc, "scene_number", idx + 1) if not isinstance(sc, dict) else sc.get("scene_number", idx + 1)
+            wts = getattr(sc, "word_timings", None) or (sc.get("word_timings") if isinstance(sc, dict) else None) or []
+            if wts:
+                w_end = max(getattr(w, "end_time", None) or (w.get("end_time", 0.0) if isinstance(w, dict) else 0.0) for w in wts)
+                dur = max(float(w_end) + 0.35, 1.5)
+            else:
+                dur = float(getattr(sc, "duration", 4.0) if not isinstance(sc, dict) else sc.get("duration", 4.0))
+
+            spk = getattr(sc, "speaker", "") if not isinstance(sc, dict) else sc.get("speaker", "")
+            b_objs = getattr(sc, "board_objects", None) or (sc.get("board_objects") if isinstance(sc, dict) else None)
+            vis = getattr(sc, "visuals", None) or (sc.get("visuals") if isinstance(sc, dict) else None)
+            layout = getattr(sc, "layout", None) or (sc.get("layout") if isinstance(sc, dict) else None)
+            has_board = bool(b_objs or vis or (layout and (isinstance(layout, dict) and (layout.get("slots") or layout.get("elements") or layout.get("template")))))
+
+            scene_defs.append({
+                "scene_number": sc_num,
+                "start": curr_t,
+                "end": curr_t + dur,
+                "duration": dur,
+                "speaker": spk,
+                "has_board": has_board,
+            })
+            curr_t += dur
+        if shots and scene_defs:
+            scene_defs[-1]["end"] = max(scene_defs[-1]["end"], shots[-1].end_sec)
+    else:
+        # Infer scenes from shots
+        cur_group: List[CameraShot] = []
+        sc_counter = 1
+        for s in shots:
+            if not cur_group:
+                cur_group.append(s)
+            elif is_closeup_shot(s) and not is_closeup_shot(cur_group[-1]):
+                cur_group.append(s)
+            else:
+                st = cur_group[0].start_sec
+                et = cur_group[-1].end_sec
+                scene_defs.append({
+                    "scene_number": sc_counter,
+                    "start": st,
+                    "end": et,
+                    "duration": et - st,
+                    "speaker": cur_group[0].speaker,
+                    "has_board": True,
+                })
+                sc_counter += 1
+                cur_group = [s]
+        if cur_group:
+            st = cur_group[0].start_sec
+            et = cur_group[-1].end_sec
+            scene_defs.append({
+                "scene_number": sc_counter,
+                "start": st,
+                "end": et,
+                "duration": et - st,
+                "speaker": cur_group[0].speaker,
+                "has_board": True,
+            })
+
+    def get_scene_num(t: float) -> int:
+        for sd in scene_defs:
+            if sd["start"] - 1e-4 <= t < sd["end"] + 1e-4:
+                return sd["scene_number"]
+        return scene_defs[-1]["scene_number"] if scene_defs else 1
+
+    # Check 1: Per-shot close-up duration and zoom caps
+    for s in shots:
+        sc_num = get_scene_num(s.start_sec)
+        d = s.duration()
+
+        # Rule: closeup_duration_exceeded
+        if is_closeup_shot(s) and d > 1.5 + 1e-4:
+            errors.append(
+                f"Scene {sc_num}, time {s.start_sec:.2f}s: rule 'closeup_duration_exceeded' failed: close-up shot duration {d:.2f}s exceeds 1.5s limit"
+            )
+
+        # Rule: zoom_cap_exceeded
+        peak_z = max(s.zoom_start, s.zoom_end)
+        is_snap_rx = (s.motion == "SNAP_ZOOM" and d <= 1.5 + 1e-4)
+        effective_cap = max_zoom_snap if is_snap_rx else max_zoom_default
+        if peak_z > effective_cap + 1e-4:
+            errors.append(
+                f"Scene {sc_num}, time {s.start_sec:.2f}s: rule 'zoom_cap_exceeded' failed: peak zoom {peak_z:.2f} exceeds cap {effective_cap:.2f}"
+            )
+
+    # Check 2: Per-scene rules: closeup_as_main_shot and board_visibility_under_70
+    for sd in scene_defs:
+        sc_num = sd["scene_number"]
+        sc_start = sd["start"]
+        sc_end = sd["end"]
+        sc_dur = sd["duration"]
+        has_board = sd["has_board"]
+
+        # Shots overlapping this scene
+        sc_shots = [
+            s for s in shots
+            if max(s.start_sec, sc_start) < min(s.end_sec, sc_end) - 1e-4
+        ]
+        if not sc_shots:
+            continue
+
+        # Rule: closeup_as_main_shot
+        cu_shots = [s for s in sc_shots if is_closeup_shot(s)]
+        non_cu_shots = [s for s in sc_shots if not is_closeup_shot(s)]
+        if cu_shots:
+            if not non_cu_shots:
+                cu = cu_shots[0]
+                errors.append(
+                    f"Scene {sc_num}, time {cu.start_sec:.2f}s: rule 'closeup_as_main_shot' failed: close-up shot used as main shot of scene"
+                )
+            else:
+                max_non_cu_dur = max(s.duration() for s in non_cu_shots)
+                for cu in cu_shots:
+                    if cu.duration() > max_non_cu_dur or cu.duration() > sc_dur * 0.50 + 1e-4:
+                        errors.append(
+                            f"Scene {sc_num}, time {cu.start_sec:.2f}s: rule 'closeup_as_main_shot' failed: close-up shot used as main shot of scene"
+                        )
+
+        # Rule: board_visibility_under_70
+        if has_board:
+            under_70_shots: List[Tuple[CameraShot, float, float]] = []
+            for s in sc_shots:
+                t_mid = (s.start_sec + s.end_sec) / 2.0
+                samples = [
+                    (s.start_sec, evaluate_camera(s, int(round(s.start_sec * fps)))),
+                    (t_mid, evaluate_camera(s, int(round(t_mid * fps)))),
+                    (s.end_sec, evaluate_camera(s, int(round(s.end_sec * fps)))),
+                ]
+                min_vis = 1.0
+                min_t = s.start_sec
+                for t_val, state in samples:
+                    vr = compute_visible_rect(state["zoom"], state["center"])
+                    v_frac = compute_board_visibility_fraction(vr)
+                    if v_frac < min_vis:
+                        min_vis = v_frac
+                        min_t = t_val
+                if min_vis < 0.70 - 1e-4:
+                    under_70_shots.append((s, min_vis, min_t))
+
+            if len(under_70_shots) > 1:
+                for s, min_vis, min_t in under_70_shots:
+                    errors.append(
+                        f"Scene {sc_num}, time {min_t:.2f}s: rule 'board_visibility_under_70' failed: board visibility {min_vis * 100:.1f}% is under 70.0% minimum"
+                    )
+            elif len(under_70_shots) == 1:
+                s, min_vis, min_t = under_70_shots[0]
+                if not (is_reaction_shot(s) and s.duration() <= 1.5 + 1e-4):
+                    errors.append(
+                        f"Scene {sc_num}, time {min_t:.2f}s: rule 'board_visibility_under_70' failed: board visibility {min_vis * 100:.1f}% is under 70.0% minimum"
+                    )
+
+    # Check 3: Speaking character cropping check
+    for s in shots:
+        sc_num = get_scene_num(s.start_sec)
+        spk = s.speaker
+        t_mid = (s.start_sec + s.end_sec) / 2.0
+        samples = [
+            (s.start_sec, evaluate_camera(s, int(round(s.start_sec * fps)))),
+            (t_mid, evaluate_camera(s, int(round(t_mid * fps)))),
+            (s.end_sec, evaluate_camera(s, int(round(s.end_sec * fps)))),
+        ]
+        for t_val, state in samples:
+            vr = compute_visible_rect(state["zoom"], state["center"])
+            if is_speaker_cropped(vr, spk, tol=2.0, boxes=boxes):
+                errors.append(
+                    f"Scene {sc_num}, time {t_val:.2f}s: rule 'speaking_character_cropped' failed: speaking character '{spk}' cropped by visible frame"
+                )
+                break
+
+    return errors
+
+
 def save_camera_plan(shots: List[CameraShot], output_path: Union[str, Path]) -> Path:
     """Serializes CameraShot list to camera_plan.json."""
     p = Path(output_path)
@@ -556,8 +850,12 @@ def plan_camera_plan(
 ) -> List[CameraShot]:
     """
     Unified Camera Shot Planner for Character Zone.
-    Produces a contiguous list of CameraShots covering [0.0, total_duration_sec].
-    Board zone camera remains completely independent.
+    Produces a contiguous list of CameraShots covering [0.0, total_duration_sec] conforming to:
+    - Default shots must be WIDE_2SHOT or MED_BOARD
+    - In scenes using board, every shot keeps >= 70% board area visible except a single reaction shot per scene
+    - Close-ups (CU_A / CU_B) allowed only as short reaction, max 1.5s, never as main shot of scene
+    - Speaking character fully inside frame (head to waist at least)
+    - Widen instead of zooming when cropped
     """
     if not scenes:
         return []
@@ -572,6 +870,8 @@ def plan_camera_plan(
     def speaker_code(name: str) -> str:
         clean = (name or "").strip()
         if len(cast_names) >= 2 and clean == cast_names[1]:
+            return "B"
+        if clean in ("B", "boy_b", "speaker_b"):
             return "B"
         return "A"
 
@@ -595,37 +895,17 @@ def plan_camera_plan(
         st, _, s_num, s_obj, s_wts = scene_data[-1]
         scene_data[-1] = (st, total_duration_sec, s_num, s_obj, s_wts)
 
-    shots: List[CameraShot] = []
-
-    # 1. Opening wide shot with creep push-in
-    s0_start, s0_end, s0_num, s0_obj, s0_wts = scene_data[0]
-    first_split = min(2.5, max(1.2, s0_end * 0.55))
-    if s0_end > 3.2:
-        shots.append(shot_from_preset("CAM_01_WIDE_2SHOT", 0.0, first_split, "BOTH", motion="CREEP_IN"))
-        s0_spk = getattr(s0_obj, "speaker", "") if not isinstance(s0_obj, dict) else s0_obj.get("speaker", "")
-        code0 = speaker_code(s0_spk)
-        preset0 = "CAM_04_CU_SPEAKER_B" if code0 == "B" else "CAM_03_OTS_SPEAKER_A"
-        shots.append(shot_from_preset(preset0, first_split, s0_end, code0, motion="HOLD"))
-    else:
-        shots.append(shot_from_preset("CAM_01_WIDE_2SHOT", 0.0, s0_end, "BOTH", motion="CREEP_IN"))
-
-    prev_end = shots[-1].end_sec
-
-    # 2. Subsequent scenes
+    # Precompute scene cut boundaries using cut lead-in rules
+    # 3 frames before speaker change, 2 before interrupt, 12 before reaction
+    scene_cuts: List[float] = [0.0] * (len(scene_data) + 1)
+    scene_cuts[0] = 0.0
+    scene_cuts[-1] = total_duration_sec
     for i in range(1, len(scene_data)):
         st, et, sc_num, sc_obj, wts = scene_data[i]
-        spk = getattr(sc_obj, "speaker", "") if not isinstance(sc_obj, dict) else sc_obj.get("speaker", "")
-        code = speaker_code(spk)
-        dlg = getattr(sc_obj, "dialogue_line", "") if not isinstance(sc_obj, dict) else sc_obj.get("dialogue_line", "")
-        is_punch = bool(getattr(sc_obj, "is_punchline", False) if not isinstance(sc_obj, dict) else sc_obj.get("is_punchline", False))
-        has_board = bool(getattr(sc_obj, "visuals", None) or getattr(sc_obj, "board_objects", None) or (layout_blocks_map and layout_blocks_map.get(sc_num)))
-        acting_info = (acting_beats_map or {}).get(sc_num)
-
         w_start = (getattr(wts[0], "start_time", 0.25) if hasattr(wts[0], "start_time") else wts[0].get("start_time", 0.25)) if wts else 0.25
         speech_abs = st + float(w_start)
-
-        # Cut lead calculation:
-        # 3 frames before speaker change, 2 before interrupt, 12 before reaction
+        is_punch = bool(getattr(sc_obj, "is_punchline", False) if not isinstance(sc_obj, dict) else sc_obj.get("is_punchline", False))
+        acting_info = (acting_beats_map or {}).get(sc_num)
         if acting_info and acting_info.get("listener_reaction"):
             cut_kind = "REACTION"
         elif is_punch or (acting_info and acting_info.get("tactic") == "interrupt"):
@@ -634,64 +914,68 @@ def plan_camera_plan(
             cut_kind = "SPEAKER_CHANGE"
 
         desired_cut = cut_time_for_line(speech_abs, cut_kind, fps=fps)
-        cut_t = max(prev_end, min(et - 0.5, desired_cut))
-        if cut_t > prev_end + 0.05:
-            # Adjust previous shot end
-            prev_shot = shots[-1]
-            shots[-1] = CameraShot(
-                start_sec=prev_shot.start_sec,
-                end_sec=cut_t,
-                speaker=prev_shot.speaker,
-                preset=prev_shot.preset,
-                zoom_start=prev_shot.zoom_start,
-                zoom_end=prev_shot.zoom_end,
-                center_start=prev_shot.center_start,
-                center_end=prev_shot.center_end,
-                motion=prev_shot.motion,
-                entry=prev_shot.entry,
-                eye_target=prev_shot.eye_target,
-            )
-            prev_end = cut_t
+        cut_t = max(scene_cuts[i - 1] + 0.8, min(et - 0.5, desired_cut))
+        scene_cuts[i] = round(cut_t, 3)
 
-        # Select preset per moment
-        target_preset = "CAM_02_MED_BOARD"
-        motion = "CREEP_IN"
-        eye = "PARTNER"
+    shots: List[CameraShot] = []
 
-        if is_punch:
-            target_preset = "CAM_04_CU_SPEAKER_B" if code == "B" else "CAM_05_CU_SPEAKER_A"
-            motion = "SNAP_ZOOM"
-            eye = "CAMERA"
-        elif "?" in dlg or (acting_info and "question" in str(acting_info.get("tactic", "")).lower()):
-            target_preset = "CAM_04_CU_SPEAKER_B"
-            motion = "HOLD"
-            eye = "PARTNER"
-        elif (acting_info and "hesitat" in str(acting_info.get("tactic", "")).lower()) or "realiz" in dlg.lower():
-            target_preset = "CAM_05_CU_SPEAKER_A"
-            motion = "CREEP_IN"
-            eye = "DOWN"
-        elif has_board:
-            target_preset = "CAM_02_MED_BOARD"
-            motion = "CREEP_IN"
-            eye = "BOARD"
-        elif code == "A":
-            target_preset = "CAM_03_OTS_SPEAKER_A"
-            motion = "CREEP_IN"
-            eye = "PARTNER"
+    for i in range(len(scene_data)):
+        s_start = scene_cuts[i]
+        s_end = scene_cuts[i + 1]
+        scene_dur = s_end - s_start
+        st, et, sc_num, sc_obj, wts = scene_data[i]
+        spk = getattr(sc_obj, "speaker", "") if not isinstance(sc_obj, dict) else sc_obj.get("speaker", "")
+        code = speaker_code(spk)
+        is_punch = bool(getattr(sc_obj, "is_punchline", False) if not isinstance(sc_obj, dict) else sc_obj.get("is_punchline", False))
+        has_board = bool(getattr(sc_obj, "visuals", None) or getattr(sc_obj, "board_objects", None) or getattr(sc_obj, "layout", None) or (layout_blocks_map and layout_blocks_map.get(sc_num)))
+        acting_info = (acting_beats_map or {}).get(sc_num)
+
+        default_preset = "CAM_02_MED_BOARD" if has_board else "CAM_01_WIDE_2SHOT"
+        default_eye = "BOARD" if has_board else "PARTNER"
+
+        if i == 0:
+            # Opening scene
+            first_split = round(s_start + min(2.5, max(1.2, scene_dur * 0.55)), 3)
+            if scene_dur > 3.2:
+                shots.append(shot_from_preset("CAM_01_WIDE_2SHOT", s_start, first_split, "BOTH", motion="CREEP_IN"))
+                preset0 = "CAM_02_MED_BOARD" if has_board else "CAM_01_WIDE_2SHOT"
+                shots.append(shot_from_preset(preset0, first_split, s_end, code, motion="HOLD", eye_target=default_eye))
+            else:
+                shots.append(shot_from_preset("CAM_01_WIDE_2SHOT", s_start, s_end, "BOTH", motion="CREEP_IN"))
+            continue
+
+        has_reaction = False
+        reaction_kind = None
+        if is_punch and scene_dur >= 2.0:
+            has_reaction = True
+            reaction_kind = "PUNCHLINE"
+        elif acting_info and acting_info.get("listener_reaction") and scene_dur >= 2.8:
+            has_reaction = True
+            reaction_kind = "LISTENER"
+
+        if has_reaction and reaction_kind == "PUNCHLINE":
+            # Reaction beat at end of scene: punchline snap zoom
+            reaction_dur = min(1.30, max(0.8, round(scene_dur * 0.32, 3)))
+            main_dur = scene_dur - reaction_dur
+            main_end = round(s_start + main_dur, 3)
+            shots.append(shot_from_preset(default_preset, s_start, main_end, code, motion="CREEP_IN", eye_target=default_eye))
+            cu_preset = "CAM_04_CU_SPEAKER_B" if code == "B" else "CAM_05_CU_SPEAKER_A"
+            shots.append(shot_from_preset(cu_preset, main_end, s_end, code, motion="SNAP_ZOOM", eye_target="CAMERA"))
+        elif has_reaction and reaction_kind == "LISTENER":
+            reaction_dur = min(1.25, max(0.8, round(scene_dur * 0.28, 3)))
+            main_dur = scene_dur - reaction_dur
+            main_end = round(s_start + main_dur, 3)
+            shots.append(shot_from_preset(default_preset, s_start, main_end, code, motion="CREEP_IN", eye_target=default_eye))
+            listener_code = "A" if code == "B" else "B"
+            cu_preset = "CAM_05_CU_SPEAKER_A" if listener_code == "A" else "CAM_04_CU_SPEAKER_B"
+            shots.append(shot_from_preset(cu_preset, main_end, s_end, listener_code, motion="HOLD", eye_target="PARTNER"))
+        elif scene_dur > 5.0:
+            mid = round(s_start + scene_dur * 0.55, 3)
+            shots.append(shot_from_preset(default_preset, s_start, mid, code, motion="CREEP_IN", eye_target=default_eye))
+            alt_preset = "CAM_01_WIDE_2SHOT" if default_preset == "CAM_02_MED_BOARD" else "CAM_02_MED_BOARD"
+            shots.append(shot_from_preset(alt_preset, mid, s_end, code, motion="HOLD", eye_target=default_eye))
         else:
-            target_preset = "CAM_04_CU_SPEAKER_B"
-            motion = "HOLD"
-            eye = "PARTNER"
-
-        scene_dur = et - prev_end
-        if scene_dur > 5.0:
-            mid = round(prev_end + scene_dur * 0.55, 3)
-            shots.append(shot_from_preset(target_preset, prev_end, mid, code, motion=motion, eye_target=eye))
-            alt_preset = "CAM_04_CU_SPEAKER_B" if target_preset != "CAM_04_CU_SPEAKER_B" and code == "B" else "CAM_02_MED_BOARD"
-            shots.append(shot_from_preset(alt_preset, mid, et, code, motion="HOLD", eye_target=eye))
-        else:
-            shots.append(shot_from_preset(target_preset, prev_end, et, code, motion=motion, eye_target=eye))
-        prev_end = et
+            shots.append(shot_from_preset(default_preset, s_start, s_end, code, motion="CREEP_IN", eye_target=default_eye))
 
     # Snap last shot end to total_duration_sec
     if shots:
@@ -718,6 +1002,18 @@ def plan_camera_plan(
             shots[idx].start_sec = shots[idx - 1].end_sec
     shots[-1].end_sec = total_duration_sec
 
+    # Widening pass: widen instead of zooming when cropped
+    for idx, s in enumerate(shots):
+        v_start = compute_visible_rect(s.zoom_start, s.center_start)
+        v_end = compute_visible_rect(s.zoom_end, s.center_end)
+        b_vis = min(compute_board_visibility_fraction(v_start), compute_board_visibility_fraction(v_end))
+        spk_crop = is_speaker_cropped(v_start, s.speaker) or is_speaker_cropped(v_end, s.speaker)
+        is_rx = is_reaction_shot(s)
+
+        if (b_vis < 0.70 and not is_rx) or spk_crop:
+            logger.info("Widening shot %d (%s) to CAM_02_MED_BOARD to ensure visibility", idx, s.preset)
+            shots[idx] = shot_from_preset("CAM_02_MED_BOARD", s.start_sec, s.end_sec, s.speaker, motion="HOLD", eye_target="BOARD")
+
     probs = timeline_problems(shots, total_sec=total_duration_sec, fps=fps, max_zoom=max_zoom)
     if probs:
         logger.warning("Camera shot planner validation issues: %s", probs)
@@ -732,9 +1028,10 @@ def check_camera(video_source: Union[str, Path]) -> Dict[str, Any]:
     - timeline_problems returns 0 issues
     - cut timing rules (3 frames speaker change, 2 frames interrupt, 12 frames reaction)
     - determinism verified (evaluating frames yields identical values)
-    - zoom cap <= 1.9 respected across all shots
+    - zoom cap <= 1.35 respected across all shots (snap-zoom <= 1.45 on reaction <= 1.5s)
     - board zone transform independence (character zoom/cuts never move the board zone)
     - character zoom stays clipped to character zone (never covers board slots or captions)
+    - visibility checks (board >= 70% visible in board scenes, speaking character head/body uncropped, close-up <= 1.5s, CU never main shot)
     """
     from toonshorts.core import config
     vdir = Path(video_source)
@@ -756,7 +1053,9 @@ def check_camera(video_source: Union[str, Path]) -> Dict[str, Any]:
         return {"status": "FAIL", "video": vdir.name, "errors": ["camera plan has no shots"]}
 
     total_sec = shots[-1].end_sec
-    max_cap = float(getattr(config, "CAMERA_CHARACTER_MAX_ZOOM", 1.9))
+    max_cap = float(getattr(config, "CAMERA_CHARACTER_MAX_ZOOM", MAX_ZOOM_DEFAULT))
+    max_snap_cap = float(getattr(config, "CAMERA_SNAP_MAX_ZOOM", MAX_ZOOM_SNAP))
+
     probs = timeline_problems(shots, total_sec=total_sec, max_zoom=max_cap)
     errors: List[str] = list(probs)
 
@@ -775,20 +1074,44 @@ def check_camera(video_source: Union[str, Path]) -> Dict[str, Any]:
             break
 
     # 3. Zoom cap check
-    max_z = max(max(s.zoom_start, s.zoom_end) for s in shots)
-    if max_z > max_cap + 1e-4:
-        errors.append(f"Peak zoom {max_z:.2f} exceeds cap {max_cap}")
+    for idx, s in enumerate(shots):
+        s_max_z = max(s.zoom_start, s.zoom_end)
+        if s.motion == "SNAP_ZOOM" and s.duration() <= 1.5 + 1e-4:
+            if s_max_z > max_snap_cap + 1e-4:
+                errors.append(f"shot {idx}: Peak zoom {s_max_z:.2f} exceeds snap cap {max_snap_cap}")
+        else:
+            if s_max_z > max_cap + 1e-4:
+                errors.append(f"shot {idx}: Peak zoom {s_max_z:.2f} exceeds cap {max_cap}")
 
     # 4. Board zone independence verification:
     # Character zone zoom and center offsets are strictly separate from board transform
     board_zone_independent = True
 
     # 5. Layout containment at peak zoom:
-    # Character zone is clipped by overflow:hidden at top:820px, bottom:1350px.
-    # Board zone is top:288px, bottom:808px. Subtitle zone is top:1355px, bottom:1435px.
-    # Therefore, peak character zoom CANNOT overlap board slots or subtitles.
     layout_clearance = True
 
+    # 6. Visibility and framing verification
+    scenes = None
+    scene_file = vdir / "scene.json"
+    if scene_file.is_file():
+        try:
+            sdata = json.loads(scene_file.read_text(encoding="utf-8"))
+            scenes = sdata.get("scenes", [])
+        except Exception as e:
+            logger.warning("Could not read scene.json in %s: %s", vdir, e)
+
+    vis_errors = verify_camera_plan_visibility(
+        shots,
+        scenes=scenes,
+        fps=FPS,
+        max_zoom_default=max_cap,
+        max_zoom_snap=max_snap_cap,
+    )
+    for verr in vis_errors:
+        if verr not in errors:
+            errors.append(verr)
+
+    max_z = max(max(s.zoom_start, s.zoom_end) for s in shots)
     status = "PASS" if not errors else "FAIL"
     return {
         "status": status,
@@ -799,5 +1122,7 @@ def check_camera(video_source: Union[str, Path]) -> Dict[str, Any]:
         "board_zone_independent": board_zone_independent,
         "determinism_verified": True,
         "layout_clearance": layout_clearance,
+        "visibility_verified": len(vis_errors) == 0,
         "errors": errors,
     }
+

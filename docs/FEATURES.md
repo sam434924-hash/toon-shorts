@@ -23,7 +23,7 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Tests**: `tests/unit/test_layout_checker.py`
 
 ### `check-camera`
-- **Description**: Verifies camera plan shot list, pacing (<=6s), determinism, zoom limits (1.9x cap for character zone), and board-zone independence.
+- **Description**: Verifies camera plan shot list, pacing (<=6s), determinism, zoom limits (1.35x cap, 1.45x reaction peak), visibility rules (>=70% board area visible, speaking character head-to-waist framing, <=1.5s close-up reaction limit), and board-zone independence.
 - **Files**: `src/toonshorts/cli.py`, `src/toonshorts/core/camera.py`, `src/toonshorts/core/camera_shots.py`
 - **Config Flags / Options**: `video_name`, `--json`
 - **Tests**: `tests/unit/test_camera_shots.py`, `tests/unit/test_camera_sharpness.py`

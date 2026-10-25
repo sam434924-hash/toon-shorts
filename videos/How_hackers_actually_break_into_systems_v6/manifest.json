@@ -1,0 +1,240 @@
+{
+  "video_name": "How_hackers_actually_break_into_systems_v6",
+  "created_at": "2026-10-25T12:25:15Z",
+  "style": "night_studio",
+  "characters": [
+    {
+      "name": "boy_b",
+      "pack": "boy_b",
+      "version": "1.0.0"
+    },
+    {
+      "name": "girl_a",
+      "pack": "girl_a",
+      "version": "1.0.0"
+    }
+  ],
+  "voice": {
+    "engine": "gemini_tts",
+    "voice_name": "Puck",
+    "model": "gemini-3.8-flash-tts"
+  },
+  "library_pieces_used": [
+    "library/backgrounds/bg_night_studio_far_107a32c3e87c65d5.png",
+    "library/backgrounds/bg_night_studio_mid_276b98b40b9d4924.png",
+    "library/backgrounds/bg_night_studio_near_a4af961b064747e9.png",
+    "library/elements/custom/custom_0610975c5cbd0847.json",
+    "library/elements/custom/custom_0dd6196dc0dd2956.json",
+    "library/elements/custom/custom_14d57c15e87451a4.json",
+    "library/elements/custom/custom_2356966ad4b42688.json",
+    "library/elements/custom/custom_26a37d9734b9f199.json",
+    "library/elements/custom/custom_3ac193a807e909b3.json",
+    "library/elements/custom/custom_421d2ed529bf54c6.json",
+    "library/elements/custom/custom_45956f77b15344cd.json",
+    "library/elements/custom/custom_45b9a2f5bd55ef5e.json",
+    "library/elements/custom/custom_877016dba871955a.json",
+    "library/elements/custom/custom_936c172e56a59cc3.json",
+    "library/elements/custom/custom_af4749d9cdf16809.json",
+    "library/elements/custom/custom_b6aa2cf38a0767fd.json",
+    "library/elements/custom/custom_edf39ec8ec4f89c0.json",
+    "library/elements/custom/custom_edf5713bfabba5f5.json",
+    "library/elements/images/img_23aa870b5c14924b.png",
+    "library/sfx/sfx_boing_1a844751dcfca809.wav",
+    "library/sfx/sfx_pop_47e9f275ccb62bb6.wav",
+    "library/sfx/sfx_whistle_f385dbe00174d272.wav"
+  ],
+  "tool_versions": {
+    "python": "3.14.4",
+    "ffmpeg": "installed",
+    "toonshorts": "1.0.0"
+  },
+  "level2_custom_visuals": [],
+  "tools_used": [
+    {
+      "category": "skills",
+      "name": "toon-shorts-directing"
+    },
+    {
+      "category": "skills",
+      "name": "animejs-animation"
+    },
+    {
+      "category": "skills",
+      "name": "toon-shorts-visual-check"
+    },
+    {
+      "category": "skills",
+      "name": "toon-shorts-style"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_0610975c5cbd0847.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_0dd6196dc0dd2956.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_14d57c15e87451a4.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_2356966ad4b42688.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_26a37d9734b9f199.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_3ac193a807e909b3.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_421d2ed529bf54c6.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_45956f77b15344cd.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_45b9a2f5bd55ef5e.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_877016dba871955a.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_936c172e56a59cc3.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_af4749d9cdf16809.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_b6aa2cf38a0767fd.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_edf39ec8ec4f89c0.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_edf5713bfabba5f5.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/images/img_23aa870b5c14924b.png"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 1,
+      "id": "sc1_myth_title",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 1,
+      "id": "sc1_padlock_open",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 2,
+      "id": "sc2_step1_shop",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 2,
+      "id": "sc2_step2_reuse",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 2,
+      "id": "sc2_step3_bank",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 3,
+      "id": "sc3_database_leak",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 3,
+      "id": "sc3_accounts_compromised",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 4,
+      "id": "sc4_vault_lock",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 4,
+      "id": "sc4_strength_meter",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 5,
+      "id": "sc5_title",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 6,
+      "id": "sc6_pw_original",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 6,
+      "id": "sc6_pw_variant",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 6,
+      "id": "sc6_pw_rule",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 7,
+      "id": "sc7_title",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 7,
+      "id": "sc7_summary_card",
+      "level": 1,
+      "effect": "custom_svg"
+    }
+  ],
+  "images": []
+}
