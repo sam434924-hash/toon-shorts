@@ -45,6 +45,15 @@ Every scene still must be verified against these 6 criteria:
    - Bottom 480 px (below 1440 px) is reserved for auto-captions and audio attribution.
    - All critical cards, character faces, and diagrams must sit strictly between Y=288 px and Y=1440 px.
 
+7. **Registered Image Quality & Consistency**:
+   - For every registered image used in a scene (from `library/elements/images/`):
+     - Check for garbled text (unreadable, distorted, or hallucinated letters).
+     - Check for style mismatch (dissonant art style, non-harmonized strokes or lighting).
+     - Check for wrong-looking details (anatomical errors, incorrect iconography).
+   - If image review fails:
+     - Regenerate once with a refined prompt and register again via `toonshorts register-image <file> --prompt "..." --theme ... --style ...`.
+     - If it fails again after regeneration, do not loop: report the issue clearly in `visual_review.md` and report to the user.
+
 ## Fix Rounds Protocol
 - If any check fails or the score is under 7.0/10:
   1. Trigger **Fix Round 1**: Adjust styling tokens, card coordinates, or contrast ratios in `scene.json` and re-render stills.

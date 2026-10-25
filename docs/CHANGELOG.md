@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-25: register-image command, single-save indexing, and visual-check review: added register-image CLI validating formats (PNG/JPEG/WebP) and dimensions, re-encoding and stripping metadata, caching in library/elements/images/ by deterministic key, updated directing asset planning, and added registered image quality review to visual-check.
+
 - 2026-10-25: automatic layout planning and directing validation: added plan_scene_layout and plan_script_layouts with template rules (hero, split, chain, stack, title-card), updated toon-shorts-directing skill with mandatory layout blocks, enforced plan validation rejecting missing layouts or conflicting slot bounds, and verified parity against hackers v3 layouts.
 
 - 2026-10-25: layout motion margin, restored bounce overshoot, layout elements, and staggered balance: added ~12% inner motion margin to layout slots, restored pop-in overshoot preset to 1.14 while passing peak overshoot sampling, integrated title and keyword cards as layout elements, and evaluated visual balance only when all planned beat elements are visible.

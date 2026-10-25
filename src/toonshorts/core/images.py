@@ -3,7 +3,7 @@ Purpose: Reference image intake, style analysis, safe image validation, cutouts 
 Inputs: Image paths, purpose notes, theme names, prompts, dimensions, and allowed directories.
 Outputs: Theme draft dictionaries, sanitized images, cutout PNGs, and manifest image items.
 Depends on: hashlib, json, logging, math, os, pathlib, re, shutil, typing, PIL, core.config, core.library, core.paths, core.models
-Used by: core.board_objects, core.pipeline
+Used by: cli, core.board_objects, core.pipeline
 Config keys: None
 Tests: tests/unit/test_images_and_references.py
 """
@@ -204,6 +204,114 @@ def save_image_to_library(
     save_element_index("images", entries)
     logger.info("Saved image ONCE to library: %s", fname)
     return out_path, False
+
+
+def register_image(
+    file_path: Union[str, Path],
+    prompt: str,
+    style: str = "default",
+    theme: Optional[Union[str, List[str]]] = None,
+    source: str = "generated",
+    design_version: int = 1,
+) -> Path:
+    """
+    Takes an image generated with a built-in tool or pipeline:
+    - validates type, size and dimensions (PNG, JPEG, WebP only)
+    - re-encodes it and strips metadata
+    - saves it once in library/elements/images/ with index entry (prompt, theme tags, source, size, key = prompt + style + size + design_version)
+    - returns the library path. If key exists already, reuses it and does not save a copy.
+    """
+    p = Path(file_path).resolve()
+    if not p.is_file():
+        raise FileNotFoundError(f"Image file does not exist: {p}")
+
+    ext = p.suffix.lower()
+    if ext not in ALLOWED_IMAGE_EXTENSIONS:
+        raise ValueError(
+            f"Disallowed image file extension '{ext}'. Accepted formats are PNG, JPEG, and WebP."
+        )
+
+    file_size = p.stat().st_size
+    if file_size > MAX_IMAGE_FILE_SIZE_BYTES:
+        raise ValueError(
+            f"Image file size ({file_size} bytes) exceeds maximum allowed size ({MAX_IMAGE_FILE_SIZE_BYTES} bytes)."
+        )
+
+    header = p.read_bytes()[:512].lower()
+    if b"<svg" in header or b"<?xml" in header or b"<!doctype svg" in header:
+        raise ValueError("SVG image files are forbidden in raster image intake. SVG from images is not permitted.")
+
+    try:
+        with Image.open(p) as img:
+            img_format = (img.format or "").upper()
+            if img_format not in ALLOWED_IMAGE_FORMATS:
+                raise ValueError(
+                    f"Unsupported image format '{img_format}'. Only PNG, JPEG, and WebP are allowed."
+                )
+
+            w, h = img.size
+            if w < MIN_IMAGE_DIMENSION or h < MIN_IMAGE_DIMENSION:
+                raise ValueError(
+                    f"Image dimension ({w}x{h}) is too small (minimum {MIN_IMAGE_DIMENSION}px)."
+                )
+            if w > MAX_IMAGE_DIMENSION or h > MAX_IMAGE_DIMENSION:
+                raise ValueError(
+                    f"Image dimension ({w}x{h}) exceeds maximum allowed ({MAX_IMAGE_DIMENSION}px)."
+                )
+
+            # Re-encode and strip metadata
+            mode = "RGBA" if img.mode in ("RGBA", "LA") or (img.mode == "P" and "transparency" in img.info) else "RGB"
+            clean_img = Image.new(mode, img.size)
+            clean_img.paste(img)
+    except (ValueError, PermissionError):
+        raise
+    except Exception as e:
+        raise ValueError(f"Failed to read or validate image '{p.name}': {e}") from e
+
+    # Compute deterministic key: prompt + style + size + design_version
+    key = compute_image_key(prompt, style, (w, h), design_version)
+    lib_dir = get_image_library_dir()
+
+    # Reuse if key exists already
+    existing = find_image_in_library(key)
+    if existing:
+        fname = existing.get("file_name", "")
+        fpath = lib_dir / fname
+        if not fpath.is_file():
+            fpath = paths.LIBRARY_ELEMENTS_DIR / "image" / fname
+        if fpath.is_file() and fpath.stat().st_size > 0:
+            logger.info("Reusing existing library image for key %s: %s", key[:8], fpath)
+            return fpath
+
+    # Save once into library/elements/images/
+    fname = f"img_{key[:16]}.png"
+    out_path = lib_dir / fname
+    clean_img.save(out_path, format="PNG")
+
+    theme_tags = resolve_theme_tags(style)
+    if theme:
+        if isinstance(theme, str):
+            custom_tags = [t.strip().lower() for t in theme.split(",") if t.strip()]
+        else:
+            custom_tags = [str(t).strip().lower() for t in theme if str(t).strip()]
+        for t in custom_tags:
+            if t not in theme_tags:
+                theme_tags.append(t)
+
+    entries = load_element_index("images")
+    entries.append({
+        "key": key,
+        "prompt": prompt,
+        "theme_tags": theme_tags,
+        "source": source,
+        "size": [w, h],
+        "design_version": design_version,
+        "file_name": fname,
+        "created_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    })
+    save_element_index("images", entries)
+    logger.info("Registered image in library: %s", out_path)
+    return out_path
 
 
 def assert_not_reference_image(file_path: Path, video_dir: Path) -> None:

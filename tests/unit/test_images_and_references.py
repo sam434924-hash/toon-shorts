@@ -242,3 +242,92 @@ def test_image_animation_presets_board_object_schema():
         assert obj["type"] == "image"
         assert obj["data"]["preset"] == preset
         assert obj["board_slot"] == "slot_mid"
+
+
+def test_register_image_validation_and_deduplication(tmp_path, monkeypatch):
+    """Verifies register_image validates format, strips metadata, indexes, and reuses on hit."""
+    from toonshorts.core import paths
+    from toonshorts.core.images import register_image, find_image_in_library
+
+    # Mock library directory to isolated tmp_path
+    mock_lib_elements = tmp_path / "library" / "elements"
+    mock_lib_images = mock_lib_elements / "images"
+    mock_lib_images.mkdir(parents=True)
+    monkeypatch.setattr(paths, "LIBRARY_ELEMENTS_DIR", mock_lib_elements)
+
+    # 1. Create a valid test PNG
+    src_img_path = tmp_path / "raw_gen.png"
+    img = Image.new("RGBA", (128, 128), color=(20, 30, 40, 255))
+    img.save(src_img_path, format="PNG")
+
+    # 2. Register image
+    lib_path = register_image(
+        file_path=src_img_path,
+        prompt="neon glowing shield icon",
+        style="night_studio",
+        theme="security,tech",
+        source="built-in",
+    )
+    assert lib_path.is_file()
+    assert "images" in str(lib_path)
+
+    # Check index
+    index_file = mock_lib_images / "index.json"
+    assert index_file.is_file()
+    entries = json.loads(index_file.read_text(encoding="utf-8"))
+    assert len(entries) == 1
+    assert entries[0]["prompt"] == "neon glowing shield icon"
+    assert "security" in entries[0]["theme_tags"]
+
+    # 3. Second registration with identical prompt + style + size should hit cache and NOT create a new file
+    lib_path2 = register_image(
+        file_path=src_img_path,
+        prompt="neon glowing shield icon",
+        style="night_studio",
+        theme="security,tech",
+        source="built-in",
+    )
+    assert lib_path2 == lib_path
+    entries2 = json.loads(index_file.read_text(encoding="utf-8"))
+    assert len(entries2) == 1  # No duplicate index entry
+
+    # 4. Rejection of fake SVG masquerading as PNG
+    fake_png = tmp_path / "fake.png"
+    fake_png.write_bytes(b"<svg xmlns='http://www.w3.org/2000/svg'><circle/></svg>")
+    with pytest.raises(ValueError, match="SVG image files are forbidden"):
+        register_image(
+            file_path=fake_png,
+            prompt="malicious svg",
+            style="night_studio",
+        )
+
+
+def test_register_image_cli_command(tmp_path):
+    """Verifies toonshorts register-image CLI command outputs library path."""
+    import os
+    import subprocess
+    import sys
+
+    src_img = tmp_path / "cli_test.png"
+    Image.new("RGB", (100, 100), color=(10, 20, 30)).save(src_img, format="PNG")
+
+    env = os.environ.copy()
+    env["TOONSHORTS_LIBRARY_DIR"] = str(tmp_path / "lib")
+
+    cmd = [
+        sys.executable,
+        "-m",
+        "toonshorts",
+        "register-image",
+        str(src_img),
+        "--prompt",
+        "command line test image",
+        "--style",
+        "whiteboard",
+        "--theme",
+        "test_theme",
+    ]
+    proc = subprocess.run(cmd, capture_output=True, text=True, env=env)
+    assert proc.returncode == 0, f"register-image CLI failed: {proc.stderr}"
+    assert "img_" in proc.stdout
+    assert Path(proc.stdout.strip()).is_file()

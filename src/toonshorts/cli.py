@@ -2,7 +2,7 @@
 Purpose: Command-line interface entry points for ToonShorts video pipeline.
 Inputs: CLI arguments for story topic, style preset, brief, and plugin overrides.
 Outputs: Executed pipeline runs and exit status codes.
-Depends on: argparse, brief, core.config, core.layout_checker, core.library, core.pipeline, core.visual_checker, inventory, logging, pathlib, plugins, sys
+Depends on: argparse, brief, core.config, core.images, core.layout_checker, core.library, core.pipeline, core.visual_checker, inventory, logging, pathlib, plugins, sys
 Used by: __main__
 Config keys: None
 Tests: tests/smoke/test_smoke_pipeline.py
@@ -201,6 +201,24 @@ def check_layout_command(args: argparse.Namespace) -> int:
         return 1
 
 
+def register_image_command(args: argparse.Namespace) -> int:
+    """Takes an image file and registers it into library/elements/images/."""
+    try:
+        from toonshorts.core.images import register_image
+        lib_path = register_image(
+            file_path=args.file,
+            prompt=args.prompt,
+            style=args.style,
+            theme=args.theme,
+            source=args.source,
+        )
+        print(str(lib_path))
+        return 0
+    except Exception as e:
+        sys.stderr.write(f"Error registering image: {e}\n")
+        return 1
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="toonshorts",
@@ -263,6 +281,16 @@ def main():
     check_visuals_parser.add_argument("video_name", help="Name of video folder inside videos/ or path to directory")
     check_visuals_parser.add_argument("--json", action="store_true", help="Output review as structured JSON")
 
+    reg_img_parser = subparsers.add_parser(
+        "register-image",
+        help="Validate, strip metadata, and register an image into library/elements/images/",
+    )
+    reg_img_parser.add_argument("file", help="Path to image file to register")
+    reg_img_parser.add_argument("--prompt", required=True, help="Prompt used to generate the image")
+    reg_img_parser.add_argument("--theme", default=None, help="Theme tags (e.g. night_studio, security)")
+    reg_img_parser.add_argument("--style", default="default", help="Art style of the image")
+    reg_img_parser.add_argument("--source", default="generated", help="Source of image (default: generated)")
+
     args = parser.parse_args()
     if args.command == "make":
         sys.exit(make_command(args))
@@ -274,6 +302,8 @@ def main():
         sys.exit(check_layout_command(args))
     elif args.command == "check-visuals":
         sys.exit(check_visuals_command(args))
+    elif args.command == "register-image":
+        sys.exit(register_image_command(args))
 
 
 if __name__ == "__main__":
