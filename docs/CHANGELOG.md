@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-25: automatic layout planning and directing validation: added plan_scene_layout and plan_script_layouts with template rules (hero, split, chain, stack, title-card), updated toon-shorts-directing skill with mandatory layout blocks, enforced plan validation rejecting missing layouts or conflicting slot bounds, and verified parity against hackers v3 layouts.
+
 - 2026-10-25: layout motion margin, restored bounce overshoot, layout elements, and staggered balance: added ~12% inner motion margin to layout slots, restored pop-in overshoot preset to 1.14 while passing peak overshoot sampling, integrated title and keyword cards as layout elements, and evaluated visual balance only when all planned beat elements are visible.
 
 - 2026-10-25: layout planned stills review: planned and rendered 7 scene stills for How_hackers_actually_break_into_systems_v3 using layout templates and board objects, resolved base64 asset encoding, verified zero layout violations and 10/10 visual review, and documented visual_review.md.

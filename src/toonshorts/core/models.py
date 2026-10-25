@@ -89,6 +89,7 @@ class Shot(BaseModel):
 class Visual(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
+    id: Optional[str] = Field(default=None, max_length=40)
     type: str = Field(..., min_length=1, max_length=30)
     trigger_word: str = Field(..., min_length=1, max_length=30)
     params: Dict[str, Any] = Field(default_factory=dict)
@@ -144,6 +145,8 @@ class Scene(BaseModel):
     @field_validator("layout")
     @classmethod
     def validate_layout_value(cls, v: Any) -> Any:
+        if v is None:
+            return None
         if isinstance(v, dict):
             return v
         val = (v or "cards").lower().strip()

@@ -242,7 +242,11 @@ def validate_plan(
             scene_cast = [sc.speaker]
 
         # Layout validation
-        if isinstance(sc.layout, dict):
+        if not sc.layout:
+            all_errors.append(
+                f"Scene {sc.scene_number}: layout: missing required layout block. Writing a script must include a layout block per scene."
+            )
+        elif isinstance(sc.layout, dict):
             layout_errs = validate_scene_layout(sc.layout, scene_duration=sc_len, scene_number=sc.scene_number)
             all_errors.extend(layout_errs)
         elif sc.layout not in ("cards", "stage"):

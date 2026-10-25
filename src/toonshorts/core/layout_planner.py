@@ -12,6 +12,7 @@ import json
 import logging
 import math
 from pathlib import Path
+import re
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 from toonshorts.core import config
@@ -507,3 +508,241 @@ def compute_board_visual_balance(
     right_ratio = right_area / total_area
     is_balanced = (left_ratio <= 0.70) and (right_ratio <= 0.70)
     return round(left_ratio, 3), round(right_ratio, 3), is_balanced
+
+
+def plan_scene_layout(
+    scene: Union[Scene, Dict[str, Any]],
+    scene_duration: float,
+    word_timings: Optional[List[Any]] = None,
+    style_preset: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """
+    Automatic layout planner:
+    Derives deterministic layout block per scene from script lines, visuals, and word timings.
+    Rules:
+    - 1 main visual = hero or title-card
+    - 2 visuals that compare = split
+    - 3 or more in sequence = chain
+    - a list = stack
+    - The hero is the visual tied to the key claim or punchline.
+    - Enter and exit times come from trigger words.
+    - Validates with existing validate_scene_layout (max 3 on screen, one hero per beat).
+    """
+    if hasattr(scene, "model_dump"):
+        sc = scene.model_dump()
+    elif isinstance(scene, dict):
+        sc = dict(scene)
+    else:
+        sc = {"scene_number": 1, "dialogue_line": str(scene)}
+
+    scene_num = int(sc.get("scene_number", 1))
+    dialogue = str(sc.get("dialogue_line") or sc.get("dialogue") or "")
+    action = str(sc.get("action") or "").lower()
+    is_punchline = bool(sc.get("is_punchline", False))
+
+    # 1. Collect visual elements / candidate objects
+    raw_visuals = sc.get("visuals") or sc.get("board_objects") or []
+    items: List[Dict[str, Any]] = []
+
+    for idx, v in enumerate(raw_visuals):
+        if isinstance(v, dict):
+            v_dict = dict(v)
+        elif hasattr(v, "model_dump"):
+            v_dict = v.model_dump()
+        else:
+            v_dict = {"id": f"vis_{scene_num}_{idx+1}"}
+
+        v_id = str(v_dict.get("id") or f"vis_{scene_num}_{idx+1}").strip()
+        v_dict["id"] = v_id
+        items.append(v_dict)
+
+    # If no visuals declared, derive items from words or dialogue points
+    if not items:
+        words = sc.get("words") or []
+        if words:
+            for idx, w in enumerate(words):
+                w_text = w.get("text", f"Keyword {idx+1}") if isinstance(w, dict) else str(w)
+                items.append({
+                    "id": f"sc{scene_num}_card_{idx+1}",
+                    "type": "text_pop",
+                    "text": w_text,
+                    "trigger_word": w_text.split()[0] if w_text else "",
+                    "start_ms": w.get("start_ms") if isinstance(w, dict) else None,
+                })
+        else:
+            items.append({
+                "id": f"sc{scene_num}_hero_visual",
+                "type": "custom",
+                "trigger_word": "",
+            })
+
+    # 2. Select Template
+    count = len(items)
+    has_title_element = any(
+        "title" in str(it.get("id", "")).lower() or
+        str(it.get("board_slot", "")).lower() in ("title", "slot_title") or
+        it.get("slot") in ("title", "slot_title")
+        for it in items
+    )
+
+    if count == 1:
+        if scene_num == 1 or "title" in action or "myth" in action or "heading" in action or has_title_element:
+            template = "title-card"
+        else:
+            template = "hero"
+    elif count == 2:
+        if has_title_element:
+            template = "title-card"
+        else:
+            template = "split"
+    else:  # count >= 3
+        is_list = (
+            "list" in action or "stack" in action or "variant" in action or
+            "rule" in action or any("stack" in str(it.get("board_slot", "")).lower() for it in items) or
+            any("list" in str(it.get("type", "")).lower() for it in items)
+        )
+        if is_list:
+            template = "stack"
+        else:
+            template = "chain"
+
+    # 3. Assign Slots (max 3 items on screen)
+    active_items = items[:3]
+    slots_map: Dict[str, str] = {}
+    elements_plan: List[Dict[str, Any]] = []
+
+    if template == "hero":
+        slots_map["hero"] = active_items[0]["id"]
+        slot_assignments = [("hero", active_items[0])]
+    elif template == "title-card":
+        if len(active_items) >= 2:
+            t_item = active_items[0]
+            c_item = active_items[1]
+            if "title" in str(c_item.get("id", "")).lower() and "title" not in str(t_item.get("id", "")).lower():
+                t_item, c_item = c_item, t_item
+            slots_map["title"] = t_item["id"]
+            slots_map["card"] = c_item["id"]
+            slot_assignments = [("title", t_item), ("card", c_item)]
+        else:
+            slots_map["card"] = active_items[0]["id"]
+            slot_assignments = [("card", active_items[0])]
+    elif template == "split":
+        slots_map["left"] = active_items[0]["id"]
+        slots_map["right"] = active_items[1]["id"]
+        slot_assignments = [("left", active_items[0]), ("right", active_items[1])]
+    elif template == "chain":
+        chain_keys = ["step_1", "step_2", "step_3"]
+        slot_assignments = []
+        for i, it in enumerate(active_items):
+            k = chain_keys[i]
+            slots_map[k] = it["id"]
+            slot_assignments.append((k, it))
+    else:  # stack
+        stack_keys = ["top", "mid", "bottom"]
+        slot_assignments = []
+        for i, it in enumerate(active_items):
+            k = stack_keys[i]
+            slots_map[k] = it["id"]
+            slot_assignments.append((k, it))
+
+    # 4. Resolve Trigger Word Timings and Hero Identification
+    hero_index = len(slot_assignments) - 1
+    if template == "title-card":
+        for s_idx, (s_name, it) in enumerate(slot_assignments):
+            if s_name == "card":
+                hero_index = s_idx
+                break
+    elif is_punchline:
+        hero_index = len(slot_assignments) - 1
+
+    wt_map: Dict[str, float] = {}
+    if word_timings:
+        for wt in word_timings:
+            w_str = getattr(wt, "word", None) or (wt.get("word") if isinstance(wt, dict) else "")
+            s_t = getattr(wt, "start_time", None) if hasattr(wt, "start_time") else (wt.get("start_time", wt.get("start", 0.0)) if isinstance(wt, dict) else 0.0)
+            clean_w = re.sub(r"[^\w]", "", str(w_str)).lower()
+            if clean_w and clean_w not in wt_map:
+                wt_map[clean_w] = float(s_t)
+
+    for idx, (slot_name, it) in enumerate(slot_assignments):
+        el_id = it["id"]
+        is_hero_val = (idx == hero_index)
+
+        trig = str(it.get("trigger_word") or it.get("anchor") or "").strip().lower()
+        clean_trig = re.sub(r"[^\w]", "", trig)
+        start_ms = it.get("start_ms")
+
+        if start_ms is not None and isinstance(start_ms, (int, float)):
+            enter_t = round(max(0.2, float(start_ms) / 1000.0), 2)
+        elif clean_trig and clean_trig in wt_map:
+            enter_t = round(max(0.2, wt_map[clean_trig]), 2)
+        else:
+            enter_t = round(0.3 + idx * 0.45, 2)
+
+        enter_t = min(enter_t, max(0.2, round(scene_duration - 0.4, 2)))
+        exit_t = round(scene_duration, 2)
+        if exit_t <= enter_t:
+            exit_t = round(enter_t + 0.4, 2)
+
+        elements_plan.append({
+            "id": el_id,
+            "slot": slot_name,
+            "is_hero": is_hero_val,
+            "enter_time": enter_t,
+            "exit_time": exit_t,
+        })
+
+    hero_id = slot_assignments[hero_index][1]["id"] if slot_assignments else ""
+
+    layout_block = {
+        "template": template,
+        "hero": hero_id,
+        "slots": slots_map,
+        "elements": elements_plan,
+    }
+
+    # 5. Validate with existing layout validator
+    val_errs = validate_scene_layout(layout_block, scene_duration, scene_number=scene_num, style_preset=style_preset)
+    if val_errs:
+        logger.warning("Scene %d planner produced layout warnings: %s. Adjusting...", scene_num, val_errs)
+        for el in layout_block["elements"]:
+            el["enter_time"] = max(0.0, min(el["enter_time"], scene_duration - 0.2))
+            el["exit_time"] = min(scene_duration, max(el["enter_time"] + 0.2, el["exit_time"]))
+
+    return layout_block
+
+
+def plan_script_layouts(
+    plan_or_scenes: Any,
+    word_timings_per_scene: Optional[Dict[int, List[Any]]] = None,
+    style_preset: Optional[Dict[str, Any]] = None,
+) -> Any:
+    """
+    Plans layout blocks for every scene in a ScriptPlan or list of scenes.
+    Updates scenes in place with valid layout dictionaries and returns the plan.
+    """
+    if hasattr(plan_or_scenes, "scenes"):
+        scenes_list = plan_or_scenes.scenes
+    elif isinstance(plan_or_scenes, dict) and "scenes" in plan_or_scenes:
+        scenes_list = plan_or_scenes["scenes"]
+    elif isinstance(plan_or_scenes, list):
+        scenes_list = plan_or_scenes
+    else:
+        return plan_or_scenes
+
+    for sc in scenes_list:
+        sc_num = getattr(sc, "scene_number", None) or (sc.get("scene_number") if isinstance(sc, dict) else 1)
+        wts = (word_timings_per_scene or {}).get(sc_num)
+
+        dlg = getattr(sc, "dialogue_line", None) or (sc.get("dialogue_line") if isinstance(sc, dict) else "")
+        words_count = len(re.findall(r"\w+", str(dlg)))
+        sc_dur = max(2.5, words_count * 0.40 + 1.2)
+
+        layout_plan = plan_scene_layout(sc, scene_duration=sc_dur, word_timings=wts, style_preset=style_preset)
+
+        if isinstance(sc, dict):
+            sc["layout"] = layout_plan
+        else:
+            setattr(sc, "layout", layout_plan)
+
+    return plan_or_scenes

@@ -34,10 +34,23 @@ Whenever a story or video idea is provided:
 For every scene during directing and planning, the director must execute the **Asset Planning** step to designate the visual asset strategy before writing or rendering:
 1. **Library Asset**: Search existing indexed elements in `library/elements/<type>/index.json` or backgrounds in `library/backgrounds/`. If an asset exists matching the required theme tags and visual key, reuse it directly without regenerating.
 2. **Custom Animated SVG**: Author vector artwork and motion using sanitized SVG (Level 1) or sandboxed pure JavaScript (Level 2). When writing animation timelines and keyframed motion, use the **animejs-animation** skill.
-3. **Generated Image**: Use built-in image generation (such as Gemini Imagen or image-generator subagent). Check `library/elements/image/index.json` first before generating. Save newly generated images once into `library/elements/image/` and register them in the index.
+3. **Generated Image**: generate with the built-in image tool, then register-image. Check `library/elements/images/index.json` first before generating. Save newly generated images once into `library/elements/images/` via `toonshorts register-image <file> --prompt "..." --theme ... --style ...` and record the image in manifest.json `tools_used`.
 4. **Screen Recording**: Clean screen capture walkthroughs, UI recordings, or demo clips.
 
 Record all planned assets and their sources in the scene manifest under `tools_used`.
+
+## Scene Layout Planning (Mandatory)
+Writing a script now requires an explicit `layout` block for every scene. Validation strictly FAILS if a scene has none.
+- **Generation**: Generated automatically by the layout planner (`plan_scene_layout` / `plan_script_layouts`) from dialogue lines, visuals, and word timings, then reviewed.
+- **Rules**:
+  - 1 main visual = `hero` or `title-card`
+  - 2 visuals that compare = `split`
+  - 3 or more in sequence = `chain`
+  - a list = `stack`
+  - The hero is the visual tied to the key claim or punchline.
+  - Enter and exit times come from trigger words.
+  - Max 3 elements on screen at once, strictly one hero per beat.
+- **Review**: The agent may adjust the planner's layout result, but it must pass validation.
 
 ## Cast and staging
 - Max 2 speaking characters per scene. Character A stands LEFT and faces right. Character B stands RIGHT and faces left. Never swap sides inside a scene (180-degree rule).

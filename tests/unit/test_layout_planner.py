@@ -193,3 +193,229 @@ def test_balance_check():
     l_ratio, r_ratio, is_bal = compute_board_visual_balance(boxes_imbalanced)
     assert not is_bal
     assert l_ratio > 0.70
+
+
+def test_plan_scene_layout_rules():
+    """Verifies automatic planner rules: 1 main=hero/title-card, 2=split, 3 seq=chain, list=stack."""
+    from toonshorts.core.layout_planner import plan_scene_layout
+
+    # 1 main visual in standard scene -> hero
+    sc_hero = {
+        "scene_number": 2,
+        "dialogue_line": "This is the single core concept to remember.",
+        "action": "points to single main concept",
+        "visuals": [{"id": "single_vis", "trigger_word": "concept"}],
+    }
+    p_hero = plan_scene_layout(sc_hero, scene_duration=4.0)
+    assert p_hero["template"] == "hero"
+    assert p_hero["hero"] == "single_vis"
+    assert "hero" in p_hero["slots"]
+
+    # 1 main visual in scene 1 or title scene -> title-card
+    sc_title = {
+        "scene_number": 1,
+        "dialogue_line": "Welcome to our cybersecurity guide.",
+        "action": "shows title heading and icon",
+        "visuals": [{"id": "title_elem", "trigger_word": "guide"}],
+    }
+    p_title = plan_scene_layout(sc_title, scene_duration=4.0)
+    assert p_title["template"] == "title-card"
+    assert "card" in p_title["slots"]
+
+    # 2 visuals that compare -> split
+    sc_split = {
+        "scene_number": 3,
+        "dialogue_line": "Compare strong passwords versus weak passwords.",
+        "action": "comparing strong vs weak",
+        "visuals": [
+            {"id": "vis_strong", "trigger_word": "strong"},
+            {"id": "vis_weak", "trigger_word": "weak"},
+        ],
+    }
+    p_split = plan_scene_layout(sc_split, scene_duration=4.0)
+    assert p_split["template"] == "split"
+    assert p_split["slots"]["left"] == "vis_strong"
+    assert p_split["slots"]["right"] == "vis_weak"
+
+    # 3 in sequence -> chain
+    sc_chain = {
+        "scene_number": 4,
+        "dialogue_line": "First shop, then reuse, then bank access.",
+        "action": "explaining sequence of steps in attack chain",
+        "visuals": [
+            {"id": "step1", "trigger_word": "shop"},
+            {"id": "step2", "trigger_word": "reuse"},
+            {"id": "step3", "trigger_word": "bank"},
+        ],
+    }
+    p_chain = plan_scene_layout(sc_chain, scene_duration=5.0)
+    assert p_chain["template"] == "chain"
+    assert p_chain["slots"]["step_1"] == "step1"
+    assert p_chain["slots"]["step_2"] == "step2"
+    assert p_chain["slots"]["step_3"] == "step3"
+
+    # List -> stack
+    sc_stack = {
+        "scene_number": 5,
+        "dialogue_line": "Here are the top three password rules to follow.",
+        "action": "listing three rules in a stack",
+        "visuals": [
+            {"id": "rule1", "trigger_word": "first"},
+            {"id": "rule2", "trigger_word": "second"},
+            {"id": "rule3", "trigger_word": "third"},
+        ],
+    }
+    p_stack = plan_scene_layout(sc_stack, scene_duration=5.0)
+    assert p_stack["template"] == "stack"
+    assert p_stack["slots"]["top"] == "rule1"
+    assert p_stack["slots"]["mid"] == "rule2"
+    assert p_stack["slots"]["bottom"] == "rule3"
+
+
+def test_brand_new_script_with_no_layout_gets_valid_plan():
+    """Verifies a brand new script with no layout gets a valid plan via the planner and passes validation."""
+    from toonshorts.core.layout_planner import plan_script_layouts
+    from toonshorts.core.validator import validate_plan
+    from toonshorts.core.models import PlanValidationError
+
+    raw_script = {
+        "version": 2,
+        "title": "Fresh Script Without Layout",
+        "art_style": "night_studio",
+        "emotional_arc": "suspenseful",
+        "characters": [
+            {"name": "Alice", "visual_description": "Friendly presenter"},
+            {"name": "Bob", "visual_description": "Tech expert character"}
+        ],
+        "scenes": [
+            {
+                "scene_number": 1,
+                "speaker": "Alice",
+                "dialogue_line": "Do you know how movie hackers really smash keyboards?",
+                "action": "questioning title myth",
+                "pose": "idle",
+                "layout": None,
+                "visuals": [{"id": "vis1", "type": "custom", "trigger_word": "hackers"}],
+                "cast": ["Alice", "Bob"]
+            },
+            {
+                "scene_number": 2,
+                "speaker": "Bob",
+                "dialogue_line": "They test stolen credentials across multiple services.",
+                "action": "explaining steps in attack chain",
+                "pose": "idle",
+                "layout": None,
+                "visuals": [
+                    {"id": "step_a", "type": "custom", "trigger_word": "test"},
+                    {"id": "step_b", "type": "custom", "trigger_word": "stolen"},
+                    {"id": "step_c", "type": "custom", "trigger_word": "services"}
+                ],
+                "cast": ["Alice", "Bob"]
+            },
+            {
+                "scene_number": 3,
+                "speaker": "Alice",
+                "dialogue_line": "So a leak in one service breaches another service.",
+                "action": "comparing forum leak vs email breach",
+                "pose": "idle",
+                "layout": None,
+                "visuals": [
+                    {"id": "leak_a", "type": "custom", "trigger_word": "leak"},
+                    {"id": "leak_b", "type": "custom", "trigger_word": "breaches"}
+                ],
+                "cast": ["Alice", "Bob"]
+            },
+            {
+                "scene_number": 4,
+                "speaker": "Bob",
+                "dialogue_line": "Always use unique passwords and turn on 2FA today!",
+                "action": "punchline reminder",
+                "pose": "laughing",
+                "is_punchline": True,
+                "layout": None,
+                "visuals": [{"id": "shield_hero", "type": "custom", "trigger_word": "2FA"}],
+                "cast": ["Alice", "Bob"]
+            }
+        ]
+    }
+
+    # Brand new script directly into validate_plan fails because scenes have no layout
+    with pytest.raises(PlanValidationError, match="missing required layout block"):
+        validate_plan(raw_script)
+
+    # Planner automatically creates valid layouts
+    planned = plan_script_layouts(raw_script)
+    assert planned["scenes"][0]["layout"]["template"] == "title-card"
+    assert planned["scenes"][1]["layout"]["template"] == "chain"
+    assert planned["scenes"][2]["layout"]["template"] == "split"
+    assert planned["scenes"][3]["layout"]["template"] == "hero"
+
+    # Now passes validation
+    validated_plan = validate_plan(planned)
+    assert validated_plan is not None
+
+
+def test_script_with_overlapping_slots_is_rejected():
+    """Verifies that a script with overlapping slots is rejected by validation."""
+    from toonshorts.core.validator import validate_plan
+    from toonshorts.core.models import PlanValidationError
+
+    bad_script = {
+        "version": 2,
+        "title": "Conflicting Slot Script",
+        "art_style": "night_studio",
+        "emotional_arc": "suspenseful",
+        "characters": [
+            {"name": "Alice", "visual_description": "Friendly presenter"},
+            {"name": "Bob", "visual_description": "Tech expert character"}
+        ],
+        "scenes": [
+            {
+                "scene_number": 1,
+                "speaker": "Alice",
+                "dialogue_line": "This layout has two elements colliding in the same slot.",
+                "action": "explaining",
+                "pose": "idle",
+                "cast": ["Alice", "Bob"],
+                "layout": {
+                    "template": "hero",
+                    "hero": "elem1",
+                    "slots": {"hero": "elem1"},
+                    "elements": [
+                        {"id": "elem1", "slot": "hero", "is_hero": True, "enter_time": 0.5, "exit_time": 4.0},
+                        {"id": "elem2", "slot": "hero", "is_hero": False, "enter_time": 1.0, "exit_time": 4.5},
+                    ]
+                }
+            },
+            {
+                "scene_number": 2,
+                "speaker": "Bob",
+                "dialogue_line": "This is second scene.",
+                "action": "explaining",
+                "pose": "idle",
+                "cast": ["Alice", "Bob"],
+                "layout": {"template": "hero", "hero": "e2", "slots": {"hero": "e2"}, "elements": [{"id": "e2", "slot": "hero", "enter_time": 0.0, "exit_time": 3.0}]}
+            },
+            {
+                "scene_number": 3,
+                "speaker": "Alice",
+                "dialogue_line": "This is third scene.",
+                "action": "explaining",
+                "pose": "idle",
+                "cast": ["Alice", "Bob"],
+                "layout": {"template": "hero", "hero": "e3", "slots": {"hero": "e3"}, "elements": [{"id": "e3", "slot": "hero", "enter_time": 0.0, "exit_time": 3.0}]}
+            },
+            {
+                "scene_number": 4,
+                "speaker": "Bob",
+                "dialogue_line": "This is fourth scene.",
+                "action": "punchline",
+                "pose": "laughing",
+                "is_punchline": True,
+                "cast": ["Alice", "Bob"],
+                "layout": {"template": "hero", "hero": "e4", "slots": {"hero": "e4"}, "elements": [{"id": "e4", "slot": "hero", "enter_time": 0.0, "exit_time": 3.0}]}
+            }
+        ]
+    }
+    with pytest.raises(PlanValidationError, match="collision without lifecycle exit"):
+        validate_plan(bad_script)
