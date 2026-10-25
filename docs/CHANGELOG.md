@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-25: camera & acting hardening: fixed per-scene timing offset in animejs templates, implemented activeTurn lean/flip, listener board glance and speaker change blinks, hardened pipeline check gates, and added 2x slices for stick_hoodie.
+
 - 2026-10-25: part 4 roadmap: created docs/ROADMAP.md documenting remaining project steps and future milestones from Appendix D.
 
 - 2026-10-25: part 3 v5 stills and fast preview review: generated camera_plan.json, acting_plan.json, rendered key scene stills and 540x960 fast preview for How_hackers_actually_break_into_systems_v5, validated with check-camera, check-acting, check-layout, and check-visuals, and documented visual_review.md.

@@ -62,7 +62,7 @@ function computeCameraState(ms, frameIdx) {
     let driftRot = 0.0;
     let planeOffsets = {};
 
-    const tSec = ms / 1000.0;
+    const tSec = (window.__sceneStartSec || 0.0) + (ms / 1000.0);
 
     if (cameraPlan && Array.isArray(cameraPlan) && cameraPlan.length > 0) {
       let activeShot = cameraPlan[0];

@@ -797,7 +797,9 @@ def run_pipeline_from_brief(
         save_acting_plan(acting_plan_data, build_dir / "acting_plan.json")
         acting_check = check_acting(build_dir)
         if acting_check.get("status") != "PASS":
-            logger.warning("Acting plan validation issues: %s", acting_check.get("errors"))
+            err_msg = f"Acting plan validation FAILED: {'; '.join(acting_check.get('errors', []))}"
+            logger.error(err_msg)
+            raise PipelineError(err_msg)
 
         # Mandatory camera plan generation
         from toonshorts.core.camera import plan_camera_plan, save_camera_plan, check_camera
@@ -811,7 +813,9 @@ def run_pipeline_from_brief(
         save_camera_plan(camera_shots, build_dir / "camera_plan.json")
         camera_check = check_camera(build_dir)
         if camera_check.get("status") != "PASS":
-            logger.warning("Camera plan validation issues: %s", camera_check.get("errors"))
+            err_msg = f"Camera plan validation FAILED: {'; '.join(camera_check.get('errors', []))}"
+            logger.error(err_msg)
+            raise PipelineError(err_msg)
 
         # Attach to each scene so renderer has access to camera plan and acting plan
         serialized_camera_shots = [s.to_dict() if hasattr(s, "to_dict") else s for s in camera_shots]

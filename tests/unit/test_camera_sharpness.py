@@ -71,3 +71,18 @@ def test_stick_hoodie_raster_slices_and_resolution_ceiling():
 
     # For vector packs (boy_a, boy_b, girl_a, presenter), 1.9x zoom is supported with zero blur.
     # For stick_hoodie raster pack, zoom above 1.25x requires re-export or causes slight softness.
+
+
+def test_stick_hoodie_2x_upscaled_slices():
+    """Verify that 2x upscaled slices exist for stick_hoodie to maintain sharpness under character zone zooms."""
+    hoodie_dir = CHARACTER_BASE / "stick_hoodie"
+    layers_2x_dir = hoodie_dir / "layers_2x"
+    assert layers_2x_dir.is_dir(), "stick_hoodie/layers_2x missing"
+
+    head_2x = layers_2x_dir / "head.png"
+    assert head_2x.is_file(), "head.png 2x missing"
+    with Image.open(head_2x) as img:
+        assert img.width >= 200 and img.height >= 200
+    
+    png_slices = list(layers_2x_dir.glob("*.png"))
+    assert len(png_slices) >= 30, f"Expected at least 30 2x slices, found {len(png_slices)}"

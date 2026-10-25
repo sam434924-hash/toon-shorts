@@ -121,6 +121,7 @@ def generate_whiteboard_html(
     camera_plan: Optional[Dict[str, Any]] = None,
     handheld_enabled: Optional[bool] = None,
     acting_plan: Optional[Dict[str, Any]] = None,
+    scene_start_sec: Optional[float] = None,
 ) -> str:
     """
     Generates a high-contrast HTML5/SVG composition with Anime.js whiteboard animation,
@@ -710,6 +711,20 @@ def generate_whiteboard_html(
     else:
         serialized_camera_plan = camera_plan or {}
 
+    resolved_scene_start_sec = scene_start_sec
+    if resolved_scene_start_sec is None or resolved_scene_start_sec == 0.0:
+        if acting_plan and isinstance(acting_plan, dict) and "scenes" in acting_plan:
+            accum = 0.0
+            for sc_item in acting_plan.get("scenes", []):
+                if sc_item.get("scene_number") == scene_number:
+                    resolved_scene_start_sec = accum
+                    break
+                accum += float(sc_item.get("duration_sec", 0.0))
+    if resolved_scene_start_sec is None:
+        resolved_scene_start_sec = 0.0
+
+    result = result.replace("{{SCENE_NUMBER}}", str(scene_number))
+    result = result.replace("{{SCENE_START_SEC}}", f"{float(resolved_scene_start_sec):.3f}")
     result = result.replace("{{CAMERA_PLAN_JSON}}", json.dumps(serialized_camera_plan))
     result = result.replace("{{ACTING_PLAN_JSON}}", json.dumps(acting_plan or {}))
     handheld_val = (

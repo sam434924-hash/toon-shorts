@@ -80,7 +80,7 @@ Every scene and video now requires an explicit acting plan (`acting_plan.json`) 
 
 ## Cast and staging
 - Max 2 speaking characters per scene. Character A stands LEFT and faces right. Character B stands RIGHT and faces left. Never swap sides inside a scene (180-degree rule).
-- Only the current speaker's mouth moves. The listener only blinks and glances toward the speaker. No arm or hand gestures.
+- The speaker delivers dialogue with loudness-driven mouth sync and purposeful FK arm gestures synced to stressed words. The listener exhibits active listening life (subtle nods, blinks, glances at partner and board).
 
 ## Shots
 - Default shot is WIDE (both characters fully visible).
@@ -88,8 +88,8 @@ Every scene and video now requires an explicit acting plan (`acting_plan.json`) 
 - Short lines (under about 1.5 s) and fast back-and-forth stay in the wide shot. Zoom on emphasis only, never on every line.
 
 ## Camera limits (a validator must enforce these)
-- Max zoom 1.35x. Ease in and ease out each 0.4 to 0.6 s. Minimum hold 1.2 s.
-- At most one zoom per 5 s of video.
+- Character zone: zoom cap 1.9x; hard cuts (0s) on speaker turns and snap-zooms (~0.20-0.27s) allowed; continuous moves 0.4-0.6s.
+- Board zone: zoom cap 1.35x; continuous moves 0.4-0.6s; never hard cut or snap zoom.
 - The speaker is always fully inside the frame. Subtitles stay outside the camera layer and never scale.
 - Zoom targets come from the speaker's face position (not the frame center). Render at 2x resolution so zooms stay sharp.
 

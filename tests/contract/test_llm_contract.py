@@ -20,7 +20,7 @@ def test_llm_contract(plugin_name):
     if plugin_name == "gemini":
         try:
             plan = llm.generate_plan(topic, "stickman", preset)
-        except RuntimeError as e:
+        except (RuntimeError, ValueError) as e:
             pytest.skip(f"Live Gemini LLM is unavailable: {e}")
     else:
         plan = llm.generate_plan(topic, "stickman", preset)

@@ -2,7 +2,7 @@
            AUDIO-VISUAL SYNC VERIFICATION REPORT
 =======================================================
 Max Allowed Difference: 150 ms
-Fallback Allowed:       YES
+Fallback Allowed:       NO
 -------------------------------------------------------
 Scene 1:
   (no discrete stage visual cues)

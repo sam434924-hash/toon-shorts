@@ -75,7 +75,7 @@ function seekLimbAnimation(ms, frameIdx) {
       mOpen.style.display = isOpen ? "inline" : "none";
     }
 
-    const sBlink = ((ms + 400) % 3600) < 140;
+    const sBlink = (ms < 150) || (((ms + 400) % 3600) < 140);
     const seBlink = speakerEl.querySelector("#eyes-blink");
     const seOpen = speakerEl.querySelector("#eyes-open");
     if (seBlink && seOpen) {
@@ -84,57 +84,7 @@ function seekLimbAnimation(ms, frameIdx) {
     }
   }
 
-  // 2. Listener glance toward speaker & independent blinking
-  const listenerEl = document.getElementById(window.__listenerSlotId);
-  if (listenerEl) {
-    const lmClosed = listenerEl.querySelector("#mouth-closed");
-    if (lmClosed) lmClosed.style.display = "inline";
-    const otherMouths = listenerEl.querySelectorAll(".mouth-state:not(#mouth-closed)");
-    otherMouths.forEach(el => el.style.display = "none");
-
-    const lBlink = ((ms + 1600) % 3200) < 140;
-    const lGlance = ((ms + 800) % 4500) < 2200;
-
-    const isListenerRight = window.__listenerSlotId === "character-rig-right" || listenerEl.classList.contains("char-slot-right");
-    const isSpeakerRight = (window.__speakerSlotId || "character-rig") === "character-rig-right";
-    const speakerOnRight = isSpeakerRight && !isListenerRight;
-    const screenDir = speakerOnRight ? "right" : "left";
-    const targetEye = isListenerRight
-      ? (screenDir === "left" ? "eyes-screen_right" : "eyes-screen_left")
-      : (screenDir === "right" ? "eyes-screen_right" : "eyes-screen_left");
-    const fallbackEye = (targetEye === "eyes-screen_right") ? "eyes-screen_left" : "eyes-screen_right";
-
-    const leGlance = listenerEl.querySelector(`#${targetEye}`) || listenerEl.querySelector(`#${fallbackEye}`);
-    const leBlink = listenerEl.querySelector("#eyes-blink");
-    const leOpen = listenerEl.querySelector("#eyes-open");
-    const activeEye = (lBlink && leBlink) ? leBlink : ((lGlance && leGlance) ? leGlance : leOpen);
-
-    if (activeEye) {
-      listenerEl.querySelectorAll(".eye-state").forEach(el => {
-        el.style.display = (el === activeEye) ? "inline" : "none";
-      });
-    }
-  }
-
-  // 3. Idle life: breathing bob (~1.5s), micro head tilt, and speech squash
-  const breatheY = Math.sin((ms / 1500.0) * 2 * Math.PI) * 1.8;
-  const headTilt = Math.sin((ms / 2800.0) * 2 * Math.PI) * 0.7;
-  const isLeftSpeaker = (window.__speakerSlotId || "character-rig") === "character-rig";
-  const isRightSpeaker = (window.__speakerSlotId || "character-rig") === "character-rig-right";
-  const leftSquash = (isLeftSpeaker && isOpen) ? "scale(1.012, 0.988)" : "scale(1.0, 1.0)";
-  const rightSquash = (isRightSpeaker && isOpen) ? "scale(1.012, 0.988)" : "scale(1.0, 1.0)";
-
-  const charRig = document.getElementById("character-rig");
-  if (charRig) {
-    charRig.style.transform = `translateY(${breatheY.toFixed(2)}px) rotate(${headTilt.toFixed(2)}deg) ${leftSquash}`;
-  }
-  const charRigRight = document.getElementById("character-rig-right");
-  if (charRigRight) {
-    const breatheYRight = Math.sin(((ms + 600) / 1500.0) * 2 * Math.PI) * 1.8;
-    charRigRight.style.transform = `scaleX(-1) translateY(${breatheYRight.toFixed(2)}px) rotate(${(-headTilt).toFixed(2)}deg) ${rightSquash}`;
-  }
-
-  // 4. Purposeful gesture & FK full-body rig animation
+  // Resolve acting plan beat (turn, reaction, gaze, gesture) upfront for this scene
   let gestType = window.__gestureType;
   let speakerElForGest = document.getElementById(window.__speakerSlotId || "character-rig");
   let trigMs = window.__gestureTriggerMs;
@@ -150,6 +100,12 @@ function seekLimbAnimation(ms, frameIdx) {
     const scNum = window.__sceneNumber || 1;
     const scPlan = window.__actingPlan.scenes.find(s => s.scene_number === scNum);
     if (scPlan && scPlan.beats && scPlan.beats.length > 0) {
+      const b0 = scPlan.beats[0];
+      activeTurn = b0.turn;
+      activeReaction = b0.listener_reaction;
+      activeGaze = b0.gaze;
+      activeTargetSlot = b0.pointing_target_slot;
+
       for (let i = 0; i < scPlan.beats.length; i++) {
         const b = scPlan.beats[i];
         if (b.gesture) {
@@ -164,15 +120,141 @@ function seekLimbAnimation(ms, frameIdx) {
             raiseDur = r;
             holdDur = h;
             lowerDur = l;
-            activeTargetSlot = b.pointing_target_slot;
-            activeTurn = b.turn;
-            activeReaction = b.listener_reaction;
-            activeGaze = b.gaze;
+            if (b.pointing_target_slot) activeTargetSlot = b.pointing_target_slot;
+            if (b.turn) activeTurn = b.turn;
+            if (b.listener_reaction) activeReaction = b.listener_reaction;
+            if (b.gaze) activeGaze = b.gaze;
             break;
           }
         }
       }
     }
+  }
+
+  // Speaker gaze direction towards BOARD / PARTNER / CAMERA
+  if (activeGaze && speakerEl) {
+    const gTime = (activeGaze.time_sec || 0) * 1000;
+    if (ms >= gTime) {
+      const isRight = (window.__speakerSlotId || "character-rig") === "character-rig-right";
+      const gTarget = activeGaze.target;
+      let targetEyeId = "eyes-open";
+      if (gTarget === "BOARD" || gTarget === "PARTNER") {
+        targetEyeId = "eyes-screen_right";
+      }
+      const gEye = speakerEl.querySelector(`#${targetEyeId}`);
+      if (gEye && !((ms < 150) || (((ms + 400) % 3600) < 140))) {
+        speakerEl.querySelectorAll(".eye-state").forEach(el => {
+          el.style.display = (el === gEye) ? "inline" : "none";
+        });
+      }
+    }
+  }
+
+  // 2. Listener glance toward speaker/board & independent blinking
+  const listenerEl = document.getElementById(window.__listenerSlotId);
+  if (listenerEl) {
+    const lmClosed = listenerEl.querySelector("#mouth-closed");
+    if (lmClosed) lmClosed.style.display = "inline";
+    const otherMouths = listenerEl.querySelectorAll(".mouth-state:not(#mouth-closed)");
+    otherMouths.forEach(el => el.style.display = "none");
+
+    const lBlink = (ms < 150) || (((ms + 1600) % 3200) < 140);
+    const lGlance = ((ms + 800) % 4500) < 2200;
+
+    // Check if board visual or card enters 150-300ms before or is currently active
+    let boardVisualEnteringSoon = false;
+    const stageVis = window.__stageVisuals || [];
+    for (let i = 0; i < stageVis.length; i++) {
+      const v = stageVis[i];
+      const sMs = v.start_ms || 0;
+      if (ms >= sMs - 300 && ms < sMs + (v.duration_ms || 800) + 200) {
+        boardVisualEnteringSoon = true;
+        break;
+      }
+    }
+    const cardTimings = window.__cardTimings || [];
+    for (let i = 0; i < cardTimings.length; i++) {
+      const c = cardTimings[i];
+      const sMs = c.start_ms || 0;
+      if (ms >= sMs - 300 && ms < sMs + (c.duration_ms || 800) + 200) {
+        boardVisualEnteringSoon = true;
+        break;
+      }
+    }
+
+    const isListenerRight = window.__listenerSlotId === "character-rig-right" || listenerEl.classList.contains("char-slot-right");
+    const isSpeakerRight = (window.__speakerSlotId || "character-rig") === "character-rig-right";
+    const speakerOnRight = isSpeakerRight && !isListenerRight;
+    const screenDir = speakerOnRight ? "right" : "left";
+
+    let targetEye = isListenerRight
+      ? (screenDir === "left" ? "eyes-screen_right" : "eyes-screen_left")
+      : (screenDir === "right" ? "eyes-screen_right" : "eyes-screen_left");
+    if (boardVisualEnteringSoon) {
+      targetEye = "eyes-screen_right";
+    }
+    const fallbackEye = (targetEye === "eyes-screen_right") ? "eyes-screen_left" : "eyes-screen_right";
+
+    const leGlance = listenerEl.querySelector(`#${targetEye}`) || listenerEl.querySelector(`#${fallbackEye}`);
+    const leBlink = listenerEl.querySelector("#eyes-blink");
+    const leOpen = listenerEl.querySelector("#eyes-open");
+    const activeEye = (lBlink && leBlink) ? leBlink : (((boardVisualEnteringSoon || lGlance) && leGlance) ? leGlance : leOpen);
+
+    if (activeEye) {
+      listenerEl.querySelectorAll(".eye-state").forEach(el => {
+        el.style.display = (el === activeEye) ? "inline" : "none";
+      });
+    }
+  }
+
+  // 3. Idle life: breathing bob (~1.5s), micro head tilt, speech squash, and partner turn lean
+  const breatheY = Math.sin((ms / 1500.0) * 2 * Math.PI) * 1.8;
+  const headTilt = Math.sin((ms / 2800.0) * 2 * Math.PI) * 0.7;
+  const isLeftSpeaker = (window.__speakerSlotId || "character-rig") === "character-rig";
+  const isRightSpeaker = (window.__speakerSlotId || "character-rig") === "character-rig-right";
+  const leftSquash = (isLeftSpeaker && isOpen) ? "scale(1.012, 0.988)" : "scale(1.0, 1.0)";
+  const rightSquash = (isRightSpeaker && isOpen) ? "scale(1.012, 0.988)" : "scale(1.0, 1.0)";
+
+  // Turn lean calculation (anticipation dip + quick lean in + settle)
+  let turnLeanRot = 0.0;
+  let turnLeanX = 0.0;
+  if (activeTurn && activeTurn.type && activeTurn.type !== "none") {
+    const tMs = (activeTurn.time_sec || 0) * 1000;
+    const turnDur = 1000;
+    if (ms >= tMs && ms < tMs + turnDur + 800) {
+      const dt = ms - tMs;
+      if (dt < 150) {
+        turnLeanRot = -0.8 * (dt / 150.0);
+        turnLeanX = -3.0 * (dt / 150.0);
+      } else if (dt < 450) {
+        const p = (dt - 150) / 300.0;
+        const e = 1 - Math.pow(1 - p, 2);
+        turnLeanRot = -0.8 + 3.2 * e;
+        turnLeanX = -3.0 + 15.0 * e;
+      } else if (dt < turnDur) {
+        turnLeanRot = 2.4;
+        turnLeanX = 12.0;
+      } else {
+        const p = Math.max(0.0, Math.min(1.0, (dt - turnDur) / 800.0));
+        const e = 1 - (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2);
+        turnLeanRot = 2.4 * e;
+        turnLeanX = 12.0 * e;
+      }
+    }
+  }
+
+  const charRig = document.getElementById("character-rig");
+  if (charRig) {
+    const turnRot = isLeftSpeaker ? turnLeanRot : 0;
+    const turnX = isLeftSpeaker ? turnLeanX : 0;
+    charRig.style.transform = `translate(${turnX.toFixed(2)}px, ${breatheY.toFixed(2)}px) rotate(${(headTilt + turnRot).toFixed(2)}deg) ${leftSquash}`;
+  }
+  const charRigRight = document.getElementById("character-rig-right");
+  if (charRigRight) {
+    const breatheYRight = Math.sin(((ms + 600) / 1500.0) * 2 * Math.PI) * 1.8;
+    const turnRot = isRightSpeaker ? -turnLeanRot : 0;
+    const turnX = isRightSpeaker ? -turnLeanX : 0;
+    charRigRight.style.transform = `scaleX(-1) translate(${turnX.toFixed(2)}px, ${breatheYRight.toFixed(2)}px) rotate(${(-headTilt + turnRot).toFixed(2)}deg) ${rightSquash}`;
   }
 
   // 4a. Standalone arm element fallback (e.g. presenter pack)

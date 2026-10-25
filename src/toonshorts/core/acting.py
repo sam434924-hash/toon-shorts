@@ -194,6 +194,11 @@ def plan_acting_plan(
             energy = "medium"
             subtext = "Breaking it down clearly"
 
+        # Check for unsupported gestures (handshake)
+        act_str = str(getattr(sc, "action", "") or (sc.get("action") if isinstance(sc, dict) else "")).lower()
+        if "handshake" in act_str or "handshake" in dlg.lower() or str(getattr(sc, "gesture", "")).lower() == "handshake":
+            logger.warning("Handshake requested in scene %d; handshake is out of scope and unsupported.", sc_num)
+
         # Accents on stressed words
         stressed_words = _pick_stressed_words(wts, dur_sec)
         accent = stressed_words[0]
@@ -247,13 +252,14 @@ def plan_acting_plan(
             "time_sec": round(start_sec, 3),
         }
 
-        # Listener reaction: engaged listener reacts every 3 to 4 seconds
+        # Listener reaction: engaged listener reacts every 3 to 4 seconds (<= 3.5s)
         listener_reaction_type = "amused" if is_punch else ("nod" if "?" not in dlg else "head_tilt")
-        reaction_time = min(round(dur_sec * 0.65, 3), round(dur_sec - 0.4, 3))
+        raw_rx_time = min(round(dur_sec * 0.55, 3), round(dur_sec - 0.4, 3))
+        reaction_time = min(3.2, max(0.8, raw_rx_time))
         listener_payload = {
             "type": listener_reaction_type,
             "intensity": "high" if is_punch else "subtle",
-            "time_sec": max(0.8, reaction_time),
+            "time_sec": reaction_time,
         }
 
         beat = {
@@ -365,16 +371,34 @@ def check_acting(video_source: Union[str, Path]) -> Dict[str, Any]:
 
         for b in beats:
             b_id = b.get("beat_id", "")
-            # Accents: at most 1 stressed word group per beat
+            # Accents: at most 1 stressed word / accent gesture per phrase
             sw = b.get("stressed_words", [])
-            if len(sw) > 2:
-                errors.append(f"scene {sc_num} beat {b_id}: more than 2 stressed accents ({len(sw)})")
+            if len(sw) > 1:
+                errors.append(f"scene {sc_num} beat {b_id}: more than 1 accent gesture per phrase ({len(sw)})")
 
             # Gesture validity
             gest = b.get("gesture", {})
             g_name = gest.get("name", "idle")
-            if g_name not in ALLOWED_GESTURES:
+            if g_name == "handshake":
+                logger.warning("Handshake requested in scene %s beat %s; unsupported and out of scope.", sc_num, b_id)
+                errors.append(f"scene {sc_num} beat {b_id}: handshake is out of scope and unsupported")
+            elif g_name not in ALLOWED_GESTURES:
                 errors.append(f"scene {sc_num} beat {b_id}: unknown gesture {g_name!r}")
+
+            # Gesture timing: peak must be within 150 ms of stressed word peak
+            if sw and g_name != "idle":
+                g_peak = gest.get("peak_ms", 0) / 1000.0 if "peak_ms" in gest else gest.get("peak_sec", 0.0)
+                w_peak = sw[0].get("peak_sec", sw[0].get("peak_ms", 0) / 1000.0)
+                if abs(g_peak - w_peak) > 0.150 + 1e-4:
+                    errors.append(
+                        f"scene {sc_num} beat {b_id}: gesture peak ({g_peak:.3f}s) is not within 150ms of stressed word peak ({w_peak:.3f}s)"
+                    )
+
+            # Motionless duration check: no actor motionless for > 2.0s
+            if dur > 2.0:
+                g_start = gest.get("start_ms", 0) / 1000.0 if "start_ms" in gest else gest.get("start_sec", 0.0)
+                if g_start > 2.0 and not sw:
+                    errors.append(f"scene {sc_num} beat {b_id}: speaking actor motionless for more than 2.0s before gesture")
 
             # Back-to-back repeat check
             if g_name != "idle" and last_gesture_by_speaker.get(spk) == g_name:
@@ -386,6 +410,8 @@ def check_acting(video_source: Union[str, Path]) -> Dict[str, Any]:
                 slot = b.get("pointing_target_slot")
                 if not slot:
                     errors.append(f"scene {sc_num} beat {b_id}: pointing gesture missing target slot")
+                elif not (isinstance(slot, str) and (slot.startswith("slot-") or slot.startswith("sc") or slot.startswith("target") or "hero" in slot or "card" in slot or "board" in slot)):
+                    errors.append(f"scene {sc_num} beat {b_id}: pointing target slot {slot!r} is invalid")
 
             # Gaze target check
             gaze = b.get("gaze", {})
@@ -398,6 +424,10 @@ def check_acting(video_source: Union[str, Path]) -> Dict[str, Any]:
                 errors.append(f"scene {sc_num}: duration {dur:.2f}s lacks required listener reaction")
             elif lr and lr.get("type") not in LISTENER_REACTION_TYPES:
                 errors.append(f"scene {sc_num} beat {b_id}: unknown listener reaction type {lr.get('type')!r}")
+            elif lr and dur > 2.0:
+                lr_time = lr.get("time_sec", 0.0)
+                if lr_time > 4.0:
+                    errors.append(f"scene {sc_num} beat {b_id}: listener motionless for more than 4.0s (reaction at {lr_time:.2f}s)")
 
     status = "PASS" if not errors else "FAIL"
     return {

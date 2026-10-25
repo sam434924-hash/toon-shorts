@@ -1,6 +1,6 @@
 {
   "video_name": "How_hackers_actually_break_into_systems_v5",
-  "created_at": "2026-10-25T07:52:28Z",
+  "created_at": "2026-10-25T08:42:54Z",
   "style": "night_studio",
   "characters": [
     {
@@ -44,7 +44,7 @@
     "library/sfx/sfx_whistle_f385dbe00174d272.wav"
   ],
   "tool_versions": {
-    "python": "3.11.9",
+    "python": "3.14.4",
     "ffmpeg": "installed",
     "toonshorts": "1.0.0"
   },

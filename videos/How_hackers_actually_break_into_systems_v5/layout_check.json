@@ -1,5 +1,5 @@
 {
-  "video_dir": "C:\\dev\\toon-shorts\\videos\\How_hackers_actually_break_into_systems_v5",
+  "video_dir": "videos\\How_hackers_actually_break_into_systems_v5",
   "total_scenes": 7,
   "passed": true,
   "failed_scenes": [],

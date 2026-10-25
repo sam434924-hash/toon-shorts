@@ -96,6 +96,7 @@ class AnimeJSRenderPlugin(RenderInterface):
             board_objects=board_objects,
             camera_plan=getattr(scene, 'camera_plan', None),
             acting_plan=getattr(scene, 'acting_plan', None),
+            scene_start_sec=getattr(scene, 'scene_start_sec', None),
         )
 
         html_file = temp_dir / f"scene_{scene.scene_number}_still.html"
@@ -184,6 +185,7 @@ class AnimeJSRenderPlugin(RenderInterface):
 
         if scene_audios and len(scene_audios) == len(plan.scenes):
             jobs: List[SceneRenderJob] = []
+            cur_start_sec = 0.0
             for i, (scene, audio) in enumerate(zip(plan.scenes, scene_audios)):
                 clip_path = temp_dir / f"animejs_scene_{scene.scene_number}.mp4"
                 title, words, annotations = extract_whiteboard_content_and_annotations(
@@ -226,8 +228,10 @@ class AnimeJSRenderPlugin(RenderInterface):
                     board_objects=getattr(scene, "board_objects", None),
                     camera_plan=getattr(scene, 'camera_plan', None),
                     acting_plan=getattr(scene, 'acting_plan', None),
+                    scene_start_sec=cur_start_sec,
                 )
                 jobs.append(job)
+                cur_start_sec += audio.scene_total_duration
 
             return render_scenes_in_parallel(jobs, workers=workers)
         else:

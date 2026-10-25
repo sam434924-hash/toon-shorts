@@ -87,6 +87,7 @@ class SceneRenderJob:
     camera_plan: Optional[Dict[str, Any]] = None
     handheld_enabled: Optional[bool] = None
     acting_plan: Optional[Dict[str, Any]] = None
+    scene_start_sec: float = 0.0
 
 
 _CACHE_LOCK = threading.Lock()
@@ -364,6 +365,7 @@ def _render_job_with_browser(
         camera_plan=job.camera_plan,
         handheld_enabled=job.handheld_enabled,
         acting_plan=job.acting_plan,
+        scene_start_sec=getattr(job, "scene_start_sec", 0.0),
     )
 
     html_file = (work_dir / "whiteboard_scene.html").resolve()

@@ -496,12 +496,28 @@ def perform_visual_check(
 
     full_md_text = "\n".join(md_lines)
 
+    qualitative_text = ""
+    if review_md_path.exists():
+        try:
+            old_text = review_md_path.read_text(encoding="utf-8")
+            for q_marker in [
+                "## Qualitative Visual & Acting Audit",
+                "## Qualitative Camera & Acting Review",
+                "## Qualitative Acting and Camera Review",
+                "## Directing & Acting Notes",
+            ]:
+                if q_marker in old_text:
+                    qualitative_text = "\n\n" + q_marker + old_text.split(q_marker, 1)[1]
+                    break
+        except Exception as e:
+            logger.debug("Failed reading existing qualitative review text: %s", e)
+
     # If round > 1, append round to existing file
     if round_num > 1 and review_md_path.exists():
         old_text = review_md_path.read_text(encoding="utf-8")
-        review_md_path.write_text(old_text + "\n---\n\n" + full_md_text, encoding="utf-8")
+        review_md_path.write_text(old_text + "\n---\n\n" + full_md_text + qualitative_text, encoding="utf-8")
     else:
-        review_md_path.write_text(full_md_text, encoding="utf-8")
+        review_md_path.write_text(full_md_text + qualitative_text, encoding="utf-8")
 
     logger.info("Visual review saved to %s (Score: %.1f/10 - %s)", review_md_path, score, "PASSED" if overall_passed else "FAIL")
 

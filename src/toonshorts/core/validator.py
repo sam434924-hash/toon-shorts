@@ -118,9 +118,9 @@ def validate_shots(
                 f"Scene {scene_number}: shots: zoom ({shot.zoom:.2f}) must be >= 1.0"
             )
 
-        # 4. Ease times (Hard cuts 0s and snap-zoom ~0.20-0.27s allowed for character zone; creep/pull-back 0.4-0.6s)
-        is_hard_cut = (abs(shot.ease_in) < 1e-4 and abs(shot.ease_out) < 1e-4)
-        is_snap_zoom = (
+        # 4. Ease times (Hard cuts 0s and snap-zoom ~0.20-0.27s allowed for character zone only; creep/pull-back and board zone require 0.4-0.6s)
+        is_hard_cut = is_character_zone and (abs(shot.ease_in) < 1e-4 and abs(shot.ease_out) < 1e-4)
+        is_snap_zoom = is_character_zone and (
             (0.19 <= shot.ease_in <= 0.28 or abs(shot.ease_in) < 1e-4)
             and (0.19 <= shot.ease_out <= 0.28 or abs(shot.ease_out) < 1e-4)
             and (0.19 <= max(shot.ease_in, shot.ease_out) <= 0.28)

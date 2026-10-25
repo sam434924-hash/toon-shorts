@@ -43,7 +43,7 @@
           "listener_reaction": {
             "type": "head_tilt",
             "intensity": "subtle",
-            "time_sec": 2.983
+            "time_sec": 2.525
           },
           "pointing_target_slot": "slot-hero"
         }
@@ -88,7 +88,7 @@
           "listener_reaction": {
             "type": "nod",
             "intensity": "subtle",
-            "time_sec": 4.14
+            "time_sec": 3.2
           },
           "pointing_target_slot": "slot-hero"
         }
@@ -133,7 +133,7 @@
           "listener_reaction": {
             "type": "head_tilt",
             "intensity": "subtle",
-            "time_sec": 3.413
+            "time_sec": 2.888
           },
           "pointing_target_slot": null
         }
@@ -178,7 +178,7 @@
           "listener_reaction": {
             "type": "nod",
             "intensity": "subtle",
-            "time_sec": 3.439
+            "time_sec": 2.91
           },
           "pointing_target_slot": null
         }
@@ -223,7 +223,7 @@
           "listener_reaction": {
             "type": "nod",
             "intensity": "subtle",
-            "time_sec": 3.712
+            "time_sec": 3.141
           },
           "pointing_target_slot": null
         }
@@ -268,7 +268,7 @@
           "listener_reaction": {
             "type": "amused",
             "intensity": "high",
-            "time_sec": 4.505
+            "time_sec": 3.2
           },
           "pointing_target_slot": "slot-hero"
         }
@@ -313,7 +313,7 @@
           "listener_reaction": {
             "type": "nod",
             "intensity": "subtle",
-            "time_sec": 3.568
+            "time_sec": 3.019
           },
           "pointing_target_slot": null
         }
