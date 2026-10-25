@@ -867,7 +867,7 @@ def run_pipeline_from_brief(
 
         renderer = get_renderer(active_renderer_name)
         still_paths: List[Path] = []
-        if stills_only or renderer_name == "animejs":
+        if stills_only or active_renderer_name == "animejs":
             key_indices = list(range(len(plan.scenes)))
         else:
             key_indices = [0]

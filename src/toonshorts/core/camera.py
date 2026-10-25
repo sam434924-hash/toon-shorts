@@ -566,6 +566,20 @@ def compute_board_visibility_fraction(v_rect: Tuple[float, float, float, float])
     return ((ix_max - ix_min) * (iy_max - iy_min)) / BOARD_AREA
 
 
+def normalize_speaker(speaker: str) -> str:
+    """Normalizes speaker name string to 'A', 'B', 'BOTH', or 'REACTION'."""
+    clean = (speaker or "").strip().lower()
+    if clean in ("b", "boy_b", "speaker_b", "speaker b") or clean.endswith("_b") or clean.endswith(" b"):
+        return "B"
+    if clean in ("a", "girl_a", "speaker_a", "speaker a") or clean.endswith("_a") or clean.endswith(" a"):
+        return "A"
+    if clean in ("both", "wide", "two_shot", "all"):
+        return "BOTH"
+    if clean in ("reaction", "none", ""):
+        return "REACTION"
+    return "A"
+
+
 def is_speaker_cropped(
     v_rect: Tuple[float, float, float, float],
     speaker: str,
@@ -573,16 +587,13 @@ def is_speaker_cropped(
     boxes: Optional[Dict[str, Tuple[float, float, float, float]]] = None,
 ) -> bool:
     """Returns True if designated speaker head-to-waist is cropped by v_rect beyond tol."""
-    v_left, v_top, v_right, v_bottom = v_rect
+    clean = normalize_speaker(speaker)
+    if clean == "REACTION":
+        return False
     box_map = boxes or SPEAKER_BOXES
-    clean = (speaker or "").strip()
-    if clean in ("B", "boy_b", "speaker_b"):
-        box = box_map["B"]
-    elif clean in ("A", "girl_a", "speaker_a"):
-        box = box_map["A"]
-    else:
-        box = box_map["BOTH"]
+    box = box_map.get(clean, box_map["BOTH"])
 
+    v_left, v_top, v_right, v_bottom = v_rect
     s_left, s_top, s_right, s_bottom = box
     if s_left < v_left - tol:
         return True
@@ -602,8 +613,6 @@ def is_closeup_shot(shot: CameraShot) -> bool:
         "CU" in preset
         or "ECU" in preset
         or preset in ("CAM_04_CU_SPEAKER_B", "CAM_05_CU_SPEAKER_A", "CAM_06_ECU_REACTION")
-        or shot.zoom_start > 1.28
-        or shot.zoom_end > 1.28
     )
 
 
@@ -724,14 +733,20 @@ def verify_camera_plan_visibility(
                 f"Scene {sc_num}, time {s.start_sec:.2f}s: rule 'closeup_duration_exceeded' failed: close-up shot duration {d:.2f}s exceeds 1.5s limit"
             )
 
-        # Rule: zoom_cap_exceeded
-        peak_z = max(s.zoom_start, s.zoom_end)
+        # Rule: zoom_cap_exceeded (tested per frame across the shot)
         is_snap_rx = (s.motion == "SNAP_ZOOM" and d <= 1.5 + 1e-4)
         effective_cap = max_zoom_snap if is_snap_rx else max_zoom_default
-        if peak_z > effective_cap + 1e-4:
-            errors.append(
-                f"Scene {sc_num}, time {s.start_sec:.2f}s: rule 'zoom_cap_exceeded' failed: peak zoom {peak_z:.2f} exceeds cap {effective_cap:.2f}"
-            )
+        start_frame = int(round(s.start_sec * fps))
+        end_frame = int(round(s.end_sec * fps))
+        for f in range(start_frame, max(start_frame + 1, end_frame + 1)):
+            eval_st = evaluate_camera(s, f, fps=fps)
+            z_val = eval_st["zoom"]
+            if z_val > effective_cap + 1e-4:
+                t_val = f / float(fps)
+                errors.append(
+                    f"Scene {sc_num}, time {t_val:.2f}s: rule 'zoom_cap_exceeded' failed: peak zoom {z_val:.2f} exceeds cap {effective_cap:.2f}"
+                )
+                break
 
     # Check 2: Per-scene rules: closeup_as_main_shot and board_visibility_under_70
     for sd in scene_defs:
@@ -766,52 +781,46 @@ def verify_camera_plan_visibility(
                             f"Scene {sc_num}, time {cu.start_sec:.2f}s: rule 'closeup_as_main_shot' failed: close-up shot used as main shot of scene"
                         )
 
-        # Rule: board_visibility_under_70
+        # Rule: board_visibility_under_70 (evaluated every frame of each shot)
         if has_board:
             under_70_shots: List[Tuple[CameraShot, float, float]] = []
             for s in sc_shots:
-                t_mid = (s.start_sec + s.end_sec) / 2.0
-                samples = [
-                    (s.start_sec, evaluate_camera(s, int(round(s.start_sec * fps)))),
-                    (t_mid, evaluate_camera(s, int(round(t_mid * fps)))),
-                    (s.end_sec, evaluate_camera(s, int(round(s.end_sec * fps)))),
-                ]
+                start_frame = int(round(s.start_sec * fps))
+                end_frame = int(round(s.end_sec * fps))
                 min_vis = 1.0
                 min_t = s.start_sec
-                for t_val, state in samples:
-                    vr = compute_visible_rect(state["zoom"], state["center"])
+                for f in range(start_frame, max(start_frame + 1, end_frame + 1)):
+                    eval_st = evaluate_camera(s, f, fps=fps)
+                    vr = compute_visible_rect(eval_st["zoom"], eval_st["center"])
                     v_frac = compute_board_visibility_fraction(vr)
                     if v_frac < min_vis:
                         min_vis = v_frac
-                        min_t = t_val
+                        min_t = f / float(fps)
                 if min_vis < 0.70 - 1e-4:
                     under_70_shots.append((s, min_vis, min_t))
 
-            if len(under_70_shots) > 1:
-                for s, min_vis, min_t in under_70_shots:
-                    errors.append(
-                        f"Scene {sc_num}, time {min_t:.2f}s: rule 'board_visibility_under_70' failed: board visibility {min_vis * 100:.1f}% is under 70.0% minimum"
-                    )
-            elif len(under_70_shots) == 1:
-                s, min_vis, min_t = under_70_shots[0]
-                if not (is_reaction_shot(s) and s.duration() <= 1.5 + 1e-4):
-                    errors.append(
-                        f"Scene {sc_num}, time {min_t:.2f}s: rule 'board_visibility_under_70' failed: board visibility {min_vis * 100:.1f}% is under 70.0% minimum"
-                    )
+            reaction_exempt_used = False
+            for s, min_vis, min_t in under_70_shots:
+                if not reaction_exempt_used and is_reaction_shot(s) and s.duration() <= 1.5 + 1e-4:
+                    reaction_exempt_used = True
+                    continue
+                errors.append(
+                    f"Scene {sc_num}, time {min_t:.2f}s: rule 'board_visibility_under_70' failed: board visibility {min_vis * 100:.1f}% is under 70.0% minimum"
+                )
 
-    # Check 3: Speaking character cropping check
+    # Check 3: Speaking character cropping check (every frame of every shot)
     for s in shots:
         sc_num = get_scene_num(s.start_sec)
         spk = s.speaker
-        t_mid = (s.start_sec + s.end_sec) / 2.0
-        samples = [
-            (s.start_sec, evaluate_camera(s, int(round(s.start_sec * fps)))),
-            (t_mid, evaluate_camera(s, int(round(t_mid * fps)))),
-            (s.end_sec, evaluate_camera(s, int(round(s.end_sec * fps)))),
-        ]
-        for t_val, state in samples:
-            vr = compute_visible_rect(state["zoom"], state["center"])
+        if normalize_speaker(spk) == "REACTION":
+            continue
+        start_frame = int(round(s.start_sec * fps))
+        end_frame = int(round(s.end_sec * fps))
+        for f in range(start_frame, max(start_frame + 1, end_frame + 1)):
+            eval_st = evaluate_camera(s, f, fps=fps)
+            vr = compute_visible_rect(eval_st["zoom"], eval_st["center"])
             if is_speaker_cropped(vr, spk, tol=2.0, boxes=boxes):
+                t_val = f / float(fps)
                 errors.append(
                     f"Scene {sc_num}, time {t_val:.2f}s: rule 'speaking_character_cropped' failed: speaking character '{spk}' cropped by visible frame"
                 )
@@ -868,10 +877,16 @@ def plan_camera_plan(
             cast_names.append(spk)
 
     def speaker_code(name: str) -> str:
-        clean = (name or "").strip()
-        if len(cast_names) >= 2 and clean == cast_names[1]:
+        clean = (name or "").strip().lower()
+        if clean in ("b", "boy_b", "speaker_b", "speaker b") or clean.endswith("_b") or clean.endswith(" b"):
             return "B"
-        if clean in ("B", "boy_b", "speaker_b"):
+        if clean in ("a", "girl_a", "speaker_a", "speaker a") or clean.endswith("_a") or clean.endswith(" a"):
+            return "A"
+        if clean in ("both", "wide", "two_shot", "all"):
+            return "BOTH"
+        if clean in ("reaction", "none", ""):
+            return "REACTION"
+        if len(cast_names) >= 2 and (name or "").strip() == cast_names[1]:
             return "B"
         return "A"
 
@@ -927,7 +942,10 @@ def plan_camera_plan(
         spk = getattr(sc_obj, "speaker", "") if not isinstance(sc_obj, dict) else sc_obj.get("speaker", "")
         code = speaker_code(spk)
         is_punch = bool(getattr(sc_obj, "is_punchline", False) if not isinstance(sc_obj, dict) else sc_obj.get("is_punchline", False))
-        has_board = bool(getattr(sc_obj, "visuals", None) or getattr(sc_obj, "board_objects", None) or getattr(sc_obj, "layout", None) or (layout_blocks_map and layout_blocks_map.get(sc_num)))
+        b_objs = getattr(sc_obj, "board_objects", None) or (sc_obj.get("board_objects") if isinstance(sc_obj, dict) else None)
+        vis = getattr(sc_obj, "visuals", None) or (sc_obj.get("visuals") if isinstance(sc_obj, dict) else None)
+        lay = getattr(sc_obj, "layout", None) or (sc_obj.get("layout") if isinstance(sc_obj, dict) else None)
+        has_board = bool(b_objs or vis or (layout_blocks_map and layout_blocks_map.get(sc_num)) or (lay and (not isinstance(lay, dict) or lay.get("slots") or lay.get("elements") or lay.get("template"))))
         acting_info = (acting_beats_map or {}).get(sc_num)
 
         default_preset = "CAM_02_MED_BOARD" if has_board else "CAM_01_WIDE_2SHOT"
@@ -1002,15 +1020,22 @@ def plan_camera_plan(
             shots[idx].start_sec = shots[idx - 1].end_sec
     shots[-1].end_sec = total_duration_sec
 
-    # Widening pass: widen instead of zooming when cropped
+    # Widening pass: widen instead of zooming when cropped (check every frame)
     for idx, s in enumerate(shots):
-        v_start = compute_visible_rect(s.zoom_start, s.center_start)
-        v_end = compute_visible_rect(s.zoom_end, s.center_end)
-        b_vis = min(compute_board_visibility_fraction(v_start), compute_board_visibility_fraction(v_end))
-        spk_crop = is_speaker_cropped(v_start, s.speaker) or is_speaker_cropped(v_end, s.speaker)
+        start_frame = int(round(s.start_sec * fps))
+        end_frame = int(round(s.end_sec * fps))
+        needs_widen = False
         is_rx = is_reaction_shot(s)
+        for f in range(start_frame, max(start_frame + 1, end_frame + 1)):
+            st_f = evaluate_camera(s, f, fps=fps)
+            v_rect = compute_visible_rect(st_f["zoom"], st_f["center"])
+            b_vis = compute_board_visibility_fraction(v_rect)
+            spk_crop = is_speaker_cropped(v_rect, s.speaker)
+            if (b_vis < 0.70 and not is_rx) or spk_crop:
+                needs_widen = True
+                break
 
-        if (b_vis < 0.70 and not is_rx) or spk_crop:
+        if needs_widen:
             logger.info("Widening shot %d (%s) to CAM_02_MED_BOARD to ensure visibility", idx, s.preset)
             shots[idx] = shot_from_preset("CAM_02_MED_BOARD", s.start_sec, s.end_sec, s.speaker, motion="HOLD", eye_target="BOARD")
 

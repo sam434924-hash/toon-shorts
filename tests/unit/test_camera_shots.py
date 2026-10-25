@@ -319,3 +319,69 @@ def test_visibility_check_failing_long_closeup():
     errs = verify_camera_plan_visibility([bad_shot], scenes=scenes)
     assert any("closeup_duration_exceeded" in e for e in errs)
     assert any("Scene 1" in e for e in errs)
+
+
+def test_visibility_check_speaker_name_formats():
+    """Verify normalize_speaker handles 'Speaker A', 'girl_a', 'Speaker B', 'boy_b', and 'REACTION'."""
+    scenes = [
+        {"scene_number": 1, "speaker": "girl_a", "duration": 3.0, "visuals": []},
+        {"scene_number": 2, "speaker": "boy_b", "duration": 3.0, "visuals": []},
+    ]
+    shots = [
+        shot_from_preset("CAM_02_MED_BOARD", start_sec=0.0, end_sec=3.0, speaker="Speaker A", motion="HOLD"),
+        shot_from_preset("CAM_02_MED_BOARD", start_sec=3.0, end_sec=6.0, speaker="Speaker B", motion="HOLD"),
+    ]
+    errs = verify_camera_plan_visibility(shots, scenes=scenes)
+    assert errs == [], f"Expected clean pass for named speakers, got: {errs}"
+
+
+def test_visibility_check_every_frame_motion_catches_violation():
+    """Verify that camera visibility verifies every frame, catching mid-shot boundary excursions."""
+    scenes = [
+        {"scene_number": 1, "speaker": "Speaker A", "duration": 3.0, "visuals": [{"id": "v1"}]},
+    ]
+    # Center shifts from 0.48 (valid board) to 0.95 (cropped board) over the shot
+    moving_shot = CameraShot(
+        start_sec=0.0,
+        end_sec=3.0,
+        speaker="A",
+        preset="CAM_01_WIDE_2SHOT",
+        zoom_start=1.20,
+        zoom_end=1.20,
+        center_start=(0.48, 0.46),  # valid board at start
+        center_end=(0.95, 0.46),    # crops board before end
+        motion="CREEP_IN",
+        entry="CUT",
+        eye_target="BOARD",
+    )
+    errs = verify_camera_plan_visibility([moving_shot], scenes=scenes)
+    assert any("board_visibility_under_70" in e for e in errs)
+    assert any("Scene 1" in e for e in errs)
+
+
+def test_visibility_check_single_reaction_exemption():
+    """Verify that only a single short reaction shot is exempt from 70% board visibility per scene."""
+    scenes = [
+        {"scene_number": 1, "speaker": "A", "duration": 5.0, "visuals": [{"id": "v1"}]},
+    ]
+    # Two reaction shots in the same scene, both cropping board below 70%
+    shot1 = CameraShot(
+        start_sec=0.0, end_sec=2.0, speaker="A", preset="CAM_02_MED_BOARD",
+        zoom_start=1.18, zoom_end=1.18, center_start=(0.48, 0.46), center_end=(0.48, 0.46),
+    )
+    # First reaction shot (exempt)
+    rx1 = CameraShot(
+        start_sec=2.0, end_sec=3.2, speaker="B", preset="CAM_06_ECU_REACTION",
+        zoom_start=1.40, zoom_end=1.40, center_start=(0.90, 0.48), center_end=(0.90, 0.48),
+        motion="SNAP_ZOOM",
+    )
+    # Second reaction shot (should FAIL because only one exemption allowed per scene)
+    rx2 = CameraShot(
+        start_sec=3.2, end_sec=4.5, speaker="B", preset="CAM_06_ECU_REACTION",
+        zoom_start=1.40, zoom_end=1.40, center_start=(0.90, 0.48), center_end=(0.90, 0.48),
+        motion="SNAP_ZOOM",
+    )
+    errs = verify_camera_plan_visibility([shot1, rx1, rx2], scenes=scenes)
+    assert len([e for e in errs if "board_visibility_under_70" in e]) == 1
+    assert any("time 3.20s" in e for e in errs)
+

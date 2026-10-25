@@ -107,8 +107,8 @@ def validate_shots(
                     f"Scene {scene_number}: shots: overlapping shots between [{prev_shot.start:.2f}s - {prev_shot.end:.2f}s] and [{shot.start:.2f}s - {shot.end:.2f}s]"
                 )
 
-        # 3. Zoom limit (Character zone cap 1.9, board zone / default 1.35)
-        effective_max_zoom = float(max_zoom) if max_zoom is not None else (1.9 if is_character_zone else 1.35)
+        # 3. Zoom limit (Character zone cap 1.35, board zone / default 1.35)
+        effective_max_zoom = float(max_zoom) if max_zoom is not None else 1.35
         if shot.zoom > effective_max_zoom + 1e-4:
             errors.append(
                 f"Scene {scene_number}: shots: zoom ({shot.zoom:.2f}) must be <= {effective_max_zoom:.2f}"
