@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-25: part 2 acting skill and plan: implemented Appendix C acting skill, core acting planner generating acting_plan.json with beats, accents, gestures, gaze, turns, listener reactions, pointing slots, and check-acting CLI.
+
 - 2026-10-25: part 1 camera language: implemented Appendix A presets, transitions, zoom cap 1.9, depth parallax math, bg blur smoothstep ramp, check-camera CLI tool, and character slice sharpness tests.
 
 - 2026-10-25: part 0 baseline verification: verified repo hygiene, fixed postponed annotations in models.py, validated Gemini script generation from idea, and recorded Gemini image API modality status.

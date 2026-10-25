@@ -1,13 +1,16 @@
 // Character Animation, Mouth Sync, Idle Life & Forward Kinematics (FK) Limb Math
 
 // Computes snap rotation angle for right arm pointing toward active visual target
-function computeArmSnapAngle(fkArmR, ms, trigMs, defaultAngle) {
+function computeArmSnapAngle(fkArmR, ms, trigMs, defaultAngle, targetSlotId) {
   const defAng = (defaultAngle !== undefined) ? defaultAngle : -55.0;
   if (window.__enableArmSnap === false) return defAng;
   if (!fkArmR) return defAng;
 
-  // 1. Locate active visual target from stage visuals or board cards
+  // 1. Locate active visual target from explicit slot, stage visuals, or board cards
   let targetEl = null;
+  if (targetSlotId) {
+    targetEl = document.getElementById(targetSlotId) || document.querySelector(`.${targetSlotId}`);
+  }
   const visuals = window.__stageVisuals || [];
   for (let i = 0; i < visuals.length; i++) {
     const v = visuals[i];
@@ -132,9 +135,45 @@ function seekLimbAnimation(ms, frameIdx) {
   }
 
   // 4. Purposeful gesture & FK full-body rig animation
-  const gestType = window.__gestureType;
-  const speakerElForGest = document.getElementById(window.__speakerSlotId || "character-rig");
-  const trigMs = window.__gestureTriggerMs;
+  let gestType = window.__gestureType;
+  let speakerElForGest = document.getElementById(window.__speakerSlotId || "character-rig");
+  let trigMs = window.__gestureTriggerMs;
+  let raiseDur = 350;
+  let holdDur = 1100;
+  let lowerDur = 400;
+  let activeTargetSlot = null;
+  let activeTurn = null;
+  let activeReaction = null;
+  let activeGaze = null;
+
+  if (window.__actingPlan && window.__actingPlan.scenes) {
+    const scNum = window.__sceneNumber || 1;
+    const scPlan = window.__actingPlan.scenes.find(s => s.scene_number === scNum);
+    if (scPlan && scPlan.beats && scPlan.beats.length > 0) {
+      for (let i = 0; i < scPlan.beats.length; i++) {
+        const b = scPlan.beats[i];
+        if (b.gesture) {
+          const g = b.gesture;
+          const s = g.start_ms || 0;
+          const r = (g.peak_ms - g.start_ms) > 0 ? (g.peak_ms - g.start_ms) : 300;
+          const h = g.hold_ms || 1100;
+          const l = g.return_ms || 400;
+          if (ms >= s && ms < s + r + h + l + 600) {
+            gestType = g.name || gestType;
+            trigMs = s;
+            raiseDur = r;
+            holdDur = h;
+            lowerDur = l;
+            activeTargetSlot = b.pointing_target_slot;
+            activeTurn = b.turn;
+            activeReaction = b.listener_reaction;
+            activeGaze = b.gaze;
+            break;
+          }
+        }
+      }
+    }
+  }
 
   // 4a. Standalone arm element fallback (e.g. presenter pack)
   const gestArm = speakerElForGest ? speakerElForGest.querySelector(`#arm-gesture-${gestType}`) : document.getElementById(`arm-gesture-${gestType}`);
@@ -232,7 +271,7 @@ function seekLimbAnimation(ms, frameIdx) {
 
       if (gestType === "point" || gestType === "point_board") {
         // Right arm raises upward pointing toward the active visual target
-        const snapAngle = computeArmSnapAngle(fkArmR, ms, trigMs, -55.0);
+        const snapAngle = computeArmSnapAngle(fkArmR, ms, trigMs, -55.0, activeTargetSlot);
         angShR = snapAngle * gPhase;
         angElR = -25 * gPhase;
         if (inHold) {
@@ -288,8 +327,22 @@ function seekLimbAnimation(ms, frameIdx) {
     const lFkHead = listenerElForGest.querySelector("#fk_head_base");
     if (lFkHead) {
       // Subtly nod or tilt head during speaker turns
-      const lNod = Math.sin((ms + 400) * 0.0035) * 2.2;
-      const lTilt = Math.sin((ms + 900) * 0.0022) * 2.5;
+      let lNod = Math.sin((ms + 400) * 0.0035) * 2.2;
+      let lTilt = Math.sin((ms + 900) * 0.0022) * 2.5;
+      if (activeReaction) {
+        const rMs = (activeReaction.time_sec || 0) * 1000;
+        if (ms >= rMs && ms < rMs + 700) {
+          const u = (ms - rMs) / 700;
+          if (activeReaction.type === "nod") {
+            lNod += Math.sin(u * Math.PI * 2) * 7.5;
+          } else if (activeReaction.type === "head_tilt" || activeReaction.type === "skeptical") {
+            lTilt += Math.sin(u * Math.PI) * 6.5;
+          } else if (activeReaction.type === "amused") {
+            lNod += Math.sin(u * Math.PI * 4) * 4.0;
+            lTilt += Math.sin(u * Math.PI * 4) * 3.5;
+          }
+        }
+      }
       lFkHead.setAttribute("transform", `rotate(${(lNod + lTilt).toFixed(2)}, 500, 500)`);
     }
   }

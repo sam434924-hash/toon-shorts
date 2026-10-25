@@ -65,6 +65,19 @@ Every scene and video now requires an explicit camera plan (`camera_plan.json`) 
   - Something changes at least every 2.5 s; no shot longer than 6 s.
 - **Output**: `videos/<name>/camera_plan.json`.
 
+## Acting Planning (Mandatory)
+Every scene and video now requires an explicit acting plan (`acting_plan.json`) following the **toon-shorts-acting** skill. Validation fails if it is missing or invalid.
+- **Generation**: Generated automatically by the acting planner from script scenes, cast, word timings, and layout plan.
+- **Rules**:
+  - Max 2 actors on screen (Character A left, Character B right).
+  - Split dialogue into acting beats: tactic, energy, subtext. Tactic changes at least once per scene.
+  - Accents placed on stressed words: gesture begins 0 to 4 frames before stressed word, peaks on accent, holds, and returns to rest.
+  - At most one accent gesture per phrase; no gesture repeated twice in a row.
+  - Listener behavior: never frozen; nods, blinks, or head tilts at least every 3 to 4 s; no actor motionless > 2 s.
+  - Gaze, turns (lean plus flip with anticipation and settle), and pointing directly at board visual slots.
+  - Secondary motion (breathing, sway) offset between actors so they never breathe in unison.
+- **Output**: `videos/<name>/acting_plan.json`.
+
 ## Cast and staging
 - Max 2 speaking characters per scene. Character A stands LEFT and faces right. Character B stands RIGHT and faces left. Never swap sides inside a scene (180-degree rule).
 - Only the current speaker's mouth moves. The listener only blinks and glances toward the speaker. No arm or hand gestures.

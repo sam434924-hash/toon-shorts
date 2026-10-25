@@ -95,6 +95,7 @@ class AnimeJSRenderPlugin(RenderInterface):
             subtitle_text=strip_speaker_label(scene.dialogue_line),
             board_objects=board_objects,
             camera_plan=getattr(scene, 'camera_plan', None),
+            acting_plan=getattr(scene, 'acting_plan', None),
         )
 
         html_file = temp_dir / f"scene_{scene.scene_number}_still.html"
@@ -224,6 +225,7 @@ class AnimeJSRenderPlugin(RenderInterface):
                     subtitle_text=strip_speaker_label(scene.dialogue_line),
                     board_objects=getattr(scene, "board_objects", None),
                     camera_plan=getattr(scene, 'camera_plan', None),
+                    acting_plan=getattr(scene, 'acting_plan', None),
                 )
                 jobs.append(job)
 

@@ -2,7 +2,7 @@
 Purpose: Command-line interface entry points for ToonShorts video pipeline.
 Inputs: CLI arguments for story topic, style preset, brief, and plugin overrides.
 Outputs: Executed pipeline runs and exit status codes.
-Depends on: argparse, brief, core.config, core.images, core.layout_checker, core.library, core.pipeline, core.visual_checker, inventory, logging, pathlib, plugins, sys
+Depends on: argparse, brief, core.acting, core.camera, core.config, core.images, core.layout_checker, core.library, core.pipeline, core.visual_checker, inventory, logging, pathlib, plugins, sys
 Used by: __main__
 Config keys: None
 Tests: tests/smoke/test_smoke_pipeline.py
@@ -172,6 +172,27 @@ def check_camera_command(args: argparse.Namespace) -> int:
         sys.stderr.write(f"Camera check error: {e}\n")
         return 1
 
+
+
+def check_acting_command(args: argparse.Namespace) -> int:
+    """Verifies acting plan, beat coverage, gesture vocabulary, and listener reactions."""
+    from toonshorts.core.acting import check_acting
+    try:
+        report = check_acting(args.video_name)
+        if getattr(args, "json", False):
+            print(json.dumps(report, indent=2))
+        else:
+            status = report.get("status", "FAIL")
+            print(f"Acting check {status} for {report.get('video')}")
+            print(f"Scenes: {report.get('scenes_count')}, Cast: {report.get('cast')}")
+            if report.get("errors"):
+                for err in report["errors"]:
+                    print(f"  - ERROR: {err}")
+        return 0 if report.get("status") == "PASS" else 1
+    except Exception as e:
+        sys.stderr.write(f"Acting check error: {e}\n")
+        return 1
+
 def check_visuals_command(args: argparse.Namespace) -> int:
     """Inspects scene stills against quality checklist, contrast ratios, and writes visual_review.md."""
     from toonshorts.core.visual_checker import perform_visual_check
@@ -302,6 +323,10 @@ def main():
     check_cam_parser.add_argument("video_name", help="Name of video folder inside videos/ or path to directory")
     check_cam_parser.add_argument("--json", action="store_true", help="Output review as structured JSON")
 
+    check_acting_parser = subparsers.add_parser("check-acting", help="Verify acting plan, beats, accents, gestures, and listener reactions")
+    check_acting_parser.add_argument("video_name", help="Name of video folder inside videos/ or path to directory")
+    check_acting_parser.add_argument("--json", action="store_true", help="Output review as structured JSON")
+
     check_visuals_parser = subparsers.add_parser("check-visuals", help="Inspect scene stills against quality checklist and contrast ratios")
     check_visuals_parser.add_argument("video_name", help="Name of video folder inside videos/ or path to directory")
     check_visuals_parser.add_argument("--json", action="store_true", help="Output review as structured JSON")
@@ -327,6 +352,8 @@ def main():
         sys.exit(check_layout_command(args))
     elif args.command == "check-camera":
         sys.exit(check_camera_command(args))
+    elif args.command == "check-acting":
+        sys.exit(check_acting_command(args))
     elif args.command == "check-visuals":
         sys.exit(check_visuals_command(args))
     elif args.command == "register-image":

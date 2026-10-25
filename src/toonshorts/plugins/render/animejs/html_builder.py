@@ -120,6 +120,7 @@ def generate_whiteboard_html(
     topic: Optional[str] = None,
     camera_plan: Optional[Dict[str, Any]] = None,
     handheld_enabled: Optional[bool] = None,
+    acting_plan: Optional[Dict[str, Any]] = None,
 ) -> str:
     """
     Generates a high-contrast HTML5/SVG composition with Anime.js whiteboard animation,
@@ -703,6 +704,7 @@ def generate_whiteboard_html(
     result = result.replace("{{SPLIT_CHAR_SHOTS_JSON}}", json.dumps(split_char_shots))
     result = result.replace("{{SPLIT_BOARD_SHOTS_JSON}}", json.dumps(split_board_shots))
     result = result.replace("{{CAMERA_PLAN_JSON}}", json.dumps(camera_plan or {}))
+    result = result.replace("{{ACTING_PLAN_JSON}}", json.dumps(acting_plan or {}))
     handheld_val = (
         handheld_enabled
         if handheld_enabled is not None
