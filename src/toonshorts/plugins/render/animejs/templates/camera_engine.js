@@ -48,69 +48,140 @@ function computeCameraState(ms, frameIdx) {
   const tau = ((cfg.transition_sec !== undefined) ? cfg.transition_sec : 0.80) * 1000.0;
 
   // Phase 4C: Two Independent Camera Zones Engine
+  // Phase 4C / Next Steps: Unified Camera System (Character Zone + Independent Board Zone)
   if (window.__enableSplitCameraZones === true) {
     const charFraming = window.__splitCameraFraming || {};
     const charShots = window.__splitCharShots || [];
     const boardShots = window.__splitBoardShots || [];
-
-    function resolveCharCoords(targetName) {
-      if (!targetName || targetName === 'wide') {
-        return { x: 0.0, y: 0.0, zoom: 1.0 };
-      }
-      if (charFraming[targetName]) {
-        return { x: charFraming[targetName].x, y: charFraming[targetName].y, zoom: charFraming[targetName].zoom };
-      }
-      const isRight = targetName.indexOf('right') !== -1 || targetName.indexOf('girl') !== -1 ||
-        (isSpeakerRight && targetName.indexOf('left') === -1 && targetName.indexOf('boy') === -1);
-      const fallbackKey = isRight ? 'speaker_right' : 'speaker_left';
-      if (charFraming[fallbackKey]) {
-        return { x: charFraming[fallbackKey].x, y: charFraming[fallbackKey].y, zoom: charFraming[fallbackKey].zoom };
-      }
-      return { x: 0.0, y: 0.0, zoom: 1.0 };
-    }
+    const cameraPlan = window.__cameraPlan || null;
 
     let charX = 0.0;
     let charY = 0.0;
     let charZoom = 1.0;
+    let bgBlur = 2.0;
+    let driftRot = 0.0;
+    let planeOffsets = {};
 
-    if (charShots.length > 0) {
-      if (ms < charShots[0].t_start) {
-        const initC = resolveCharCoords(charShots[0].from_target);
-        charX = initC.x;
-        charY = initC.y;
-        charZoom = initC.zoom;
-      } else {
-        let found = false;
-        for (let i = 0; i < charShots.length; i++) {
-          const s = charShots[i];
-          if (ms >= s.t_start && ms <= s.t_end) {
-            const p = (s.t_end > s.t_start) ? ((ms - s.t_start) / (s.t_end - s.t_start)) : 1.0;
-            const ease = easeInOutCubic(p);
-            const fromC = resolveCharCoords(s.from_target);
-            const toC = resolveCharCoords(s.to_target);
-            charX = fromC.x + ease * (toC.x - fromC.x);
-            charY = fromC.y + ease * (toC.y - fromC.y);
-            charZoom = fromC.zoom + ease * (toC.zoom - fromC.zoom);
-            found = true;
-            break;
-          } else if (ms > s.t_end) {
-            const nextShot = (i + 1 < charShots.length) ? charShots[i + 1] : null;
-            if (!nextShot || ms < nextShot.t_start) {
+    const tSec = ms / 1000.0;
+
+    if (cameraPlan && Array.isArray(cameraPlan) && cameraPlan.length > 0) {
+      let activeShot = cameraPlan[0];
+      for (let i = 0; i < cameraPlan.length; i++) {
+        const s = cameraPlan[i];
+        if (tSec >= s.start_sec && tSec <= s.end_sec) {
+          activeShot = s;
+          break;
+        } else if (tSec > s.end_sec) {
+          activeShot = s;
+        }
+      }
+
+      if (activeShot) {
+        const s = activeShot;
+        const dur = Math.max(0.001, s.end_sec - s.start_sec);
+        const tIn = Math.max(0.0, Math.min(dur, tSec - s.start_sec));
+        let e = 0.0;
+
+        if (s.motion === "HOLD") {
+          e = 0.0;
+        } else if (s.motion === "SNAP_ZOOM") {
+          const snap = Math.min(dur, (window.__snapFrames || 7) / (window.__fps || 30));
+          const u = Math.max(0.0, Math.min(1.0, tIn / snap));
+          e = 1.0 - Math.pow(1.0 - u, 3);
+        } else {
+          // CREEP_IN / PULL_BACK
+          const u = Math.max(0.0, Math.min(1.0, tIn / dur));
+          e = 0.5 - 0.5 * Math.cos(Math.PI * u);
+        }
+
+        charZoom = s.zoom_start + (s.zoom_end - s.zoom_start) * e;
+        const cStart = s.center_start || [0.5, 0.5];
+        const cEnd = s.center_end || [0.5, 0.5];
+        const cx = cStart[0] + (cEnd[0] - cStart[0]) * e;
+        const cy = cStart[1] + (cEnd[1] - cStart[1]) * e;
+
+        let driftX = 0.0;
+        let driftY = 0.0;
+        if (window.__handheldEnabled === true) {
+          const damp = 1.0 / Math.pow(charZoom, 0.85);
+          driftX = 3.5 * damp * (Math.sin(2 * Math.PI * 0.42 * tSec) + 0.5 * Math.cos(2 * Math.PI * 0.91 * tSec));
+          driftY = 2.5 * damp * (Math.cos(2 * Math.PI * 0.37 * tSec) + 0.5 * Math.sin(2 * Math.PI * 0.78 * tSec));
+          driftRot = 0.18 * damp * Math.sin(2 * Math.PI * 0.29 * tSec);
+        }
+
+        charX = (0.5 - cx) * 1080.0 * charZoom + driftX;
+        charY = (0.5 - cy) * 1920.0 * charZoom + driftY;
+
+        const uBlur = Math.max(0.0, Math.min(1.0, (charZoom - 1.0) / (1.8 - 1.0)));
+        bgBlur = 2.0 + (14.0 - 2.0) * uBlur;
+
+        const pPlanes = { bg_far: 0.25, set_dressing: 0.65, subjects: 1.0, fg_edge: 1.35 };
+        for (const [pName, pFactor] of Object.entries(pPlanes)) {
+          planeOffsets[pName] = {
+            scale: 1.0 + pFactor * (charZoom - 1.0),
+            offset_px: [
+              (0.5 - cx) * 1080.0 * pFactor * charZoom + driftX * pFactor,
+              (0.5 - cy) * 1920.0 * pFactor * charZoom + driftY * pFactor,
+            ]
+          };
+        }
+      }
+    } else {
+      function resolveCharCoords(targetName) {
+        if (!targetName || targetName === 'wide') {
+          return { x: 0.0, y: 0.0, zoom: 1.0 };
+        }
+        if (charFraming[targetName]) {
+          return { x: charFraming[targetName].x, y: charFraming[targetName].y, zoom: charFraming[targetName].zoom };
+        }
+        const isRight = targetName.indexOf('right') !== -1 || targetName.indexOf('girl') !== -1 ||
+          (isSpeakerRight && targetName.indexOf('left') === -1 && targetName.indexOf('boy') === -1);
+        const fallbackKey = isRight ? 'speaker_right' : 'speaker_left';
+        if (charFraming[fallbackKey]) {
+          return { x: charFraming[fallbackKey].x, y: charFraming[fallbackKey].y, zoom: charFraming[fallbackKey].zoom };
+        }
+        return { x: 0.0, y: 0.0, zoom: 1.0 };
+      }
+
+      if (charShots.length > 0) {
+        if (ms < charShots[0].t_start) {
+          const initC = resolveCharCoords(charShots[0].from_target);
+          charX = initC.x;
+          charY = initC.y;
+          charZoom = initC.zoom;
+        } else {
+          let found = false;
+          for (let i = 0; i < charShots.length; i++) {
+            const s = charShots[i];
+            if (ms >= s.t_start && ms <= s.t_end) {
+              const p = (s.t_end > s.t_start) ? ((ms - s.t_start) / (s.t_end - s.t_start)) : 1.0;
+              const ease = easeInOutCubic(p);
+              const fromC = resolveCharCoords(s.from_target);
               const toC = resolveCharCoords(s.to_target);
-              charX = toC.x;
-              charY = toC.y;
-              charZoom = toC.zoom;
+              charX = fromC.x + ease * (toC.x - fromC.x);
+              charY = fromC.y + ease * (toC.y - fromC.y);
+              charZoom = fromC.zoom + ease * (toC.zoom - fromC.zoom);
               found = true;
               break;
+            } else if (ms > s.t_end) {
+              const nextShot = (i + 1 < charShots.length) ? charShots[i + 1] : null;
+              if (!nextShot || ms < nextShot.t_start) {
+                const toC = resolveCharCoords(s.to_target);
+                charX = toC.x;
+                charY = toC.y;
+                charZoom = toC.zoom;
+                found = true;
+                break;
+              }
             }
           }
-        }
-        if (!found && charShots.length > 0) {
-          const lastShot = charShots[charShots.length - 1];
-          const toC = resolveCharCoords(lastShot.to_target);
-          charX = toC.x;
-          charY = toC.y;
-          charZoom = toC.zoom;
+          if (!found && charShots.length > 0) {
+            const lastShot = charShots[charShots.length - 1];
+            const toC = resolveCharCoords(lastShot.to_target);
+            charX = toC.x;
+            charY = toC.y;
+            charZoom = toC.zoom;
+          }
         }
       }
     }
@@ -179,7 +250,11 @@ function computeCameraState(ms, frameIdx) {
         camX: charX,
         camY: charY,
         camZoom: charZoom,
+        bgBlur: bgBlur,
+        driftRot: driftRot,
+        planes: planeOffsets,
       },
+      bg_blur_px: bgBlur,
       // Backward-compatibility aliases for single-camera inspection and edge-case contracts
       camX: charX,
       camY: charY,
@@ -187,7 +262,7 @@ function computeCameraState(ms, frameIdx) {
       focus: (boardZoom > 1.05) ? 'board' : 'subject',
       driftX: 0.0,
       driftY: 0.0,
-      driftRot: 0.0,
+      driftRot: driftRot,
       pFactors: {},
       cfg: cfg,
     };
@@ -505,7 +580,33 @@ function applyMultiplaneParallax(camState) {
       boardEl.style.transform = 'translate(' + camState.board.camX.toFixed(2) + 'px, ' + camState.board.camY.toFixed(2) + 'px) scale(' + camState.board.camZoom.toFixed(3) + ')';
     }
     if (charEl && camState.character) {
-      charEl.style.transform = 'translate(' + camState.character.camX.toFixed(2) + 'px, ' + camState.character.camY.toFixed(2) + 'px) scale(' + camState.character.camZoom.toFixed(3) + ')';
+      const rot = (camState.character.driftRot || 0).toFixed(3);
+      charEl.style.transform = 'translate(' + camState.character.camX.toFixed(2) + 'px, ' + camState.character.camY.toFixed(2) + 'px) scale(' + camState.character.camZoom.toFixed(4) + ') rotate(' + rot + 'deg)';
+    }
+
+    const bgBlur = (camState.character && camState.character.bgBlur !== undefined) ? camState.character.bgBlur : (camState.bg_blur_px || 0.0);
+    const bgFarEl = document.getElementById('bg-layer-far');
+    const bgMidEl = document.getElementById('bg-layer-mid');
+    const bgNearEl = document.getElementById('bg-layer-near');
+    const bgTopicEl = document.getElementById('layer-topic-bg');
+    const deepBgEl = document.getElementById('layer-deep-bg');
+
+    if (!window.__isFast && bgBlur > 0.0) {
+      if (bgFarEl) bgFarEl.style.filter = 'blur(' + (bgBlur * 1.2).toFixed(2) + 'px)';
+      if (bgMidEl) bgMidEl.style.filter = 'blur(' + (bgBlur * 0.9).toFixed(2) + 'px)';
+      if (bgNearEl) bgNearEl.style.filter = 'blur(' + bgBlur.toFixed(2) + 'px)';
+      if (bgTopicEl) bgTopicEl.style.filter = 'blur(' + (bgBlur * 0.5).toFixed(2) + 'px)';
+      if (deepBgEl) deepBgEl.style.filter = 'blur(' + bgBlur.toFixed(2) + 'px)';
+    }
+
+    if (camState.character && camState.character.planes) {
+      const p = camState.character.planes;
+      if (bgFarEl && p.bg_far) {
+        bgFarEl.style.transform = 'translate(' + p.bg_far.offset_px[0].toFixed(2) + 'px, ' + p.bg_far.offset_px[1].toFixed(2) + 'px) scale(' + p.bg_far.scale.toFixed(4) + ')';
+      }
+      if (bgMidEl && p.set_dressing) {
+        bgMidEl.style.transform = 'translate(' + p.set_dressing.offset_px[0].toFixed(2) + 'px, ' + p.set_dressing.offset_px[1].toFixed(2) + 'px) scale(' + p.set_dressing.scale.toFixed(4) + ')';
+      }
     }
     return;
   }

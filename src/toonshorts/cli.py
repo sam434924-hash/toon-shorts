@@ -151,6 +151,27 @@ def inventory_command(args: argparse.Namespace) -> int:
     return 0
 
 
+
+
+def check_camera_command(args: argparse.Namespace) -> int:
+    """Verifies camera plan shot list, determinism, zoom limits, and clearance."""
+    from toonshorts.core.camera import check_camera
+    try:
+        report = check_camera(args.video_name)
+        if getattr(args, "json", False):
+            print(json.dumps(report, indent=2))
+        else:
+            status = report.get("status", "FAIL")
+            print(f"Camera check {status} for {report.get('video')}")
+            print(f"Shots: {report.get('shots_count')}, Duration: {report.get('total_duration_sec', 0):.2f}s, Peak Zoom: {report.get('peak_zoom', 0):.2f}")
+            if report.get("errors"):
+                for err in report["errors"]:
+                    print(f"  - ERROR: {err}")
+        return 0 if report.get("status") == "PASS" else 1
+    except Exception as e:
+        sys.stderr.write(f"Camera check error: {e}\n")
+        return 1
+
 def check_visuals_command(args: argparse.Namespace) -> int:
     """Inspects scene stills against quality checklist, contrast ratios, and writes visual_review.md."""
     from toonshorts.core.visual_checker import perform_visual_check
@@ -277,6 +298,10 @@ def main():
     check_layout_parser.add_argument("video_name", help="Name of video folder inside videos/ or path to directory")
     check_layout_parser.add_argument("--json", action="store_true", help="Output check results as structured JSON")
 
+    check_cam_parser = subparsers.add_parser("check-camera", help="Verify camera plan shot list, pacing, determinism, and zoom limits")
+    check_cam_parser.add_argument("video_name", help="Name of video folder inside videos/ or path to directory")
+    check_cam_parser.add_argument("--json", action="store_true", help="Output review as structured JSON")
+
     check_visuals_parser = subparsers.add_parser("check-visuals", help="Inspect scene stills against quality checklist and contrast ratios")
     check_visuals_parser.add_argument("video_name", help="Name of video folder inside videos/ or path to directory")
     check_visuals_parser.add_argument("--json", action="store_true", help="Output review as structured JSON")
@@ -300,6 +325,8 @@ def main():
         sys.exit(inventory_command(args))
     elif args.command == "check-layout":
         sys.exit(check_layout_command(args))
+    elif args.command == "check-camera":
+        sys.exit(check_camera_command(args))
     elif args.command == "check-visuals":
         sys.exit(check_visuals_command(args))
     elif args.command == "register-image":

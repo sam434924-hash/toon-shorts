@@ -52,6 +52,19 @@ Writing a script now requires an explicit `layout` block for every scene. Valida
   - Max 3 elements on screen at once, strictly one hero per beat.
 - **Review**: The agent may adjust the planner's layout result, but it must pass validation.
 
+## Camera Planning (Mandatory)
+Every scene and video now requires an explicit camera plan (`camera_plan.json`) following the **toon-shorts-camera** skill. Validation fails if it is missing or invalid.
+- **Generation**: Generated automatically by the camera shot planner from dialogue lines, word timings, layout blocks, and acting beats.
+- **Rules**:
+  - Open on wide 2-shot (`CAM_01_WIDE_2SHOT`) with creep.
+  - Medium board (`CAM_02_MED_BOARD`) while the board explains.
+  - Snap-zoom on interrupt or punchline.
+  - Close-up (`CAM_04_CU_SPEAKER_B` / `CAM_05_CU_SPEAKER_A`) on question, hesitation, realization, or reaction.
+  - Cuts on speech: 3 frames before speaker change, 2 frames before interrupt, 12 frames before reaction.
+  - Character zone zoom cap 1.9; cuts and character zoom never move the board zone.
+  - Something changes at least every 2.5 s; no shot longer than 6 s.
+- **Output**: `videos/<name>/camera_plan.json`.
+
 ## Cast and staging
 - Max 2 speaking characters per scene. Character A stands LEFT and faces right. Character B stands RIGHT and faces left. Never swap sides inside a scene (180-degree rule).
 - Only the current speaker's mouth moves. The listener only blinks and glances toward the speaker. No arm or hand gestures.

@@ -68,6 +68,8 @@ def validate_shots(
     scene_number: int,
     scene_length: float,
     previous_zoom_scene_time: Optional[float] = None,
+    max_zoom: Optional[float] = None,
+    is_character_zone: bool = False,
 ) -> Tuple[List[str], Optional[float]]:
     """
     Enforces camera and shot limits from the toon-shorts-directing skill:
@@ -105,38 +107,53 @@ def validate_shots(
                     f"Scene {scene_number}: shots: overlapping shots between [{prev_shot.start:.2f}s - {prev_shot.end:.2f}s] and [{shot.start:.2f}s - {shot.end:.2f}s]"
                 )
 
-        # 3. Zoom limit
-        if shot.zoom > 1.35 + 1e-4:
+        # 3. Zoom limit (Character zone cap 1.9, board zone / default 1.35)
+        effective_max_zoom = float(max_zoom) if max_zoom is not None else (1.9 if is_character_zone else 1.35)
+        if shot.zoom > effective_max_zoom + 1e-4:
             errors.append(
-                f"Scene {scene_number}: shots: zoom ({shot.zoom:.2f}) must be <= 1.35"
+                f"Scene {scene_number}: shots: zoom ({shot.zoom:.2f}) must be <= {effective_max_zoom:.2f}"
             )
         if shot.zoom < 1.0 - 1e-4:
             errors.append(
                 f"Scene {scene_number}: shots: zoom ({shot.zoom:.2f}) must be >= 1.0"
             )
 
-        # 4. Ease times
-        if not (0.4 - 1e-4 <= shot.ease_in <= 0.6 + 1e-4):
-            errors.append(
-                f"Scene {scene_number}: shots: ease_in ({shot.ease_in:.2f}s) must be between 0.4 and 0.6 s"
-            )
-        if not (0.4 - 1e-4 <= shot.ease_out <= 0.6 + 1e-4):
-            errors.append(
-                f"Scene {scene_number}: shots: ease_out ({shot.ease_out:.2f}s) must be between 0.4 and 0.6 s"
-            )
-
-        # 5. Minimum hold 1.2 s
-        hold_time = (shot.end - shot.start) - (shot.ease_in + shot.ease_out)
-        if shot.type == "close_up" or shot.zoom > 1.0 + 1e-4:
-            if hold_time < 1.2 - 1e-4:
+        # 4. Ease times (Hard cuts 0s and snap-zoom ~0.20-0.27s allowed for character zone; creep/pull-back 0.4-0.6s)
+        is_hard_cut = (abs(shot.ease_in) < 1e-4 and abs(shot.ease_out) < 1e-4)
+        is_snap_zoom = (
+            (0.19 <= shot.ease_in <= 0.28 or abs(shot.ease_in) < 1e-4)
+            and (0.19 <= shot.ease_out <= 0.28 or abs(shot.ease_out) < 1e-4)
+            and (0.19 <= max(shot.ease_in, shot.ease_out) <= 0.28)
+        )
+        if not (is_hard_cut or is_snap_zoom):
+            if not (0.4 - 1e-4 <= shot.ease_in <= 0.6 + 1e-4):
                 errors.append(
-                    f"Scene {scene_number}: shots: minimum hold must be at least 1.2 s (got {hold_time:.2f}s)"
+                    f"Scene {scene_number}: shots: ease_in ({shot.ease_in:.2f}s) must be between 0.4 and 0.6 s"
+                )
+            if not (0.4 - 1e-4 <= shot.ease_out <= 0.6 + 1e-4):
+                errors.append(
+                    f"Scene {scene_number}: shots: ease_out ({shot.ease_out:.2f}s) must be between 0.4 and 0.6 s"
+                )
+
+        # 5. Minimum hold (0.4s for cuts and snap-zoom; 1.2s for creep and pull-back)
+        min_required = 0.4 if (is_hard_cut or is_snap_zoom) else 1.2
+        if is_hard_cut:
+            hold_time = shot.end - shot.start
+        elif is_snap_zoom:
+            hold_time = (shot.end - shot.start) - max(shot.ease_in, shot.ease_out)
+        else:
+            hold_time = (shot.end - shot.start) - (shot.ease_in + shot.ease_out)
+
+        if shot.type == "close_up" or shot.zoom > 1.0 + 1e-4:
+            if hold_time < min_required - 1e-4:
+                errors.append(
+                    f"Scene {scene_number}: shots: minimum hold must be at least {min_required:.1f} s (got {hold_time:.2f}s)"
                 )
         else:
             duration = shot.end - shot.start
-            if duration < 1.2 - 1e-4:
+            if duration < min_required - 1e-4:
                 errors.append(
-                    f"Scene {scene_number}: shots: minimum hold must be at least 1.2 s (got {duration:.2f}s)"
+                    f"Scene {scene_number}: shots: minimum hold must be at least {min_required:.1f} s (got {duration:.2f}s)"
                 )
 
         # 6. Target must exist in cast

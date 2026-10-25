@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-25: part 1 camera language: implemented Appendix A presets, transitions, zoom cap 1.9, depth parallax math, bg blur smoothstep ramp, check-camera CLI tool, and character slice sharpness tests.
+
 - 2026-10-25: part 0 baseline verification: verified repo hygiene, fixed postponed annotations in models.py, validated Gemini script generation from idea, and recorded Gemini image API modality status.
 
 - 2026-10-25: voice matching and audio assembly fix: restored gender-aware character voice assignment for Puck and Aoede, ensuring 100% TTS library cache hits and high-quality dialogue voiceover in How_hackers_actually_break_into_systems_v4.

@@ -201,7 +201,9 @@ SPLIT_STAGE_ANCHORS = {
     "right": {"left": 420.0, "top": 20.0, "width": 420.0, "height": 480.0},
 }
 
-CAMERA_MAX_ZOOM = 1.35
+CAMERA_MAX_ZOOM = 1.9
+CAMERA_CHARACTER_MAX_ZOOM = 1.9
+CAMERA_BOARD_MAX_ZOOM = 1.35
 CAMERA_MIN_HOLD_SEC = 1.2
 
 # Cost Estimator Pricing (USD, based on current Google GenAI API rates)

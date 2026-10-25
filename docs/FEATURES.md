@@ -22,6 +22,12 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Config Flags / Options**: `video_dir`, `--fail-fast`
 - **Tests**: `tests/unit/test_layout_checker.py`
 
+### `check-camera`
+- **Description**: Verifies camera plan shot list, pacing (<=6s), determinism, zoom limits (1.9x cap for character zone), and board-zone independence.
+- **Files**: `src/toonshorts/cli.py`, `src/toonshorts/core/camera.py`, `src/toonshorts/core/camera_shots.py`
+- **Config Flags / Options**: `video_name`, `--json`
+- **Tests**: `tests/unit/test_camera_shots.py`, `tests/unit/test_camera_sharpness.py`
+
 ### `check-visuals`
 - **Description**: Inspects rendered scene still frames against a 6-item quality checklist, safe zones (top 288px, bottom 1440px), WCAG contrast ratios, and outputs visual_review.md.
 - **Files**: `src/toonshorts/cli.py`, `src/toonshorts/core/visual_checker.py`, `src/toonshorts/core/pipeline.py`

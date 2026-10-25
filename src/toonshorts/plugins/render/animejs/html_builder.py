@@ -118,6 +118,8 @@ def generate_whiteboard_html(
     enable_split_camera_zones: Optional[bool] = None,
     subtitle_text: Optional[str] = None,
     topic: Optional[str] = None,
+    camera_plan: Optional[Dict[str, Any]] = None,
+    handheld_enabled: Optional[bool] = None,
 ) -> str:
     """
     Generates a high-contrast HTML5/SVG composition with Anime.js whiteboard animation,
@@ -700,6 +702,13 @@ def generate_whiteboard_html(
     result = result.replace("{{SPLIT_CAMERA_FRAMING_JSON}}", json.dumps(split_camera_framing))
     result = result.replace("{{SPLIT_CHAR_SHOTS_JSON}}", json.dumps(split_char_shots))
     result = result.replace("{{SPLIT_BOARD_SHOTS_JSON}}", json.dumps(split_board_shots))
+    result = result.replace("{{CAMERA_PLAN_JSON}}", json.dumps(camera_plan or {}))
+    handheld_val = (
+        handheld_enabled
+        if handheld_enabled is not None
+        else (camera_plan.get("handheld_enabled", True) if isinstance(camera_plan, dict) and "handheld_enabled" in camera_plan else getattr(config, "CAMERA_HANDHELD_BREATHING", True))
+    )
+    result = result.replace("{{HANDHELD_ENABLED}}", "true" if handheld_val else "false")
     result = result.replace("{{SUBTITLE_PREVIEW_TEXT}}", safe_subtitle)
     result = result.replace("{{THEME_NAME}}", theme)
     result = result.replace("{{PARALLAX_CLASS}}", " parallax-bg-enabled" if enable_parallax_bg else "")

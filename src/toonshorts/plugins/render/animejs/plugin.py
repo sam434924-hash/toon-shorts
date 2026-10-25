@@ -94,6 +94,7 @@ class AnimeJSRenderPlugin(RenderInterface):
             enable_split_camera_zones=style_preset.get("split_camera_zones", getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False)) if style_preset else getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False),
             subtitle_text=strip_speaker_label(scene.dialogue_line),
             board_objects=board_objects,
+            camera_plan=getattr(scene, 'camera_plan', None),
         )
 
         html_file = temp_dir / f"scene_{scene.scene_number}_still.html"
@@ -222,6 +223,7 @@ class AnimeJSRenderPlugin(RenderInterface):
                     enable_split_camera_zones=style_preset.get("split_camera_zones", getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False)) if style_preset else getattr(config, "ENABLE_SPLIT_CAMERA_ZONES", False),
                     subtitle_text=strip_speaker_label(scene.dialogue_line),
                     board_objects=getattr(scene, "board_objects", None),
+                    camera_plan=getattr(scene, 'camera_plan', None),
                 )
                 jobs.append(job)
 

@@ -84,6 +84,8 @@ class SceneRenderJob:
     enable_split_camera_zones: Optional[bool] = None
     subtitle_text: Optional[str] = None
     board_objects: Optional[List[Dict[str, Any]]] = None
+    camera_plan: Optional[Dict[str, Any]] = None
+    handheld_enabled: Optional[bool] = None
 
 
 _CACHE_LOCK = threading.Lock()
@@ -358,6 +360,8 @@ def _render_job_with_browser(
         enable_split_camera_zones=job.enable_split_camera_zones,
         subtitle_text=job.subtitle_text,
         board_objects=job.board_objects,
+        camera_plan=job.camera_plan,
+        handheld_enabled=job.handheld_enabled,
     )
 
     html_file = (work_dir / "whiteboard_scene.html").resolve()
@@ -570,6 +574,8 @@ def render_whiteboard_video(
     enable_split_camera_zones: Optional[bool] = None,
     subtitle_text: Optional[str] = None,
     board_objects: Optional[List[Dict[str, Any]]] = None,
+    camera_plan: Optional[Dict[str, Any]] = None,
+    handheld_enabled: Optional[bool] = None,
 ) -> Path:
     """
     Renders a fully animated MP4 video clip with mouth sync, camera moves, and Rough.js sketches.
