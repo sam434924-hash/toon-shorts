@@ -1,0 +1,81 @@
+[13:21:12] INFO [toonshorts.pipeline]: Loaded pre-authored screenplay from briefs\How_hackers_actually_break_into_systems_v5_scene.json
+[13:21:12] INFO [toonshorts.pipeline]: Running critic review on screenplay...
+[13:21:23] INFO [toonshorts.plugins.llm.gemini]: Critic review successfully parsed and validated on first attempt.
+[13:21:23] WARNING [toonshorts.client]: Gemini Developer API mode does not support additionalProperties in response_schema; retrying with application/json: additionalProperties is only supported in Gemini Enterprise Agent Platform mode, , not in Gemini Developer API mode.
+[13:21:44] WARNING [toonshorts.plugins.llm.gemini]: Critic review score (6.0/10) remained below the 7.0 pass threshold after reaching the maximum re-plan limit of 2 attempts.
+[13:21:44] INFO [toonshorts.pipeline]: Critic review score: 6.0/10
+[13:21:44] WARNING [toonshorts.pipeline]: Proceeding despite low critic score (6.0/10) due to --allow-low-score flag.
+[13:21:44] INFO [toonshorts.library]: Library HIT for element custom/custom_936c172e56a59cc3.json (936c172e)
+[13:21:44] INFO [toonshorts.library]: Library HIT for element custom/custom_14d57c15e87451a4.json (14d57c15)
+[13:21:44] INFO [toonshorts.library]: Library HIT for element custom/custom_45956f77b15344cd.json (45956f77)
+[13:21:44] INFO [toonshorts.library]: Library HIT for element custom/custom_0610975c5cbd0847.json (0610975c)
+[13:21:44] INFO [toonshorts.library]: Library HIT for element custom/custom_af4749d9cdf16809.json (af4749d9)
+[13:21:44] INFO [toonshorts.library]: Library HIT for element custom/custom_45b9a2f5bd55ef5e.json (45b9a2f5)
+[13:21:44] INFO [toonshorts.library]: Library HIT for element custom/custom_edf5713bfabba5f5.json (edf5713b)
+[13:21:44] INFO [toonshorts.library]: Library HIT for element custom/custom_26a37d9734b9f199.json (26a37d97)
+[13:21:44] INFO [toonshorts.library]: Library HIT for element custom/custom_edf39ec8ec4f89c0.json (edf39ec8)
+[13:21:44] INFO [toonshorts.library]: Library HIT for element custom/custom_877016dba871955a.json (877016db)
+[13:21:44] INFO [toonshorts.library]: Library HIT for element custom/custom_421d2ed529bf54c6.json (421d2ed5)
+[13:21:44] INFO [toonshorts.library]: Library HIT for element custom/custom_0dd6196dc0dd2956.json (0dd6196d)
+[13:21:44] INFO [toonshorts.library]: Library HIT for element custom/custom_b6aa2cf38a0767fd.json (b6aa2cf3)
+[13:21:44] INFO [toonshorts.library]: Library HIT for element custom/custom_2356966ad4b42688.json (2356966a)
+[13:21:44] INFO [toonshorts.library]: Library HIT for element custom/custom_3ac193a807e909b3.json (3ac193a8)
+[13:21:45] INFO [toonshorts.pipeline]: Generating voice tracks using engine 'gemini_tts' (voice: Puck)...
+[13:21:47] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 0 (key: 6717b923fc2ae7b0134f9e03c256f2031db2483384022c8b3a5d48b01ce6280d)
+[13:21:49] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 1 (key: 5595f51abed0b9808d219b0fb11ede817d59f3c1bbebf4189fd6289224d714d1)
+[13:21:52] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 2 (key: dd751b34bdac6b40f6900ac4e87ec9c3986093fa58810d371380b85580cbb2bd)
+[13:21:54] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 3 (key: c0617ced08e3697a791e34a0a0bac9408cd630d534a25fa8d3d4119553adffa7)
+[13:21:57] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 4 (key: d69d7da3fa564c1520cb6c7d13eedb8ae2372c504f6165a24f3e415fccaafcd1)
+[13:21:59] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 5 (key: 8f0bb2215b3c3cbd17aa27db34a8ea71269db97dbd534dc0415b7955927833f9)
+[13:22:02] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 6 (key: 1481a8ac412687b950bd1b2c19499c74373ded49c5bf3762a95261fe2e14ca52)
+[13:22:03] INFO [toonshorts.library]: Library HIT for element custom/custom_936c172e56a59cc3.json (936c172e)
+[13:22:03] INFO [toonshorts.library]: Library HIT for element custom/custom_14d57c15e87451a4.json (14d57c15)
+[13:22:03] INFO [toonshorts.library]: Library HIT for element custom/custom_45956f77b15344cd.json (45956f77)
+[13:22:03] INFO [toonshorts.library]: Library HIT for element custom/custom_0610975c5cbd0847.json (0610975c)
+[13:22:03] INFO [toonshorts.library]: Library HIT for element custom/custom_af4749d9cdf16809.json (af4749d9)
+[13:22:03] INFO [toonshorts.library]: Library HIT for element custom/custom_45b9a2f5bd55ef5e.json (45b9a2f5)
+[13:22:03] INFO [toonshorts.library]: Library HIT for element custom/custom_edf5713bfabba5f5.json (edf5713b)
+[13:22:03] INFO [toonshorts.library]: Library HIT for element custom/custom_26a37d9734b9f199.json (26a37d97)
+[13:22:03] INFO [toonshorts.library]: Library HIT for element custom/custom_edf39ec8ec4f89c0.json (edf39ec8)
+[13:22:03] INFO [toonshorts.library]: Library HIT for element custom/custom_877016dba871955a.json (877016db)
+[13:22:03] INFO [toonshorts.library]: Library HIT for element custom/custom_421d2ed529bf54c6.json (421d2ed5)
+[13:22:03] INFO [toonshorts.library]: Library HIT for element custom/custom_0dd6196dc0dd2956.json (0dd6196d)
+[13:22:03] INFO [toonshorts.library]: Library HIT for element custom/custom_b6aa2cf38a0767fd.json (b6aa2cf3)
+[13:22:03] INFO [toonshorts.library]: Library HIT for element custom/custom_2356966ad4b42688.json (2356966a)
+[13:22:03] INFO [toonshorts.library]: Library HIT for element custom/custom_3ac193a807e909b3.json (3ac193a8)
+[13:22:03] INFO [toonshorts.sync]: Saved word timings to C:\dev\toon-shorts\videos\.tmp-How_hackers_actually_break_into_systems_v5-73149863\word_timings.json
+[13:22:03] INFO [toonshorts.sync]: Updated scene manifest written to C:\dev\toon-shorts\videos\.tmp-How_hackers_actually_break_into_systems_v5-73149863\scene.json
+[13:22:03] INFO [toonshorts.sync]: Wrote audio-visual sync report to C:\dev\toon-shorts\videos\.tmp-How_hackers_actually_break_into_systems_v5-73149863\sync_report.txt
+[13:22:18] INFO [toonshorts.pipeline]: Rendered 7 scene stills: ['How_hackers_actually_break_into_systems_v5_still_sc1.png', 'How_hackers_actually_break_into_systems_v5_still_sc2.png', 'How_hackers_actually_break_into_systems_v5_still_sc3.png', 'How_hackers_actually_break_into_systems_v5_still_sc4.png', 'How_hackers_actually_break_into_systems_v5_still_sc5.png', 'How_hackers_actually_break_into_systems_v5_still_sc6.png', 'How_hackers_actually_break_into_systems_v5_still_sc7.png']
+[13:22:18] INFO [toonshorts.pipeline]: Running automated layout and safe-zone check on all scene stills...
+[13:22:27] INFO [toonshorts.pipeline]: Automated layout check PASSED for all 7 scenes.
+[13:22:27] INFO [toonshorts.pipeline]: Running automated visual quality review on scene stills...
+[13:22:28] INFO [toonshorts.visual_checker]: Visual review saved to C:\dev\toon-shorts\videos\.tmp-How_hackers_actually_break_into_systems_v5-73149863\visual_review.md (Score: 10.0/10 - PASSED)
+[13:22:28] INFO [toonshorts.pipeline]: Visual quality review PASSED (Score: 10.0/10). Proceeding to full render.
+[13:22:28] INFO [toonshorts.library]: Library HIT for background night_studio far (107a32c3)
+[13:22:28] INFO [toonshorts.library]: Library HIT for background night_studio far (107a32c3)
+[13:22:28] INFO [toonshorts.library]: Library HIT for background night_studio mid (276b98b4)
+[13:22:28] INFO [toonshorts.library]: Library HIT for background night_studio mid (276b98b4)
+[13:22:28] INFO [toonshorts.library]: Library HIT for background night_studio near (a4af961b)
+[13:22:28] INFO [toonshorts.library]: Library HIT for background night_studio near (a4af961b)
+[13:22:39] INFO [toonshorts.library]: Library HIT for background night_studio far (107a32c3)
+[13:22:39] INFO [toonshorts.library]: Library HIT for background night_studio mid (276b98b4)
+[13:22:39] INFO [toonshorts.library]: Library HIT for background night_studio near (a4af961b)
+[13:22:44] INFO [toonshorts.library]: Library HIT for background night_studio far (107a32c3)
+[13:22:44] INFO [toonshorts.library]: Library HIT for background night_studio mid (276b98b4)
+[13:22:44] INFO [toonshorts.library]: Library HIT for background night_studio near (a4af961b)
+[13:22:52] INFO [toonshorts.library]: Library HIT for background night_studio far (107a32c3)
+[13:22:52] INFO [toonshorts.library]: Library HIT for background night_studio mid (276b98b4)
+[13:22:52] INFO [toonshorts.library]: Library HIT for background night_studio near (a4af961b)
+[13:22:57] INFO [toonshorts.library]: Library HIT for background night_studio far (107a32c3)
+[13:22:57] INFO [toonshorts.library]: Library HIT for background night_studio mid (276b98b4)
+[13:22:57] INFO [toonshorts.library]: Library HIT for background night_studio near (a4af961b)
+[13:23:07] INFO [toonshorts.library]: Library HIT for background night_studio far (107a32c3)
+[13:23:07] INFO [toonshorts.library]: Library HIT for background night_studio mid (276b98b4)
+[13:23:07] INFO [toonshorts.library]: Library HIT for background night_studio near (a4af961b)
+[13:23:19] INFO [toonshorts.library]: Library HIT for SFX pop (47e9f275)
+[13:23:19] INFO [toonshorts.library]: Library HIT for SFX boing (1a844751)
+[13:23:19] INFO [toonshorts.library]: Library HIT for SFX whistle (f385dbe0)
+[13:23:20] INFO [toonshorts.assembler]: Concatenating all scenes into unified video stream...
+[13:23:21] INFO [toonshorts.assembler]: Burning in ASS word-level captions to final video...
+[13:23:21] INFO [toonshorts.assembler]: Successfully assembled video: C:\dev\toon-shorts\videos\.tmp-How_hackers_actually_break_into_systems_v5-73149863\How_hackers_actually_break_into_systems_v5.mp4

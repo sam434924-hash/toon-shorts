@@ -1,0 +1,268 @@
+[
+  {
+    "start_sec": 0.0,
+    "end_sec": 2.5,
+    "speaker": "BOTH",
+    "preset": "CAM_01_WIDE_2SHOT",
+    "zoom_start": 1.0,
+    "zoom_end": 1.04,
+    "center_start": [
+      0.5,
+      0.52
+    ],
+    "center_end": [
+      0.5,
+      0.52
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "PARTNER"
+  },
+  {
+    "start_sec": 2.5,
+    "end_sec": 4.59,
+    "speaker": "A",
+    "preset": "CAM_03_OTS_SPEAKER_A",
+    "zoom_start": 1.4,
+    "zoom_end": 1.4,
+    "center_start": [
+      0.36,
+      0.5
+    ],
+    "center_end": [
+      0.36,
+      0.5
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "PARTNER"
+  },
+  {
+    "start_sec": 4.59,
+    "end_sec": 8.093,
+    "speaker": "B",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.24,
+    "zoom_end": 1.28,
+    "center_start": [
+      0.46,
+      0.48
+    ],
+    "center_end": [
+      0.46,
+      0.48
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 8.093,
+    "end_sec": 10.96,
+    "speaker": "B",
+    "preset": "CAM_04_CU_SPEAKER_B",
+    "zoom_start": 1.72,
+    "zoom_end": 1.72,
+    "center_start": [
+      0.68,
+      0.44
+    ],
+    "center_end": [
+      0.68,
+      0.44
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 10.96,
+    "end_sec": 13.848,
+    "speaker": "A",
+    "preset": "CAM_04_CU_SPEAKER_B",
+    "zoom_start": 1.72,
+    "zoom_end": 1.72,
+    "center_start": [
+      0.68,
+      0.44
+    ],
+    "center_end": [
+      0.68,
+      0.44
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "PARTNER"
+  },
+  {
+    "start_sec": 13.848,
+    "end_sec": 16.45,
+    "speaker": "A",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.24,
+    "zoom_end": 1.24,
+    "center_start": [
+      0.46,
+      0.48
+    ],
+    "center_end": [
+      0.46,
+      0.48
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "PARTNER"
+  },
+  {
+    "start_sec": 16.45,
+    "end_sec": 19.228,
+    "speaker": "B",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.24,
+    "zoom_end": 1.28,
+    "center_start": [
+      0.46,
+      0.48
+    ],
+    "center_end": [
+      0.46,
+      0.48
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 19.228,
+    "end_sec": 21.5,
+    "speaker": "B",
+    "preset": "CAM_04_CU_SPEAKER_B",
+    "zoom_start": 1.72,
+    "zoom_end": 1.72,
+    "center_start": [
+      0.68,
+      0.44
+    ],
+    "center_end": [
+      0.68,
+      0.44
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 21.5,
+    "end_sec": 24.64,
+    "speaker": "B",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.24,
+    "zoom_end": 1.28,
+    "center_start": [
+      0.46,
+      0.48
+    ],
+    "center_end": [
+      0.46,
+      0.48
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 24.64,
+    "end_sec": 27.21,
+    "speaker": "B",
+    "preset": "CAM_04_CU_SPEAKER_B",
+    "zoom_start": 1.72,
+    "zoom_end": 1.72,
+    "center_start": [
+      0.68,
+      0.44
+    ],
+    "center_end": [
+      0.68,
+      0.44
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 27.21,
+    "end_sec": 31.021,
+    "speaker": "A",
+    "preset": "CAM_05_CU_SPEAKER_A",
+    "zoom_start": 1.8,
+    "zoom_end": 1.88,
+    "center_start": [
+      0.3,
+      0.54
+    ],
+    "center_end": [
+      0.3,
+      0.54
+    ],
+    "motion": "SNAP_ZOOM",
+    "entry": "CUT",
+    "eye_target": "CAMERA"
+  },
+  {
+    "start_sec": 31.021,
+    "end_sec": 34.14,
+    "speaker": "A",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.24,
+    "zoom_end": 1.24,
+    "center_start": [
+      0.46,
+      0.48
+    ],
+    "center_end": [
+      0.46,
+      0.48
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "CAMERA"
+  },
+  {
+    "start_sec": 34.14,
+    "end_sec": 37.16,
+    "speaker": "B",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.24,
+    "zoom_end": 1.28,
+    "center_start": [
+      0.46,
+      0.48
+    ],
+    "center_end": [
+      0.46,
+      0.48
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 37.16,
+    "end_sec": 39.63,
+    "speaker": "B",
+    "preset": "CAM_04_CU_SPEAKER_B",
+    "zoom_start": 1.72,
+    "zoom_end": 1.72,
+    "center_start": [
+      0.68,
+      0.44
+    ],
+    "center_end": [
+      0.68,
+      0.44
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  }
+]

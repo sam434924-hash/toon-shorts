@@ -3,7 +3,7 @@ Purpose: Data-driven acting planner, validation, and check-acting tool for chara
 Inputs: Script scenes, cast characters, word timings, and layout plan blocks.
 Outputs: Deterministic acting_plan.json with beats, accents, gestures, gaze, turns, and listener reactions.
 Depends on: json, logging, math, pathlib, random, typing, core.config
-Used by: cli
+Used by: cli, core.pipeline
 Config keys: None
 Tests: tests/unit/test_acting.py
 """

@@ -703,12 +703,19 @@ def generate_whiteboard_html(
     result = result.replace("{{SPLIT_CAMERA_FRAMING_JSON}}", json.dumps(split_camera_framing))
     result = result.replace("{{SPLIT_CHAR_SHOTS_JSON}}", json.dumps(split_char_shots))
     result = result.replace("{{SPLIT_BOARD_SHOTS_JSON}}", json.dumps(split_board_shots))
-    result = result.replace("{{CAMERA_PLAN_JSON}}", json.dumps(camera_plan or {}))
+    if isinstance(camera_plan, list):
+        serialized_camera_plan = [s.to_dict() if hasattr(s, "to_dict") else s for s in camera_plan]
+    elif hasattr(camera_plan, "to_dict"):
+        serialized_camera_plan = camera_plan.to_dict()
+    else:
+        serialized_camera_plan = camera_plan or {}
+
+    result = result.replace("{{CAMERA_PLAN_JSON}}", json.dumps(serialized_camera_plan))
     result = result.replace("{{ACTING_PLAN_JSON}}", json.dumps(acting_plan or {}))
     handheld_val = (
         handheld_enabled
         if handheld_enabled is not None
-        else (camera_plan.get("handheld_enabled", True) if isinstance(camera_plan, dict) and "handheld_enabled" in camera_plan else getattr(config, "CAMERA_HANDHELD_BREATHING", True))
+        else (serialized_camera_plan.get("handheld_enabled", True) if isinstance(serialized_camera_plan, dict) and "handheld_enabled" in serialized_camera_plan else getattr(config, "CAMERA_HANDHELD_BREATHING", True))
     )
     result = result.replace("{{HANDHELD_ENABLED}}", "true" if handheld_val else "false")
     result = result.replace("{{SUBTITLE_PREVIEW_TEXT}}", safe_subtitle)

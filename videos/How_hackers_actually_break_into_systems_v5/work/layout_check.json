@@ -1,0 +1,243 @@
+{
+  "video_dir": "C:\\dev\\toon-shorts\\videos\\.tmp-How_hackers_actually_break_into_systems_v5-73149863",
+  "total_scenes": 7,
+  "passed": true,
+  "failed_scenes": [],
+  "violations_count": 0,
+  "violations": [],
+  "warnings_count": 0,
+  "warnings": [],
+  "scene_results": [
+    {
+      "scene": 1,
+      "html_file": "scene_1_still.html",
+      "passed": true,
+      "violations": [],
+      "warnings": [],
+      "board_zone": {
+        "top": 288,
+        "bottom": 808,
+        "left": 60,
+        "right": 960,
+        "width": 900,
+        "height": 520,
+        "visible": true,
+        "scrollWidth": 900,
+        "scrollHeight": 520,
+        "clientWidth": 900,
+        "clientHeight": 520
+      },
+      "title_badge": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "visible": false,
+        "scrollWidth": 0,
+        "scrollHeight": 0,
+        "clientWidth": 0,
+        "clientHeight": 0
+      }
+    },
+    {
+      "scene": 2,
+      "html_file": "scene_2_still.html",
+      "passed": true,
+      "violations": [],
+      "warnings": [],
+      "board_zone": {
+        "top": 288,
+        "bottom": 808,
+        "left": 60,
+        "right": 960,
+        "width": 900,
+        "height": 520,
+        "visible": true,
+        "scrollWidth": 900,
+        "scrollHeight": 520,
+        "clientWidth": 900,
+        "clientHeight": 520
+      },
+      "title_badge": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "visible": false,
+        "scrollWidth": 0,
+        "scrollHeight": 0,
+        "clientWidth": 0,
+        "clientHeight": 0
+      }
+    },
+    {
+      "scene": 3,
+      "html_file": "scene_3_still.html",
+      "passed": true,
+      "violations": [],
+      "warnings": [],
+      "board_zone": {
+        "top": 288,
+        "bottom": 808,
+        "left": 60,
+        "right": 960,
+        "width": 900,
+        "height": 520,
+        "visible": true,
+        "scrollWidth": 900,
+        "scrollHeight": 520,
+        "clientWidth": 900,
+        "clientHeight": 520
+      },
+      "title_badge": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "visible": false,
+        "scrollWidth": 0,
+        "scrollHeight": 0,
+        "clientWidth": 0,
+        "clientHeight": 0
+      }
+    },
+    {
+      "scene": 4,
+      "html_file": "scene_4_still.html",
+      "passed": true,
+      "violations": [],
+      "warnings": [],
+      "board_zone": {
+        "top": 288,
+        "bottom": 808,
+        "left": 60,
+        "right": 960,
+        "width": 900,
+        "height": 520,
+        "visible": true,
+        "scrollWidth": 900,
+        "scrollHeight": 520,
+        "clientWidth": 900,
+        "clientHeight": 520
+      },
+      "title_badge": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "visible": false,
+        "scrollWidth": 0,
+        "scrollHeight": 0,
+        "clientWidth": 0,
+        "clientHeight": 0
+      }
+    },
+    {
+      "scene": 5,
+      "html_file": "scene_5_still.html",
+      "passed": true,
+      "violations": [],
+      "warnings": [],
+      "board_zone": {
+        "top": 288,
+        "bottom": 808,
+        "left": 60,
+        "right": 960,
+        "width": 900,
+        "height": 520,
+        "visible": true,
+        "scrollWidth": 900,
+        "scrollHeight": 520,
+        "clientWidth": 900,
+        "clientHeight": 520
+      },
+      "title_badge": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "visible": false,
+        "scrollWidth": 0,
+        "scrollHeight": 0,
+        "clientWidth": 0,
+        "clientHeight": 0
+      }
+    },
+    {
+      "scene": 6,
+      "html_file": "scene_6_still.html",
+      "passed": true,
+      "violations": [],
+      "warnings": [],
+      "board_zone": {
+        "top": 288,
+        "bottom": 808,
+        "left": 60,
+        "right": 960,
+        "width": 900,
+        "height": 520,
+        "visible": true,
+        "scrollWidth": 900,
+        "scrollHeight": 520,
+        "clientWidth": 900,
+        "clientHeight": 520
+      },
+      "title_badge": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "visible": false,
+        "scrollWidth": 0,
+        "scrollHeight": 0,
+        "clientWidth": 0,
+        "clientHeight": 0
+      }
+    },
+    {
+      "scene": 7,
+      "html_file": "scene_7_still.html",
+      "passed": true,
+      "violations": [],
+      "warnings": [],
+      "board_zone": {
+        "top": 288,
+        "bottom": 808,
+        "left": 60,
+        "right": 960,
+        "width": 900,
+        "height": 520,
+        "visible": true,
+        "scrollWidth": 900,
+        "scrollHeight": 520,
+        "clientWidth": 900,
+        "clientHeight": 520
+      },
+      "title_badge": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "visible": false,
+        "scrollWidth": 0,
+        "scrollHeight": 0,
+        "clientWidth": 0,
+        "clientHeight": 0
+      }
+    }
+  ]
+}

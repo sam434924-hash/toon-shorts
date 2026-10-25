@@ -1,0 +1,101 @@
+[Script Info]
+Title: ToonShorts Captions
+ScriptType: v4.00+
+WrapStyle: 0
+PlayResX: 1080
+PlayResY: 1920
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial,76,&H00FFFFFF,&H000000FF,&H000F172A,&H60050811,-1,0,0,0,100,100,0,0,3,7,0,2,60,60,120,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.50,Default,,0,0,0,,{\c&H0000D8F6\b1}Wait,{\c&H00FFFFFF\b1} do movie hackers\Nreally smash keyboards to
+Dialogue: 0,0:00:00.64,0:00:00.80,Default,,0,0,0,,Wait, {\c&H0000D8F6\b1}do{\c&H00FFFFFF\b1} movie hackers\Nreally smash keyboards to
+Dialogue: 0,0:00:00.80,0:00:01.04,Default,,0,0,0,,Wait, do {\c&H0000D8F6\b1}movie{\c&H00FFFFFF\b1} hackers\Nreally smash keyboards to
+Dialogue: 0,0:00:01.04,0:00:01.48,Default,,0,0,0,,Wait, do movie {\c&H0000D8F6\b1}hackers{\c&H00FFFFFF\b1}\Nreally smash keyboards to
+Dialogue: 0,0:00:01.48,0:00:02.18,Default,,0,0,0,,Wait, do movie hackers\N{\c&H0000D8F6\b1}really{\c&H00FFFFFF\b1} smash keyboards to
+Dialogue: 0,0:00:02.18,0:00:02.70,Default,,0,0,0,,Wait, do movie hackers\Nreally {\c&H0000D8F6\b1}smash{\c&H00FFFFFF\b1} keyboards to
+Dialogue: 0,0:00:02.70,0:00:03.10,Default,,0,0,0,,Wait, do movie hackers\Nreally smash {\c&H0000D8F6\b1}keyboards{\c&H00FFFFFF\b1} to
+Dialogue: 0,0:00:03.10,0:00:03.46,Default,,0,0,0,,Wait, do movie hackers\Nreally smash keyboards {\c&H0000D8F6\b1}to{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:03.46,0:00:03.64,Default,,0,0,0,,{\c&H0000D8F6\b1}break{\c&H00FFFFFF\b1} into your account?
+Dialogue: 0,0:00:03.64,0:00:03.82,Default,,0,0,0,,break {\c&H0000D8F6\b1}into{\c&H00FFFFFF\b1} your account?
+Dialogue: 0,0:00:03.82,0:00:03.98,Default,,0,0,0,,break into {\c&H0000D8F6\b1}your{\c&H00FFFFFF\b1} account?
+Dialogue: 0,0:00:03.98,0:00:04.24,Default,,0,0,0,,break into your {\c&H0000D8F6\b1}account?{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:04.83,0:00:05.47,Default,,0,0,0,,{\c&H0000D8F6\b1}Not{\c&H00FFFFFF\b1} even close! Most\Nbreaches happen because people
+Dialogue: 0,0:00:05.47,0:00:05.87,Default,,0,0,0,,Not {\c&H0000D8F6\b1}even{\c&H00FFFFFF\b1} close! Most\Nbreaches happen because people
+Dialogue: 0,0:00:05.87,0:00:06.47,Default,,0,0,0,,Not even {\c&H0000D8F6\b1}close!{\c&H00FFFFFF\b1} Most\Nbreaches happen because people
+Dialogue: 0,0:00:06.89,0:00:07.17,Default,,0,0,0,,Not even close! {\c&H0000D8F6\b1}Most{\c&H00FFFFFF\b1}\Nbreaches happen because people
+Dialogue: 0,0:00:07.17,0:00:07.59,Default,,0,0,0,,Not even close! Most\N{\c&H0000D8F6\b1}breaches{\c&H00FFFFFF\b1} happen because people
+Dialogue: 0,0:00:07.59,0:00:07.99,Default,,0,0,0,,Not even close! Most\Nbreaches {\c&H0000D8F6\b1}happen{\c&H00FFFFFF\b1} because people
+Dialogue: 0,0:00:07.99,0:00:08.43,Default,,0,0,0,,Not even close! Most\Nbreaches happen {\c&H0000D8F6\b1}because{\c&H00FFFFFF\b1} people
+Dialogue: 0,0:00:08.43,0:00:08.89,Default,,0,0,0,,Not even close! Most\Nbreaches happen because {\c&H0000D8F6\b1}people{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:08.89,0:00:09.49,Default,,0,0,0,,{\c&H0000D8F6\b1}reuse{\c&H00FFFFFF\b1} simple passwords everywhere.
+Dialogue: 0,0:00:09.49,0:00:09.83,Default,,0,0,0,,reuse {\c&H0000D8F6\b1}simple{\c&H00FFFFFF\b1} passwords everywhere.
+Dialogue: 0,0:00:09.83,0:00:10.25,Default,,0,0,0,,reuse simple {\c&H0000D8F6\b1}passwords{\c&H00FFFFFF\b1} everywhere.
+Dialogue: 0,0:00:10.25,0:00:10.85,Default,,0,0,0,,reuse simple passwords {\c&H0000D8F6\b1}everywhere.{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:11.74,0:00:12.46,Default,,0,0,0,,{\c&H0000D8F6\b1}So{\c&H00FFFFFF\b1} if one random\Nshopping site leaks, they
+Dialogue: 0,0:00:12.46,0:00:12.94,Default,,0,0,0,,So {\c&H0000D8F6\b1}if{\c&H00FFFFFF\b1} one random\Nshopping site leaks, they
+Dialogue: 0,0:00:12.94,0:00:13.48,Default,,0,0,0,,So if {\c&H0000D8F6\b1}one{\c&H00FFFFFF\b1} random\Nshopping site leaks, they
+Dialogue: 0,0:00:13.48,0:00:13.92,Default,,0,0,0,,So if one {\c&H0000D8F6\b1}random{\c&H00FFFFFF\b1}\Nshopping site leaks, they
+Dialogue: 0,0:00:13.92,0:00:14.34,Default,,0,0,0,,So if one random\N{\c&H0000D8F6\b1}shopping{\c&H00FFFFFF\b1} site leaks, they
+Dialogue: 0,0:00:14.34,0:00:14.72,Default,,0,0,0,,So if one random\Nshopping {\c&H0000D8F6\b1}site{\c&H00FFFFFF\b1} leaks, they
+Dialogue: 0,0:00:14.72,0:00:15.06,Default,,0,0,0,,So if one random\Nshopping site {\c&H0000D8F6\b1}leaks,{\c&H00FFFFFF\b1} they
+Dialogue: 0,0:00:15.50,0:00:15.52,Default,,0,0,0,,So if one random\Nshopping site leaks, {\c&H0000D8F6\b1}they{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:15.52,0:00:15.72,Default,,0,0,0,,{\c&H0000D8F6\b1}get{\c&H00FFFFFF\b1} into everything?
+Dialogue: 0,0:00:15.72,0:00:16.06,Default,,0,0,0,,get {\c&H0000D8F6\b1}into{\c&H00FFFFFF\b1} everything?
+Dialogue: 0,0:00:16.06,0:00:16.64,Default,,0,0,0,,get into {\c&H0000D8F6\b1}everything?{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:17.97,0:00:18.49,Default,,0,0,0,,{\c&H0000D8F6\b1}Exactly!{\c&H00FFFFFF\b1} That is why\Nyou need a password
+Dialogue: 0,0:00:19.05,0:00:19.25,Default,,0,0,0,,Exactly! {\c&H0000D8F6\b1}That{\c&H00FFFFFF\b1} is why\Nyou need a password
+Dialogue: 0,0:00:19.25,0:00:19.45,Default,,0,0,0,,Exactly! That {\c&H0000D8F6\b1}is{\c&H00FFFFFF\b1} why\Nyou need a password
+Dialogue: 0,0:00:19.45,0:00:19.55,Default,,0,0,0,,Exactly! That is {\c&H0000D8F6\b1}why{\c&H00FFFFFF\b1}\Nyou need a password
+Dialogue: 0,0:00:19.55,0:00:19.67,Default,,0,0,0,,Exactly! That is why\N{\c&H0000D8F6\b1}you{\c&H00FFFFFF\b1} need a password
+Dialogue: 0,0:00:19.67,0:00:19.91,Default,,0,0,0,,Exactly! That is why\Nyou {\c&H0000D8F6\b1}need{\c&H00FFFFFF\b1} a password
+Dialogue: 0,0:00:19.91,0:00:20.09,Default,,0,0,0,,Exactly! That is why\Nyou need {\c&H0000D8F6\b1}a{\c&H00FFFFFF\b1} password
+Dialogue: 0,0:00:20.09,0:00:20.37,Default,,0,0,0,,Exactly! That is why\Nyou need a {\c&H0000D8F6\b1}password{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:20.37,0:00:20.75,Default,,0,0,0,,{\c&H0000D8F6\b1}manager{\c&H00FFFFFF\b1} and\Nhigh strength passphrases.
+Dialogue: 0,0:00:20.75,0:00:21.21,Default,,0,0,0,,manager {\c&H0000D8F6\b1}and{\c&H00FFFFFF\b1}\Nhigh strength passphrases.
+Dialogue: 0,0:00:21.21,0:00:21.43,Default,,0,0,0,,manager and\N{\c&H0000D8F6\b1}high{\c&H00FFFFFF\b1} strength passphrases.
+Dialogue: 0,0:00:21.43,0:00:21.69,Default,,0,0,0,,manager and\Nhigh {\c&H0000D8F6\b1}strength{\c&H00FFFFFF\b1} passphrases.
+Dialogue: 0,0:00:21.95,0:00:22.27,Default,,0,0,0,,manager and\Nhigh strength {\c&H0000D8F6\b1}passphrases.{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:22.96,0:00:23.68,Default,,0,0,0,,{\c&H0000D8F6\b1}And{\c&H00FFFFFF\b1} always turn on\Ntwo factor authentication! That
+Dialogue: 0,0:00:23.68,0:00:24.06,Default,,0,0,0,,And {\c&H0000D8F6\b1}always{\c&H00FFFFFF\b1} turn on\Ntwo factor authentication! That
+Dialogue: 0,0:00:24.06,0:00:24.30,Default,,0,0,0,,And always {\c&H0000D8F6\b1}turn{\c&H00FFFFFF\b1} on\Ntwo factor authentication! That
+Dialogue: 0,0:00:24.30,0:00:24.58,Default,,0,0,0,,And always turn {\c&H0000D8F6\b1}on{\c&H00FFFFFF\b1}\Ntwo factor authentication! That
+Dialogue: 0,0:00:24.58,0:00:24.82,Default,,0,0,0,,And always turn on\N{\c&H0000D8F6\b1}two{\c&H00FFFFFF\b1} factor authentication! That
+Dialogue: 0,0:00:24.82,0:00:25.10,Default,,0,0,0,,And always turn on\Ntwo {\c&H0000D8F6\b1}factor{\c&H00FFFFFF\b1} authentication! That
+Dialogue: 0,0:00:25.10,0:00:25.64,Default,,0,0,0,,And always turn on\Ntwo factor {\c&H0000D8F6\b1}authentication!{\c&H00FFFFFF\b1} That
+Dialogue: 0,0:00:26.32,0:00:26.52,Default,,0,0,0,,And always turn on\Ntwo factor authentication! {\c&H0000D8F6\b1}That{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:26.52,0:00:26.76,Default,,0,0,0,,{\c&H0000D8F6\b1}puts{\c&H00FFFFFF\b1} an iron\Nshield on your login.
+Dialogue: 0,0:00:26.76,0:00:27.06,Default,,0,0,0,,puts {\c&H0000D8F6\b1}an{\c&H00FFFFFF\b1} iron\Nshield on your login.
+Dialogue: 0,0:00:27.06,0:00:27.32,Default,,0,0,0,,puts an {\c&H0000D8F6\b1}iron{\c&H00FFFFFF\b1}\Nshield on your login.
+Dialogue: 0,0:00:27.32,0:00:27.60,Default,,0,0,0,,puts an iron\N{\c&H0000D8F6\b1}shield{\c&H00FFFFFF\b1} on your login.
+Dialogue: 0,0:00:27.60,0:00:27.88,Default,,0,0,0,,puts an iron\Nshield {\c&H0000D8F6\b1}on{\c&H00FFFFFF\b1} your login.
+Dialogue: 0,0:00:27.88,0:00:28.04,Default,,0,0,0,,puts an iron\Nshield on {\c&H0000D8F6\b1}your{\c&H00FFFFFF\b1} login.
+Dialogue: 0,0:00:28.04,0:00:28.32,Default,,0,0,0,,puts an iron\Nshield on your {\c&H0000D8F6\b1}login.{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:28.99,0:00:30.01,Default,,0,0,0,,{\c&H0000D8F6\b1}So{\c&H00FFFFFF\b1} changing my password\Nfrom password123 to password1234
+Dialogue: 0,0:00:30.03,0:00:30.33,Default,,0,0,0,,So {\c&H0000D8F6\b1}changing{\c&H00FFFFFF\b1} my password\Nfrom password123 to password1234
+Dialogue: 0,0:00:30.33,0:00:30.61,Default,,0,0,0,,So changing {\c&H0000D8F6\b1}my{\c&H00FFFFFF\b1} password\Nfrom password123 to password1234
+Dialogue: 0,0:00:30.61,0:00:30.95,Default,,0,0,0,,So changing my {\c&H0000D8F6\b1}password{\c&H00FFFFFF\b1}\Nfrom password123 to password1234
+Dialogue: 0,0:00:30.95,0:00:31.51,Default,,0,0,0,,So changing my password\N{\c&H0000D8F6\b1}from{\c&H00FFFFFF\b1} password123 to password1234
+Dialogue: 0,0:00:31.51,0:00:31.87,Default,,0,0,0,,So changing my password\Nfrom {\c&H0000D8F6\b1}password123{\c&H00FFFFFF\b1} to password1234
+Dialogue: 0,0:00:32.53,0:00:32.79,Default,,0,0,0,,So changing my password\Nfrom password123 {\c&H0000D8F6\b1}to{\c&H00FFFFFF\b1} password1234
+Dialogue: 0,0:00:32.79,0:00:33.13,Default,,0,0,0,,So changing my password\Nfrom password123 to {\c&H0000D8F6\b1}password1234{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:34.21,0:00:34.59,Default,,0,0,0,,{\c&H0000D8F6\b1}did{\c&H00FFFFFF\b1} not save me?
+Dialogue: 0,0:00:34.59,0:00:35.01,Default,,0,0,0,,did {\c&H0000D8F6\b1}not{\c&H00FFFFFF\b1} save me?
+Dialogue: 0,0:00:35.01,0:00:35.23,Default,,0,0,0,,did not {\c&H0000D8F6\b1}save{\c&H00FFFFFF\b1} me?
+Dialogue: 0,0:00:35.23,0:00:35.57,Default,,0,0,0,,did not save {\c&H0000D8F6\b1}me?{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:36.06,0:00:36.88,Default,,0,0,0,,{\c&H0000D8F6\b1}Definitely{\c&H00FFFFFF\b1} not! Make it\Nlong, make it unique,
+Dialogue: 0,0:00:36.88,0:00:37.54,Default,,0,0,0,,Definitely {\c&H0000D8F6\b1}not!{\c&H00FFFFFF\b1} Make it\Nlong, make it unique,
+Dialogue: 0,0:00:37.96,0:00:38.14,Default,,0,0,0,,Definitely not! {\c&H0000D8F6\b1}Make{\c&H00FFFFFF\b1} it\Nlong, make it unique,
+Dialogue: 0,0:00:38.14,0:00:38.34,Default,,0,0,0,,Definitely not! Make {\c&H0000D8F6\b1}it{\c&H00FFFFFF\b1}\Nlong, make it unique,
+Dialogue: 0,0:00:38.34,0:00:38.70,Default,,0,0,0,,Definitely not! Make it\N{\c&H0000D8F6\b1}long,{\c&H00FFFFFF\b1} make it unique,
+Dialogue: 0,0:00:39.08,0:00:39.26,Default,,0,0,0,,Definitely not! Make it\Nlong, {\c&H0000D8F6\b1}make{\c&H00FFFFFF\b1} it unique,
+Dialogue: 0,0:00:39.26,0:00:39.44,Default,,0,0,0,,Definitely not! Make it\Nlong, make {\c&H0000D8F6\b1}it{\c&H00FFFFFF\b1} unique,
+Dialogue: 0,0:00:39.44,0:00:39.84,Default,,0,0,0,,Definitely not! Make it\Nlong, make it {\c&H0000D8F6\b1}unique,{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:40.36,0:00:40.52,Default,,0,0,0,,{\c&H0000D8F6\b1}and{\c&H00FFFFFF\b1} lock it down!
+Dialogue: 0,0:00:40.52,0:00:40.68,Default,,0,0,0,,and {\c&H0000D8F6\b1}lock{\c&H00FFFFFF\b1} it down!
+Dialogue: 0,0:00:40.68,0:00:40.88,Default,,0,0,0,,and lock {\c&H0000D8F6\b1}it{\c&H00FFFFFF\b1} down!
+Dialogue: 0,0:00:40.88,0:00:41.20,Default,,0,0,0,,and lock it {\c&H0000D8F6\b1}down!{\c&H00FFFFFF\b1}

@@ -1,0 +1,28 @@
+{
+  "video_name": "How_hackers_actually_break_into_systems_v5",
+  "story": "Boy and Girl discover how weak and reused passwords expose accounts, and learn how password managers, strong passphrases, and two-factor authentication provide ironclad defense.",
+  "format": "explanation video",
+  "style": "night_studio",
+  "characters": [
+    "boy_b",
+    "girl_a"
+  ],
+  "speaker": "both",
+  "voice": "Puck",
+  "voice_engine": "gemini_tts",
+  "board_animations_use": [
+    "counter",
+    "flow",
+    "check_cross",
+    "draw_svg",
+    "step_ladder"
+  ],
+  "board_animations_avoid": [
+    "typed_code"
+  ],
+  "hand_gestures": "on",
+  "camera": "zoom_speaker",
+  "length_seconds": 45,
+  "custom": "Awareness and defense only. Real board visuals: strength meter, reuse chain, draw-on lock and shield.",
+  "created_at": "2026-10-25T01:25:00Z"
+}

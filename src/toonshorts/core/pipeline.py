@@ -2,7 +2,7 @@
 Purpose: Pipeline runner orchestrating LLM, voice, render, and motion into self-contained video bundles.
 Inputs: Video production topic, style name, flags, and plugin selections.
 Outputs: Path to finalized vertical animation MP4 short inside dedicated video directory.
-Depends on: brief, core.assembler, core.camera, core.config, core.cost, core.errors, core.images, core.layout_checker, core.library, core.models, core.paths, core.registry, core.validator, core.visual_checker, json, logging, pathlib, platform, shutil, subprocess, sys, time, typing, uuid
+Depends on: brief, core.acting, core.assembler, core.camera, core.config, core.cost, core.errors, core.images, core.layout_checker, core.library, core.models, core.paths, core.registry, core.validator, core.visual_checker, json, logging, pathlib, platform, shutil, subprocess, sys, time, typing, uuid
 Used by: cli, core
 Config keys: DEFAULT_LLM, DEFAULT_MOTION, DEFAULT_RENDERER, DEFAULT_VOICE, STYLES_DIR, VIDEOS_DIR
 Tests: tests/smoke/test_smoke_pipeline.py, tests/unit/test_video_folders.py
@@ -785,6 +785,39 @@ def run_pipeline_from_brief(
             max_diff_ms=getattr(config, "MAX_SYNC_DIFFERENCE_MS", 150),
             allow_fallback=allow_fallback,
         )
+
+        # Mandatory acting plan generation
+        from toonshorts.core.acting import plan_acting_plan, save_acting_plan, check_acting
+        acting_plan_data = plan_acting_plan(
+            scenes=plan.scenes,
+            characters=plan.characters,
+            word_timings_map={s.scene_number: s.word_timings for s in plan.scenes},
+            layout_blocks_map={s.scene_number: s.layout for s in plan.scenes},
+        )
+        save_acting_plan(acting_plan_data, build_dir / "acting_plan.json")
+        acting_check = check_acting(build_dir)
+        if acting_check.get("status") != "PASS":
+            logger.warning("Acting plan validation issues: %s", acting_check.get("errors"))
+
+        # Mandatory camera plan generation
+        from toonshorts.core.camera import plan_camera_plan, save_camera_plan, check_camera
+        acting_beats_map = {s["scene_number"]: (s["beats"][0] if s.get("beats") else {}) for s in acting_plan_data.get("scenes", [])}
+        camera_shots = plan_camera_plan(
+            scenes=plan.scenes,
+            word_timings_map={s.scene_number: s.word_timings for s in plan.scenes},
+            acting_beats_map=acting_beats_map,
+            layout_blocks_map={s.scene_number: s.layout for s in plan.scenes},
+        )
+        save_camera_plan(camera_shots, build_dir / "camera_plan.json")
+        camera_check = check_camera(build_dir)
+        if camera_check.get("status") != "PASS":
+            logger.warning("Camera plan validation issues: %s", camera_check.get("errors"))
+
+        # Attach to each scene so renderer has access to camera plan and acting plan
+        serialized_camera_shots = [s.to_dict() if hasattr(s, "to_dict") else s for s in camera_shots]
+        for sc in plan.scenes:
+            setattr(sc, "camera_plan", serialized_camera_shots)
+            setattr(sc, "acting_plan", acting_plan_data)
 
         # 4. Render key scene stills first
         active_renderer_name = renderer_name or getattr(brief, "renderer", None) or ("fake" if mock else (preset.get("renderer") or config.DEFAULT_RENDERER))

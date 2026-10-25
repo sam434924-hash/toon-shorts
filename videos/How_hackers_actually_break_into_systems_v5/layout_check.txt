@@ -1,0 +1,15 @@
+=======================================================
+        AUTOMATED LAYOUT & SAFE-ZONE REPORT
+=======================================================
+Directory:     C:\dev\toon-shorts\videos\How_hackers_actually_break_into_systems_v5
+Total Scenes:  7
+Overall Status: PASSED
+-------------------------------------------------------
+Scene  1 [PASS]: Board Y=[288, 808], Title Y=[0, 0]
+Scene  2 [PASS]: Board Y=[288, 808], Title Y=[0, 0]
+Scene  3 [PASS]: Board Y=[288, 808], Title Y=[0, 0]
+Scene  4 [PASS]: Board Y=[288, 808], Title Y=[0, 0]
+Scene  5 [PASS]: Board Y=[288, 808], Title Y=[0, 0]
+Scene  6 [PASS]: Board Y=[288, 808], Title Y=[0, 0]
+Scene  7 [PASS]: Board Y=[288, 808], Title Y=[0, 0]
+=======================================================

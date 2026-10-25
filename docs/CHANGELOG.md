@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-25: part 3 v5 stills and fast preview review: generated camera_plan.json, acting_plan.json, rendered key scene stills and 540x960 fast preview for How_hackers_actually_break_into_systems_v5, validated with check-camera, check-acting, check-layout, and check-visuals, and documented visual_review.md.
+
 - 2026-10-25: part 2 acting skill and plan: implemented Appendix C acting skill, core acting planner generating acting_plan.json with beats, accents, gestures, gaze, turns, listener reactions, pointing slots, and check-acting CLI.
 
 - 2026-10-25: part 1 camera language: implemented Appendix A presets, transitions, zoom cap 1.9, depth parallax math, bg blur smoothstep ramp, check-camera CLI tool, and character slice sharpness tests.

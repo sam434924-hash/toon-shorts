@@ -115,6 +115,8 @@ class Scene(BaseModel):
     visuals: Optional[List[Visual]] = Field(default=None)
     board_objects: Optional[List[Dict[str, Any]]] = Field(default=None)
     word_timings: Optional[List[WordTiming]] = Field(default=None)
+    camera_plan: Optional[Any] = Field(default=None)
+    acting_plan: Optional[Any] = Field(default=None)
 
     @field_validator("dialogue_line", mode="before")
     @classmethod
@@ -166,6 +168,8 @@ class ScriptPlan(BaseModel):
     emotional_arc: str = Field(..., min_length=5, max_length=200)
     characters: List[Character] = Field(..., min_length=2, max_length=3)
     scenes: List[Scene] = Field(..., min_length=4, max_length=10)
+    camera_plan: Optional[Any] = Field(default=None)
+    acting_plan: Optional[Any] = Field(default=None)
 
     @model_validator(mode="before")
     @classmethod

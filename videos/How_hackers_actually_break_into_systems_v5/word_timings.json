@@ -1,0 +1,451 @@
+{
+  "scene_1": [
+    {
+      "word": "Wait,",
+      "start_time": 0.0,
+      "end_time": 0.5
+    },
+    {
+      "word": "do",
+      "start_time": 0.64,
+      "end_time": 0.8
+    },
+    {
+      "word": "movie",
+      "start_time": 0.8,
+      "end_time": 1.04
+    },
+    {
+      "word": "hackers",
+      "start_time": 1.04,
+      "end_time": 1.48
+    },
+    {
+      "word": "really",
+      "start_time": 1.48,
+      "end_time": 2.18
+    },
+    {
+      "word": "smash",
+      "start_time": 2.18,
+      "end_time": 2.7
+    },
+    {
+      "word": "keyboards",
+      "start_time": 2.7,
+      "end_time": 3.1
+    },
+    {
+      "word": "to",
+      "start_time": 3.1,
+      "end_time": 3.46
+    },
+    {
+      "word": "break",
+      "start_time": 3.46,
+      "end_time": 3.64
+    },
+    {
+      "word": "into",
+      "start_time": 3.64,
+      "end_time": 3.82
+    },
+    {
+      "word": "your",
+      "start_time": 3.82,
+      "end_time": 3.98
+    },
+    {
+      "word": "account?",
+      "start_time": 3.98,
+      "end_time": 4.24
+    }
+  ],
+  "scene_2": [
+    {
+      "word": "Not",
+      "start_time": 0.0,
+      "end_time": 0.64
+    },
+    {
+      "word": "even",
+      "start_time": 0.64,
+      "end_time": 1.04
+    },
+    {
+      "word": "close!",
+      "start_time": 1.04,
+      "end_time": 1.64
+    },
+    {
+      "word": "Most",
+      "start_time": 2.06,
+      "end_time": 2.34
+    },
+    {
+      "word": "breaches",
+      "start_time": 2.34,
+      "end_time": 2.76
+    },
+    {
+      "word": "happen",
+      "start_time": 2.76,
+      "end_time": 3.16
+    },
+    {
+      "word": "because",
+      "start_time": 3.16,
+      "end_time": 3.6
+    },
+    {
+      "word": "people",
+      "start_time": 3.6,
+      "end_time": 4.06
+    },
+    {
+      "word": "reuse",
+      "start_time": 4.06,
+      "end_time": 4.66
+    },
+    {
+      "word": "simple",
+      "start_time": 4.66,
+      "end_time": 5.0
+    },
+    {
+      "word": "passwords",
+      "start_time": 5.0,
+      "end_time": 5.42
+    },
+    {
+      "word": "everywhere.",
+      "start_time": 5.42,
+      "end_time": 6.02
+    }
+  ],
+  "scene_3": [
+    {
+      "word": "So",
+      "start_time": 0.0,
+      "end_time": 0.72
+    },
+    {
+      "word": "if",
+      "start_time": 0.72,
+      "end_time": 1.2
+    },
+    {
+      "word": "one",
+      "start_time": 1.2,
+      "end_time": 1.74
+    },
+    {
+      "word": "random",
+      "start_time": 1.74,
+      "end_time": 2.18
+    },
+    {
+      "word": "shopping",
+      "start_time": 2.18,
+      "end_time": 2.6
+    },
+    {
+      "word": "site",
+      "start_time": 2.6,
+      "end_time": 2.98
+    },
+    {
+      "word": "leaks,",
+      "start_time": 2.98,
+      "end_time": 3.32
+    },
+    {
+      "word": "they",
+      "start_time": 3.76,
+      "end_time": 3.78
+    },
+    {
+      "word": "get",
+      "start_time": 3.78,
+      "end_time": 3.98
+    },
+    {
+      "word": "into",
+      "start_time": 3.98,
+      "end_time": 4.32
+    },
+    {
+      "word": "everything?",
+      "start_time": 4.32,
+      "end_time": 4.9
+    }
+  ],
+  "scene_4": [
+    {
+      "word": "Exactly!",
+      "start_time": 0.64,
+      "end_time": 1.16
+    },
+    {
+      "word": "That",
+      "start_time": 1.72,
+      "end_time": 1.92
+    },
+    {
+      "word": "is",
+      "start_time": 1.92,
+      "end_time": 2.12
+    },
+    {
+      "word": "why",
+      "start_time": 2.12,
+      "end_time": 2.22
+    },
+    {
+      "word": "you",
+      "start_time": 2.22,
+      "end_time": 2.34
+    },
+    {
+      "word": "need",
+      "start_time": 2.34,
+      "end_time": 2.58
+    },
+    {
+      "word": "a",
+      "start_time": 2.58,
+      "end_time": 2.76
+    },
+    {
+      "word": "password",
+      "start_time": 2.76,
+      "end_time": 3.04
+    },
+    {
+      "word": "manager",
+      "start_time": 3.04,
+      "end_time": 3.42
+    },
+    {
+      "word": "and",
+      "start_time": 3.42,
+      "end_time": 3.88
+    },
+    {
+      "word": "high",
+      "start_time": 3.88,
+      "end_time": 4.1
+    },
+    {
+      "word": "strength",
+      "start_time": 4.1,
+      "end_time": 4.36
+    },
+    {
+      "word": "passphrases.",
+      "start_time": 4.62,
+      "end_time": 4.94
+    }
+  ],
+  "scene_5": [
+    {
+      "word": "And",
+      "start_time": 0.0,
+      "end_time": 0.72
+    },
+    {
+      "word": "always",
+      "start_time": 0.72,
+      "end_time": 1.1
+    },
+    {
+      "word": "turn",
+      "start_time": 1.1,
+      "end_time": 1.34
+    },
+    {
+      "word": "on",
+      "start_time": 1.34,
+      "end_time": 1.62
+    },
+    {
+      "word": "two",
+      "start_time": 1.62,
+      "end_time": 1.86
+    },
+    {
+      "word": "factor",
+      "start_time": 1.86,
+      "end_time": 2.14
+    },
+    {
+      "word": "authentication!",
+      "start_time": 2.14,
+      "end_time": 2.68
+    },
+    {
+      "word": "That",
+      "start_time": 3.36,
+      "end_time": 3.56
+    },
+    {
+      "word": "puts",
+      "start_time": 3.56,
+      "end_time": 3.8
+    },
+    {
+      "word": "an",
+      "start_time": 3.8,
+      "end_time": 4.1
+    },
+    {
+      "word": "iron",
+      "start_time": 4.1,
+      "end_time": 4.36
+    },
+    {
+      "word": "shield",
+      "start_time": 4.36,
+      "end_time": 4.64
+    },
+    {
+      "word": "on",
+      "start_time": 4.64,
+      "end_time": 4.92
+    },
+    {
+      "word": "your",
+      "start_time": 4.92,
+      "end_time": 5.08
+    },
+    {
+      "word": "login.",
+      "start_time": 5.08,
+      "end_time": 5.36
+    }
+  ],
+  "scene_6": [
+    {
+      "word": "So",
+      "start_time": 0.0,
+      "end_time": 1.02
+    },
+    {
+      "word": "changing",
+      "start_time": 1.04,
+      "end_time": 1.34
+    },
+    {
+      "word": "my",
+      "start_time": 1.34,
+      "end_time": 1.62
+    },
+    {
+      "word": "password",
+      "start_time": 1.62,
+      "end_time": 1.96
+    },
+    {
+      "word": "from",
+      "start_time": 1.96,
+      "end_time": 2.52
+    },
+    {
+      "word": "password123",
+      "start_time": 2.52,
+      "end_time": 2.88
+    },
+    {
+      "word": "to",
+      "start_time": 3.54,
+      "end_time": 3.8
+    },
+    {
+      "word": "password1234",
+      "start_time": 3.8,
+      "end_time": 4.14
+    },
+    {
+      "word": "did",
+      "start_time": 5.22,
+      "end_time": 5.6
+    },
+    {
+      "word": "not",
+      "start_time": 5.6,
+      "end_time": 6.02
+    },
+    {
+      "word": "save",
+      "start_time": 6.02,
+      "end_time": 6.24
+    },
+    {
+      "word": "me?",
+      "start_time": 6.24,
+      "end_time": 6.58
+    }
+  ],
+  "scene_7": [
+    {
+      "word": "Definitely",
+      "start_time": 0.0,
+      "end_time": 0.82
+    },
+    {
+      "word": "not!",
+      "start_time": 0.82,
+      "end_time": 1.48
+    },
+    {
+      "word": "Make",
+      "start_time": 1.9,
+      "end_time": 2.08
+    },
+    {
+      "word": "it",
+      "start_time": 2.08,
+      "end_time": 2.28
+    },
+    {
+      "word": "long,",
+      "start_time": 2.28,
+      "end_time": 2.64
+    },
+    {
+      "word": "make",
+      "start_time": 3.02,
+      "end_time": 3.2
+    },
+    {
+      "word": "it",
+      "start_time": 3.2,
+      "end_time": 3.38
+    },
+    {
+      "word": "unique,",
+      "start_time": 3.38,
+      "end_time": 3.78
+    },
+    {
+      "word": "and",
+      "start_time": 4.3,
+      "end_time": 4.46
+    },
+    {
+      "word": "lock",
+      "start_time": 4.46,
+      "end_time": 4.62
+    },
+    {
+      "word": "it",
+      "start_time": 4.62,
+      "end_time": 4.82
+    },
+    {
+      "word": "down!",
+      "start_time": 4.82,
+      "end_time": 5.14
+    }
+  ]
+}
