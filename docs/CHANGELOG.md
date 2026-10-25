@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-25: part 0 baseline verification: verified repo hygiene, fixed postponed annotations in models.py, validated Gemini script generation from idea, and recorded Gemini image API modality status.
+
 - 2026-10-25: voice matching and audio assembly fix: restored gender-aware character voice assignment for Puck and Aoede, ensuring 100% TTS library cache hits and high-quality dialogue voiceover in How_hackers_actually_break_into_systems_v4.
 
 - 2026-10-25: full-quality v4 render with automatic layouts and calm background: rendered 1080x1920 How_hackers_actually_break_into_systems_v4 with automatic layouts, restored pop-in overshoot, registered 2FA image, verified 10/10 visual review, and documented per-scene visual_review.md.

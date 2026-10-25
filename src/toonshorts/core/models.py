@@ -8,6 +8,8 @@ Config keys: None
 Tests: tests/unit/test_sanitizing.py, tests/unit/test_validation.py, tests/unit/test_v2_validation.py
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
