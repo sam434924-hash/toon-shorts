@@ -61,6 +61,7 @@ def build_board_slots_markup(
 
     tmpl = templates.get(tmpl_name, DEFAULT_LAYOUT_TEMPLATES.get("hero", {}))
     padding = tmpl.get("padding", 16)
+    motion_margin = float(tmpl.get("motion_margin", 0.12))
     slots = tmpl.get("slots", {})
 
     slot_divs = []
@@ -70,10 +71,13 @@ def build_board_slots_markup(
         rel = canvas_to_board_relative_box(s_box)
         slot_id = f"board-slot-{s_name}"
         generated_slot_ids.add(slot_id)
+        # Inner motion margin of about 12% of slot size
+        pad_x = max(int(padding), int(round(rel["width"] * (motion_margin / 2.0))))
+        pad_y = max(int(padding), int(round(rel["height"] * (motion_margin / 2.0))))
         slot_divs.append(
             f'            <div class="board-slot slot-{s_name}" id="{slot_id}" data-slot="{s_name}" '
             f'style="position: absolute; left: {rel["left"]}px; top: {rel["top"]}px; '
-            f'width: {rel["width"]}px; height: {rel["height"]}px; padding: {padding}px; '
+            f'width: {rel["width"]}px; height: {rel["height"]}px; padding: {pad_y}px {pad_x}px; '
             f'box-sizing: border-box; display: flex; align-items: center; justify-content: center; overflow: hidden;"></div>'
         )
 
@@ -139,10 +143,17 @@ def generate_whiteboard_html(
     title_duration_ms = 420
 
     has_layout_or_bo = bool(isinstance(layout, dict) or board_objects)
-    if has_layout_or_bo:
-        title_badge_html = '<div class="title-badge" id="wb-title" style="display: none;"></div>'
-    else:
-        title_badge_html = f'<div class="title-badge" id="wb-title">{safe_title}</div>'
+    tmpl_name = "hero"
+    if isinstance(layout, dict):
+        tmpl_name = str(layout.get("template", "hero")).lower().strip()
+    elif isinstance(layout, str):
+        tmpl_name = layout.lower().strip()
+
+    # Check if a board object is already assigned to the title slot
+    has_title_obj = any(
+        str(obj.get("board_slot") or obj.get("slot", "")).lower() in ("slot_title", "title")
+        for obj in (board_objects or [])
+    )
 
     # Build fallback annotations if not provided
     if annotations is None:
@@ -178,7 +189,30 @@ def generate_whiteboard_html(
 
     # Anime.js timeline for title and cards entry
     timeline_steps = []
-    if not has_layout_or_bo:
+    if tmpl_name == "title-card" and not has_title_obj:
+        title_badge_html = f'<div class="title-badge title-slot-element" id="wb-title">{safe_title}</div>'
+        # Match trigger word from title
+        matched_title_ms = title_start_ms
+        import re
+        clean_twords = [re.sub(r"[^\w]", "", w).lower() for w in title.split() if len(re.sub(r"[^\w]", "", w)) >= 3]
+        for wt in (word_timings or []):
+            w_str = getattr(wt, "word", None) or (wt.get("word") if isinstance(wt, dict) else "")
+            w_clean = re.sub(r"[^\w]", "", str(w_str)).lower()
+            if w_clean in clean_twords:
+                s_t = getattr(wt, "start_time", None) if hasattr(wt, "start_time") else (wt.get("start_time", wt.get("start", 0.0)) if isinstance(wt, dict) else 0.0)
+                matched_title_ms = max(50, int(float(s_t) * 1000))
+                break
+        timeline_steps.append(
+            f"""    .add({{
+      targets: '#wb-title',
+      opacity: [0, 1],
+      translateY: [-28, 0],
+      duration: {title_duration_ms},
+      easing: 'easeOutBack'
+    }}, {matched_title_ms})"""
+        )
+    elif not has_layout_or_bo:
+        title_badge_html = f'<div class="title-badge" id="wb-title">{safe_title}</div>'
         timeline_steps.append(
             f"""    .add({{
       targets: '#wb-title',
@@ -188,6 +222,8 @@ def generate_whiteboard_html(
       easing: 'easeOutBack'
     }}, {title_start_ms})"""
         )
+    else:
+        title_badge_html = '<div class="title-badge" id="wb-title" style="display: none;"></div>'
 
     card_colors = [
         ("#2563eb", "#eff6ff"),  # Vibrant Royal Blue
@@ -449,6 +485,32 @@ def generate_whiteboard_html(
 
     enable_board_objects = getattr(config, "ENABLE_BOARD_OBJECTS", True)
     if enable_board_objects:
+        if not board_objects and not visuals and words and isinstance(layout, dict):
+            slot_map = {
+                "stack": ["top", "mid", "bottom"],
+                "chain": ["step_1", "step_2", "step_3"],
+                "split": ["left", "right"],
+                "hero": ["hero"],
+                "title-card": ["card"],
+            }
+            avail_slots = slot_map.get(tmpl_name, ["mid", "top", "bottom"])
+            derived_bo = []
+            for i, w in enumerate(words):
+                slot_key = avail_slots[i % len(avail_slots)]
+                w_text = w.get("text", f"Keyword {i+1}")
+                s_ms = int(w.get("start_ms", title_start_ms + i * 600))
+                derived_bo.append({
+                    "id": f"keyword-card-{scene_number}-{i+1}",
+                    "type": "text_pop",
+                    "anchor": s_ms,
+                    "start_ms": s_ms,
+                    "exit_ms": total_duration_ms,
+                    "enter": "pop",
+                    "board_slot": slot_key,
+                    "data": {"text": w_text, "font_size": 32},
+                })
+            board_objects = derived_bo
+
         if board_objects:
             resolved_bo = resolve_board_objects_for_scene(
                 board_objects,

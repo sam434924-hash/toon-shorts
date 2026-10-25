@@ -36,6 +36,7 @@ DEFAULT_LAYOUT_TEMPLATES: Dict[str, Dict[str, Any]] = {
         "name": "hero",
         "description": "One big focal visual centered inside the board zone",
         "padding": 16,
+        "motion_margin": 0.12,
         "min_gap": 20,
         "slots": {
             "hero": {"x": 80, "y": 308, "width": 860, "height": 480},
@@ -45,6 +46,7 @@ DEFAULT_LAYOUT_TEMPLATES: Dict[str, Dict[str, Any]] = {
         "name": "split",
         "description": "Two side-by-side visual slots for comparisons or two-element layouts",
         "padding": 16,
+        "motion_margin": 0.12,
         "min_gap": 20,
         "slots": {
             "left": {"x": 80, "y": 308, "width": 415, "height": 480},
@@ -55,6 +57,7 @@ DEFAULT_LAYOUT_TEMPLATES: Dict[str, Dict[str, Any]] = {
         "name": "chain",
         "description": "Left-to-right sequence with three stages or steps",
         "padding": 14,
+        "motion_margin": 0.12,
         "min_gap": 20,
         "slots": {
             "step_1": {"x": 80, "y": 308, "width": 266, "height": 480},
@@ -66,6 +69,7 @@ DEFAULT_LAYOUT_TEMPLATES: Dict[str, Dict[str, Any]] = {
         "name": "stack",
         "description": "Vertical list layout with three stacked slots",
         "padding": 14,
+        "motion_margin": 0.12,
         "min_gap": 16,
         "slots": {
             "top": {"x": 80, "y": 308, "width": 860, "height": 140},
@@ -77,6 +81,7 @@ DEFAULT_LAYOUT_TEMPLATES: Dict[str, Dict[str, Any]] = {
         "name": "title-card",
         "description": "Top title banner plus one large content card below",
         "padding": 16,
+        "motion_margin": 0.12,
         "min_gap": 20,
         "slots": {
             "title": {"x": 80, "y": 308, "width": 860, "height": 95},

@@ -271,10 +271,20 @@ def _evaluate_all_beat_samples_js() -> str:
         sampleTimesSet.add(0);
         sampleTimesSet.add(dur);
 
-        // Add enter and exit times
+        // Add enter, exit, and peak overshoot frames
         if (window.__boardObjects && Array.isArray(window.__boardObjects)) {
             window.__boardObjects.forEach(obj => {
-                if (typeof obj.start_ms === 'number') sampleTimesSet.add(Math.round(obj.start_ms));
+                if (typeof obj.start_ms === 'number') {
+                    sampleTimesSet.add(Math.round(obj.start_ms));
+                    const dur = obj.duration_ms || 600;
+                    // Test peak overshoot frames
+                    if (obj.enter === 'pop' || (obj.data && (obj.data.motion_preset === 'pop' || obj.data.motion_preset === 'bounce'))) {
+                        sampleTimesSet.add(Math.round(obj.start_ms + dur * 0.70));
+                    }
+                    if (obj.type === 'image' && obj.data && (obj.data.preset === 'pop_with_wobble' || obj.data.preset === 'pop-with-wobble')) {
+                        sampleTimesSet.add(Math.round(obj.start_ms + dur * 0.25));
+                    }
+                }
                 if (typeof obj.exit_ms === 'number') sampleTimesSet.add(Math.round(obj.exit_ms));
             });
         }
@@ -325,10 +335,37 @@ def _evaluate_all_beat_samples_js() -> str:
                 }
             });
 
+            // Check if all planned elements for this beat are visible (staggered entry check)
+            let allBeatElementsVisible = true;
+            if (window.__boardObjects && Array.isArray(window.__boardObjects)) {
+                for (const vis of visibleItems) {
+                    const visObj = window.__boardObjects.find(o => o.id === vis.id);
+                    if (!visObj) continue;
+                    const visStart = typeof visObj.start_ms === 'number' ? visObj.start_ms : 0;
+                    const visExit = typeof visObj.exit_ms === 'number' ? visObj.exit_ms : dur;
+
+                    for (const other of window.__boardObjects) {
+                        if (other.id === vis.id) continue;
+                        const oStart = typeof other.start_ms === 'number' ? other.start_ms : 0;
+                        const oExit = typeof other.exit_ms === 'number' ? other.exit_ms : dur;
+                        const overlapStart = Math.max(visStart, oStart);
+                        const overlapEnd = Math.min(visExit, oExit);
+                        if (overlapStart < overlapEnd - 50) {
+                            if (ms < oStart) {
+                                allBeatElementsVisible = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (!allBeatElementsVisible) break;
+                }
+            }
+
             if (visibleItems.length > 0) {
                 allSamples.push({
                     ms: ms,
-                    items: visibleItems
+                    items: visibleItems,
+                    allBeatElementsVisible: allBeatElementsVisible
                 });
             }
         }
@@ -343,6 +380,7 @@ def validate_element_overlaps(
     timestamp_ms: int,
     scene_num: int,
     min_gap: float = 16.0,
+    all_beat_elements_visible: bool = True,
 ) -> Tuple[List[str], List[str]]:
     """
     Validates board element against board element overlap and rules at a specific timestamp:
@@ -438,16 +476,17 @@ def validate_element_overlaps(
                         f"gap={dist:.1f}px < min_gap={min_gap}px."
                     )
 
-    # Balance check: warn if more than 70% of visible area is on one side
-    boxes = [it.get("box") for it in visible_items if it.get("box")]
-    l_ratio, r_ratio, is_balanced = compute_board_visual_balance(boxes)
-    if not is_balanced:
-        heavy_side = "left" if l_ratio > 0.70 else "right"
-        ratio_pct = max(l_ratio, r_ratio) * 100.0
-        warnings.append(
-            f"Scene {scene_num} (t={timestamp_ms}ms) [BALANCE WARN]: Visual area is off-balance: "
-            f"{ratio_pct:.1f}% on {heavy_side} side (threshold: 70%)."
-        )
+    # Balance check: evaluate only when all planned elements of a beat are visible
+    if all_beat_elements_visible:
+        boxes = [it.get("box") for it in visible_items if it.get("box")]
+        l_ratio, r_ratio, is_balanced = compute_board_visual_balance(boxes)
+        if not is_balanced:
+            heavy_side = "left" if l_ratio > 0.70 else "right"
+            ratio_pct = max(l_ratio, r_ratio) * 100.0
+            warnings.append(
+                f"Scene {scene_num} (t={timestamp_ms}ms) [BALANCE WARN]: Visual area is off-balance: "
+                f"{ratio_pct:.1f}% on {heavy_side} side (threshold: 70%)."
+            )
 
     return violations, warnings
 
@@ -500,6 +539,7 @@ def check_scene_html_layout(
                 s_data.get("items", []),
                 timestamp_ms=int(s_data.get("ms", 0)),
                 scene_num=scene_num,
+                all_beat_elements_visible=bool(s_data.get("allBeatElementsVisible", True)),
             )
             beat_violations.extend(v_list)
             beat_warnings.extend(w_list)

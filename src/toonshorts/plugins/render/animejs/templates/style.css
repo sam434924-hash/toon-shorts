@@ -219,6 +219,19 @@ body.parallax-bg-enabled .layer-board {
   box-shadow: 0 12px 25px -4px rgba(15, 23, 42, 0.35);
   opacity: 0;
 }
+.title-slot-element {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 860px;
+  height: 95px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 !important;
+  box-sizing: border-box;
+  z-index: 5;
+}
 
 /* Whiteboard Word Cards */
 .word-list {
@@ -632,10 +645,12 @@ body.parallax-bg-enabled .layer-board {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  max-width: 95%;
+  max-width: 87%;
+  max-height: 87%;
   opacity: 0;
   will-change: transform, opacity;
   box-sizing: border-box;
+  transform-origin: 50% 50%;
 }
 
 .bo-text-pop {

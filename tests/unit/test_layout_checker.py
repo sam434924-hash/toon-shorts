@@ -264,3 +264,87 @@ def test_layout_checker_visual_balance_warning():
     assert len(warnings) >= 1
     assert any("[BALANCE WARN]" in w and "left side" in w for w in warnings)
 
+
+def test_layout_checker_balance_suppressed_during_staggered_entry():
+    """Verifies that balance warnings are suppressed while beat elements are still staggering in."""
+    items = [
+        {
+            "id": "staggered_left_item",
+            "box": {"left": 80, "right": 520, "top": 320, "bottom": 750, "width": 440, "height": 430, "visible": True},
+            "isText": False,
+            "isShape": True,
+            "isDeclaredOverlap": False,
+            "outsideSlot": False,
+        }
+    ]
+    # During staggered entry: all_beat_elements_visible=False
+    violations, warnings = validate_element_overlaps(
+        items, timestamp_ms=400, scene_num=1, all_beat_elements_visible=False
+    )
+    assert len(violations) == 0
+    assert len(warnings) == 0, f"Expected no balance warning during staggered entry, got {warnings}"
+
+    # Once all beat elements are visible:
+    violations2, warnings2 = validate_element_overlaps(
+        items, timestamp_ms=1200, scene_num=1, all_beat_elements_visible=True
+    )
+    assert len(warnings2) == 1
+    assert any("[BALANCE WARN]" in w for w in warnings2)
+
+
+def test_slot_motion_margin_and_pop_overshoot(tmp_path: Path):
+    """Verifies that slots have motion margins and 1.14x pop overshoot frames pass overlap check."""
+    html = generate_whiteboard_html(
+        title="Overshoot Margin Test",
+        words=[],
+        duration_sec=3.0,
+        layout={"template": "split", "slots": {"left": "obj_left", "right": "obj_right"}},
+        board_objects=[
+            {
+                "id": "obj_left",
+                "type": "text_pop",
+                "anchor": 200,
+                "start_ms": 200,
+                "duration_ms": 500,
+                "exit_ms": 3000,
+                "enter": "pop",
+                "board_slot": "slot_left",
+                "data": {"text": "Left Card"}
+            },
+            {
+                "id": "obj_right",
+                "type": "text_pop",
+                "anchor": 400,
+                "start_ms": 400,
+                "duration_ms": 500,
+                "exit_ms": 3000,
+                "enter": "pop",
+                "board_slot": "slot_right",
+                "data": {"text": "Right Card"}
+            }
+        ],
+        theme="night_studio",
+        enable_split_camera_zones=True,
+    )
+    html_file = tmp_path / "scene_1_still.html"
+    html_file.write_text(html, encoding="utf-8")
+
+    res = check_scene_html_layout(html_file, scene_num=1)
+    assert res["passed"] is True, f"Expected peak overshoot frames to pass, but got: {res['violations']}"
+    assert len(res["violations"]) == 0
+
+
+def test_title_and_keyword_cards_in_layout(tmp_path: Path):
+    """Verifies that title-card template includes a title slot element and keyword cards appear in slots."""
+    html = generate_whiteboard_html(
+        title="Security Myth Title",
+        words=[{"text": "Keyword One", "start_ms": 300}, {"text": "Keyword Two", "start_ms": 600}],
+        duration_sec=3.5,
+        layout={"template": "title-card", "slots": {"card": "keyword-card-1-1"}},
+        theme="night_studio",
+        enable_split_camera_zones=True,
+    )
+    assert 'class="title-badge title-slot-element" id="wb-title"' in html
+    assert 'style="display: none;"' not in html or 'id="wb-title" style="display: none;"' not in html
+    assert "Security Myth Title" in html
+

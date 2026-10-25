@@ -317,8 +317,9 @@ window.initBoardObjects = function() {
     el.className = "board-object bo-" + obj.type.replace(/_/g, "-");
     el.style.opacity = "0";
     el.style.boxSizing = "border-box";
-    el.style.maxWidth = "100%";
-    el.style.maxHeight = "100%";
+    el.style.maxWidth = "87%";
+    el.style.maxHeight = "87%";
+    el.style.transformOrigin = "50% 50%";
 
     // Handle declared overlap {badge or label on a card corner} with layer order
     if (obj.overlap || obj.declared_overlap) {
@@ -651,7 +652,7 @@ window.updateBoardObjects = function(ms) {
       el.style.transform = "none";
       el.style.opacity = String(pExit.toFixed(3));
     } else if (obj.enter === "pop") {
-      const spring = p < 0.7 ? (p / 0.7) * 1.03 : 1.03 - ((p - 0.7) / 0.3) * 0.03;
+      const spring = p < 0.7 ? (p / 0.7) * 1.14 : 1.14 - ((p - 0.7) / 0.3) * 0.14;
       el.style.transform = "scale(" + Math.max(0, spring).toFixed(3) + ")";
       el.style.opacity = String(pExit.toFixed(3));
     } else if (obj.enter === "slide_in") {
@@ -815,7 +816,7 @@ window.updateBoardObjects = function(ms) {
         } else if (preset === "fade_in") {
           customWrap.style.opacity = String(p.toFixed(3));
         } else if (preset === "pop" || preset === "bounce") {
-          const scale = p < 0.7 ? (p / 0.7) * 1.03 : 1.03 - ((p - 0.7) / 0.3) * 0.03;
+          const scale = p < 0.7 ? (p / 0.7) * 1.14 : 1.14 - ((p - 0.7) / 0.3) * 0.14;
           customWrap.style.transform = "scale(" + Math.max(0, scale).toFixed(3) + ")";
           customWrap.style.opacity = p > 0.05 ? "1" : String((p * 20).toFixed(2));
         } else if (preset === "slide_in") {
