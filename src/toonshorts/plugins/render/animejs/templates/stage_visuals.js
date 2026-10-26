@@ -580,7 +580,11 @@ window.initBoardObjects = function() {
 
       const sLevel = (obj.data && obj.data.level) || 1;
       if (obj.data && obj.data.svg) {
-        customWrap.innerHTML = obj.data.svg;
+        let cleanSvg = obj.data.svg;
+        if (cleanSvg.search(/<\s*\/?\s*ns\d+:/i) !== -1) {
+          cleanSvg = cleanSvg.replace(/<\s*(\/)?\s*ns\d+:/gi, '<$1').replace(/\s+xmlns:ns\d+="[^"]*"/gi, '');
+        }
+        customWrap.innerHTML = cleanSvg;
         const svgEl = customWrap.querySelector("svg");
         if (svgEl) {
           svgEl.style.maxWidth = "100%";

@@ -558,3 +558,114 @@ def test_level2_custom_script_infinite_loop_protection(tmp_path, monkeypatch):
         capture_still_frame(html_file, still_output, duration_sec=1.0)
 
     assert not still_output.exists(), "Output image should not be produced on hang"
+
+
+
+
+
+
+
+
+# ----------------------------------------------------------------------
+# 5. Phase 1 Fix Tests: NS0 Prevention, Malicious Attributes & DOM Shapes
+# ----------------------------------------------------------------------
+
+def test_sanitizer_blocks_data_uris():
+    """Verify data: URIs in attributes and styles are strictly blocked."""
+    cases = [
+        '<svg xmlns="http://www.w3.org/2000/svg"><rect href="data:image/svg+xml;base64,PHN2Zy8+" /></svg>',
+        '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><circle xlink:href="data:image/svg+xml;base64,PHN2Zy8+" /></svg>',
+        '<svg xmlns="http://www.w3.org/2000/svg"><rect style="fill: data:image/png;base64,abc"/></svg>',
+        '<svg xmlns="http://www.w3.org/2000/svg"><style>rect { fill: data:image/png;base64,abc; }</style><rect/></svg>',
+    ]
+    for case in cases:
+        with pytest.raises(ValueError, match="data: URI"):
+            sanitize_svg(case)
+
+
+def test_sanitizer_blocks_external_xlink_href():
+    """Verify external xlink:href and javascript: xlink:href are strictly blocked."""
+    cases = [
+        '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><use xlink:href="http://evil.com/icon.svg#test"/></svg>',
+        '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><use xlink:href="javascript:alert(1)"/></svg>',
+    ]
+    for case in cases:
+        with pytest.raises(ValueError):
+            sanitize_svg(case)
+
+
+def test_html_escaping_dialogue_and_text():
+    """Verify all dialogue and text containing < > & " ' are escaped before going into HTML."""
+    from toonshorts.plugins.render.animejs.html_builder import generate_whiteboard_html
+
+    hostile_text = '<script>alert("XSS & ' + chr(39) + 'quotes' + chr(39) + '")</script>'
+    html_out = generate_whiteboard_html(
+        title='Title <with> & "quotes" ' + chr(39) + 'single' + chr(39),
+        words=[{"text": 'Word <tag> & "test" ' + chr(39) + 'w' + chr(39), "start_ms": 100}],
+        duration_sec=2.0,
+        subtitle_text=hostile_text,
+    )
+
+    # Raw script/tags must not appear in HTML
+    assert '<script>alert' not in html_out
+    assert '<with>' not in html_out
+    assert '<tag>' not in html_out
+    # Escaped versions must appear
+    assert '&lt;script&gt;alert' in html_out
+    assert '&amp;' in html_out
+    assert '&quot;' in html_out
+    assert '&#x27;' in html_out
+
+
+def test_generated_html_no_ns0_and_renders_visible_shapes(tmp_path):
+    """Verify generated HTML has no ns0: prefixes and board objects render visible shapes in DOM."""
+    from toonshorts.plugins.render.animejs.html_builder import generate_whiteboard_html
+    from playwright.sync_api import sync_playwright
+
+    board_obj = {
+        "id": "bo_test_shapes",
+        "type": "custom",
+        "board_slot": "slot_mid",
+        "start_ms": 100,
+        "exit_ms": 3000,
+        "data": {
+            "level": 1,
+            "motion_preset": "draw_on",
+            "svg": '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 100" width="500" height="100"><rect x="10" y="10" width="480" height="80" fill="#2563eb"/><circle cx="60" cy="50" r="30" fill="#f59e0b"/><text x="120" y="60">Hello</text></svg>'
+        }
+    }
+
+    html_out = generate_whiteboard_html(
+        title="SVG Shape Test",
+        words=[],
+        duration_sec=3.0,
+        board_objects=[board_obj],
+        layout={"template": "hero", "slots": {"mid": [60, 288, 960, 808]}},
+    )
+
+    # 1. Assert no ns0: in generated HTML
+    assert "ns0:" not in html_out
+    assert "<ns0:" not in html_out
+
+    # 2. Render in headless browser and count visible shapes
+    test_html_file = tmp_path / "test_scene.html"
+    test_html_file.write_text(html_out, encoding="utf-8")
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.goto(test_html_file.resolve().as_uri())
+        page.evaluate("if (typeof window.seekAnimation === 'function') { window.seekAnimation(500); }")
+
+        shape_count = page.evaluate("""() => {
+            const shapes = document.querySelectorAll("#board-objects-container svg rect, #board-objects-container svg circle, #board-objects-container svg path, #board-objects-container svg polygon");
+            let visibleCount = 0;
+            shapes.forEach(s => {
+                const r = s.getBoundingClientRect();
+                if (r.width > 0 && r.height > 0) visibleCount++;
+            });
+            return visibleCount;
+        }""")
+        browser.close()
+
+    assert shape_count >= 2, f"Expected at least 2 visible SVG shapes in DOM, got {shape_count}"

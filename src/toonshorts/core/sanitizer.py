@@ -12,6 +12,10 @@ import re
 import xml.etree.ElementTree as ET
 from typing import List, Set
 
+# Register standard SVG namespaces globally so ElementTree never generates ns0: prefixes
+ET.register_namespace("", "http://www.w3.org/2000/svg")
+ET.register_namespace("xlink", "http://www.w3.org/1999/xlink")
+
 MAX_SVG_SIZE_BYTES = 500 * 1024  # 500 KB limit for agent SVG
 
 ALLOWED_SVG_ELEMENTS = frozenset({
@@ -39,6 +43,7 @@ ALLOWED_SVG_ELEMENTS = frozenset({
 URL_PATTERN = re.compile(r"url\s*\(\s*([^)]*)\s*\)", re.IGNORECASE)
 IMPORT_PATTERN = re.compile(r"@import\b", re.IGNORECASE)
 JAVASCRIPT_PATTERN = re.compile(r"javascript\s*:", re.IGNORECASE)
+DATA_PATTERN = re.compile(r"data\s*:", re.IGNORECASE)
 ENTITY_PATTERN = re.compile(r"<!ENTITY\b", re.IGNORECASE)
 DOCTYPE_PATTERN = re.compile(r"<!DOCTYPE\b", re.IGNORECASE)
 SCRIPT_PATTERN = re.compile(r"<\s*script\b", re.IGNORECASE)
@@ -87,6 +92,8 @@ def sanitize_svg(svg_content: str, strict: bool = True) -> str:
                 raise ValueError("Security violation: Disallowed @import in style block")
             if JAVASCRIPT_PATTERN.search(style_text):
                 raise ValueError("Security violation: Disallowed javascript: in style block")
+            if DATA_PATTERN.search(style_text):
+                raise ValueError("Security violation: Disallowed data: URI in style block")
             for match in URL_PATTERN.finditer(style_text):
                 target = match.group(1).strip("'\" \t\r\n")
                 if not target.startswith("#"):
@@ -103,6 +110,9 @@ def sanitize_svg(svg_content: str, strict: bool = True) -> str:
             if JAVASCRIPT_PATTERN.search(val_str):
                 raise ValueError(f"Security violation: Disallowed javascript: URI in '{attr}'")
 
+            if DATA_PATTERN.search(val_str):
+                raise ValueError(f"Security violation: Disallowed data: URI in '{attr}'")
+
             if attr_lower in ("href", "xlink:href"):
                 if not val_str.startswith("#"):
                     raise ValueError(f"Security violation: Disallowed external href in '{attr}': '{val_str}'")
@@ -112,6 +122,8 @@ def sanitize_svg(svg_content: str, strict: bool = True) -> str:
                     raise ValueError("Security violation: Disallowed @import in style attribute")
                 if JAVASCRIPT_PATTERN.search(val_str):
                     raise ValueError("Security violation: Disallowed javascript: in style attribute")
+                if DATA_PATTERN.search(val_str):
+                    raise ValueError("Security violation: Disallowed data: URI in style attribute")
                 for match in URL_PATTERN.finditer(val_str):
                     target = match.group(1).strip("'\" \t\r\n")
                     if not target.startswith("#"):
@@ -121,4 +133,13 @@ def sanitize_svg(svg_content: str, strict: bool = True) -> str:
             check_element(child)
 
     check_element(root)
-    return ET.tostring(root, encoding="unicode")
+
+    # Register default namespaces before serialization
+    ET.register_namespace("", "http://www.w3.org/2000/svg")
+    ET.register_namespace("xlink", "http://www.w3.org/1999/xlink")
+    serialized = ET.tostring(root, encoding="unicode")
+
+    # Clean any ns0: namespace artifacts to ensure valid standard SVG in browser DOM
+    serialized = re.sub(r"<\s*/?\s*ns\d+:", lambda m: "<" if "/" not in m.group(0) else "</", serialized)
+    serialized = re.sub(r'\s+xmlns:ns\d+="[^"]*"', "", serialized)
+    return serialized

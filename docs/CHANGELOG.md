@@ -1,5 +1,11 @@
 # Changelog
 
+- 2026-10-26: Phase 1 SVG shape rendering fix: registered SVG default namespaces in sanitizer.py to eliminate <ns0:> prefixes, added strict data: URI and xlink:href validation, escaped HTML text entities, added DOM shape bounding box verification tests, and rendered ai_agents_explainer_phase1.mp4.
+
+- 2026-10-25: ai_agents_explainer review fix: repaired whiteboard stroke contrast detection in visual_checker (10/10 PASS), added top-caption alignment (Alignment=8) in subtitles.py, synthesized timeline SFX track mixing subtle click/whoosh/task_complete cues, and ensured self-contained video folder assets.
+
+- 2026-10-25: ai_agents_explainer 90s video: added walk and raise_hand gestures for boy_b FK rig, expanded dialogue line limit to 400, added quiet ambient bg music and sound effects synthesis, implemented camera shot interval subdivision for long scenes, and rendered complete ai_agents_explainer vertical short with Gemini TTS Puck voice and burned-in captions.
+
 - 2026-10-25: camera & still rendering audit: resolved speaker identity and listener reaction assignment in plan_camera_plan, fixed active_renderer_name check in pipeline to render stills for all 7 scenes, verified per-frame visibility checking and single reaction exemption, and regenerated full v6 stills suite and fast preview.
 
 - 2026-10-25: camera visibility rules & zoom cap reduction: lowered default camera zoom cap from 1.9x to 1.35x (1.45x reaction peak), enforced >=70% board area visibility in board scenes, restricted close-ups to reaction shots <=1.5s, verified speaking character head-to-waist framing, added visibility verification engine to check_camera with unit tests, and re-rendered How_hackers_actually_break_into_systems_v6.
