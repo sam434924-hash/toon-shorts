@@ -1077,7 +1077,7 @@ window.updateBoardObjects = function(ms) {
       const c2_below = {
         name: "below_head",
         left: 170,
-        top: 1250,
+        top: 1180,
         width: 740,
         height: bHeight
       };
@@ -1136,13 +1136,14 @@ window.updateBoardObjects = function(ms) {
       console.warn("Speech bubble auto-placement shrunken to min font size 46px");
     }
     if (!chosenCandidate) {
-      chosenCandidate = { name: "below_head_fallback", left: 170, top: 1250, width: 740, height: 150 };
+      chosenCandidate = { name: "below_head_fallback", left: 170, top: 1180, width: 740, height: 150 };
       chosenFontSize = 46;
     }
 
     bubbleEl.style.left = chosenCandidate.left + "px";
     bubbleEl.style.top = chosenCandidate.top + "px";
     bubbleEl.style.width = chosenCandidate.width + "px";
+    bubbleEl.style.maxHeight = (SAFE_MAX_Y - chosenCandidate.top - 10) + "px";
     bubbleEl.style.fontSize = chosenFontSize + "px";
 
     const tailEl = bubbleEl.querySelector(".speech-bubble-tail");
