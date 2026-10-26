@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-26: Phase 2 Real visual checks engine: rewritten visual_checker.py to measure real browser DOM shapes and final MP4 frame pixel deltas (checks a-f), removed fake 10/10 score in favor of measured metrics table, updated pipeline to fail build on visual quality failure, and updated test_phase2_quality_gate.py.
+
 - 2026-10-26: Phase 1 SVG shape rendering fix: registered SVG default namespaces in sanitizer.py to eliminate <ns0:> prefixes, added strict data: URI and xlink:href validation, escaped HTML text entities, added DOM shape bounding box verification tests, and rendered ai_agents_explainer_phase1.mp4.
 
 - 2026-10-25: ai_agents_explainer review fix: repaired whiteboard stroke contrast detection in visual_checker (10/10 PASS), added top-caption alignment (Alignment=8) in subtitles.py, synthesized timeline SFX track mixing subtle click/whoosh/task_complete cues, and ensured self-contained video folder assets.

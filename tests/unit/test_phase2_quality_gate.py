@@ -1,10 +1,11 @@
 """
 Purpose: Unit tests for Phase 2 Quality Gate:
          - Contrast-ratio calculation and WCAG thresholds
-         - Quality gate checklist (6 items) and visual_review.md generation
+         - Real DOM and MP4 frame measurement engine (checks a-f)
+         - Measured numbers markdown table per scene (no 10/10 self-graded score)
+         - Failure of build on timing or framing violations
          - Fix rounds recording in visual review
          - Critic score stop-and-ask gate with --allow-low-score override
-         - CLI check-visuals command
          - Layout block comparison and mismatch reporting
 Inputs: Mock scene stills, test video folders, color tokens.
 Outputs: Pytest assertions verifying quality gate enforcement.
@@ -24,6 +25,7 @@ from toonshorts.core.visual_checker import (
     calculate_relative_luminance,
     check_contrast_ratio,
     perform_visual_check,
+    measure_board_pixel_contrast,
 )
 from toonshorts.core.models import ScriptPlan, Scene
 from toonshorts.core.pipeline import run_pipeline
@@ -49,8 +51,8 @@ def test_contrast_ratio_calculations():
     assert low_passes is False
 
 
-def test_visual_checker_checklist_and_markdown(tmp_path):
-    """Verify visual check validates 6 checklist items and writes visual_review.md."""
+def test_visual_checker_measured_table_and_markdown(tmp_path):
+    """Verify visual check produces measured metrics table in visual_review.md and evaluates real requirements."""
     vid_dir = tmp_path / "test_video"
     stills_dir = vid_dir / "stills"
     stills_dir.mkdir(parents=True)
@@ -66,25 +68,48 @@ def test_visual_checker_checklist_and_markdown(tmp_path):
             {
                 "scene_number": 1,
                 "dialogue": "Welcome to our video!",
-                "visuals": [{"type": "text_pop", "data": {"text": "Welcome"}}],
+                "board_objects": [{"id": "bo1", "start_ms": 500, "enter": "pop", "data": {"label": "Welcome"}}],
+                "acting_plan": {"beats": [{"time_sec": 0.5, "cue": "wave"}]},
             }
         ]
     }
     (vid_dir / "scene.json").write_text(json.dumps(scene_data), encoding="utf-8")
 
     result = perform_visual_check(vid_dir, round_num=1)
-    assert result["score"] >= 7.0
+    assert result["passed"] is True
     assert (vid_dir / "visual_review.md").is_file()
 
     md_content = (vid_dir / "visual_review.md").read_text(encoding="utf-8")
-    assert "Quality Gate Checklist" in md_content
-    assert "Text readable against its background" in md_content
-    assert "Nothing overlapping or clipped" in md_content
-    assert "Board looks designed and not plain" in md_content
-    assert "Style matches the characters" in md_content
-    assert "Motion beats exist for every key word" in md_content
-    assert "Nothing important in top 288 px or under captions" in md_content
-    assert "Automated Contrast Ratio Verification" in md_content
+    assert "Measured Scene Performance (DOM & MP4 Frames)" in md_content
+    assert "| Scene | Board Objects Valid | Max Board Gap (s) | Max Blank Board (s) | Max Gesture Gap (s) | In-Frame | Safe-Zone | Text Overlap Clear | Status |" in md_content
+    assert "| 1 |" in md_content
+    assert "10/10" not in md_content
+
+
+def test_visual_checker_fails_build_on_violations(tmp_path):
+    """Verify visual check fails and reports violations when timing or motion criteria are violated."""
+    vid_dir = tmp_path / "fail_video"
+    stills_dir = vid_dir / "stills"
+    stills_dir.mkdir(parents=True)
+
+    scene_data = {
+        "art_style": "whiteboard",
+        "scenes": [
+            {
+                "scene_number": 1,
+                "dialogue": "Long delay before anything happens.",
+                # First board object appears at 3500ms (> 2.0s blank board failure!)
+                "board_objects": [{"id": "bo_late", "start_ms": 3500, "enter": "pop", "data": {"label": "Late"}}],
+            }
+        ]
+    }
+    (vid_dir / "scene.json").write_text(json.dumps(scene_data), encoding="utf-8")
+
+    result = perform_visual_check(vid_dir, round_num=1)
+    assert result["passed"] is False
+    assert any("blank_board_le_2s" in iss for iss in result["issues"])
+    md_content = (vid_dir / "visual_review.md").read_text(encoding="utf-8")
+    assert "FAILED" in md_content
 
 
 def test_visual_checker_multiple_rounds(tmp_path):
@@ -94,8 +119,20 @@ def test_visual_checker_multiple_rounds(tmp_path):
     stills_dir.mkdir(parents=True)
 
     still_img = Image.new("RGB", (1080, 1920), color=(20, 20, 30))
-    (stills_dir / "fix_video_still_sc1.png").touch()
     still_img.save(stills_dir / "fix_video_still_sc1.png")
+
+    scene_data = {
+        "art_style": "whiteboard",
+        "scenes": [
+            {
+                "scene_number": 1,
+                "dialogue": "Round test",
+                "board_objects": [{"id": "bo1", "start_ms": 500, "enter": "pop", "data": {"label": "Round"}}],
+                "acting_plan": {"beats": [{"time_sec": 0.5, "cue": "nod"}]},
+            }
+        ]
+    }
+    (vid_dir / "scene.json").write_text(json.dumps(scene_data), encoding="utf-8")
 
     # Round 1
     r1 = perform_visual_check(vid_dir, round_num=1)
@@ -156,6 +193,7 @@ def test_critic_low_score_stopping_and_allow_flag(tmp_path, monkeypatch):
     )
     assert result is not None
     assert result.is_file()
+
 
 def test_critic_runs_on_pre_authored_scene_files(tmp_path, monkeypatch):
     """Verify critic runs on hand-written or pre-authored scene files and stops if score < 7.0 unless --allow-low-score."""
@@ -278,7 +316,6 @@ def test_calm_background_topic_layers_and_contrast_check(tmp_path):
     """Verifies calm background design version 2, topic-aware ambient layer, and automatic contrast ratio >= 4.5:1."""
     from toonshorts.core import config
     from toonshorts.plugins.render.animejs.layout import build_topic_background_layer
-    from toonshorts.core.visual_checker import measure_board_pixel_contrast
     from PIL import ImageDraw
 
     # 1. Background design version bumped to 2
@@ -294,12 +331,9 @@ def test_calm_background_topic_layers_and_contrast_check(tmp_path):
     test_still = tmp_path / "still_sc1.png"
     still_img = Image.new("RGB", (1080, 1920), color=(5, 11, 20))
     draw = ImageDraw.Draw(still_img)
-    # Draw faint ambient background details
     draw.rectangle([60, 288, 960, 808], fill=(8, 14, 25))
-    # Draw card and white text
     draw.rectangle([200, 400, 600, 600], fill=(30, 41, 59))
     draw.text((250, 450), "Safe White Text", fill=(248, 250, 252))
-    # Draw thin cyan stroke
     draw.line([250, 500, 550, 500], fill=(56, 189, 248), width=2)
     still_img.save(test_still, format="PNG")
 
@@ -312,4 +346,3 @@ def test_calm_background_topic_layers_and_contrast_check(tmp_path):
     assert contrast["passed"] is True
     assert contrast["text_contrast_ratio"] >= 4.5
     assert contrast["thin_stroke_contrast_ratio"] >= 4.5
-

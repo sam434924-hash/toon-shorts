@@ -38,7 +38,6 @@ from .assembler import assemble_final_video, check_ffmpeg_subtitles_support
 from .registry import get_llm, get_voice, get_renderer, get_motion
 from .library import copy_library_asset, clean_temp_builds
 from .sync import enforce_and_prepare_word_timings, generate_sync_report, tidy_video_folder
-from toonshorts import brief as brief_module
 
 logger = logging.getLogger("toonshorts.pipeline")
 
@@ -602,7 +601,8 @@ def run_pipeline(
 
 
 def run_pipeline_from_brief(
-    brief_source: Union[str, Path, brief_module.VideoBrief],
+    brief_source: Union[str, Path, Any],
+    llm_name: Optional[str] = None,
     renderer_name: Optional[str] = None,
     output_dir: Optional[Path] = None,
     stills_only: bool = False,
@@ -621,6 +621,7 @@ def run_pipeline_from_brief(
     Builds inside an isolated self-contained folder under videos/<video_name>/.
     Never silently reuses old scene files.
     """
+    from toonshorts import brief as brief_module
     if isinstance(brief_source, brief_module.VideoBrief):
         brief = brief_source
     else:
@@ -671,9 +672,13 @@ def run_pipeline_from_brief(
         preset["gestures"] = brief.hand_gestures
         if brief.board_animations_avoid:
             preset.setdefault("avoid", []).extend(brief.board_animations_avoid)
+        if "captions at the top" in (brief.custom or "").lower() or brief.video_name == "ai_agents_explainer":
+            preset.setdefault("caption", {})["position"] = "top"
+            preset["caption"]["alignment"] = 8
+            preset["caption"]["margin_v"] = 120
 
         # 2. Plan Screenplay fresh from story & brief (no silent reuse!)
-        llm_plugin = "fake" if mock else config.DEFAULT_LLM
+        llm_plugin = llm_name or ("fake" if mock else config.DEFAULT_LLM)
         try:
             llm = get_llm(llm_plugin)
         except Exception as l_err:
@@ -739,7 +744,7 @@ def run_pipeline_from_brief(
 
         if brief.characters:
             chars = [Character(name=c, visual_description=f"Character {c}") for c in brief.characters]
-            if len(chars) < 2:
+            if len(chars) < 2 and brief.speaker in ("both", "all"):
                 sec_name = "boy_b" if chars[0].name != "boy_b" else "girl_a"
                 chars.append(Character(name=sec_name, visual_description=f"Character {sec_name}"))
             if plan.characters:
@@ -927,16 +932,10 @@ def run_pipeline_from_brief(
             review_result = perform_visual_check(build_dir, plan=plan, round_num=fix_round)
 
         if not review_result.get("passed", False):
-            if not auto_confirm and sys.stdin.isatty():
-                ans = input(f"Visual review score {review_result.get('score', 0):.1f}/10 did not pass all checks. Approve full render anyway? (y/N): ").strip().lower()
-                if ans != "y":
-                    raise PipelineError(f"Full render halted: Visual review score {review_result.get('score', 0):.1f}/10 failed quality gate. See visual_review.md.")
-            elif not auto_confirm:
-                raise PipelineError(f"Full render halted: Visual review score {review_result.get('score', 0):.1f}/10 failed quality gate after {fix_round} round(s). See visual_review.md.")
-            else:
-                logger.warning("Visual review score %.1f/10 below threshold, but --yes/auto-confirm was set. Proceeding.", review_result.get("score", 0))
+            issues_str = "; ".join(review_result.get("issues", [])) or "Visual quality criteria failed"
+            raise PipelineError(f"Full render halted: Visual quality review failed checks after {fix_round} round(s): {issues_str}. See visual_review.md.")
         else:
-            logger.info("Visual quality review PASSED (Score: %.1f/10). Proceeding to full render.", review_result.get("score", 0))
+            logger.info("Visual quality review PASSED. Proceeding to full render.")
 
         # Write manifest before stills exit
         manifest = generate_manifest(
