@@ -106,7 +106,7 @@ function seekLimbAnimation(ms, frameIdx) {
       activeGaze = b0.gaze;
       activeTargetSlot = b0.pointing_target_slot;
 
-      for (let i = 0; i < scPlan.beats.length; i++) {
+      for (let i = scPlan.beats.length - 1; i >= 0; i--) {
         const b = scPlan.beats[i];
         if (b.gesture) {
           const g = b.gesture;
@@ -303,6 +303,8 @@ function seekLimbAnimation(ms, frameIdx) {
     explain: 78,
     thumbs_up: 110,
     shrug: 45,
+    raise_hand: 125,
+    walk: 0,
     idle: 0
   };
   const restDeg = restAngles[gestType] || 0;
@@ -347,6 +349,10 @@ function seekLimbAnimation(ms, frameIdx) {
     const fkArmL = speakerElForGest.querySelector("#fk_arm_l");
     const fkArmLowerL = speakerElForGest.querySelector("#fk_arm_lower_l");
     const fkHead = speakerElForGest.querySelector("#fk_head_base");
+    const fkLegR = speakerElForGest.querySelector("#fk_leg_r");
+    const fkLegLowerR = speakerElForGest.querySelector("#fk_leg_lower_r");
+    const fkLegL = speakerElForGest.querySelector("#fk_leg_l");
+    const fkLegLowerL = speakerElForGest.querySelector("#fk_leg_lower_l");
 
     if (fkArmR && fkArmLowerR) {
       // Joint pivot points from SVG transform or defaults
@@ -355,6 +361,10 @@ function seekLimbAnimation(ms, frameIdx) {
       const pShL = [415, 525];
       const pElL = [390, 660];
       const pHead = [500, 500];
+      const pHipR = [565, 870];
+      const pKneeR = [575, 1100];
+      const pHipL = [435, 870];
+      const pKneeL = [425, 1100];
 
       // Gesture phase calculation: anticipation -> quick arc -> hold -> return
       let gPhase = 0.0;
@@ -429,6 +439,47 @@ function seekLimbAnimation(ms, frameIdx) {
         angHead = Math.sin((ms - trigMs) * 0.014) * 8 * gPhase;
       } else if (gestType === "head_tilt") {
         angHead = 7 * gPhase;
+      } else if (gestType === "raise_hand") {
+        angShR = -82 * gPhase;
+        angElR = -26 * gPhase;
+        if (inHold) {
+          angShR += Math.sin((ms - trigMs) * 0.006) * 1.5;
+        }
+      } else if (gestType === "walk") {
+        const walkCycle = Math.sin((ms - trigMs) * 0.008);
+        const legSwing = walkCycle * 24 * gPhase;
+        const kneeBendL = Math.max(0, walkCycle * 28) * gPhase;
+        const kneeBendR = Math.max(0, -walkCycle * 28) * gPhase;
+        angShR = -walkCycle * 20 * gPhase;
+        angElR = -12 * gPhase;
+        angShL = walkCycle * 20 * gPhase;
+        angElL = 12 * gPhase;
+        angHead = Math.sin((ms - trigMs) * 0.016) * 2.5 * gPhase;
+
+        // X/Y translation across the stage (character walks onto stage from left and settles)
+        const walkDurMs = 2800.0;
+        const pWalk = Math.min(1.0, Math.max(0.0, (ms - trigMs) / walkDurMs));
+        const smoothStep = pWalk * pWalk * (3.0 - 2.0 * pWalk);
+        const tx = (1.0 - smoothStep) * -220.0;
+        const ty = -Math.abs(Math.sin((ms - trigMs) * 0.008)) * 8.0 * (1.0 - smoothStep);
+        if (speakerEl) {
+          speakerEl.style.transform = `translateX(${tx.toFixed(2)}px) translateY(${ty.toFixed(2)}px)`;
+        }
+
+        if (fkLegL) fkLegL.setAttribute("transform", `rotate(${legSwing.toFixed(2)}, ${pHipL[0]}, ${pHipL[1]})`);
+        if (fkLegLowerL) fkLegLowerL.setAttribute("transform", `rotate(${kneeBendL.toFixed(2)}, ${pKneeL[0]}, ${pKneeL[1]})`);
+        if (fkLegR) fkLegR.setAttribute("transform", `rotate(${(-legSwing).toFixed(2)}, ${pHipR[0]}, ${pHipR[1]})`);
+        if (fkLegLowerR) fkLegLowerR.setAttribute("transform", `rotate(${kneeBendR.toFixed(2)}, ${pKneeR[0]}, ${pKneeR[1]})`);
+      }
+
+      if (gestType !== "walk") {
+        if (speakerEl && speakerEl.style.transform && speakerEl.style.transform.includes("translateX")) {
+          speakerEl.style.transform = "none";
+        }
+        if (fkLegL) fkLegL.setAttribute("transform", `rotate(0, ${pHipL[0]}, ${pHipL[1]})`);
+        if (fkLegLowerL) fkLegLowerL.setAttribute("transform", `rotate(0, ${pKneeL[0]}, ${pKneeL[1]})`);
+        if (fkLegR) fkLegR.setAttribute("transform", `rotate(0, ${pHipR[0]}, ${pHipR[1]})`);
+        if (fkLegLowerR) fkLegLowerR.setAttribute("transform", `rotate(0, ${pKneeR[0]}, ${pKneeR[1]})`);
       }
 
       fkArmR.setAttribute("transform", `rotate(${angShR.toFixed(2)}, ${pShR[0]}, ${pShR[1]})`);

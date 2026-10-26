@@ -60,7 +60,13 @@ class AnimeJSRenderPlugin(RenderInterface):
             duration_sec = max(2.5, max_end + 0.5) if max_end > 0 else 2.5
         title, words_data, annotations = extract_whiteboard_content_and_annotations(scene, duration_sec)
 
-        scene_gesture = getattr(scene, "gesture", None) or "idle"
+        pose_val = getattr(scene, "pose", None)
+        pose_gest = None
+        if pose_val:
+            p_str = str(pose_val.value if hasattr(pose_val, "value") else pose_val).lower().strip()
+            p_map = {"pointing": "point", "point": "point", "explaining": "explain", "explain": "explain", "waving": "wave", "wave": "wave", "shrug": "shrug", "shrugging": "shrug", "nod": "nod", "nodding": "nod", "thumbs_up": "thumbs_up", "raise_hand": "raise_hand", "walk": "walk"}
+            pose_gest = p_map.get(p_str)
+        scene_gesture = getattr(scene, "gesture", None) or pose_gest or "idle"
         scene_cast = resolve_scene_cast(scene, characters)
         characters_data = build_characters_data(
             scene_cast,
@@ -191,7 +197,13 @@ class AnimeJSRenderPlugin(RenderInterface):
                 title, words, annotations = extract_whiteboard_content_and_annotations(
                     scene, audio.scene_total_duration, audio.word_timings
                 )
-                scene_gesture = getattr(scene, "gesture", None) or "idle"
+                pose_val = getattr(scene, "pose", None)
+                pose_gest = None
+                if pose_val:
+                    p_str = str(pose_val.value if hasattr(pose_val, "value") else pose_val).lower().strip()
+                    p_map = {"pointing": "point", "point": "point", "explaining": "explain", "explain": "explain", "waving": "wave", "wave": "wave", "shrug": "shrug", "shrugging": "shrug", "nod": "nod", "nodding": "nod", "thumbs_up": "thumbs_up", "raise_hand": "raise_hand", "walk": "walk"}
+                    pose_gest = p_map.get(p_str)
+                scene_gesture = getattr(scene, "gesture", None) or pose_gest or "idle"
                 scene_cast = resolve_scene_cast(scene, plan.characters)
                 characters_data = build_characters_data(
                     scene_cast,

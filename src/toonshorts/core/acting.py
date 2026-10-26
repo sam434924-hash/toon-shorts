@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 from pathlib import Path
 import random
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -146,6 +147,7 @@ def plan_acting_plan(
 
     planned_scenes: List[Dict[str, Any]] = []
     last_gesture = {"A": "idle", "B": "idle"}
+    last_first_beat_gesture = {"A": "idle", "B": "idle"}
 
     gesture_pool_speaker = ["explain", "point_board", "thumbs_up", "shrug", "hands_on_hips"]
 
@@ -205,86 +207,120 @@ def plan_acting_plan(
 
         # Accents on stressed words
         stressed_words = _pick_stressed_words(wts, dur_sec)
-        accent = stressed_words[0]
 
-        # Select gesture: avoid immediate repetition
-        if target_slot and (idx % 2 == 1 or "board" in dlg.lower()):
-            candidate_gest = "point_board"
-        elif is_punch:
-            candidate_gest = "thumbs_up" if code == "A" else "shrug"
-        elif "?" in dlg:
-            candidate_gest = "shrug"
-        else:
-            options = [g for g in gesture_pool_speaker if g != last_gesture[code] and g != "point_board"]
-            candidate_gest = rng.choice(options) if options else "explain"
+        # Multi-beat acting timeline (never more than 3.5s without a beat)
+        authored_gest = getattr(sc, "gesture", None) or (sc.get("gesture") if isinstance(sc, dict) else None)
+        if not authored_gest:
+            pose_val = getattr(sc, "pose", None) or (sc.get("pose") if isinstance(sc, dict) else None)
+            if pose_val:
+                p_str = str(pose_val.value if hasattr(pose_val, "value") else pose_val).lower().strip()
+                p_map = {
+                    "pointing": "point", "point": "point",
+                    "explaining": "explain", "explain": "explain",
+                    "waving": "wave", "wave": "wave",
+                    "shrug": "shrug", "shrugging": "shrug",
+                    "nod": "nod", "nodding": "nod",
+                    "thumbs_up": "thumbs_up",
+                    "raise_hand": "raise_hand",
+                    "walk": "walk",
+                }
+                authored_gest = p_map.get(p_str)
 
-        if candidate_gest == last_gesture[code]:
-            # swap to alternate
-            candidate_gest = "explain" if candidate_gest != "explain" else "hands_on_hips"
+        bo_objs = getattr(sc, "board_objects", None) or (sc.get("board_objects") if isinstance(sc, dict) else None) or []
+        bo_times = [float(bo.get("start_ms", 0)) / 1000.0 for bo in bo_objs if isinstance(bo, dict) and bo.get("start_ms")]
 
-        last_gesture[code] = candidate_gest
-
-        # Timing: gesture begins 0-4 frames early (default 3 frames = 100ms at 30fps)
+        accent = stressed_words[0] if stressed_words else {"start_sec": 0.0, "peak_sec": 0.3}
         lead_frames = 3
         lead_sec = lead_frames / 30.0
-        start_sec = max(0.0, accent["start_sec"] - lead_sec)
-        peak_sec = accent["peak_sec"]
-        hold_sec = 1.1
-        return_sec = 0.4
 
-        gesture_payload = {
-            "name": candidate_gest,
-            "intensity": "high" if energy == "high" else "medium",
-            "lead_frames": lead_frames,
-            "start_ms": int(round(start_sec * 1000)),
-            "peak_ms": int(round(peak_sec * 1000)),
-            "hold_ms": int(round(hold_sec * 1000)),
-            "return_ms": int(round(return_sec * 1000)),
-        }
+        n_beats = max(1, math.ceil(dur_sec / 3.4))
+        beat_times = [max(0.0, accent["start_sec"] - lead_sec)]
+        step = dur_sec / n_beats
+        for b_idx in range(1, n_beats):
+            beat_times.append(round(b_idx * step, 2))
 
-        # Gaze
-        gaze_target = "BOARD" if candidate_gest == "point_board" else ("CAMERA" if is_punch else "PARTNER")
-        gaze_payload = {
-            "target": gaze_target,
-            "time_sec": round(max(0.0, start_sec - 0.2), 3),
-        }
+        for bt_idx, bt in enumerate(bo_times):
+            if 0 < bt_idx < len(beat_times):
+                beat_times[bt_idx] = round(max(0.2, bt - 0.1), 2)
 
-        # Turn / lean
-        turn_type = "lean_in" if energy == "high" else "none"
-        turn_payload = {
-            "type": turn_type,
-            "time_sec": round(start_sec, 3),
-        }
+        beats: List[Dict[str, Any]] = []
+        for b_idx, b_time in enumerate(beat_times):
+            if b_idx == 0 and authored_gest:
+                gest_name = authored_gest
+            elif b_idx == 0:
+                if target_slot and (idx % 2 == 1 or "board" in dlg.lower()):
+                    gest_name = "point_board"
+                elif is_punch:
+                    gest_name = "thumbs_up" if code == "A" else "shrug"
+                elif "?" in dlg:
+                    gest_name = "shrug"
+                else:
+                    options = [g for g in gesture_pool_speaker if g != last_first_beat_gesture[code] and g != "point_board"]
+                    gest_name = rng.choice(options) if options else ("hands_on_hips" if last_first_beat_gesture[code] == "explain" else "explain")
+                if gest_name == last_first_beat_gesture[code]:
+                    gest_name = "hands_on_hips" if gest_name != "hands_on_hips" else "shrug"
+                last_first_beat_gesture[code] = gest_name
+            elif b_idx > 0 and bo_times and any(abs(b_time - bt) < 0.8 for bt in bo_times):
+                gest_name = "point_board"
+            elif b_idx == n_beats - 1 and is_punch:
+                gest_name = "thumbs_up"
+            elif "?" in dlg and b_idx % 2 == 1:
+                gest_name = "shrug"
+            else:
+                options = ["explain", "point_board", "nod", "raise_hand", "wave", "thumbs_up", "shrug"]
+                valid_opts = [g for g in options if g != last_gesture[code]]
+                gest_name = rng.choice(valid_opts) if valid_opts else "explain"
 
-        # Listener reaction: engaged listener reacts every 3 to 4 seconds (<= 3.5s)
-        listener_reaction_type = "amused" if is_punch else ("nod" if "?" not in dlg else "head_tilt")
-        raw_rx_time = min(round(dur_sec * 0.55, 3), round(dur_sec - 0.4, 3))
-        reaction_time = min(3.2, max(0.8, raw_rx_time))
-        listener_payload = {
-            "type": listener_reaction_type,
-            "intensity": "high" if is_punch else "subtle",
-            "time_sec": reaction_time,
-        }
+            last_gesture[code] = gest_name
 
-        beat = {
-            "beat_id": f"beat_{sc_num}_1",
-            "tactic": tactic,
-            "energy": energy,
-            "subtext": subtext,
-            "stressed_words": stressed_words,
-            "gesture": gesture_payload,
-            "gaze": gaze_payload,
-            "turn": turn_payload,
-            "listener_reaction": listener_payload,
-            "pointing_target_slot": target_slot if candidate_gest in ("point", "point_board") else None,
-        }
+            if b_idx == 0:
+                g_start_ms = int(round(max(0.0, accent["start_sec"] - lead_sec) * 1000))
+                g_peak_ms = int(round(accent["peak_sec"] * 1000))
+            else:
+                g_start_ms = int(round(b_time * 1000))
+                g_peak_ms = g_start_ms + 300
+            g_hold_ms = min(1400, int(step * 600))
+            gesture_payload = {
+                "name": gest_name,
+                "intensity": "high" if energy == "high" else "medium",
+                "lead_frames": 3,
+                "start_ms": g_start_ms,
+                "peak_ms": g_peak_ms,
+                "hold_ms": g_hold_ms,
+                "return_ms": 350,
+            }
+            gaze_payload = {
+                "target": "BOARD" if gest_name in ("point", "point_board") else ("CAMERA" if is_punch else "PARTNER"),
+                "time_sec": round(b_time, 2),
+            }
+            turn_payload = {
+                "type": "lean_in" if (energy == "high" and b_idx == 0) else "none",
+                "time_sec": round(b_time, 2),
+            }
+            listener_payload = {
+                "type": "amused" if is_punch else ("nod" if "?" not in dlg else "head_tilt"),
+                "intensity": "high" if is_punch else "subtle",
+                "time_sec": round(min(dur_sec - 0.2, b_time + 1.2), 2),
+            }
+            beats.append({
+                "beat_id": f"beat_{sc_num}_{b_idx+1}",
+                "tactic": tactic,
+                "energy": energy,
+                "subtext": subtext,
+                "stressed_words": stressed_words if b_idx == 0 else [],
+                "gesture": gesture_payload,
+                "gaze": gaze_payload,
+                "turn": turn_payload,
+                "listener_reaction": listener_payload,
+                "pointing_target_slot": target_slot if gest_name in ("point", "point_board") else None,
+            })
 
         planned_scenes.append({
             "scene_number": sc_num,
             "speaker": code,
             "listener": listener_code,
             "duration_sec": round(dur_sec, 3),
-            "beats": [beat],
+            "beats": beats,
         })
 
     return {

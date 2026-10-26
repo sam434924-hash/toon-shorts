@@ -885,9 +885,9 @@ body.split-zones-active #zone-character {
   position: absolute;
   top: 820px;
   left: 60px;
-  width: 900px;
-  height: 530px;
-  overflow: hidden;
+  width: 960px;
+  height: 750px;
+  overflow: visible;
   z-index: 20;
 }
 
@@ -895,8 +895,9 @@ body.split-zones-active #character-camera-content {
   position: absolute;
   top: 0;
   left: 0;
-  width: 900px;
-  height: 530px;
+  width: 960px;
+  height: 750px;
+  overflow: visible;
   transform-origin: 50% 50%;
   will-change: transform;
 }
