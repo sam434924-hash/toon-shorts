@@ -848,6 +848,157 @@ window.updateBoardObjects = function(ms) {
             }
           }
         }
+
+        // Storyboard specific kinetic diagram animations (Phase 3)
+        if (obj.id === "bo_sc3_nodes") {
+          const svgEl = customWrap.querySelector("svg");
+          if (svgEl) {
+            const nPlan = svgEl.querySelector(".node-plan, g:nth-of-type(1)");
+            const arr1 = svgEl.querySelector(".arrow-1, g:nth-of-type(2)");
+            const nAct = svgEl.querySelector(".node-act, g:nth-of-type(3)");
+            const arr2 = svgEl.querySelector(".arrow-2, g:nth-of-type(4)");
+            const nCheck = svgEl.querySelector(".node-check, g:nth-of-type(5)");
+            const arr3 = svgEl.querySelector(".arrow-3, g:nth-of-type(6)");
+            const nAdjust = svgEl.querySelector(".node-adjust, g:nth-of-type(7)");
+            const arrLoop = svgEl.querySelector(".arrow-loop");
+            const dot = svgEl.querySelector(".glowing-dot");
+
+            const setNodeState = (el, tTrigger) => {
+              if (!el) return;
+              if (elapsed >= tTrigger) {
+                const pN = Math.min(1.0, (elapsed - tTrigger) / 350.0);
+                const s = pN < 0.65 ? (pN / 0.65) * 1.15 : 1.15 - ((pN - 0.65) / 0.35) * 0.15;
+                el.style.opacity = "1";
+                el.style.transform = "scale(" + Math.max(0, s).toFixed(3) + ")";
+                el.style.transformOrigin = "center";
+              } else {
+                el.style.opacity = "0";
+                el.style.transform = "scale(0)";
+              }
+            };
+
+            setNodeState(nPlan, 0);
+            if (arr1) arr1.style.opacity = elapsed >= 350 ? "1" : "0";
+            setNodeState(nAct, 500);
+            if (arr2) arr2.style.opacity = elapsed >= 850 ? "1" : "0";
+            setNodeState(nCheck, 1000);
+            if (arr3) arr3.style.opacity = elapsed >= 1350 ? "1" : "0";
+            setNodeState(nAdjust, 1500);
+            if (arrLoop) arrLoop.style.opacity = elapsed >= 1800 ? "1" : "0";
+
+            // Glowing dot travelling along the nodes and loop back
+            if (dot) {
+              const loopDur = 2800.0;
+              const tProg = (elapsed % loopDur) / loopDur;
+              let cx = 77, cy = 52;
+              if (tProg < 0.25) {
+                const u = tProg / 0.25;
+                cx = 77 + u * (257 - 77);
+                cy = 52;
+              } else if (tProg < 0.50) {
+                const u = (tProg - 0.25) / 0.25;
+                cx = 257 + u * (437 - 257);
+                cy = 52;
+              } else if (tProg < 0.75) {
+                const u = (tProg - 0.50) / 0.25;
+                cx = 437 + u * (617 - 437);
+                cy = 52;
+              } else {
+                const u = (tProg - 0.75) / 0.25;
+                cx = 617 - u * (617 - 77);
+                cy = 52 + Math.sin(u * Math.PI) * 60;
+              }
+              dot.setAttribute("cx", cx.toFixed(1));
+              dot.setAttribute("cy", cy.toFixed(1));
+              dot.style.opacity = elapsed >= 200 ? "1" : "0";
+            }
+          }
+        } else if (obj.id === "bo_sc4_cards") {
+          const svgEl = customWrap.querySelector("svg");
+          if (svgEl) {
+            const cards = svgEl.querySelectorAll("g");
+            cards.forEach((card, cIdx) => {
+              const tCard = cIdx * 350;
+              if (elapsed >= tCard) {
+                const pC = Math.min(1.0, (elapsed - tCard) / 380.0);
+                if (cIdx < 3) {
+                  const tx = (1.0 - pC) * -65;
+                  card.style.transform = "translateX(" + tx.toFixed(1) + "px)";
+                  card.style.opacity = String(pC.toFixed(3));
+                } else {
+                  // Final report snaps into place
+                  const snap = pC < 0.65 ? (pC / 0.65) * 1.22 : 1.22 - ((pC - 0.65) / 0.35) * 0.22;
+                  card.style.transform = "scale(" + Math.max(0, snap).toFixed(3) + ")";
+                  card.style.opacity = String(pC.toFixed(3));
+                  card.style.transformOrigin = "595px 65px";
+                }
+              } else {
+                card.style.opacity = "0";
+              }
+            });
+          }
+        } else if (obj.id === "bo_sc5_warn") {
+          if (elapsed < 1400) {
+            const flash = Math.sin((elapsed / 1400) * Math.PI * 6) > 0;
+            customWrap.style.transform = flash ? "scale(1.04)" : "scale(1.0)";
+          }
+        } else if (obj.id === "bo_sc5_shield") {
+          const svgEl = customWrap.querySelector("svg");
+          if (svgEl) {
+            const cursor = svgEl.querySelector(".file-cursor");
+            const barrier = svgEl.querySelector(".stop-barrier");
+            const shield = svgEl.querySelector(".safety-shield");
+            if (cursor) {
+              const pCursor = Math.min(1.0, elapsed / 850.0);
+              const curX = 20 + pCursor * 160;
+              cursor.style.transform = "translateX(" + curX.toFixed(1) + "px)";
+              cursor.style.opacity = "1";
+            }
+            if (barrier) {
+              barrier.style.opacity = elapsed >= 800 ? "1" : "0";
+            }
+            if (shield) {
+              if (elapsed >= 800) {
+                const pS = Math.min(1.0, (elapsed - 800) / 600.0);
+                const sScale = pS < 0.65 ? (pS / 0.65) * 1.15 : 1.15 - ((pS - 0.65) / 0.35) * 0.15;
+                shield.style.transform = "scale(" + Math.max(0, sScale).toFixed(3) + ")";
+                shield.style.opacity = "1";
+                shield.style.transformOrigin = "505px 65px";
+              } else {
+                shield.style.opacity = "0";
+              }
+            }
+          }
+        } else if (obj.id === "bo_sc6_pillars") {
+          const svgEl = customWrap.querySelector("svg");
+          if (svgEl) {
+            const pThink = svgEl.querySelector(".pillar-think");
+            const arr1 = svgEl.querySelector(".arrow-p1");
+            const pAct = svgEl.querySelector(".pillar-act");
+            const arr2 = svgEl.querySelector(".arrow-p2");
+            const pVerify = svgEl.querySelector(".pillar-verify");
+
+            const popWord = (el, tTrigger) => {
+              if (!el) return;
+              if (elapsed >= tTrigger) {
+                const pW = Math.min(1.0, (elapsed - tTrigger) / 400.0);
+                const s = pW < 0.65 ? (pW / 0.65) * 1.18 : 1.18 - ((pW - 0.65) / 0.35) * 0.18;
+                el.style.opacity = "1";
+                el.style.transform = "scale(" + Math.max(0, s).toFixed(3) + ")";
+                el.style.transformOrigin = "center";
+              } else {
+                el.style.opacity = "0";
+                el.style.transform = "scale(0)";
+              }
+            };
+
+            popWord(pThink, 0);
+            if (arr1) arr1.style.opacity = elapsed >= 350 ? "1" : "0";
+            popWord(pAct, 550);
+            if (arr2) arr2.style.opacity = elapsed >= 900 ? "1" : "0";
+            popWord(pVerify, 1100);
+          }
+        }
       } else if (sLevel === 2) {
         if (window.__level2Effects && typeof window.__level2Effects[obj.id] === "function") {
           try {

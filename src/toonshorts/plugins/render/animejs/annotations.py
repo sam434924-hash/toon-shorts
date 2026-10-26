@@ -94,50 +94,55 @@ def extract_whiteboard_content_and_annotations(
     If word_timings is missing, empty, or malformed, skips annotations without crashing and logs it.
     """
     clean_dlg = strip_speaker_label(scene.dialogue_line)
-    action_text = strip_speaker_label(scene.action or "").strip()
-    title = None
-    if ":" in action_text:
+    action_text = (scene.action or "").strip()
+
+    # 1. Use authored title/items from scene when they exist
+    title = (
+        getattr(scene, "board_title", None)
+        or getattr(scene, "title", None)
+        or getattr(scene, "heading", None)
+    )
+    if not title and isinstance(scene, dict):
+        title = scene.get("board_title") or scene.get("title") or scene.get("heading")
+
+    points: List[str] = []
+    authored_items = (
+        getattr(scene, "board_items", None)
+        or getattr(scene, "items", None)
+        or getattr(scene, "points", None)
+    )
+    if not authored_items and isinstance(scene, dict):
+        authored_items = scene.get("board_items") or scene.get("items") or scene.get("points")
+    if authored_items and isinstance(authored_items, (list, tuple)):
+        points = [str(p).strip() for p in authored_items if str(p).strip()]
+
+    # 2. Check for explicit heading in action text (e.g. "Topic: Item A, Item B")
+    if not title and ":" in action_text:
         title_part, points_part = action_text.split(":", 1)
-        title = title_part.strip()
-        points = [p.strip() for p in points_part.replace(";", ",").split(",") if p.strip()]
+        if len(title_part.split()) <= 4 and not any(w in title_part.lower() for w in ("walks", "types", "appears", "slides", "enters", "points to", "points at")):
+            title = title_part.strip()
+            if not points:
+                points = [p.strip() for p in points_part.replace(";", ",").split(",") if p.strip()]
+
+    # 3. Check visuals label if specified
+    if not title and getattr(scene, "visuals", None):
+        for v in scene.visuals:
+            params = v.get("params", {}) if isinstance(v, dict) else getattr(v, "params", {})
+            lbl = params.get("label") or params.get("text")
+            if lbl and len(lbl) <= 25:
+                title = lbl.strip()
+                break
+
+    # Stop using first 3 words as title, and stop slicing sentence into thirds.
+    # When authored title/items do not exist, leave them empty.
+    if not title:
+        title = ""
     else:
-        # Extract short, clean topic heading (avoid slicing raw stage direction text)
-        m = re.search(
-            r"^(?:boy|girl|presenter|host|character)?\s*(?:explains|talks about|shows|discusses|reacts with|describes|presents|points to)\s+(.+?)(?:\s+(?:with|and|across|while)\b|$)",
-            action_text,
-            re.IGNORECASE,
-        )
-        if m:
-            candidate = m.group(1).strip()
-            if len(candidate) <= 30 and candidate.lower() not in ("shock", "curiosity", "surprise"):
-                title = candidate.title()
+        title = str(title).strip()[:MAX_TITLE_LENGTH]
 
-        if not title and getattr(scene, "visuals", None):
-            for v in scene.visuals:
-                params = v.get("params", {}) if isinstance(v, dict) else getattr(v, "params", {})
-                lbl = params.get("label") or params.get("text")
-                if lbl and len(lbl) <= 25:
-                    title = lbl.strip()
-                    break
+    if not title and not points:
+        return "", [], []
 
-        if not title:
-            words_dlg = clean_dlg.split()
-            if words_dlg:
-                title = " ".join(words_dlg[:3]).rstrip(".,!?;:").title()
-            else:
-                title = f"Scene {scene.scene_number}"
-
-        words_dlg = clean_dlg.split()
-        if len(words_dlg) >= 6:
-            points = [
-                " ".join(words_dlg[: len(words_dlg) // 3]),
-                " ".join(words_dlg[len(words_dlg) // 3 : 2 * len(words_dlg) // 3]),
-                " ".join(words_dlg[2 * len(words_dlg) // 3 :]),
-            ]
-        else:
-            points = [clean_dlg[:30]] if clean_dlg else ["Key Idea"]
-
-    title = title[:MAX_TITLE_LENGTH]
     total_ms = int(duration_sec * 1000)
 
     # Validate word timings (strictly skip annotations if missing, empty, or malformed)
@@ -145,51 +150,52 @@ def extract_whiteboard_content_and_annotations(
     raw_timings = validate_word_timings(effective_timings, duration_sec, scene.scene_number)
 
     # Build basic word cards
-    num_pts = max(len(points), 1)
+    num_pts = len(points)
     word_cards: List[Dict[str, Any]] = []
 
     if raw_timings is None or len(raw_timings) == 0:
-        # Timings missing or invalid: construct cards without synchronized sketch annotations
-        for i, pt in enumerate(points):
-            frac = 0.30 + (i / max(num_pts, 1)) * 0.58
-            c_start_sec = duration_sec * frac
-            word_cards.append({
-                "text": pt[:42],
-                "start_time": c_start_sec,
-                "start_ms": int(round(c_start_sec * 1000)),
-                "duration_ms": 420,
-            })
+        if num_pts > 0:
+            for i, pt in enumerate(points):
+                frac = 0.30 + (i / max(num_pts, 1)) * 0.58
+                c_start_sec = duration_sec * frac
+                word_cards.append({
+                    "text": pt[:42],
+                    "start_time": c_start_sec,
+                    "start_ms": int(round(c_start_sec * 1000)),
+                    "duration_ms": 420,
+                })
         return title, word_cards, []
 
     def clean_word(w: str) -> str:
         return re.sub(r"[^\w]", "", w).lower()
 
-    # Match Title Underline to a keyword in dialogue
-    title_words = [clean_word(tw) for tw in title.split() if len(clean_word(tw)) >= 3]
-    matched_title_wt = None
-    for tw in title_words:
-        matched_title_wt = next((wt for wt in raw_timings if clean_word(wt.word) == tw), None)
-        if matched_title_wt:
-            break
-
-    if not matched_title_wt:
-        pick_idx = min(len(raw_timings) - 1, max(0, len(raw_timings) // 6))
-        matched_title_wt = raw_timings[pick_idx]
-
     annotations: List[Dict[str, Any]] = []
 
-    # Title underline starts exactly at matched title word start_time
-    title_u_start_sec = matched_title_wt.start_time
-    title_u_start_ms = max(50, int(round(title_u_start_sec * 1000)))
-    annotations.append({
-        "id": "rough-title-underline",
-        "type": "underline",
-        "tied_word": matched_title_wt.word,
-        "tied_word_obj": matched_title_wt,
-        "start_time": title_u_start_sec,
-        "start_ms": title_u_start_ms,
-        "duration_ms": 380,
-    })
+    # Match Title Underline to a keyword in dialogue only if title exists
+    if title:
+        title_words = [clean_word(tw) for tw in title.split() if len(clean_word(tw)) >= 3]
+        matched_title_wt = None
+        for tw in title_words:
+            matched_title_wt = next((wt for wt in raw_timings if clean_word(wt.word) == tw), None)
+            if matched_title_wt:
+                break
+
+        if not matched_title_wt:
+            pick_idx = min(len(raw_timings) - 1, max(0, len(raw_timings) // 6))
+            matched_title_wt = raw_timings[pick_idx]
+
+        # Title underline starts exactly at matched title word start_time
+        title_u_start_sec = matched_title_wt.start_time
+        title_u_start_ms = max(50, int(round(title_u_start_sec * 1000)))
+        annotations.append({
+            "id": "rough-title-underline",
+            "type": "underline",
+            "tied_word": matched_title_wt.word,
+            "tied_word_obj": matched_title_wt,
+            "start_time": title_u_start_sec,
+            "start_ms": title_u_start_ms,
+            "duration_ms": 380,
+        })
 
     # If layout is 'stage', word cards do not exist in the DOM; skip card circles & arrows
     layout = getattr(scene, "layout", "cards") or "cards"

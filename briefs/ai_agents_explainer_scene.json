@@ -1,0 +1,551 @@
+{
+  "version": 1,
+  "title": "ai_agents_explainer",
+  "art_style": "whiteboard",
+  "emotional_arc": "Curiosity -> Exploration -> Practical Mastery -> Responsible Empowerment",
+  "characters": [
+    {
+      "name": "boy_b",
+      "visual_description": "Cartoon boy narrator in blue hoodie with glasses",
+      "voice_id": "Puck"
+    }
+  ],
+  "scenes": [
+    {
+      "scene_number": 1,
+      "speaker": "boy_b",
+      "dialogue_line": "Imagine asking an AI to plan your entire day. Not just tell you what to do, but actually help get everything done. It finds information, organizes tasks, and works through each step. Sounds futuristic? Welcome to the world of AI agents.",
+      "action": "boy_b walks into an empty room with question mark over head as laptop and calendar slide in",
+      "pose": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "gesture": "walk",
+      "cast": [
+        "boy_b"
+      ],
+      "layout": {
+        "template": "stack",
+        "elements": [
+          {
+            "id": "bo_sc1_qmark",
+            "slot": "top",
+            "is_hero": false,
+            "enter_time": 0.8,
+            "exit_time": 11.5
+          },
+          {
+            "id": "bo_sc1_laptop",
+            "slot": "mid",
+            "is_hero": true,
+            "enter_time": 3.2,
+            "exit_time": 11.5
+          },
+          {
+            "id": "bo_sc1_tasks",
+            "slot": "bottom",
+            "is_hero": false,
+            "enter_time": 6.5,
+            "exit_time": 11.5
+          }
+        ]
+      },
+      "shots": null,
+      "visuals": null,
+      "board_objects": [
+        {
+          "id": "bo_sc1_qmark",
+          "type": "custom",
+          "board_slot": "slot_top",
+          "start_ms": 800,
+          "exit_ms": 12000,
+          "enter": "pop",
+          "data": {
+            "level": 1,
+            "motion_preset": "pop",
+            "label": "Plan Day Question",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 520 100\" width=\"520\" height=\"100\"><rect x=\"10\" y=\"10\" width=\"500\" height=\"80\" rx=\"20\" fill=\"#fef3c7\" stroke=\"#f59e0b\" stroke-width=\"4.5\"/><circle cx=\"60\" cy=\"50\" r=\"28\" fill=\"#f59e0b\"/><text x=\"60\" y=\"62\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"38\" fill=\"#ffffff\" text-anchor=\"middle\">?</text><text x=\"110\" y=\"58\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"26\" fill=\"#0f172a\">Plan Your Entire Day?</text></svg>"
+          }
+        },
+        {
+          "id": "bo_sc1_laptop",
+          "type": "custom",
+          "board_slot": "slot_mid",
+          "start_ms": 3200,
+          "exit_ms": 12000,
+          "enter": "slide_in",
+          "data": {
+            "level": 1,
+            "motion_preset": "slide_in",
+            "label": "Laptop Terminal",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 130\" width=\"620\" height=\"130\"><rect x=\"60\" y=\"10\" width=\"500\" height=\"95\" rx=\"14\" fill=\"#0f172a\" stroke=\"#2563eb\" stroke-width=\"4.5\"/><rect x=\"75\" y=\"20\" width=\"470\" height=\"75\" rx=\"8\" fill=\"#1e293b\"/><circle cx=\"95\" cy=\"35\" r=\"5\" fill=\"#ef4444\"/><circle cx=\"112\" cy=\"35\" r=\"5\" fill=\"#f59e0b\"/><circle cx=\"129\" cy=\"35\" r=\"5\" fill=\"#10b981\"/><text x=\"150\" y=\"40\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"15\" fill=\"#94a3b8\">agent_workspace.py</text><text x=\"95\" y=\"72\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"22\" fill=\"#38bdf8\">&gt; Auto-planning daily schedule...</text><polygon points=\"40,105 580,105 600,124 20,124\" fill=\"#475569\" stroke=\"#1e293b\" stroke-width=\"3.5\"/></svg>"
+          }
+        },
+        {
+          "id": "bo_sc1_tasks",
+          "type": "custom",
+          "board_slot": "slot_bottom",
+          "start_ms": 6500,
+          "exit_ms": 12000,
+          "enter": "pop",
+          "data": {
+            "level": 1,
+            "motion_preset": "pop",
+            "label": "Calendar and Tasks",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 680 120\" width=\"680\" height=\"120\"><g><rect x=\"10\" y=\"10\" width=\"190\" height=\"100\" rx=\"14\" fill=\"#ffffff\" stroke=\"#2563eb\" stroke-width=\"4\"/><rect x=\"10\" y=\"10\" width=\"190\" height=\"30\" rx=\"14\" fill=\"#2563eb\"/><text x=\"105\" y=\"32\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"16\" fill=\"#ffffff\" text-anchor=\"middle\">CALENDAR</text><text x=\"105\" y=\"78\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"32\" fill=\"#0f172a\" text-anchor=\"middle\">OCT 25</text></g><g transform=\"translate(215, 0)\"><rect x=\"10\" y=\"10\" width=\"200\" height=\"100\" rx=\"14\" fill=\"#ffffff\" stroke=\"#3b82f6\" stroke-width=\"4\"/><circle cx=\"50\" cy=\"55\" r=\"22\" fill=\"#dbeafe\"/><text x=\"50\" y=\"63\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"24\" fill=\"#2563eb\" text-anchor=\"middle\">@</text><text x=\"90\" y=\"52\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"20\" fill=\"#0f172a\">Inbox</text><text x=\"90\" y=\"78\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"15\" fill=\"#10b981\">Organized</text></g><g transform=\"translate(440, 0)\"><rect x=\"10\" y=\"10\" width=\"220\" height=\"100\" rx=\"14\" fill=\"#ffffff\" stroke=\"#10b981\" stroke-width=\"4\"/><circle cx=\"45\" cy=\"45\" r=\"14\" fill=\"#10b981\"/><path d=\"M38 45 L43 50 L52 39\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"70\" y=\"51\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"16\" fill=\"#0f172a\">Tasks Done</text><circle cx=\"45\" cy=\"80\" r=\"14\" fill=\"#10b981\"/><path d=\"M38 80 L43 85 L52 74\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3\" stroke-linecap=\"round\"/><text x=\"70\" y=\"86\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"16\" fill=\"#0f172a\">Steps Ready</text></g></svg>"
+          }
+        }
+      ],
+      "word_timings": null,
+      "camera_plan": null,
+      "acting_plan": null
+    },
+    {
+      "scene_number": 2,
+      "speaker": "boy_b",
+      "dialogue_line": "A traditional chatbot mainly responds to what you ask. You ask for an email, and it writes one. You ask for a plan, and it gives you a plan. But you usually have to take those next steps yourself.",
+      "action": "he types a question, a speech bubble shows a generated email, he shrugs and manually drags it into another window",
+      "pose": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "gesture": "shrug",
+      "cast": [
+        "boy_b"
+      ],
+      "layout": {
+        "template": "stack",
+        "elements": [
+          {
+            "id": "bo_sc2_label",
+            "slot": "top",
+            "is_hero": false,
+            "enter_time": 0.8,
+            "exit_time": 14.5
+          },
+          {
+            "id": "bo_sc2_chat",
+            "slot": "mid",
+            "is_hero": true,
+            "enter_time": 3.5,
+            "exit_time": 14.5
+          },
+          {
+            "id": "bo_sc2_drag",
+            "slot": "bottom",
+            "is_hero": false,
+            "enter_time": 8.0,
+            "exit_time": 14.5
+          }
+        ]
+      },
+      "shots": null,
+      "visuals": null,
+      "board_objects": [
+        {
+          "id": "bo_sc2_label",
+          "type": "custom",
+          "board_slot": "slot_top",
+          "start_ms": 800,
+          "exit_ms": 15000,
+          "enter": "slide_in",
+          "data": {
+            "level": 1,
+            "motion_preset": "slide_in",
+            "label": "AI Responds Badge",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 540 90\" width=\"540\" height=\"90\"><rect x=\"10\" y=\"10\" width=\"520\" height=\"70\" rx=\"16\" fill=\"#0f172a\" stroke=\"#3b82f6\" stroke-width=\"4\"/><text x=\"270\" y=\"54\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"26\" fill=\"#ffffff\" text-anchor=\"middle\" letter-spacing=\"1\">AI RESPONDS (PASSIVE CHATBOT)</text></svg>"
+          }
+        },
+        {
+          "id": "bo_sc2_chat",
+          "type": "custom",
+          "board_slot": "slot_mid",
+          "start_ms": 3500,
+          "exit_ms": 15000,
+          "enter": "pop",
+          "data": {
+            "level": 1,
+            "motion_preset": "pop",
+            "label": "Chatbot Speech Bubble",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 650 130\" width=\"650\" height=\"130\"><g><rect x=\"10\" y=\"10\" width=\"280\" height=\"105\" rx=\"16\" fill=\"#f1f5f9\" stroke=\"#94a3b8\" stroke-width=\"3.5\"/><text x=\"25\" y=\"38\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"17\" fill=\"#2563eb\">YOU ASK:</text><text x=\"25\" y=\"68\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"18\" fill=\"#0f172a\">&quot;Write an email</text><text x=\"25\" y=\"94\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"18\" fill=\"#0f172a\">and make a plan.&quot;</text></g><path d=\"M310 62 L345 62\" stroke=\"#2563eb\" stroke-width=\"4\" stroke-dasharray=\"6,4\"/><polygon points=\"352,62 342,56 342,68\" fill=\"#2563eb\"/><g transform=\"translate(365, 0)\"><rect x=\"10\" y=\"10\" width=\"265\" height=\"105\" rx=\"16\" fill=\"#eff6ff\" stroke=\"#2563eb\" stroke-width=\"4\"/><text x=\"25\" y=\"38\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"17\" fill=\"#2563eb\">CHATBOT OUTPUT:</text><text x=\"25\" y=\"68\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"18\" fill=\"#0f172a\">&quot;Here is text.&quot;</text><text x=\"25\" y=\"94\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"14\" fill=\"#64748b\">(Stops right here)</text></g></svg>"
+          }
+        },
+        {
+          "id": "bo_sc2_drag",
+          "type": "custom",
+          "board_slot": "slot_bottom",
+          "start_ms": 8000,
+          "exit_ms": 15000,
+          "enter": "draw_on",
+          "data": {
+            "level": 1,
+            "motion_preset": "draw_on",
+            "label": "Manual Steps Notice",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 110\" width=\"620\" height=\"110\"><rect x=\"10\" y=\"10\" width=\"600\" height=\"90\" rx=\"16\" fill=\"#fffbeb\" stroke=\"#f59e0b\" stroke-width=\"4\"/><circle cx=\"50\" cy=\"55\" r=\"22\" fill=\"#f59e0b\"/><text x=\"50\" y=\"65\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"28\" fill=\"#ffffff\" text-anchor=\"middle\">!</text><text x=\"95\" y=\"48\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"20\" fill=\"#0f172a\">YOU TAKE THE NEXT STEPS</text><text x=\"95\" y=\"78\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"16\" fill=\"#b45309\">Manual copy, paste, send, verify required</text></svg>"
+          }
+        }
+      ],
+      "word_timings": null,
+      "camera_plan": null,
+      "acting_plan": null
+    },
+    {
+      "scene_number": 3,
+      "speaker": "boy_b",
+      "dialogue_line": "An AI agent takes a different approach. You give it a goal, and it can break that goal into smaller tasks. It can decide what to do next, use available tools, check the results, and adjust its approach when something goes wrong.",
+      "action": "digital workspace appears, four nodes PLAN ACT CHECK ADJUST as he points",
+      "pose": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "gesture": "point",
+      "cast": [
+        "boy_b"
+      ],
+      "layout": {
+        "template": "stack",
+        "elements": [
+          {
+            "id": "bo_sc3_title",
+            "slot": "top",
+            "is_hero": false,
+            "enter_time": 0.5,
+            "exit_time": 17.5
+          },
+          {
+            "id": "bo_sc3_nodes",
+            "slot": "mid",
+            "is_hero": true,
+            "enter_time": 2.5,
+            "exit_time": 17.5
+          },
+          {
+            "id": "bo_sc3_tools",
+            "slot": "bottom",
+            "is_hero": false,
+            "enter_time": 8.5,
+            "exit_time": 17.5
+          }
+        ]
+      },
+      "shots": null,
+      "visuals": null,
+      "board_objects": [
+        {
+          "id": "bo_sc3_title",
+          "type": "custom",
+          "board_slot": "slot_top",
+          "start_ms": 500,
+          "exit_ms": 18000,
+          "enter": "slide_in",
+          "data": {
+            "level": 1,
+            "motion_preset": "slide_in",
+            "label": "Agent Loop Title",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 580 90\" width=\"580\" height=\"90\"><rect x=\"10\" y=\"10\" width=\"560\" height=\"70\" rx=\"16\" fill=\"#0f172a\" stroke=\"#10b981\" stroke-width=\"4\"/><text x=\"290\" y=\"54\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"26\" fill=\"#10b981\" text-anchor=\"middle\" letter-spacing=\"1\">AUTONOMOUS AGENT LOOP</text></svg>"
+          }
+        },
+        {
+          "id": "bo_sc3_nodes",
+          "type": "custom",
+          "board_slot": "slot_mid",
+          "start_ms": 2500,
+          "exit_ms": 18000,
+          "enter": "draw_on",
+          "data": {
+            "level": 1,
+            "motion_preset": "draw_on",
+            "label": "Plan Act Check Adjust Nodes",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 740 140\" width=\"740\" height=\"140\"><g class=\"node-plan\"><rect x=\"10\" y=\"20\" width=\"135\" height=\"65\" rx=\"12\" fill=\"#eff6ff\" stroke=\"#2563eb\" stroke-width=\"3.5\"/><text x=\"77\" y=\"52\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"20\" fill=\"#2563eb\" text-anchor=\"middle\">PLAN</text><text x=\"77\" y=\"72\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"12\" fill=\"#64748b\" text-anchor=\"middle\">Tasks</text></g><g class=\"arrow-1\"><path d=\"M155 52 L175 52\" stroke=\"#0f172a\" stroke-width=\"3.5\"/><polygon points=\"180,52 172,47 172,57\" fill=\"#0f172a\"/></g><g class=\"node-act\" transform=\"translate(180, 0)\"><rect x=\"10\" y=\"20\" width=\"135\" height=\"65\" rx=\"12\" fill=\"#f5f3ff\" stroke=\"#7c3aed\" stroke-width=\"3.5\"/><text x=\"77\" y=\"52\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"20\" fill=\"#7c3aed\" text-anchor=\"middle\">ACT</text><text x=\"77\" y=\"72\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"12\" fill=\"#64748b\" text-anchor=\"middle\">Run Tools</text></g><g class=\"arrow-2\"><path d=\"M335 52 L355 52\" stroke=\"#0f172a\" stroke-width=\"3.5\"/><polygon points=\"360,52 352,47 352,57\" fill=\"#0f172a\"/></g><g class=\"node-check\" transform=\"translate(360, 0)\"><rect x=\"10\" y=\"20\" width=\"135\" height=\"65\" rx=\"12\" fill=\"#fffbeb\" stroke=\"#f59e0b\" stroke-width=\"3.5\"/><text x=\"77\" y=\"52\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"20\" fill=\"#d97706\" text-anchor=\"middle\">CHECK</text><text x=\"77\" y=\"72\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"12\" fill=\"#64748b\" text-anchor=\"middle\">Verify</text></g><g class=\"arrow-3\"><path d=\"M515 52 L535 52\" stroke=\"#0f172a\" stroke-width=\"3.5\"/><polygon points=\"540,52 532,47 532,57\" fill=\"#0f172a\"/></g><g class=\"node-adjust\" transform=\"translate(540, 0)\"><rect x=\"10\" y=\"20\" width=\"135\" height=\"65\" rx=\"12\" fill=\"#ecfdf5\" stroke=\"#10b981\" stroke-width=\"3.5\"/><text x=\"77\" y=\"52\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"20\" fill=\"#059669\" text-anchor=\"middle\">ADJUST</text><text x=\"77\" y=\"72\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"12\" fill=\"#64748b\" text-anchor=\"middle\">Adapt</text></g><g class=\"arrow-loop\"><path d=\"M437 95 C437 125, 77 125, 77 95\" fill=\"none\" stroke=\"#ef4444\" stroke-width=\"3\" stroke-dasharray=\"6,3\"/><polygon points=\"77,88 71,98 83,98\" fill=\"#ef4444\"/><rect x=\"210\" y=\"108\" width=\"140\" height=\"24\" rx=\"6\" fill=\"#fef2f2\" stroke=\"#ef4444\" stroke-width=\"1.5\"/><text x=\"280\" y=\"124\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"12\" fill=\"#b91c1c\" text-anchor=\"middle\">\u21ba Loop back on error</text></g><circle class=\"glowing-dot\" cx=\"77\" cy=\"52\" r=\"9\" fill=\"#00d8f6\" stroke=\"#ffffff\" stroke-width=\"2.5\"/></svg>"
+          }
+        },
+        {
+          "id": "bo_sc3_tools",
+          "type": "custom",
+          "board_slot": "slot_bottom",
+          "start_ms": 8500,
+          "exit_ms": 18000,
+          "enter": "pop",
+          "data": {
+            "level": 1,
+            "motion_preset": "pop",
+            "label": "Agent Tools Bar",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 95\" width=\"620\" height=\"95\"><rect x=\"10\" y=\"10\" width=\"600\" height=\"75\" rx=\"14\" fill=\"#f8fafc\" stroke=\"#2563eb\" stroke-width=\"3\"/><text x=\"25\" y=\"38\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"16\" fill=\"#0f172a\">CONNECTED AGENT TOOLS:</text><g transform=\"translate(25, 46)\"><rect x=\"0\" y=\"0\" width=\"120\" height=\"28\" rx=\"6\" fill=\"#2563eb\"/><text x=\"60\" y=\"19\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"13\" fill=\"#ffffff\" text-anchor=\"middle\">Web Search</text><rect x=\"130\" y=\"0\" width=\"110\" height=\"28\" rx=\"6\" fill=\"#7c3aed\"/><text x=\"185\" y=\"19\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"13\" fill=\"#ffffff\" text-anchor=\"middle\">API Calls</text><rect x=\"250\" y=\"0\" width=\"120\" height=\"28\" rx=\"6\" fill=\"#059669\"/><text x=\"310\" y=\"19\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"13\" fill=\"#ffffff\" text-anchor=\"middle\">File System</text><rect x=\"380\" y=\"0\" width=\"170\" height=\"28\" rx=\"6\" fill=\"#0f172a\"/><text x=\"465\" y=\"19\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"13\" fill=\"#38bdf8\" text-anchor=\"middle\">\u2022 Auto-Executing</text></g></svg>"
+          }
+        }
+      ],
+      "word_timings": null,
+      "camera_plan": null,
+      "acting_plan": null
+    },
+    {
+      "scene_number": 4,
+      "speaker": "boy_b",
+      "dialogue_line": "Let's say you need to prepare for a meeting. An agent could gather information from approved sources, summarize the important points, draft an agenda, and organize the results into one document. Instead of handling every little step yourself, you supervise a process that moves toward your goal.",
+      "action": "big card PREPARE FOR MEETING appears and smaller cards snap into one report",
+      "pose": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "gesture": "nod",
+      "cast": [
+        "boy_b"
+      ],
+      "layout": {
+        "template": "stack",
+        "elements": [
+          {
+            "id": "bo_sc4_bigcard",
+            "slot": "top",
+            "is_hero": false,
+            "enter_time": 0.8,
+            "exit_time": 19.5
+          },
+          {
+            "id": "bo_sc4_cards",
+            "slot": "mid",
+            "is_hero": true,
+            "enter_time": 4.0,
+            "exit_time": 19.5
+          },
+          {
+            "id": "bo_sc4_supervise",
+            "slot": "bottom",
+            "is_hero": false,
+            "enter_time": 10.5,
+            "exit_time": 19.5
+          }
+        ]
+      },
+      "shots": null,
+      "visuals": null,
+      "board_objects": [
+        {
+          "id": "bo_sc4_bigcard",
+          "type": "custom",
+          "board_slot": "slot_top",
+          "start_ms": 800,
+          "exit_ms": 20000,
+          "enter": "slide_in",
+          "data": {
+            "level": 1,
+            "motion_preset": "slide_in",
+            "label": "Goal Meeting Header",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 600 90\" width=\"600\" height=\"90\"><rect x=\"10\" y=\"10\" width=\"580\" height=\"70\" rx=\"16\" fill=\"#1e293b\" stroke=\"#3b82f6\" stroke-width=\"4\"/><text x=\"300\" y=\"54\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"26\" fill=\"#ffffff\" text-anchor=\"middle\">GOAL: PREPARE FOR MEETING</text></svg>"
+          }
+        },
+        {
+          "id": "bo_sc4_cards",
+          "type": "custom",
+          "board_slot": "slot_mid",
+          "start_ms": 4000,
+          "exit_ms": 20000,
+          "enter": "pop",
+          "data": {
+            "level": 1,
+            "motion_preset": "pop",
+            "label": "Workflow Cards",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 700 130\" width=\"700\" height=\"130\"><g class=\"card-sources\"><rect x=\"10\" y=\"10\" width=\"150\" height=\"110\" rx=\"12\" fill=\"#ffffff\" stroke=\"#2563eb\" stroke-width=\"3\"/><circle cx=\"35\" cy=\"35\" r=\"12\" fill=\"#dbeafe\"/><text x=\"35\" y=\"41\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"14\" fill=\"#2563eb\" text-anchor=\"middle\">1</text><text x=\"58\" y=\"37\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"15\" fill=\"#0f172a\">Sources</text><text x=\"18\" y=\"70\" font-family=\"Arial, sans-serif\" font-weight=\"600\" font-size=\"12\" fill=\"#64748b\">Research</text><text x=\"18\" y=\"90\" font-family=\"Arial, sans-serif\" font-weight=\"600\" font-size=\"12\" fill=\"#64748b\">documents</text></g><g class=\"card-summary\" transform=\"translate(170, 0)\"><rect x=\"10\" y=\"10\" width=\"150\" height=\"110\" rx=\"12\" fill=\"#ffffff\" stroke=\"#7c3aed\" stroke-width=\"3\"/><circle cx=\"35\" cy=\"35\" r=\"12\" fill=\"#ede9fe\"/><text x=\"35\" y=\"41\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"14\" fill=\"#7c3aed\" text-anchor=\"middle\">2</text><text x=\"58\" y=\"37\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"15\" fill=\"#0f172a\">Summary</text><text x=\"18\" y=\"70\" font-family=\"Arial, sans-serif\" font-weight=\"600\" font-size=\"12\" fill=\"#64748b\">Key bullet</text><text x=\"18\" y=\"90\" font-family=\"Arial, sans-serif\" font-weight=\"600\" font-size=\"12\" fill=\"#64748b\">points</text></g><g class=\"card-agenda\" transform=\"translate(340, 0)\"><rect x=\"10\" y=\"10\" width=\"150\" height=\"110\" rx=\"12\" fill=\"#ffffff\" stroke=\"#f59e0b\" stroke-width=\"3\"/><circle cx=\"35\" cy=\"35\" r=\"12\" fill=\"#fef3c7\"/><text x=\"35\" y=\"41\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"14\" fill=\"#d97706\" text-anchor=\"middle\">3</text><text x=\"58\" y=\"37\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"15\" fill=\"#0f172a\">Agenda</text><text x=\"18\" y=\"70\" font-family=\"Arial, sans-serif\" font-weight=\"600\" font-size=\"12\" fill=\"#64748b\">Timed topic</text><text x=\"18\" y=\"90\" font-family=\"Arial, sans-serif\" font-weight=\"600\" font-size=\"12\" fill=\"#64748b\">structure</text></g><g class=\"card-final\" transform=\"translate(510, 0)\"><rect x=\"10\" y=\"5\" width=\"170\" height=\"120\" rx=\"14\" fill=\"#ecfdf5\" stroke=\"#10b981\" stroke-width=\"4\"/><circle cx=\"38\" cy=\"35\" r=\"14\" fill=\"#10b981\"/><path d=\"M32 35 L36 39 L45 30\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"2.5\" stroke-linecap=\"round\"/><text x=\"62\" y=\"37\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"15\" fill=\"#059669\">FINAL DOC</text><text x=\"20\" y=\"75\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"13\" fill=\"#0f172a\">One Briefing</text><text x=\"20\" y=\"98\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"13\" fill=\"#059669\">\u2713 100% Ready</text></g></svg>"
+          }
+        },
+        {
+          "id": "bo_sc4_supervise",
+          "type": "custom",
+          "board_slot": "slot_bottom",
+          "start_ms": 10500,
+          "exit_ms": 20000,
+          "enter": "draw_on",
+          "data": {
+            "level": 1,
+            "motion_preset": "draw_on",
+            "label": "Supervise Banner",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 90\" width=\"620\" height=\"90\"><rect x=\"10\" y=\"10\" width=\"600\" height=\"70\" rx=\"16\" fill=\"#f8fafc\" stroke=\"#0f172a\" stroke-width=\"3.5\"/><text x=\"310\" y=\"38\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"18\" fill=\"#2563eb\" text-anchor=\"middle\">YOU SUPERVISE \u2022 AGENT DELIVERS</text><text x=\"310\" y=\"64\" font-family=\"Arial, sans-serif\" font-weight=\"600\" font-size=\"14\" fill=\"#475569\" text-anchor=\"middle\">High leverage execution without manual friction</text></svg>"
+          }
+        }
+      ],
+      "word_timings": null,
+      "camera_plan": null,
+      "acting_plan": null
+    },
+    {
+      "scene_number": 5,
+      "speaker": "boy_b",
+      "dialogue_line": "But there's an important catch. Agents can make mistakes, misunderstand instructions, or access more than they should if permissions are poorly designed. That's why sensitive actions need clear limits, verification, and human approval when appropriate.",
+      "action": "report flashes red with warning icon, he raises a hand to stop cursor before locked file",
+      "pose": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "gesture": "raise_hand",
+      "cast": [
+        "boy_b"
+      ],
+      "layout": {
+        "template": "stack",
+        "elements": [
+          {
+            "id": "bo_sc5_warn",
+            "slot": "top",
+            "is_hero": false,
+            "enter_time": 0.8,
+            "exit_time": 14.5
+          },
+          {
+            "id": "bo_sc5_shield",
+            "slot": "mid",
+            "is_hero": true,
+            "enter_time": 3.8,
+            "exit_time": 14.5
+          },
+          {
+            "id": "bo_sc5_gate",
+            "slot": "bottom",
+            "is_hero": false,
+            "enter_time": 8.0,
+            "exit_time": 14.5
+          }
+        ]
+      },
+      "shots": null,
+      "visuals": null,
+      "board_objects": [
+        {
+          "id": "bo_sc5_warn",
+          "type": "custom",
+          "board_slot": "slot_top",
+          "start_ms": 800,
+          "exit_ms": 15000,
+          "enter": "pop",
+          "data": {
+            "level": 1,
+            "motion_preset": "pop",
+            "label": "The Catch Alert",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 540 90\" width=\"540\" height=\"90\"><rect x=\"10\" y=\"10\" width=\"520\" height=\"70\" rx=\"16\" fill=\"#fef2f2\" stroke=\"#ef4444\" stroke-width=\"4\"/><circle cx=\"50\" cy=\"45\" r=\"22\" fill=\"#ef4444\"/><text x=\"50\" y=\"55\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"28\" fill=\"#ffffff\" text-anchor=\"middle\">!</text><text x=\"95\" y=\"44\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"22\" fill=\"#b91c1c\">THE CATCH: GUARDRAILS NEEDED</text><text x=\"95\" y=\"68\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"14\" fill=\"#ef4444\">Autonomous actions carry real consequences</text></svg>"
+          }
+        },
+        {
+          "id": "bo_sc5_shield",
+          "type": "custom",
+          "board_slot": "slot_mid",
+          "start_ms": 3800,
+          "exit_ms": 15000,
+          "enter": "draw_on",
+          "data": {
+            "level": 1,
+            "motion_preset": "draw_on",
+            "label": "Locked File and Shield",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 680 130\" width=\"680\" height=\"130\"><g><rect x=\"10\" y=\"10\" width=\"280\" height=\"105\" rx=\"14\" fill=\"#ffffff\" stroke=\"#ef4444\" stroke-width=\"3.5\"/><text x=\"25\" y=\"38\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"15\" fill=\"#ef4444\">\ud83d\udd12 RESTRICTED ACTION</text><text x=\"25\" y=\"68\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"16\" fill=\"#0f172a\">send_salary_data.xlsx</text><text x=\"25\" y=\"94\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"13\" fill=\"#b91c1c\">&gt; Cursor stopped by boundary</text><line class=\"stop-barrier\" x1=\"215\" y1=\"20\" x2=\"215\" y2=\"105\" stroke=\"#ef4444\" stroke-width=\"5\" stroke-linecap=\"round\"/><g class=\"file-cursor\" transform=\"translate(180, 50)\"><path d=\"M0 0 L10 24 L14 17 L22 17 Z\" fill=\"#0f172a\" stroke=\"#ffffff\" stroke-width=\"2\"/></g></g><path d=\"M310 62 L345 62\" stroke=\"#ef4444\" stroke-width=\"4\"/><g class=\"safety-shield\" transform=\"translate(365, 0)\"><rect x=\"10\" y=\"10\" width=\"280\" height=\"105\" rx=\"14\" fill=\"#0f172a\" stroke=\"#10b981\" stroke-width=\"4\"/><path d=\"M50 30 L100 20 L150 30 L150 75 Q100 105 50 75 Z\" fill=\"#10b981\" opacity=\"0.25\" stroke=\"#10b981\" stroke-width=\"3.5\"/><text x=\"175\" y=\"52\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"20\" fill=\"#10b981\">SAFETY</text><text x=\"175\" y=\"76\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"20\" fill=\"#ffffff\">SHIELD</text></g></svg>"
+          }
+        },
+        {
+          "id": "bo_sc5_gate",
+          "type": "custom",
+          "board_slot": "slot_bottom",
+          "start_ms": 8000,
+          "exit_ms": 15000,
+          "enter": "pop",
+          "data": {
+            "level": 1,
+            "motion_preset": "pop",
+            "label": "Human Approval Gate",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 640 100\" width=\"640\" height=\"100\"><rect x=\"10\" y=\"10\" width=\"620\" height=\"80\" rx=\"16\" fill=\"#eff6ff\" stroke=\"#2563eb\" stroke-width=\"3.5\"/><circle cx=\"50\" cy=\"50\" r=\"22\" fill=\"#2563eb\"/><text x=\"50\" y=\"58\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"24\" fill=\"#ffffff\" text-anchor=\"middle\">\u2713</text><text x=\"95\" y=\"44\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"18\" fill=\"#0f172a\">REQUIRE HUMAN APPROVAL</text><text x=\"95\" y=\"70\" font-family=\"Arial, sans-serif\" font-weight=\"600\" font-size=\"14\" fill=\"#475569\">Irreversible actions must await explicit user sign-off</text></svg>"
+          }
+        }
+      ],
+      "word_timings": null,
+      "camera_plan": null,
+      "acting_plan": null
+    },
+    {
+      "scene_number": 6,
+      "speaker": "boy_b",
+      "dialogue_line": "The big shift is simple: chatbots give answers, but agents take action. And the most powerful systems are the ones that keep humans firmly in the loop.",
+      "action": "timeline cards appear as he gestures, THINK ACT VERIFY banner, fade to black",
+      "pose": "idle",
+      "camera_move": "static",
+      "transition": "cut",
+      "is_punchline": false,
+      "gesture": "thumbs_up",
+      "cast": [
+        "boy_b"
+      ],
+      "layout": {
+        "template": "stack",
+        "elements": [
+          {
+            "id": "bo_sc6_header",
+            "slot": "top",
+            "is_hero": false,
+            "enter_time": 0.5,
+            "exit_time": 9.5
+          },
+          {
+            "id": "bo_sc6_pillars",
+            "slot": "mid",
+            "is_hero": true,
+            "enter_time": 2.5,
+            "exit_time": 9.5
+          },
+          {
+            "id": "bo_sc6_quote",
+            "slot": "bottom",
+            "is_hero": false,
+            "enter_time": 5.5,
+            "exit_time": 9.5
+          }
+        ]
+      },
+      "shots": null,
+      "visuals": null,
+      "board_objects": [
+        {
+          "id": "bo_sc6_header",
+          "type": "custom",
+          "board_slot": "slot_top",
+          "start_ms": 500,
+          "exit_ms": 10000,
+          "enter": "slide_in",
+          "data": {
+            "level": 1,
+            "motion_preset": "slide_in",
+            "label": "Big Shift Header",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 580 90\" width=\"580\" height=\"90\"><rect x=\"10\" y=\"10\" width=\"560\" height=\"70\" rx=\"16\" fill=\"#0f172a\" stroke=\"#2563eb\" stroke-width=\"4\"/><text x=\"290\" y=\"54\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"26\" fill=\"#ffffff\" text-anchor=\"middle\" letter-spacing=\"1\">FROM ANSWERS TO ACTION</text></svg>"
+          }
+        },
+        {
+          "id": "bo_sc6_pillars",
+          "type": "custom",
+          "board_slot": "slot_mid",
+          "start_ms": 2500,
+          "exit_ms": 10000,
+          "enter": "pop",
+          "data": {
+            "level": 1,
+            "motion_preset": "pop",
+            "label": "Think Act Verify Pillars",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 660 110\" width=\"660\" height=\"110\"><g class=\"pillar-think\"><rect x=\"10\" y=\"15\" width=\"180\" height=\"75\" rx=\"16\" fill=\"#2563eb\" stroke=\"#1e3a8a\" stroke-width=\"3.5\"/><text x=\"100\" y=\"62\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"28\" fill=\"#ffffff\" text-anchor=\"middle\">THINK.</text></g><g class=\"arrow-p1\"><path d=\"M205 52 L225 52\" stroke=\"#0f172a\" stroke-width=\"3.5\"/><polygon points=\"230,52 222,47 222,57\" fill=\"#0f172a\"/></g><g class=\"pillar-act\" transform=\"translate(235, 0)\"><rect x=\"10\" y=\"15\" width=\"180\" height=\"75\" rx=\"16\" fill=\"#7c3aed\" stroke=\"#4c1d95\" stroke-width=\"3.5\"/><text x=\"100\" y=\"62\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"28\" fill=\"#ffffff\" text-anchor=\"middle\">ACT.</text></g><g class=\"arrow-p2\"><path d=\"M445 52 L465 52\" stroke=\"#0f172a\" stroke-width=\"3.5\"/><polygon points=\"470,52 462,47 462,57\" fill=\"#0f172a\"/></g><g class=\"pillar-verify\" transform=\"translate(475, 0)\"><rect x=\"10\" y=\"15\" width=\"180\" height=\"75\" rx=\"16\" fill=\"#10b981\" stroke=\"#065f46\" stroke-width=\"3.5\"/><text x=\"100\" y=\"62\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"28\" fill=\"#ffffff\" text-anchor=\"middle\">VERIFY.</text></g></svg>"
+          }
+        },
+        {
+          "id": "bo_sc6_quote",
+          "type": "custom",
+          "board_slot": "slot_bottom",
+          "start_ms": 5500,
+          "exit_ms": 10000,
+          "enter": "draw_on",
+          "data": {
+            "level": 1,
+            "motion_preset": "draw_on",
+            "label": "Final Quote Card",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 640 100\" width=\"640\" height=\"100\"><rect x=\"10\" y=\"10\" width=\"620\" height=\"80\" rx=\"16\" fill=\"#eff6ff\" stroke=\"#2563eb\" stroke-width=\"3.5\"/><text x=\"320\" y=\"40\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"18\" fill=\"#0f172a\" text-anchor=\"middle\">&quot;Not just what AI can tell us...</text><text x=\"320\" y=\"70\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"21\" fill=\"#2563eb\" text-anchor=\"middle\">It is what we can SAFELY let it do.&quot;</text></svg>"
+          }
+        }
+      ],
+      "word_timings": null,
+      "camera_plan": null,
+      "acting_plan": null
+    }
+  ],
+  "camera_plan": null,
+  "acting_plan": null
+}

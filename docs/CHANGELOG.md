@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-26: Phase 3 Board content and kinetic storyboard animations: implemented PLAN-ACT-CHECK-ADJUST sequential reveal with coordinate looping glowing dot and loop back error arrow, card snap animations for meeting briefing, cursor block barrier, safety shield reveal, THINK-ACT-VERIFY pillar reveal, and updated annotations.py to strictly use authored titles/items and eliminate sentence-fragment titles and sentence slicing.
+
 - 2026-10-26: Phase 2 Real visual checks engine: rewritten visual_checker.py to measure real browser DOM shapes and final MP4 frame pixel deltas (checks a-f), removed fake 10/10 score in favor of measured metrics table, updated pipeline to fail build on visual quality failure, and updated test_phase2_quality_gate.py.
 
 - 2026-10-26: Phase 1 SVG shape rendering fix: registered SVG default namespaces in sanitizer.py to eliminate <ns0:> prefixes, added strict data: URI and xlink:href validation, escaped HTML text entities, added DOM shape bounding box verification tests, and rendered ai_agents_explainer_phase1.mp4.
