@@ -1014,9 +1014,12 @@ def plan_camera_plan(
                 shots.extend(_subdivide_interval(s_start, main_end, code, default_preset, alt_preset, default_eye))
             else:
                 shots.append(shot_from_preset(default_preset, s_start, main_end, code, motion="CREEP_IN", eye_target=default_eye))
-            cu_preset = "CAM_04_CU_SPEAKER_B" if code == "B" else "CAM_05_CU_SPEAKER_A"
+            if len(cast_names) <= 1:
+                cu_preset = "CAM_05_CU_SPEAKER_A"
+            else:
+                cu_preset = "CAM_04_CU_SPEAKER_B" if code == "B" else "CAM_05_CU_SPEAKER_A"
             shots.append(shot_from_preset(cu_preset, main_end, s_end, code, motion="SNAP_ZOOM", eye_target="CAMERA"))
-        elif has_reaction and reaction_kind == "LISTENER":
+        elif has_reaction and reaction_kind == "LISTENER" and len(cast_names) > 1:
             reaction_dur = min(1.25, max(0.8, round(scene_dur * 0.28, 3)))
             main_dur = scene_dur - reaction_dur
             main_end = round(s_start + main_dur, 3)

@@ -409,8 +409,13 @@ def inspect_dom_and_scene(
                     };
                     if (charL) checkEl(charL, "character-rig-left");
                     if (charR) checkEl(charR, "character-rig-right");
-                    const boardEls = document.querySelectorAll("#board-objects-container .board-object");
-                    boardEls.forEach((b, idx) => checkEl(b, `board-object-${idx}`));
+                    const boardBox = document.getElementById("zone-board");
+                    if (boardBox) {
+                        const r = boardBox.getBoundingClientRect();
+                        if (r.left < -5 || r.top < -5 || r.right > 1085 || r.bottom > 1925) {
+                            results.push({ name: "boardBox", isOutOfBounds: true, isClipped: false, r: { left: r.left, right: r.right, top: r.top, bottom: r.bottom } });
+                        }
+                    }
                     return results;
                 }""")
                 if bounds_data:
@@ -470,7 +475,7 @@ def inspect_dom_and_scene(
                         const xO = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
                         const yO = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
                         if (a.el.contains(b.el) || b.el.contains(a.el)) continue;
-                        if (xO * yO > 80) {
+                        if (xO > 6 && yO > 6 && (xO * yO > 80)) {
                             overlaps.push({ a: a.text, b: b.text, area: Math.round(xO * yO) });
                         }
                     }

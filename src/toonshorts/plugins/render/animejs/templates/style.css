@@ -1015,16 +1015,19 @@ body.split-zones-active #zone-character .desk-container {
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;
+  line-height: 1.32;
 }
 
 .speech-bubble-text {
-  display: inline;
+  display: inline-block;
+  line-height: 1.32;
 }
 
 /* Word Spans */
 .bubble-word {
   display: inline-block;
-  margin: 0 6px;
+  margin: 3px 6px;
+  line-height: 1.25;
   color: #f1f5f9;
   transition: color 0.08s ease, transform 0.08s ease;
 }
