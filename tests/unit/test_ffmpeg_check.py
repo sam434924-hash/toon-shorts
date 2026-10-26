@@ -51,7 +51,7 @@ def test_ffmpeg_filters_command_failure_raises_error():
 
 
 def test_assemble_never_outputs_without_captions(tmp_path):
-    """Verifies assemble_final_video fails if subtitle burn-in fails, never outputting unsubbed video."""
+    """Verifies assemble_final_video preserves captions.ass as sidecar without burn-in (Phase 5)."""
     characters = [
         Character(name="Pip", visual_description="Stickman with red glasses"),
         Character(name="Zack", visual_description="Stickman with blue hat"),
@@ -85,30 +85,32 @@ def test_assemble_never_outputs_without_captions(tmp_path):
     ]
     scene_images = [img_path for _ in range(4)]
 
-    # Mock subprocess.run to succeed for scene render and concat, but fail for burn-in
+    temp_dir = tmp_path / "temp"
+    temp_dir.mkdir(parents=True, exist_ok=True)
+    unsubbed_mp4 = temp_dir / "unsubbed_full.mp4"
+    unsubbed_mp4.write_bytes(b"fake_video_bytes")
+
     def fake_run(cmd, *args, **kwargs):
         res = MagicMock()
-        if any("subtitles=" in str(arg) for arg in cmd):
-            res.returncode = 1
-            res.stderr = "Error initializing filter 'subtitles'"
-        else:
-            res.returncode = 0
-            res.stdout = ""
-            res.stderr = ""
+        res.returncode = 0
+        res.stdout = ""
+        res.stderr = ""
         return res
 
     with patch("toonshorts.core.assembler.check_ffmpeg_subtitles_support", return_value=True):
         with patch("toonshorts.core.assembler.prepare_sound_effects", return_value={}):
             with patch("subprocess.run", side_effect=fake_run):
-                with pytest.raises(RuntimeError, match="Subtitle burn-in failed"):
-                    assemble_final_video(
-                        plan=plan,
-                        scene_images=scene_images,
-                        scene_audios=scene_audios,
-                        style_preset={"caption": {"font": "Arial", "font_size": 18, "primary_color": "&H00FFFFFF&"}},
-                        temp_dir=tmp_path / "temp",
-                        output_dir=tmp_path / "output",
-                    )
+                out_path = assemble_final_video(
+                    plan=plan,
+                    scene_images=scene_images,
+                    scene_audios=scene_audios,
+                    style_preset={"caption": {"font": "Arial", "font_size": 18, "primary_color": "&H00FFFFFF&"}},
+                    temp_dir=temp_dir,
+                    output_dir=tmp_path / "output",
+                )
+                assert out_path.exists()
+                sidecar_ass = (tmp_path / "output") / "captions.ass"
+                assert sidecar_ass.exists()
 
 
 def test_escape_ffmpeg_subtitles_path_windows_path():

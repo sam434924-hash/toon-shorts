@@ -651,21 +651,27 @@ def test_generated_html_no_ns0_and_renders_visible_shapes(tmp_path):
     test_html_file = tmp_path / "test_scene.html"
     test_html_file.write_text(html_out, encoding="utf-8")
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
-        page.goto(test_html_file.resolve().as_uri())
-        page.evaluate("if (typeof window.seekAnimation === 'function') { window.seekAnimation(500); }")
+    def _run_browser():
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            page.goto(test_html_file.resolve().as_uri())
+            page.evaluate("if (typeof window.seekAnimation === 'function') { window.seekAnimation(500); }")
 
-        shape_count = page.evaluate("""() => {
-            const shapes = document.querySelectorAll("#board-objects-container svg rect, #board-objects-container svg circle, #board-objects-container svg path, #board-objects-container svg polygon");
-            let visibleCount = 0;
-            shapes.forEach(s => {
-                const r = s.getBoundingClientRect();
-                if (r.width > 0 && r.height > 0) visibleCount++;
-            });
-            return visibleCount;
-        }""")
-        browser.close()
+            cnt = page.evaluate("""() => {
+                const shapes = document.querySelectorAll("#board-objects-container svg rect, #board-objects-container svg circle, #board-objects-container svg path, #board-objects-container svg polygon");
+                let visibleCount = 0;
+                shapes.forEach(s => {
+                    const r = s.getBoundingClientRect();
+                    if (r.width > 0 && r.height > 0) visibleCount++;
+                });
+                return visibleCount;
+            }""")
+            browser.close()
+            return cnt
+
+    import concurrent.futures
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
+        shape_count = ex.submit(_run_browser).result()
 
     assert shape_count >= 2, f"Expected at least 2 visible SVG shapes in DOM, got {shape_count}"
