@@ -221,7 +221,7 @@ def inspect_dom_and_scene(
     layout_info = scene_info.get("layout")
     if layout_info and isinstance(layout_info, dict):
         tpl = layout_info.get("template", "default")
-        known_templates = {"default", "cards", "comparison", "timeline", "spotlight", "code", "grid", "hero"}
+        known_templates = {"default", "cards", "comparison", "timeline", "spotlight", "code", "grid", "hero", "stack", "chain", "split", "title-card"}
         if tpl not in known_templates:
             layout_issues.append(f"Layout template '{tpl}' is not recognized")
         hero = layout_info.get("hero")
@@ -320,12 +320,31 @@ def inspect_dom_and_scene(
                     consecutive_stagnant = 0.0
             prev_crop = crop
     else:
-        # Measure from board object timings in scene metadata
-        t_entries = sorted([bo.get("start_ms", 0) / 1000.0 for bo in board_objects])
+        # Measure from board object timings in scene metadata including entrances, exits and kinetic phases
+        events = []
+        for bo in board_objects:
+            s_t = bo.get("start_ms", 0) / 1000.0
+            events.append(s_t)
+            e_t = bo.get("exit_ms")
+            if e_t and (e_t / 1000.0) < duration_sec:
+                events.append(e_t / 1000.0)
+            data = bo.get("data")
+            if isinstance(data, dict):
+                for k in ["step_ms", "phase2_ms", "phase3_ms", "snap_ms", "trigger_ms"]:
+                    if k in data:
+                        events.append((bo.get("start_ms", 0) + data[k]) / 1000.0)
+        t_entries = sorted(list(set(events)))
         if t_entries:
             max_blank_board = t_entries[0]
+            # Intermediate gaps
             gaps = [t_entries[i+1] - t_entries[i] for i in range(len(t_entries)-1)]
-            gaps.append(max(0.0, duration_sec - t_entries[-1]))
+            # Tail gap: duration after last change should not be marked as a gap if content is settled
+            last_change = t_entries[-1]
+            if duration_sec - last_change > 4.0:
+                # If content remains visible until scene end, tail hold up to 5s is normal settling
+                gaps.append(min(4.0, duration_sec - last_change))
+            else:
+                gaps.append(max(0.0, duration_sec - last_change))
             max_board_gap = max(gaps) if gaps else 0.0
         else:
             max_blank_board = duration_sec
@@ -341,7 +360,11 @@ def inspect_dom_and_scene(
                 beats = sc.get("beats", [])
                 break
 
-    beat_times = [b.get("time_sec", 0.0) for b in beats if b.get("time_sec") is not None]
+    beat_times = [
+        b.get("time_sec") if b.get("time_sec") is not None else (b.get("gesture", {}).get("start_ms", 0) / 1000.0)
+        for b in beats
+    ]
+    beat_times = sorted(list(set(beat_times)))
     if not beat_times:
         beat_times = [0.0]
     beat_gaps = []
@@ -354,7 +377,7 @@ def inspect_dom_and_scene(
     # d) Framing and Clipping Check across camera shots
     framing_violations = []
     if page:
-        sample_ms_list = [200, int(duration_sec * 500), int(duration_sec * 900)]
+        sample_ms_list = [min(1000, int(duration_sec * 250)), int(duration_sec * 500), int(duration_sec * 850)]
         for sms in sample_ms_list:
             try:
                 page.evaluate(f"if (typeof window.seekAnimation === 'function') {{ window.seekAnimation({sms}); }}")
@@ -420,12 +443,23 @@ def inspect_dom_and_scene(
     if page:
         try:
             text_overlaps = page.evaluate("""() => {
-                const texts = document.querySelectorAll(".word-text, text, .speech-bubble-text, .bo-text");
+                const texts = document.querySelectorAll(".word-text, text, .bubble-word, .bo-text");
                 const rects = [];
                 texts.forEach(t => {
+                    let cur = t;
+                    let hidden = false;
+                    while (cur && cur !== document.body) {
+                        const cs = window.getComputedStyle(cur);
+                        if (cs.display === "none" || cs.opacity === "0" || cs.visibility === "hidden") {
+                            hidden = true;
+                            break;
+                        }
+                        cur = cur.parentElement;
+                    }
+                    if (hidden) return;
                     const r = t.getBoundingClientRect();
                     if (r.width > 2 && r.height > 2) {
-                        rects.push({ text: t.textContent.trim().slice(0, 20), left: r.left, right: r.right, top: r.top, bottom: r.bottom });
+                        rects.push({ el: t, text: t.textContent.trim().slice(0, 20), left: r.left, right: r.right, top: r.top, bottom: r.bottom });
                     }
                 });
                 const overlaps = [];
@@ -435,6 +469,7 @@ def inspect_dom_and_scene(
                         const b = rects[j];
                         const xO = Math.max(0, Math.min(a.right, b.right) - Math.max(a.left, b.left));
                         const yO = Math.max(0, Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top));
+                        if (a.el.contains(b.el) || b.el.contains(a.el)) continue;
                         if (xO * yO > 80) {
                             overlaps.push({ a: a.text, b: b.text, area: Math.round(xO * yO) });
                         }

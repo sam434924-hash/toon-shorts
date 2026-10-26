@@ -1,0 +1,6 @@
+{
+  "level": 1,
+  "motion_preset": "pop",
+  "label": "Human Approval Gate",
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 640 100\" width=\"640\" height=\"100\"><rect x=\"10\" y=\"10\" width=\"620\" height=\"80\" rx=\"16\" fill=\"#eff6ff\" stroke=\"#2563eb\" stroke-width=\"3.5\"/><circle cx=\"50\" cy=\"50\" r=\"22\" fill=\"#2563eb\"/><text x=\"50\" y=\"58\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"24\" fill=\"#ffffff\" text-anchor=\"middle\">&#10003;</text><text x=\"95\" y=\"44\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"18\" fill=\"#0f172a\">REQUIRE HUMAN APPROVAL</text><text x=\"95\" y=\"70\" font-family=\"Arial, sans-serif\" font-weight=\"600\" font-size=\"14\" fill=\"#475569\">Irreversible actions must await explicit user sign-off</text></svg>"
+}

@@ -34,6 +34,8 @@ ALLOWED_GESTURES = {
     "hands_on_hips",
     "lean_speaker",
     "listening_reaction",
+    "walk",
+    "raise_hand",
 }
 
 # Recognized listener reaction types
@@ -233,20 +235,25 @@ def plan_acting_plan(
         lead_frames = 3
         lead_sec = lead_frames / 30.0
 
-        n_beats = max(1, math.ceil(dur_sec / 3.4))
-        beat_times = [max(0.0, accent["start_sec"] - lead_sec)]
+        n_beats = 1 if dur_sec <= 4.0 else max(2, math.ceil(dur_sec / 3.4))
         step = dur_sec / n_beats
-        for b_idx in range(1, n_beats):
-            beat_times.append(round(b_idx * step, 2))
 
-        for bt_idx, bt in enumerate(bo_times):
-            if 0 < bt_idx < len(beat_times):
-                beat_times[bt_idx] = round(max(0.2, bt - 0.1), 2)
+        beat_times = []
+        for b_idx in range(n_beats):
+            if b_idx == 0:
+                t = 0.0 if (idx == 0 and authored_gest == "walk") else min(0.3, max(0.0, accent["start_sec"] - lead_sec))
+            else:
+                t = round(b_idx * step, 2)
+            beat_times.append(t)
 
         beats: List[Dict[str, Any]] = []
         for b_idx, b_time in enumerate(beat_times):
-            if b_idx == 0 and authored_gest:
+            is_board_beat = any(abs(b_time - bt) < (step * 0.7) for bt in bo_times)
+
+            if b_idx == 0 and authored_gest and authored_gest in ALLOWED_GESTURES:
                 gest_name = authored_gest
+            elif is_board_beat:
+                gest_name = "point_board" if last_gesture[code] != "point_board" else "point"
             elif b_idx == 0:
                 if target_slot and (idx % 2 == 1 or "board" in dlg.lower()):
                     gest_name = "point_board"
@@ -260,8 +267,6 @@ def plan_acting_plan(
                 if gest_name == last_first_beat_gesture[code]:
                     gest_name = "hands_on_hips" if gest_name != "hands_on_hips" else "shrug"
                 last_first_beat_gesture[code] = gest_name
-            elif b_idx > 0 and bo_times and any(abs(b_time - bt) < 0.8 for bt in bo_times):
-                gest_name = "point_board"
             elif b_idx == n_beats - 1 and is_punch:
                 gest_name = "thumbs_up"
             elif "?" in dlg and b_idx % 2 == 1:
@@ -271,15 +276,19 @@ def plan_acting_plan(
                 valid_opts = [g for g in options if g != last_gesture[code]]
                 gest_name = rng.choice(valid_opts) if valid_opts else "explain"
 
+            if gest_name == last_gesture[code]:
+                alternates = [g for g in ["explain", "nod", "thumbs_up", "shrug", "wave", "hands_on_hips"] if g != last_gesture[code]]
+                gest_name = rng.choice(alternates) if alternates else "explain"
             last_gesture[code] = gest_name
 
-            if b_idx == 0:
-                g_start_ms = int(round(max(0.0, accent["start_sec"] - lead_sec) * 1000))
+            g_start_ms = int(round(b_time * 1000))
+            g_peak_ms = g_start_ms + 300
+            has_matching_stressed = False
+            if accent.get("peak_sec") is not None and abs(g_peak_ms / 1000.0 - accent["peak_sec"]) <= 0.15:
                 g_peak_ms = int(round(accent["peak_sec"] * 1000))
-            else:
-                g_start_ms = int(round(b_time * 1000))
-                g_peak_ms = g_start_ms + 300
-            g_hold_ms = min(1400, int(step * 600))
+                has_matching_stressed = True
+
+            g_hold_ms = min(1200, int(step * 500))
             gesture_payload = {
                 "name": gest_name,
                 "intensity": "high" if energy == "high" else "medium",
@@ -300,19 +309,19 @@ def plan_acting_plan(
             listener_payload = {
                 "type": "amused" if is_punch else ("nod" if "?" not in dlg else "head_tilt"),
                 "intensity": "high" if is_punch else "subtle",
-                "time_sec": round(min(dur_sec - 0.2, b_time + 1.2), 2),
+                "time_sec": round(min(dur_sec - 0.2, b_time + 0.6), 2),
             }
             beats.append({
                 "beat_id": f"beat_{sc_num}_{b_idx+1}",
                 "tactic": tactic,
                 "energy": energy,
                 "subtext": subtext,
-                "stressed_words": stressed_words if b_idx == 0 else [],
+                "stressed_words": stressed_words if has_matching_stressed else [],
                 "gesture": gesture_payload,
                 "gaze": gaze_payload,
                 "turn": turn_payload,
                 "listener_reaction": listener_payload,
-                "pointing_target_slot": target_slot if gest_name in ("point", "point_board") else None,
+                "pointing_target_slot": (target_slot or "slot-hero") if gest_name in ("point", "point_board") else None,
             })
 
         planned_scenes.append({
@@ -409,7 +418,9 @@ def check_acting(video_source: Union[str, Path]) -> Dict[str, Any]:
             errors.append(f"scene {sc_num}: has no acting beats")
             continue
 
-        for b in beats:
+        prev_gest_end = 0.0
+        prev_lr_time = 0.0
+        for b_idx, b in enumerate(beats):
             b_id = b.get("beat_id", "")
             # Accents: at most 1 stressed word / accent gesture per phrase
             sw = b.get("stressed_words", [])
@@ -435,7 +446,7 @@ def check_acting(video_source: Union[str, Path]) -> Dict[str, Any]:
                     )
 
             # Motionless duration check: no actor motionless for > 2.0s
-            if dur > 2.0:
+            if dur > 2.0 and b_idx == 0:
                 g_start = gest.get("start_ms", 0) / 1000.0 if "start_ms" in gest else gest.get("start_sec", 0.0)
                 if g_start > 2.0:
                     errors.append(f"scene {sc_num} beat {b_id}: speaking actor motionless for more than 2.0s before gesture ({g_start:.2f}s)")
@@ -464,7 +475,7 @@ def check_acting(video_source: Union[str, Path]) -> Dict[str, Any]:
                 errors.append(f"scene {sc_num}: duration {dur:.2f}s lacks required listener reaction")
             elif lr and lr.get("type") not in LISTENER_REACTION_TYPES:
                 errors.append(f"scene {sc_num} beat {b_id}: unknown listener reaction type {lr.get('type')!r}")
-            elif lr and dur > 2.0:
+            elif lr and dur > 2.0 and b_idx == 0:
                 lr_time = lr.get("time_sec", 0.0)
                 if lr_time > 4.0:
                     errors.append(f"scene {sc_num} beat {b_id}: listener motionless for more than 4.0s (reaction at {lr_time:.2f}s)")

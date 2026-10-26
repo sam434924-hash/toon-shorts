@@ -27,6 +27,8 @@ ALLOWED_GESTURES = frozenset({
     "head_tilt",
     "lean_speaker",
     "listening_reaction",
+    "walk",
+    "raise_hand",
 })
 
 

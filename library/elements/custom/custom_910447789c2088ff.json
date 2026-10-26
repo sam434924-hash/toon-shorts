@@ -1,0 +1,6 @@
+{
+  "level": 1,
+  "motion_preset": "slide_in",
+  "label": "Laptop Terminal",
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 130\" width=\"620\" height=\"130\"><rect x=\"60\" y=\"10\" width=\"500\" height=\"95\" rx=\"14\" fill=\"#0f172a\" stroke=\"#2563eb\" stroke-width=\"4.5\"/><rect x=\"75\" y=\"20\" width=\"470\" height=\"75\" rx=\"8\" fill=\"#1e293b\"/><circle cx=\"95\" cy=\"35\" r=\"5\" fill=\"#ef4444\"/><circle cx=\"112\" cy=\"35\" r=\"5\" fill=\"#f59e0b\"/><circle cx=\"129\" cy=\"35\" r=\"5\" fill=\"#10b981\"/><text x=\"150\" y=\"40\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"15\" fill=\"#94a3b8\">agent_workspace.py</text><text x=\"95\" y=\"72\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"22\" fill=\"#38bdf8\">&gt; Auto-planning daily schedule...</text><polygon points=\"40,105 580,105 600,124 20,124\" fill=\"#475569\" stroke=\"#1e293b\" stroke-width=\"3.5\"/></svg>"
+}

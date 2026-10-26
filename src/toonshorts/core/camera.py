@@ -878,6 +878,8 @@ def plan_camera_plan(
 
     def speaker_code(name: str) -> str:
         clean = (name or "").strip().lower()
+        if len(cast_names) <= 1:
+            return "A"
         if clean in ("b", "boy_b", "speaker_b", "speaker b") or clean.endswith("_b") or clean.endswith(" b"):
             return "B"
         if clean in ("a", "girl_a", "speaker_a", "speaker a") or clean.endswith("_a") or clean.endswith(" a"):
@@ -951,13 +953,45 @@ def plan_camera_plan(
         default_preset = "CAM_02_MED_BOARD" if has_board else "CAM_01_WIDE_2SHOT"
         default_eye = "BOARD" if has_board else "PARTNER"
 
+        def _subdivide_interval(
+            start_t: float,
+            end_t: float,
+            c_code: str,
+            p1: str,
+            p2: str,
+            eye: str,
+            max_len: float = 4.8,
+        ) -> List[CameraShot]:
+            dur = round(end_t - start_t, 3)
+            if dur <= 0.05:
+                return []
+            if dur <= max_len:
+                return [shot_from_preset(p1, start_t, end_t, c_code, motion="CREEP_IN", eye_target=eye)]
+            n_shots = max(2, math.ceil(dur / max_len))
+            step = dur / n_shots
+            res: List[CameraShot] = []
+            c_start = start_t
+            for idx in range(n_shots):
+                c_end = end_t if idx == n_shots - 1 else round(start_t + (idx + 1) * step, 3)
+                curr_preset = p1 if idx % 2 == 0 else p2
+                curr_motion = "CREEP_IN" if idx % 2 == 0 else "HOLD"
+                res.append(shot_from_preset(curr_preset, c_start, c_end, c_code, motion=curr_motion, eye_target=eye))
+                c_start = c_end
+            return res
+
+        alt_preset = "CAM_01_WIDE_2SHOT" if default_preset == "CAM_02_MED_BOARD" else "CAM_02_MED_BOARD"
+
         if i == 0:
             # Opening scene
             first_split = round(s_start + min(2.5, max(1.2, scene_dur * 0.55)), 3)
             if scene_dur > 3.2:
                 shots.append(shot_from_preset("CAM_01_WIDE_2SHOT", s_start, first_split, "BOTH", motion="CREEP_IN"))
                 preset0 = "CAM_02_MED_BOARD" if has_board else "CAM_01_WIDE_2SHOT"
-                shots.append(shot_from_preset(preset0, first_split, s_end, code, motion="HOLD", eye_target=default_eye))
+                rem_dur = s_end - first_split
+                if rem_dur > 5.0:
+                    shots.extend(_subdivide_interval(first_split, s_end, code, preset0, "CAM_01_WIDE_2SHOT", default_eye))
+                else:
+                    shots.append(shot_from_preset(preset0, first_split, s_end, code, motion="HOLD", eye_target=default_eye))
             else:
                 shots.append(shot_from_preset("CAM_01_WIDE_2SHOT", s_start, s_end, "BOTH", motion="CREEP_IN"))
             continue
@@ -976,22 +1010,25 @@ def plan_camera_plan(
             reaction_dur = min(1.30, max(0.8, round(scene_dur * 0.32, 3)))
             main_dur = scene_dur - reaction_dur
             main_end = round(s_start + main_dur, 3)
-            shots.append(shot_from_preset(default_preset, s_start, main_end, code, motion="CREEP_IN", eye_target=default_eye))
+            if main_dur > 5.0:
+                shots.extend(_subdivide_interval(s_start, main_end, code, default_preset, alt_preset, default_eye))
+            else:
+                shots.append(shot_from_preset(default_preset, s_start, main_end, code, motion="CREEP_IN", eye_target=default_eye))
             cu_preset = "CAM_04_CU_SPEAKER_B" if code == "B" else "CAM_05_CU_SPEAKER_A"
             shots.append(shot_from_preset(cu_preset, main_end, s_end, code, motion="SNAP_ZOOM", eye_target="CAMERA"))
         elif has_reaction and reaction_kind == "LISTENER":
             reaction_dur = min(1.25, max(0.8, round(scene_dur * 0.28, 3)))
             main_dur = scene_dur - reaction_dur
             main_end = round(s_start + main_dur, 3)
-            shots.append(shot_from_preset(default_preset, s_start, main_end, code, motion="CREEP_IN", eye_target=default_eye))
+            if main_dur > 5.0:
+                shots.extend(_subdivide_interval(s_start, main_end, code, default_preset, alt_preset, default_eye))
+            else:
+                shots.append(shot_from_preset(default_preset, s_start, main_end, code, motion="CREEP_IN", eye_target=default_eye))
             listener_code = "A" if code == "B" else "B"
             cu_preset = "CAM_05_CU_SPEAKER_A" if listener_code == "A" else "CAM_04_CU_SPEAKER_B"
             shots.append(shot_from_preset(cu_preset, main_end, s_end, listener_code, motion="HOLD", eye_target="PARTNER"))
         elif scene_dur > 5.0:
-            mid = round(s_start + scene_dur * 0.55, 3)
-            shots.append(shot_from_preset(default_preset, s_start, mid, code, motion="CREEP_IN", eye_target=default_eye))
-            alt_preset = "CAM_01_WIDE_2SHOT" if default_preset == "CAM_02_MED_BOARD" else "CAM_02_MED_BOARD"
-            shots.append(shot_from_preset(alt_preset, mid, s_end, code, motion="HOLD", eye_target=default_eye))
+            shots.extend(_subdivide_interval(s_start, s_end, code, default_preset, alt_preset, default_eye))
         else:
             shots.append(shot_from_preset(default_preset, s_start, s_end, code, motion="CREEP_IN", eye_target=default_eye))
 

@@ -102,7 +102,7 @@ class Scene(BaseModel):
 
     scene_number: int = Field(..., ge=1, le=20)
     speaker: str = Field(..., min_length=1, max_length=30)
-    dialogue_line: str = Field(..., min_length=1, max_length=250)
+    dialogue_line: str = Field(..., min_length=1, max_length=400)
     action: str = Field(..., min_length=1, max_length=200)
     pose: Pose = Field(default=Pose.IDLE)
     camera_move: CameraMove = Field(default=CameraMove.STATIC)
@@ -140,7 +140,8 @@ class Scene(BaseModel):
         clean = v.lower().strip()
         allowed = {
             "idle", "wave", "point", "explain", "open_hand", "thumbs_up", "shrug",
-            "point_board", "point_other", "nod", "head_tilt", "lean_speaker", "listening_reaction"
+            "point_board", "point_other", "nod", "head_tilt", "lean_speaker", "listening_reaction",
+            "walk", "raise_hand"
         }
         if clean not in allowed:
             raise ValueError(f"Invalid gesture '{v}'. Allowed gestures: {sorted(list(allowed))}")
@@ -166,7 +167,7 @@ class ScriptPlan(BaseModel):
     title: str = Field(..., min_length=1, max_length=80)
     art_style: str = Field(..., min_length=1, max_length=50)
     emotional_arc: str = Field(..., min_length=5, max_length=200)
-    characters: List[Character] = Field(..., min_length=2, max_length=3)
+    characters: List[Character] = Field(..., min_length=1, max_length=3)
     scenes: List[Scene] = Field(..., min_length=4, max_length=10)
     camera_plan: Optional[Any] = Field(default=None)
     acting_plan: Optional[Any] = Field(default=None)

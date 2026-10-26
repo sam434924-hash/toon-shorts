@@ -7,7 +7,7 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 ### `make`
 - **Description**: Generates an end-to-end 9:16 vertical short animated video.
 - **Files**: `src/toonshorts/cli.py`, `src/toonshorts/core/pipeline.py`
-- **Config Flags / Options**: `--style`, `--topic`, `--yes`, `--mock`, `--fast`, `--workers`, `--llm`, `--voice`, `--voice-engine`, `--allow-noncommercial`, `--renderer`, `--motion`, `--output-dir`, `--overwrite`, `--keep-temp`, `--allow-fallback`
+- **Config Flags / Options**: `--style`, `--topic`, `--brief`, `--scene`, `--stills-only`, `--yes`, `--mock`, `--fast`, `--workers`, `--llm`, `--voice`, `--voice-engine`, `--allow-noncommercial`, `--renderer`, `--motion`, `--output-dir`, `--overwrite`, `--keep-temp`, `--allow-fallback`, `--allow-low-score`
 - **Tests**: `tests/smoke/test_smoke_pipeline.py`, `tests/unit/test_fast_preview.py`, `tests/unit/test_parallel_render.py`, `tests/unit/test_video_folders.py`, `tests/unit/test_audio_visual_sync.py`
 
 ### `clean-tmp`
@@ -282,8 +282,8 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Tests**: `tests/unit/test_layout_planner.py`
 
 ### `layout_verification` (Continuous Beat Sampling & Visual Review Gate)
-- **Description**: Automated layout collision and visual gate checking scene DOM layouts across every beat time (sampling every 100ms plus at each enter and exit) for undeclared overlaps, minimum slot gap violations (<16px), text-over-text collisions, text-over-busy-shapes contrast collisions, elements outside allocated slot bounds, more than 3 visible elements limit, horizontal visual balance warnings (>70% area on one side), and scene still verification against declared layout blocks.
-- **Files**: `src/toonshorts/core/layout_checker.py`, `src/toonshorts/core/visual_checker.py`, `src/toonshorts/cli.py`
-- **Capabilities**: Automated Playwright continuous timeline seek sampling, bounding box geometry collision detection, corner badge declared overlap exemptions, still-to-layout-block discrepancy diagnostics, and visual_review.md quality gate generation.
+- **Description**: Automated layout collision and visual gate checking scene DOM layouts across every beat time (sampling every 100ms plus at each enter and exit) for undeclared overlaps, minimum slot gap violations (<16px), text-over-text collisions, text-over-busy-shapes contrast collisions, elements outside allocated slot bounds, more than 3 visible elements limit, horizontal visual balance warnings (>70% area on one side), light and dark theme board pixel contrast measurement (>=4.5:1 text and strokes), top-caption positioning support, and scene still verification against declared layout blocks.
+- **Files**: `src/toonshorts/core/layout_checker.py`, `src/toonshorts/core/visual_checker.py`, `src/toonshorts/core/subtitles.py`, `src/toonshorts/core/assembler.py`, `src/toonshorts/cli.py`
+- **Capabilities**: Automated Playwright continuous timeline seek sampling, bounding box geometry collision detection, corner badge declared overlap exemptions, still-to-layout-block discrepancy diagnostics, theme-adaptive pixel contrast calculation, timeline subtle SFX track mixing, and visual_review.md quality gate generation.
 - **Tests**: `tests/unit/test_layout_checker.py`, `tests/unit/test_phase2_quality_gate.py`
 

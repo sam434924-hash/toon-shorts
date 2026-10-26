@@ -1,0 +1,6 @@
+{
+  "level": 1,
+  "motion_preset": "pop",
+  "label": "Think Act Verify Pillars",
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 660 110\" width=\"660\" height=\"110\"><g><rect x=\"10\" y=\"15\" width=\"180\" height=\"75\" rx=\"16\" fill=\"#2563eb\" stroke=\"#1e3a8a\" stroke-width=\"3.5\"/><text x=\"100\" y=\"62\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"28\" fill=\"#ffffff\" text-anchor=\"middle\">THINK.</text></g><path d=\"M205 52 L225 52\" stroke=\"#0f172a\" stroke-width=\"3.5\"/><polygon points=\"230,52 222,47 222,57\" fill=\"#0f172a\"/><g transform=\"translate(235, 0)\"><rect x=\"10\" y=\"15\" width=\"180\" height=\"75\" rx=\"16\" fill=\"#7c3aed\" stroke=\"#4c1d95\" stroke-width=\"3.5\"/><text x=\"100\" y=\"62\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"28\" fill=\"#ffffff\" text-anchor=\"middle\">ACT.</text></g><path d=\"M445 52 L465 52\" stroke=\"#0f172a\" stroke-width=\"3.5\"/><polygon points=\"470,52 462,47 462,57\" fill=\"#0f172a\"/><g transform=\"translate(475, 0)\"><rect x=\"10\" y=\"15\" width=\"180\" height=\"75\" rx=\"16\" fill=\"#10b981\" stroke=\"#065f46\" stroke-width=\"3.5\"/><text x=\"100\" y=\"62\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"28\" fill=\"#ffffff\" text-anchor=\"middle\">VERIFY.</text></g></svg>"
+}

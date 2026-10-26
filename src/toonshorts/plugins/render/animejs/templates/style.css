@@ -672,6 +672,11 @@ body.parallax-bg-enabled .layer-board {
   transform-origin: 50% 50%;
 }
 
+.board-object svg {
+  max-width: 100%;
+  height: auto;
+}
+
 .bo-text-pop {
   font-weight: 800;
   text-align: center;

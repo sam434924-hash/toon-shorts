@@ -1,5 +1,7 @@
 # Changelog
 
+- 2026-10-26: Phase 5 Unified word-level speech bubble captions and safe zone enforcement: removed duplicate static HTML paragraph box, stopped FFmpeg burning subtitles, integrated interactive speech bubble with active yellow word highlight and speaker tail into browser rendering layer, and enforced strict safe-zone constants (SAFE_TOP=290, SAFE_BOTTOM=480, SAFE_SIDES=150) in config.py.
+
 - 2026-10-26: Phase 4 Multi-beat acting timeline, walk translation, and unclipped framing: replaced single 1.8s cue with multi-beat timelines per scene (beats <= 3.4s apart tied to words/board objects), enabled scene.pose field mapping in renderer, implemented walk X/Y translation onto the stage for boy_b in Scene 1 at 0:00, and removed overflow:hidden clipping on #zone-character and camera content.
 
 - 2026-10-26: Phase 3 Board content and kinetic storyboard animations: implemented PLAN-ACT-CHECK-ADJUST sequential reveal with coordinate looping glowing dot and loop back error arrow, card snap animations for meeting briefing, cursor block barrier, safety shield reveal, THINK-ACT-VERIFY pillar reveal, and updated annotations.py to strictly use authored titles/items and eliminate sentence-fragment titles and sentence slicing.

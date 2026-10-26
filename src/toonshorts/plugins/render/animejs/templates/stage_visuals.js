@@ -863,27 +863,27 @@ window.updateBoardObjects = function(ms) {
             const arrLoop = svgEl.querySelector(".arrow-loop");
             const dot = svgEl.querySelector(".glowing-dot");
 
-            const setNodeState = (el, tTrigger) => {
+            const setNodeState = (el, tTrigger, baseTx) => {
               if (!el) return;
               if (elapsed >= tTrigger) {
                 const pN = Math.min(1.0, (elapsed - tTrigger) / 350.0);
                 const s = pN < 0.65 ? (pN / 0.65) * 1.15 : 1.15 - ((pN - 0.65) / 0.35) * 0.15;
                 el.style.opacity = "1";
-                el.style.transform = "scale(" + Math.max(0, s).toFixed(3) + ")";
-                el.style.transformOrigin = "center";
+                el.style.transform = "translate(" + baseTx + "px, 0px) scale(" + Math.max(0, s).toFixed(3) + ")";
+                el.style.transformOrigin = (baseTx + 77) + "px 52px";
               } else {
                 el.style.opacity = "0";
-                el.style.transform = "scale(0)";
+                el.style.transform = "translate(" + baseTx + "px, 0px) scale(0)";
               }
             };
 
-            setNodeState(nPlan, 0);
+            setNodeState(nPlan, 0, 0);
             if (arr1) arr1.style.opacity = elapsed >= 350 ? "1" : "0";
-            setNodeState(nAct, 500);
+            setNodeState(nAct, 500, 180);
             if (arr2) arr2.style.opacity = elapsed >= 850 ? "1" : "0";
-            setNodeState(nCheck, 1000);
+            setNodeState(nCheck, 1000, 360);
             if (arr3) arr3.style.opacity = elapsed >= 1350 ? "1" : "0";
-            setNodeState(nAdjust, 1500);
+            setNodeState(nAdjust, 1500, 540);
             if (arrLoop) arrLoop.style.opacity = elapsed >= 1800 ? "1" : "0";
 
             // Glowing dot travelling along the nodes and loop back
@@ -921,14 +921,15 @@ window.updateBoardObjects = function(ms) {
               const tCard = cIdx * 350;
               if (elapsed >= tCard) {
                 const pC = Math.min(1.0, (elapsed - tCard) / 380.0);
+                const baseCardX = cIdx * 170;
                 if (cIdx < 3) {
-                  const tx = (1.0 - pC) * -65;
+                  const tx = baseCardX + (1.0 - pC) * -65;
                   card.style.transform = "translateX(" + tx.toFixed(1) + "px)";
                   card.style.opacity = String(pC.toFixed(3));
                 } else {
                   // Final report snaps into place
                   const snap = pC < 0.65 ? (pC / 0.65) * 1.22 : 1.22 - ((pC - 0.65) / 0.35) * 0.22;
-                  card.style.transform = "scale(" + Math.max(0, snap).toFixed(3) + ")";
+                  card.style.transform = "translate(510px, 0px) scale(" + Math.max(0, snap).toFixed(3) + ")";
                   card.style.opacity = String(pC.toFixed(3));
                   card.style.transformOrigin = "595px 65px";
                 }
@@ -961,7 +962,7 @@ window.updateBoardObjects = function(ms) {
               if (elapsed >= 800) {
                 const pS = Math.min(1.0, (elapsed - 800) / 600.0);
                 const sScale = pS < 0.65 ? (pS / 0.65) * 1.15 : 1.15 - ((pS - 0.65) / 0.35) * 0.15;
-                shield.style.transform = "scale(" + Math.max(0, sScale).toFixed(3) + ")";
+                shield.style.transform = "translate(365px, 0px) scale(" + Math.max(0, sScale).toFixed(3) + ")";
                 shield.style.opacity = "1";
                 shield.style.transformOrigin = "505px 65px";
               } else {
@@ -978,25 +979,25 @@ window.updateBoardObjects = function(ms) {
             const arr2 = svgEl.querySelector(".arrow-p2");
             const pVerify = svgEl.querySelector(".pillar-verify");
 
-            const popWord = (el, tTrigger) => {
+            const popWord = (el, tTrigger, baseTx) => {
               if (!el) return;
               if (elapsed >= tTrigger) {
                 const pW = Math.min(1.0, (elapsed - tTrigger) / 400.0);
                 const s = pW < 0.65 ? (pW / 0.65) * 1.18 : 1.18 - ((pW - 0.65) / 0.35) * 0.18;
                 el.style.opacity = "1";
-                el.style.transform = "scale(" + Math.max(0, s).toFixed(3) + ")";
-                el.style.transformOrigin = "center";
+                el.style.transform = "translate(" + baseTx + "px, 0px) scale(" + Math.max(0, s).toFixed(3) + ")";
+                el.style.transformOrigin = (baseTx + 90) + "px 50px";
               } else {
                 el.style.opacity = "0";
-                el.style.transform = "scale(0)";
+                el.style.transform = "translate(" + baseTx + "px, 0px) scale(0)";
               }
             };
 
-            popWord(pThink, 0);
+            popWord(pThink, 0, 0);
             if (arr1) arr1.style.opacity = elapsed >= 350 ? "1" : "0";
-            popWord(pAct, 550);
+            popWord(pAct, 550, 235);
             if (arr2) arr2.style.opacity = elapsed >= 900 ? "1" : "0";
-            popWord(pVerify, 1100);
+            popWord(pVerify, 1100, 475);
           }
         }
       } else if (sLevel === 2) {

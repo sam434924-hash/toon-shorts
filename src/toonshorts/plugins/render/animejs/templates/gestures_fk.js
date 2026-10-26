@@ -457,10 +457,10 @@ function seekLimbAnimation(ms, frameIdx) {
         angHead = Math.sin((ms - trigMs) * 0.016) * 2.5 * gPhase;
 
         // X/Y translation across the stage (character walks onto stage from left and settles)
-        const walkDurMs = 2800.0;
+        const walkDurMs = 850.0;
         const pWalk = Math.min(1.0, Math.max(0.0, (ms - trigMs) / walkDurMs));
         const smoothStep = pWalk * pWalk * (3.0 - 2.0 * pWalk);
-        const tx = (1.0 - smoothStep) * -220.0;
+        const tx = (1.0 - smoothStep) * -55.0;
         const ty = -Math.abs(Math.sin((ms - trigMs) * 0.008)) * 8.0 * (1.0 - smoothStep);
         if (speakerEl) {
           speakerEl.style.transform = `translateX(${tx.toFixed(2)}px) translateY(${ty.toFixed(2)}px)`;

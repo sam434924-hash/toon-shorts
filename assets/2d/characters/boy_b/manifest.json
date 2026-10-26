@@ -164,6 +164,8 @@
     "nod",
     "head_tilt",
     "lean_speaker",
-    "listening_reaction"
+    "listening_reaction",
+    "walk",
+    "raise_hand"
   ]
 }
