@@ -88,6 +88,12 @@ VIDEO_FPS = 30
 MIN_DURATION_SECONDS = 25
 MAX_DURATION_SECONDS = 65
 
+# Safe zone boundaries (Phase 5 specifications)
+SAFE_TOP = 290
+SAFE_BOTTOM = 480  # 670 if main platform is Shorts
+SAFE_BOTTOM_SHORTS = 670
+SAFE_SIDES = 150
+
 # Reserved subtitle strip for vertical video layouts (night_studio, whiteboard)
 # Strictly clear of board (65..1045), characters (1040..1540), desk props (1420..1550), and desk bevel (1540..1578)
 NIGHT_STUDIO_SUBTITLE_STRIP = {

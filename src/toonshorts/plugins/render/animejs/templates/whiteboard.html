@@ -123,6 +123,9 @@
           if (typeof initRoughSketches === "function") {
             initRoughSketches();
           }
+          if (typeof window.initSpeechBubble === "function") {
+            window.initSpeechBubble();
+          }
           window.seekTo(0);
         });
       } else {

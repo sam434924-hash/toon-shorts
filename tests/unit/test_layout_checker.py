@@ -63,7 +63,7 @@ def test_layout_checker_detects_board_above_canvas_and_inside_safe_zone(tmp_path
         enable_split_camera_zones=True,
     )
     # Inject bad top coordinate on board zone
-    corrupted_html = html.replace("top: 288px;", "top: -150px;")
+    corrupted_html = html.replace("top: 290px;", "top: -150px;").replace("top: 288px;", "top: -150px;")
     html_file = tmp_path / "scene_2_still.html"
     html_file.write_text(corrupted_html, encoding="utf-8")
 

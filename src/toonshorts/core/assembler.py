@@ -225,6 +225,62 @@ def assemble_final_video(
     if res.returncode != 0:
         raise RuntimeError(f"FFmpeg concat failed:\n{res.stderr}")
 
+    # Mix quiet ambient background music and subtle SFX track into unified video
+    from .audio_effects import create_ambient_bg_music, create_timeline_sfx_track
+    bg_music_path = temp_dir / "bg_music.wav"
+    sfx_track_path = temp_dir / "sfx_track.wav"
+    total_audio_dur = sum(getattr(a, "scene_total_duration", 0.0) for a in scene_audios)
+    if total_audio_dur > 0:
+        create_ambient_bg_music(total_audio_dur, bg_music_path)
+        try:
+            create_timeline_sfx_track(plan, scene_audios, sfx_map, total_audio_dur, sfx_track_path)
+        except Exception as s_err:
+            logger.warning("Timeline SFX track synthesis failed: %s", s_err)
+
+        mixed_video = temp_dir / "unsubbed_mixed.mp4"
+        if sfx_track_path.is_file():
+            mix_audio_cmd = [
+                "ffmpeg", "-y",
+                "-i", str(unsubbed_video.name),
+                "-i", str(bg_music_path.name),
+                "-i", str(sfx_track_path.name),
+                "-filter_complex", "[0:a][1:a][2:a]amix=inputs=3:duration=first:dropout_transition=2:weights=1.0 0.15 0.35[a]",
+                "-map", "0:v", "-map", "[a]",
+                "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+                str(mixed_video.name)
+            ]
+        else:
+            mix_audio_cmd = [
+                "ffmpeg", "-y",
+                "-i", str(unsubbed_video.name),
+                "-i", str(bg_music_path.name),
+                "-filter_complex", "[0:a][1:a]amix=inputs=2:duration=first:dropout_transition=2:weights=1.0 0.15[a]",
+                "-map", "0:v", "-map", "[a]",
+                "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+                str(mixed_video.name)
+            ]
+        try:
+            res_mix = subprocess.run(mix_audio_cmd, cwd=temp_dir, capture_output=True, text=True, stdin=subprocess.DEVNULL)
+            if res_mix.returncode == 0 and mixed_video.is_file():
+                unsubbed_video = mixed_video
+        except Exception as e:
+            logger.warning("Audio mixing skipped: %s", e)
+
+        # Copy audio assets to output_dir so video folder is completely self-contained
+        if output_dir != temp_dir:
+            try:
+                if bg_music_path.is_file():
+                    shutil.copyfile(str(bg_music_path), str(output_dir / "bg_music.wav"))
+                if sfx_track_path.is_file():
+                    shutil.copyfile(str(sfx_track_path), str(output_dir / "sfx_track.wav"))
+                out_sfx_dir = output_dir / "sfx"
+                out_sfx_dir.mkdir(exist_ok=True)
+                for s_name, s_p in sfx_map.items():
+                    if s_p.is_file():
+                        shutil.copyfile(str(s_p), str(out_sfx_dir / s_p.name))
+            except Exception:
+                pass
+
     # 4. Generate ASS subtitles
     ass_path = temp_dir / "captions.ass"
     generate_ass_subtitles(plan, scene_audios, style_preset, ass_path)
@@ -234,24 +290,10 @@ def assemble_final_video(
         except Exception:
             pass
 
-    # 5. Burn in subtitles using properly escaped path
-    escaped_ass = escape_ffmpeg_subtitles_path(ass_path.resolve())
-    final_burn_cmd = [
-        "ffmpeg", "-y",
-        "-i", str(unsubbed_video.name),
-        "-vf", f"subtitles={escaped_ass}",
-        "-c:v", "libx264", "-preset", "ultrafast" if fast else "medium", "-crf", "18", "-pix_fmt", "yuv420p",
-        "-c:a", "aac", "-b:a", "192k",
-        "-r", str(target_fps),
-    ]
-    final_burn_cmd.append(str(final_output_path.resolve()))
-
-    logger.info("Burning in ASS word-level captions to final video...")
-    res = subprocess.run(final_burn_cmd, cwd=temp_dir, capture_output=True, text=True, stdin=subprocess.DEVNULL)
-    if res.returncode != 0:
-        raise RuntimeError(
-            f"Subtitle burn-in failed (never output a video without captions):\n{res.stderr}"
-        )
+    # 5. Phase 5: Stop FFmpeg burning captions.ass into the video. Keep captions.ass only as a sidecar file.
+    logger.info("Phase 5: Subtitle burn-in skipped. captions.ass preserved as sidecar only: %s", output_dir / "captions.ass")
+    if unsubbed_video.resolve() != final_output_path.resolve():
+        shutil.copyfile(str(unsubbed_video), str(final_output_path))
 
     logger.info("Successfully assembled video: %s", final_output_path)
     return final_output_path

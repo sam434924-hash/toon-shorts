@@ -1016,3 +1016,228 @@ window.updateBoardObjects = function(ms) {
     }
   });
 };
+
+// Phase 5: Interactive Speech Bubble & Word-Level Highlighting Engine
+(function setupSpeechBubbleEngine() {
+  const SAFE_TOP = 290;
+  const SAFE_BOTTOM = 480;
+  const SAFE_SIDES = 150;
+  const SAFE_MAX_Y = 1920 - SAFE_BOTTOM; // 1440
+  const SAFE_MAX_X = 1080 - SAFE_SIDES;  // 930
+
+  window.initSpeechBubble = function() {
+    const bubbleEl = document.getElementById("speech-bubble");
+    const bubbleText = document.getElementById("speech-bubble-text");
+    if (!bubbleEl || !bubbleText) return;
+
+    const wts = window.__wordTimings || [];
+    if (!wts || wts.length === 0) {
+      bubbleEl.style.display = "none";
+      return;
+    }
+
+    const speakerSlot = window.__speakerSlotId || "character-rig";
+    const isRightSpeaker = (speakerSlot === "character-rig-right");
+    bubbleEl.classList.remove("speaker-slot-left", "speaker-slot-right", "speaker-boy", "speaker-girl");
+    if (isRightSpeaker) {
+      bubbleEl.classList.add("speaker-slot-right", "speaker-girl");
+    } else {
+      bubbleEl.classList.add("speaker-slot-left", "speaker-boy");
+    }
+
+    // Split words into sentences / chunks that fit in max 2 lines
+    const sentences = [];
+    let currentWords = [];
+    wts.forEach((wt, idx) => {
+      currentWords.push(wt);
+      const wStr = String(wt.word || "").trim();
+      const isPunctEnd = /[.?!]$/.test(wStr);
+      const isChunkMax = currentWords.length >= 8;
+      const isLast = idx === wts.length - 1;
+      if (isPunctEnd || isChunkMax || isLast) {
+        const start_ms = currentWords[0].start_ms;
+        const end_ms = currentWords[currentWords.length - 1].end_ms;
+        sentences.push({
+          start_ms,
+          end_ms,
+          words: currentWords.slice()
+        });
+        currentWords = [];
+      }
+    });
+
+    // Auto-placement candidate positions
+    const testCandidates = (fontSize) => {
+      const bHeight = (fontSize >= 50) ? 165 : 145;
+      const c1_beside = isRightSpeaker
+        ? { name: "beside_head", left: 160, top: 850, width: 440, height: bHeight }
+        : { name: "beside_head", left: 480, top: 850, width: 440, height: bHeight };
+
+      const c2_below = {
+        name: "below_head",
+        left: 170,
+        top: 1250,
+        width: 740,
+        height: bHeight
+      };
+
+      const c3_above = {
+        name: "above_head",
+        left: 170,
+        top: 295,
+        width: 740,
+        height: bHeight
+      };
+
+      const boardEl = document.getElementById("zone-board") || document.getElementById("layer-board");
+      const boardRect = boardEl ? boardEl.getBoundingClientRect() : { left: 150, right: 930, top: 290, bottom: 810 };
+
+      const charLeftEl = document.getElementById("character-rig");
+      const charRightEl = document.getElementById("character-rig-right");
+      const charLeftRect = charLeftEl ? charLeftEl.getBoundingClientRect() : { left: 160, right: 460, top: 830, bottom: 1300 };
+      const charRightRect = (charRightEl && charRightEl.style.display !== "none") ? charRightEl.getBoundingClientRect() : null;
+
+      const candidates = [c1_beside, c2_below, c3_above];
+      for (const cand of candidates) {
+        // 1. Safe zone test
+        if (cand.left < SAFE_SIDES || (cand.left + cand.width) > SAFE_MAX_X) continue;
+        if (cand.top < SAFE_TOP || (cand.top + cand.height) > SAFE_MAX_Y) continue;
+
+        // 2. Board overlap test
+        const bOverlapX = Math.max(0, Math.min(cand.left + cand.width, boardRect.right) - Math.max(cand.left, boardRect.left));
+        const bOverlapY = Math.max(0, Math.min(cand.top + cand.height, boardRect.bottom) - Math.max(cand.top, boardRect.top));
+        if (bOverlapX * bOverlapY > 50) continue;
+
+        // 3. Face overlap test
+        if (charLeftEl) {
+          const faceL = { left: charLeftRect.left + 50, right: charLeftRect.right - 50, top: charLeftRect.top, bottom: charLeftRect.top + 200 };
+          const fOverlapX = Math.max(0, Math.min(cand.left + cand.width, faceL.right) - Math.max(cand.left, faceL.left));
+          const fOverlapY = Math.max(0, Math.min(cand.top + cand.height, faceL.bottom) - Math.max(cand.top, faceL.top));
+          if (fOverlapX * fOverlapY > 50) continue;
+        }
+        if (charRightRect) {
+          const faceR = { left: charRightRect.left + 50, right: charRightRect.right - 50, top: charRightRect.top, bottom: charRightRect.top + 200 };
+          const fOverlapX = Math.max(0, Math.min(cand.left + cand.width, faceR.right) - Math.max(cand.left, faceR.left));
+          const fOverlapY = Math.max(0, Math.min(cand.top + cand.height, faceR.bottom) - Math.max(cand.top, faceR.top));
+          if (fOverlapX * fOverlapY > 50) continue;
+        }
+
+        return cand;
+      }
+      return null;
+    };
+
+    let chosenCandidate = testCandidates(54);
+    let chosenFontSize = 54;
+    if (!chosenCandidate) {
+      chosenCandidate = testCandidates(46);
+      chosenFontSize = 46;
+      console.warn("Speech bubble auto-placement shrunken to min font size 46px");
+    }
+    if (!chosenCandidate) {
+      chosenCandidate = { name: "below_head_fallback", left: 170, top: 1250, width: 740, height: 150 };
+      chosenFontSize = 46;
+    }
+
+    bubbleEl.style.left = chosenCandidate.left + "px";
+    bubbleEl.style.top = chosenCandidate.top + "px";
+    bubbleEl.style.width = chosenCandidate.width + "px";
+    bubbleEl.style.fontSize = chosenFontSize + "px";
+
+    const tailEl = bubbleEl.querySelector(".speech-bubble-tail");
+    if (tailEl) {
+      if (chosenCandidate.name === "beside_head") {
+        if (!isRightSpeaker) {
+          tailEl.style.left = "-26px";
+          tailEl.style.top = "40px";
+          tailEl.style.transform = "rotate(90deg)";
+        } else {
+          tailEl.style.right = "-26px";
+          tailEl.style.top = "40px";
+          tailEl.style.transform = "rotate(-90deg)";
+        }
+      } else if (chosenCandidate.name.indexOf("below") !== -1) {
+        tailEl.style.top = "-26px";
+        tailEl.style.left = (!isRightSpeaker) ? "80px" : (chosenCandidate.width - 110) + "px";
+        tailEl.style.transform = "rotate(180deg)";
+      } else {
+        tailEl.style.bottom = "-26px";
+        tailEl.style.left = (!isRightSpeaker) ? "80px" : (chosenCandidate.width - 110) + "px";
+        tailEl.style.transform = "rotate(0deg)";
+      }
+    }
+
+    window.__bubbleSentences = sentences;
+    window.__currentSentenceIdx = -1;
+    window.__speechBubbleInitialized = true;
+  };
+
+  window.updateSpeechBubble = function(ms) {
+    if (!window.__speechBubbleInitialized) {
+      window.initSpeechBubble();
+    }
+    const bubbleEl = document.getElementById("speech-bubble");
+    const bubbleText = document.getElementById("speech-bubble-text");
+    if (!bubbleEl || !bubbleText) return;
+
+    const sentences = window.__bubbleSentences;
+    if (!sentences || sentences.length === 0) {
+      bubbleEl.style.display = "none";
+      return;
+    }
+
+    let activeSentIdx = -1;
+    for (let i = 0; i < sentences.length; i++) {
+      const s = sentences[i];
+      if (ms >= s.start_ms && ms <= s.end_ms + 250) {
+        activeSentIdx = i;
+        break;
+      }
+    }
+
+    if (activeSentIdx === -1) {
+      const firstStart = sentences[0].start_ms;
+      const lastEnd = sentences[sentences.length - 1].end_ms;
+      if (ms >= firstStart && ms <= lastEnd) {
+        for (let i = 0; i < sentences.length - 1; i++) {
+          if (ms > sentences[i].end_ms && ms < sentences[i+1].start_ms) {
+            activeSentIdx = i;
+            break;
+          }
+        }
+      }
+    }
+
+    if (activeSentIdx === -1) {
+      bubbleEl.style.display = "none";
+      return;
+    }
+
+    bubbleEl.style.display = "flex";
+
+    if (window.__currentSentenceIdx !== activeSentIdx) {
+      window.__currentSentenceIdx = activeSentIdx;
+      const sent = sentences[activeSentIdx];
+      bubbleText.innerHTML = "";
+      sent.words.forEach((w, wIdx) => {
+        const span = document.createElement("span");
+        span.className = "bubble-word";
+        span.id = "bw-" + wIdx;
+        span.textContent = w.word;
+        bubbleText.appendChild(span);
+      });
+    }
+
+    const sent = sentences[activeSentIdx];
+    sent.words.forEach((w, wIdx) => {
+      const span = document.getElementById("bw-" + wIdx);
+      if (span) {
+        if (ms >= w.start_ms && ms < w.end_ms) {
+          span.classList.add("active-word");
+        } else {
+          span.classList.remove("active-word");
+        }
+      }
+    });
+  };
+})();

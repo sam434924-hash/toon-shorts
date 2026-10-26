@@ -23,11 +23,11 @@ from toonshorts.core import config
 
 logger = logging.getLogger("toonshorts.visual_checker")
 
-# Safe zone boundaries (Phase 5 specifications)
-SAFE_TOP = 290
-SAFE_BOTTOM = 480  # 670 for vertical shorts platform safety
-SAFE_BOTTOM_SHORTS = 670
-SAFE_SIDES = 150
+# Safe zone boundaries imported from single config source (Phase 5 specifications)
+SAFE_TOP = config.SAFE_TOP
+SAFE_BOTTOM = config.SAFE_BOTTOM
+SAFE_BOTTOM_SHORTS = config.SAFE_BOTTOM_SHORTS
+SAFE_SIDES = config.SAFE_SIDES
 
 
 def srgb_to_linear(c: float) -> float:
@@ -554,6 +554,7 @@ def perform_visual_check(
             dur_sec = max(2.5, (wts[-1]["end_time"] + 0.4)) if wts else 4.0
 
             # Load scene HTML if available in work/
+            html_file = None
             if page:
                 html_candidates = [
                     v_dir / "work" / f"scene_{sc_num}_still.html",

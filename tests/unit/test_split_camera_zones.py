@@ -197,6 +197,7 @@ def test_flag_on_generates_split_zones_markup():
     assert "split-zones-active" in html_on
     assert 'id="zone-board"' in html_on
     assert 'id="zone-character"' in html_on
-    assert 'id="zone-subtitles"' in html_on
+    assert 'id="zone-speech-bubble"' in html_on
+    assert 'id="zone-subtitles"' not in html_on
     assert 'id="board-camera-content"' in html_on
     assert 'id="character-camera-content"' in html_on

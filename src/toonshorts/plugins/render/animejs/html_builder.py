@@ -644,10 +644,15 @@ def generate_whiteboard_html(
       </div>
     </div>
 
-    <!-- SUBTITLES (Separate Top Layer, Outside Camera Zones) -->
-    <div id="zone-subtitles" class="zone-container zone-subtitles">
-      <div id="subtitles-content" class="subtitles-content">
-        <span id="subtitles-text">{{SUBTITLE_PREVIEW_TEXT}}</span>
+    <!-- SPEECH BUBBLE (Phase 5: Unified Word-by-Word Caption System) -->
+    <div id="zone-speech-bubble" class="zone-container zone-speech-bubble">
+      <div id="speech-bubble" class="speech-bubble speaker-slot-left" style="display: none;">
+        <svg class="speech-bubble-tail" viewBox="0 0 32 32" width="32" height="32">
+          <polygon points="0,0 32,16 16,32" />
+        </svg>
+        <div class="speech-bubble-content">
+          <div id="speech-bubble-text" class="speech-bubble-text">{{SUBTITLE_PREVIEW_TEXT}}</div>
+        </div>
       </div>
     </div>"""
     else:
@@ -691,6 +696,17 @@ def generate_whiteboard_html(
         <div class="desk-bevel"></div>
         <div class="desk-top"></div>
         <div class="desk-body"></div>
+      </div>
+    </div>
+    <!-- SPEECH BUBBLE (Phase 5: Unified Word-by-Word Caption System) -->
+    <div id="zone-speech-bubble" class="zone-container zone-speech-bubble">
+      <div id="speech-bubble" class="speech-bubble speaker-slot-left" style="display: none;">
+        <svg class="speech-bubble-tail" viewBox="0 0 32 32" width="32" height="32">
+          <polygon points="0,0 32,16 16,32" />
+        </svg>
+        <div class="speech-bubble-content">
+          <div id="speech-bubble-text" class="speech-bubble-text">{{SUBTITLE_PREVIEW_TEXT}}</div>
+        </div>
       </div>
     </div>"""
 

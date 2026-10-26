@@ -777,12 +777,12 @@ body.parallax-bg-enabled .layer-board {
 }
 
 
-/* Phase 4C: Two Independent Camera Zones Layout (Split Zones) */
+/* Phase 4C: Two Independent Camera Zones Layout (Split Zones) - Scaled to Safe Zone (Phase 5) */
 body.split-zones-active #zone-board {
   position: absolute;
-  top: 288px;
-  left: 60px;
-  width: 900px;
+  top: 290px;
+  left: 150px;
+  width: 780px;
   height: 520px;
   overflow: hidden;
   z-index: 10;
@@ -794,7 +794,7 @@ body.split-zones-active #zone-board #board-camera-content {
   position: absolute;
   top: 0;
   left: 0;
-  width: 900px;
+  width: 780px;
   height: 520px;
   transform-origin: 50% 0%;
   will-change: transform;
@@ -804,9 +804,9 @@ body.split-zones-active #zone-board .whiteboard-outer {
   position: absolute;
   top: 0;
   left: 0;
-  width: 900px;
+  width: 780px;
   height: 520px;
-  padding: 18px 28px;
+  padding: 18px 20px;
   border-radius: 28px;
 }
 
@@ -814,7 +814,7 @@ body.split-zones-active #zone-board #rough-canvas {
   position: absolute;
   top: 0;
   left: 0;
-  width: 860px;
+  width: 740px;
   height: 500px;
 }
 
@@ -945,34 +945,95 @@ body.split-zones-active #zone-character .desk-container {
   z-index: 7;
 }
 
-body.split-zones-active #zone-subtitles {
+/* Phase 5: Interactive Speech Bubble & Word-Level Captions */
+#zone-speech-bubble {
   position: absolute;
-  top: 1355px;
-  left: 60px;
-  width: 900px;
-  height: 80px;
-  overflow: hidden;
-  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 1080px;
+  height: 1920px;
   pointer-events: none;
+  z-index: 100;
+}
+
+.speech-bubble {
+  position: absolute;
+  box-sizing: border-box;
+  padding: 16px 28px;
+  border-radius: 24px;
+  font-family: 'Arial', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 54px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), 0 0 20px rgba(56, 189, 248, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: opacity 0.12s ease-out;
 }
 
-body.split-zones-active #subtitles-content {
-  max-width: 92%;
-  text-align: center;
-  padding: 8px 24px;
-  background: rgba(15, 23, 42, 0.88);
-  border: 2px solid rgba(56, 189, 248, 0.35);
-  border-radius: 14px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-}
-
-body.split-zones-active #subtitles-text {
+/* Left Speaker (boy_b / slot left) */
+.speech-bubble.speaker-slot-left,
+.speech-bubble.speaker-boy {
+  background: rgba(15, 23, 42, 0.94);
+  border: 4px solid #38bdf8;
   color: #ffffff;
-  font-size: 32px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+.speech-bubble.speaker-slot-left .speech-bubble-tail polygon,
+.speech-bubble.speaker-boy .speech-bubble-tail polygon {
+  fill: rgba(15, 23, 42, 0.94);
+  stroke: #38bdf8;
+  stroke-width: 4;
+}
+
+/* Right Speaker (girl / slot right) */
+.speech-bubble.speaker-slot-right,
+.speech-bubble.speaker-girl {
+  background: rgba(30, 27, 75, 0.94);
+  border: 4px solid #f472b6;
+  color: #ffffff;
+}
+.speech-bubble.speaker-slot-right .speech-bubble-tail polygon,
+.speech-bubble.speaker-girl .speech-bubble-tail polygon {
+  fill: rgba(30, 27, 75, 0.94);
+  stroke: #f472b6;
+  stroke-width: 4;
+}
+
+/* Bubble Content & Text */
+.speech-bubble-content {
+  width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
+
+.speech-bubble-text {
+  display: inline;
+}
+
+/* Word Spans */
+.bubble-word {
+  display: inline-block;
+  margin: 0 6px;
+  color: #f1f5f9;
+  transition: color 0.08s ease, transform 0.08s ease;
+}
+
+/* Active Highlighted Word (Bright Yellow) */
+.bubble-word.active-word {
+  color: #facc15;
+  font-weight: 900;
+  text-shadow: 0 0 16px rgba(250, 204, 21, 0.75), 0 2px 4px rgba(0, 0, 0, 0.9);
+  transform: scale(1.04);
+}
+
+.speech-bubble-tail {
+  position: absolute;
+  overflow: visible;
+  pointer-events: none;
 }

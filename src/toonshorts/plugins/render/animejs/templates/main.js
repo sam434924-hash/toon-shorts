@@ -127,6 +127,11 @@ window.seekAnimation = function(ms) {
   if (typeof window.updateNightStudioEffects === "function") {
     window.updateNightStudioEffects(ms);
   }
+
+  // 9. Interactive Speech Bubble (Phase 5)
+  if (typeof window.updateSpeechBubble === "function") {
+    window.updateSpeechBubble(ms);
+  }
 };
 
 window.seekTo = window.seekAnimation;

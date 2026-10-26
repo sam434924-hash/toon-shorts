@@ -53,7 +53,9 @@ def generate_ass_subtitles(
     primary_color = caption_cfg.get("primary_color", "&H00FFFFFF")
     outline_color = caption_cfg.get("outline_color", "&H00111111")
     highlight_color = caption_cfg.get("highlight_color", "&H0000D8F6")
-    margin_v = caption_cfg.get("margin_v", 420)
+    alignment = caption_cfg.get("alignment", 8)
+    default_margin = 120 if alignment == 8 else 420
+    margin_v = caption_cfg.get("margin_v", default_margin)
     outline_width = caption_cfg.get("outline_width", 6)
     shadow = caption_cfg.get("shadow", 3)
     border_style = caption_cfg.get("border_style", 3 if style_preset.get("name") == "night_studio" else 1)
@@ -69,7 +71,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,{font_name},{font_size},{primary_color},&H000000FF,{outline_color},{back_color},-1,0,0,0,100,100,0,0,{border_style},{outline_width},{shadow},2,60,60,{margin_v},1
+Style: Default,{font_name},{font_size},{primary_color},&H000000FF,{outline_color},{back_color},-1,0,0,0,100,100,0,0,{border_style},{outline_width},{shadow},{alignment},60,60,{margin_v},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
