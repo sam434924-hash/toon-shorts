@@ -262,6 +262,68 @@ def register_image_command(args: argparse.Namespace) -> int:
         return 1
 
 
+def research_command(args: argparse.Namespace) -> int:
+    """Executes safe, offline-isolated web research step for up to 5 URLs."""
+    from toonshorts.core.research import safe_web_research
+    try:
+        res = safe_web_research(
+            urls=args.urls,
+            output_notes_path=Path(args.output) if getattr(args, "output", None) else None,
+            allowlist_path=Path(args.allowlist) if getattr(args, "allowlist", None) else None,
+        )
+        print(f"\nSafe Research completed. Notes saved to: {res['notes_file']}")
+        for e in res["entries"]:
+            st = "OK" if e["success"] else "REJECTED"
+            print(f"  [{st}] {e['url']} ({e['bytes_processed']} bytes)")
+        return 0
+    except Exception as e:
+        sys.stderr.write(f"Research error: {e}\n")
+        return 1
+
+
+def judge_command(args: argparse.Namespace) -> int:
+    """Evaluates rendered stills against design system tokens and rules."""
+    from toonshorts.core.design_judge import DesignJudge
+    from toonshorts.core.design_rules import load_theme_for_video
+    video_input = args.video_name
+    video_path = Path(video_input)
+    if not video_path.is_dir():
+        cand = config.VIDEOS_DIR / video_input
+        if cand.is_dir():
+            video_path = cand
+        else:
+            sys.stderr.write(f"Error: Video directory not found at '{video_input}' or '{cand}'.\n")
+            return 1
+
+    stills_dir = video_path / "stills"
+    if not stills_dir.is_dir():
+        sys.stderr.write(f"Error: Stills directory not found at '{stills_dir}'.\n")
+        return 1
+
+    theme_dict = load_theme_for_video(video_name=video_path.name, video_dir=video_path)
+    judge = DesignJudge(theme=theme_dict, video_name=video_path.name)
+    scene_file = video_path / "scene.json"
+    scene_plan = {}
+    if scene_file.is_file():
+        try:
+            scene_plan = json.loads(scene_file.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+
+    all_passed = True
+    for still_file in sorted(stills_dir.glob("*_still_*.png")):
+        res = judge.judge_still(still_file, scene_data=scene_plan)
+        if not res.passed:
+            all_passed = False
+            print(f"[FAIL] {still_file.name}:")
+            for iss in res.issues:
+                print(f"   - {iss}")
+        else:
+            print(f"[PASS] {still_file.name}")
+
+    return 0 if all_passed else 1
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="toonshorts",
@@ -342,6 +404,15 @@ def main():
     reg_img_parser.add_argument("--style", default="default", help="Art style of the image")
     reg_img_parser.add_argument("--source", default="generated", help="Source of image (default: generated)")
 
+    research_parser = subparsers.add_parser("research", help="Safely fetch plain text from domain-allowlisted sources")
+    research_parser.add_argument("urls", nargs="+", help="Target HTTPS URLs to research (max 5)")
+    research_parser.add_argument("--output", default="research_notes.md", help="Output notes file (default: research_notes.md)")
+    research_parser.add_argument("--allowlist", default=None, help="Custom domain allowlist JSON file")
+
+    judge_parser = subparsers.add_parser("judge", help="Evaluate rendered stills against design system rules")
+    judge_parser.add_argument("video_name", help="Name of video folder inside videos/ or path to directory")
+
+
     args = parser.parse_args()
     if args.command == "make":
         sys.exit(make_command(args))
@@ -359,6 +430,11 @@ def main():
         sys.exit(check_visuals_command(args))
     elif args.command == "register-image":
         sys.exit(register_image_command(args))
+    elif args.command == "research":
+        sys.exit(research_command(args))
+    elif args.command == "judge":
+        sys.exit(judge_command(args))
+
 
 
 if __name__ == "__main__":

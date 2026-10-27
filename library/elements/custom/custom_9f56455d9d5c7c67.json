@@ -1,0 +1,6 @@
+{
+  "level": 1,
+  "motion_preset": "wipe",
+  "label": "Verified Outcome Card",
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 860 140\" width=\"860\" height=\"140\"><rect x=\"10\" y=\"10\" width=\"840\" height=\"120\" rx=\"24\" fill=\"#17B8A6\" stroke=\"#0D9488\" stroke-width=\"4\"/><text x=\"40\" y=\"60\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"64\" fill=\"#FFFFFF\">SAVED 45 MINUTES OF MANUAL WORK</text><text x=\"40\" y=\"104\" font-family=\"Arial, sans-serif\" font-weight=\"bold\" font-size=\"48\" fill=\"#1B1240\">Status: Prepared &amp; Verified</text></svg>"
+}

@@ -1,0 +1,8 @@
+{
+  "level": 1,
+  "motion_preset": "pop",
+  "label": "Hero 3 Pillars Framework",
+  "width": 860,
+  "height": 410,
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 860 410\" width=\"860\" height=\"410\"><rect x=\"10\" y=\"10\" width=\"840\" height=\"390\" rx=\"24\" fill=\"#25124D\" stroke=\"#6D3FD0\" stroke-width=\"4\"/><g><rect x=\"30\" y=\"25\" width=\"800\" height=\"105\" rx=\"16\" fill=\"#3D1F7A\" stroke=\"#FFB800\" stroke-width=\"3\"/><text x=\"60\" y=\"65\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"48\" fill=\"#FFB800\">1. Autonomous Planning</text><text x=\"60\" y=\"105\" font-family=\"Arial, sans-serif\" font-weight=\"bold\" font-size=\"48\" fill=\"#F7F4FF\">Breaks goals into steps</text></g><g><rect x=\"30\" y=\"145\" width=\"800\" height=\"105\" rx=\"16\" fill=\"#3D1F7A\" stroke=\"#6D3FD0\" stroke-width=\"3\"/><text x=\"60\" y=\"185\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"48\" fill=\"#6D3FD0\">2. Tool Execution</text><text x=\"60\" y=\"225\" font-family=\"Arial, sans-serif\" font-weight=\"bold\" font-size=\"48\" fill=\"#F7F4FF\">Calls web tools and APIs</text></g><g><rect x=\"30\" y=\"265\" width=\"800\" height=\"105\" rx=\"16\" fill=\"#3D1F7A\" stroke=\"#17B8A6\" stroke-width=\"3\"/><text x=\"60\" y=\"305\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"48\" fill=\"#17B8A6\">3. Human Supervision</text><text x=\"60\" y=\"345\" font-family=\"Arial, sans-serif\" font-weight=\"bold\" font-size=\"48\" fill=\"#F7F4FF\">Keeps humans in control</text></g></svg>"
+}

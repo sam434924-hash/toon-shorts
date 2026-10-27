@@ -89,6 +89,9 @@ class SceneRenderJob:
     acting_plan: Optional[Dict[str, Any]] = None
     scene_start_sec: float = 0.0
 
+    layout_mode: str = 'a'
+    layout_mode: str = 'a'
+
 
 _CACHE_LOCK = threading.Lock()
 
@@ -213,6 +216,7 @@ def capture_still_frame(
     duration_sec: float = 2.5,
     width: int = config.VIDEO_WIDTH,
     height: int = config.VIDEO_HEIGHT,
+    seek_ms: Optional[int] = None,
 ) -> Path:
     """Renders a single still frame at animation completion using Playwright."""
     try:
@@ -232,6 +236,7 @@ def capture_still_frame(
                 duration_sec=duration_sec,
                 width=width,
                 height=height,
+                seek_ms=seek_ms,
             ).result()
 
     with sync_playwright() as p:
@@ -278,8 +283,8 @@ def capture_still_frame(
             if missing:
                 raise RuntimeError(f"Missing required JS modules or functions in {html_file.name}: {', '.join(missing)}")
             try:
-                seek_ms = max(0, int(duration_sec * 1000) - 200)
-                evaluate_frame(page, f"() => window.seekTo({seek_ms})", timeout_ms=DEFAULT_PER_FRAME_TIMEOUT_MS)
+                target_seek = seek_ms if seek_ms is not None else max(0, int(duration_sec * 1000) - 200)
+                evaluate_frame(page, f"() => window.seekTo({target_seek})", timeout_ms=DEFAULT_PER_FRAME_TIMEOUT_MS)
             except Exception as eval_err:
                 try:
                     page.close()
@@ -366,6 +371,8 @@ def _render_job_with_browser(
         handheld_enabled=job.handheld_enabled,
         acting_plan=job.acting_plan,
         scene_start_sec=getattr(job, "scene_start_sec", 0.0),
+
+        layout_mode=getattr(job, "layout_mode", "a"),
     )
 
     html_file = (work_dir / "whiteboard_scene.html").resolve()

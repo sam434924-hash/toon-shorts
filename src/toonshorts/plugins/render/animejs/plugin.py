@@ -81,6 +81,9 @@ class AnimeJSRenderPlugin(RenderInterface):
         rough_seed = derive_scene_seed(scene.scene_number)
 
         board_objects = getattr(scene, "board_objects", None)
+
+        layout_mode = getattr(scene, "layout_mode", "a") or "a"
+        layout_mode = getattr(scene, "layout_mode", "a") or "a"
         html_str = generate_whiteboard_html(
             title=title,
             words=words_data,
@@ -103,6 +106,7 @@ class AnimeJSRenderPlugin(RenderInterface):
             camera_plan=getattr(scene, 'camera_plan', None),
             acting_plan=getattr(scene, 'acting_plan', None),
             scene_start_sec=getattr(scene, 'scene_start_sec', None),
+            layout_mode=layout_mode,
         )
 
         html_file = temp_dir / f"scene_{scene.scene_number}_still.html"
@@ -241,6 +245,8 @@ class AnimeJSRenderPlugin(RenderInterface):
                     camera_plan=getattr(scene, 'camera_plan', None),
                     acting_plan=getattr(scene, 'acting_plan', None),
                     scene_start_sec=cur_start_sec,
+
+                    layout_mode=getattr(scene, "layout_mode", "a") or "a",
                 )
                 jobs.append(job)
                 cur_start_sec += audio.scene_total_duration

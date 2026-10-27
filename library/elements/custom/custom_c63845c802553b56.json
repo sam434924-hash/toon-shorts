@@ -1,0 +1,6 @@
+{
+  "level": 1,
+  "motion_preset": "wipe",
+  "label": "AI Responds Badge",
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 580 90\" width=\"580\" height=\"90\"><rect x=\"10\" y=\"10\" width=\"560\" height=\"70\" rx=\"16\" fill=\"#0f172a\" stroke=\"#3b82f6\" stroke-width=\"4\"/><text x=\"290\" y=\"54\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"26\" fill=\"#ffffff\" text-anchor=\"middle\" letter-spacing=\"1\">AI RESPONDS (PASSIVE CHATBOT)</text></svg>"
+}

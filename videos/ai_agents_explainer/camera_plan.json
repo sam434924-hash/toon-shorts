@@ -1,0 +1,401 @@
+[
+  {
+    "start_sec": 0.0,
+    "end_sec": 2.5,
+    "speaker": "BOTH",
+    "preset": "CAM_01_WIDE_2SHOT",
+    "zoom_start": 1.0,
+    "zoom_end": 1.04,
+    "center_start": [
+      0.5,
+      0.5
+    ],
+    "center_end": [
+      0.5,
+      0.5
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "PARTNER"
+  },
+  {
+    "start_sec": 2.5,
+    "end_sec": 6.683,
+    "speaker": "A",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.18,
+    "zoom_end": 1.22,
+    "center_start": [
+      0.48,
+      0.46
+    ],
+    "center_end": [
+      0.48,
+      0.46
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 6.683,
+    "end_sec": 10.867,
+    "speaker": "A",
+    "preset": "CAM_01_WIDE_2SHOT",
+    "zoom_start": 1.0,
+    "zoom_end": 1.0,
+    "center_start": [
+      0.5,
+      0.5
+    ],
+    "center_end": [
+      0.5,
+      0.5
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 10.867,
+    "end_sec": 15.05,
+    "speaker": "A",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.18,
+    "zoom_end": 1.22,
+    "center_start": [
+      0.48,
+      0.46
+    ],
+    "center_end": [
+      0.48,
+      0.46
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 15.05,
+    "end_sec": 18.827,
+    "speaker": "A",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.18,
+    "zoom_end": 1.22,
+    "center_start": [
+      0.48,
+      0.46
+    ],
+    "center_end": [
+      0.48,
+      0.46
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 18.827,
+    "end_sec": 22.603,
+    "speaker": "A",
+    "preset": "CAM_01_WIDE_2SHOT",
+    "zoom_start": 1.0,
+    "zoom_end": 1.0,
+    "center_start": [
+      0.5,
+      0.5
+    ],
+    "center_end": [
+      0.5,
+      0.5
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 22.603,
+    "end_sec": 26.38,
+    "speaker": "A",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.18,
+    "zoom_end": 1.22,
+    "center_start": [
+      0.48,
+      0.46
+    ],
+    "center_end": [
+      0.48,
+      0.46
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 26.38,
+    "end_sec": 30.977,
+    "speaker": "A",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.18,
+    "zoom_end": 1.22,
+    "center_start": [
+      0.48,
+      0.46
+    ],
+    "center_end": [
+      0.48,
+      0.46
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 30.977,
+    "end_sec": 35.573,
+    "speaker": "A",
+    "preset": "CAM_01_WIDE_2SHOT",
+    "zoom_start": 1.0,
+    "zoom_end": 1.0,
+    "center_start": [
+      0.5,
+      0.5
+    ],
+    "center_end": [
+      0.5,
+      0.5
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 35.573,
+    "end_sec": 40.17,
+    "speaker": "A",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.18,
+    "zoom_end": 1.22,
+    "center_start": [
+      0.48,
+      0.46
+    ],
+    "center_end": [
+      0.48,
+      0.46
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 40.17,
+    "end_sec": 44.418,
+    "speaker": "A",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.18,
+    "zoom_end": 1.22,
+    "center_start": [
+      0.48,
+      0.46
+    ],
+    "center_end": [
+      0.48,
+      0.46
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 44.418,
+    "end_sec": 48.665,
+    "speaker": "A",
+    "preset": "CAM_01_WIDE_2SHOT",
+    "zoom_start": 1.0,
+    "zoom_end": 1.0,
+    "center_start": [
+      0.5,
+      0.5
+    ],
+    "center_end": [
+      0.5,
+      0.5
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 48.665,
+    "end_sec": 52.913,
+    "speaker": "A",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.18,
+    "zoom_end": 1.22,
+    "center_start": [
+      0.48,
+      0.46
+    ],
+    "center_end": [
+      0.48,
+      0.46
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 52.913,
+    "end_sec": 57.16,
+    "speaker": "A",
+    "preset": "CAM_01_WIDE_2SHOT",
+    "zoom_start": 1.0,
+    "zoom_end": 1.0,
+    "center_start": [
+      0.5,
+      0.5
+    ],
+    "center_end": [
+      0.5,
+      0.5
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 57.16,
+    "end_sec": 60.938,
+    "speaker": "A",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.18,
+    "zoom_end": 1.22,
+    "center_start": [
+      0.48,
+      0.46
+    ],
+    "center_end": [
+      0.48,
+      0.46
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 60.938,
+    "end_sec": 64.715,
+    "speaker": "A",
+    "preset": "CAM_01_WIDE_2SHOT",
+    "zoom_start": 1.0,
+    "zoom_end": 1.0,
+    "center_start": [
+      0.5,
+      0.5
+    ],
+    "center_end": [
+      0.5,
+      0.5
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 64.715,
+    "end_sec": 68.492,
+    "speaker": "A",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.18,
+    "zoom_end": 1.22,
+    "center_start": [
+      0.48,
+      0.46
+    ],
+    "center_end": [
+      0.48,
+      0.46
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 68.492,
+    "end_sec": 72.27,
+    "speaker": "A",
+    "preset": "CAM_01_WIDE_2SHOT",
+    "zoom_start": 1.0,
+    "zoom_end": 1.0,
+    "center_start": [
+      0.5,
+      0.5
+    ],
+    "center_end": [
+      0.5,
+      0.5
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 72.27,
+    "end_sec": 75.627,
+    "speaker": "A",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.18,
+    "zoom_end": 1.22,
+    "center_start": [
+      0.48,
+      0.46
+    ],
+    "center_end": [
+      0.48,
+      0.46
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 75.627,
+    "end_sec": 78.983,
+    "speaker": "A",
+    "preset": "CAM_01_WIDE_2SHOT",
+    "zoom_start": 1.0,
+    "zoom_end": 1.0,
+    "center_start": [
+      0.5,
+      0.5
+    ],
+    "center_end": [
+      0.5,
+      0.5
+    ],
+    "motion": "HOLD",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  },
+  {
+    "start_sec": 78.983,
+    "end_sec": 82.34,
+    "speaker": "A",
+    "preset": "CAM_02_MED_BOARD",
+    "zoom_start": 1.18,
+    "zoom_end": 1.22,
+    "center_start": [
+      0.48,
+      0.46
+    ],
+    "center_end": [
+      0.48,
+      0.46
+    ],
+    "motion": "CREEP_IN",
+    "entry": "CUT",
+    "eye_target": "BOARD"
+  }
+]

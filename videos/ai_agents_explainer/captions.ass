@@ -1,0 +1,245 @@
+[Script Info]
+Title: ToonShorts Captions
+ScriptType: v4.00+
+WrapStyle: 0
+PlayResX: 1080
+PlayResY: 1920
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial,86,&H00FFFFFF,&H000000FF,&H000F172A,&H80000000,-1,0,0,0,100,100,0,0,1,7,3,8,60,60,120,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.68,Default,,0,0,0,,{\c&H0000D8F6\b1}Imagine{\c&H00FFFFFF\b1} asking an AI\Nto plan your entire
+Dialogue: 0,0:00:00.68,0:00:01.08,Default,,0,0,0,,Imagine {\c&H0000D8F6\b1}asking{\c&H00FFFFFF\b1} an AI\Nto plan your entire
+Dialogue: 0,0:00:01.08,0:00:01.34,Default,,0,0,0,,Imagine asking {\c&H0000D8F6\b1}an{\c&H00FFFFFF\b1} AI\Nto plan your entire
+Dialogue: 0,0:00:01.34,0:00:01.58,Default,,0,0,0,,Imagine asking an {\c&H0000D8F6\b1}AI{\c&H00FFFFFF\b1}\Nto plan your entire
+Dialogue: 0,0:00:01.58,0:00:01.86,Default,,0,0,0,,Imagine asking an AI\N{\c&H0000D8F6\b1}to{\c&H00FFFFFF\b1} plan your entire
+Dialogue: 0,0:00:01.86,0:00:02.14,Default,,0,0,0,,Imagine asking an AI\Nto {\c&H0000D8F6\b1}plan{\c&H00FFFFFF\b1} your entire
+Dialogue: 0,0:00:02.14,0:00:02.38,Default,,0,0,0,,Imagine asking an AI\Nto plan {\c&H0000D8F6\b1}your{\c&H00FFFFFF\b1} entire
+Dialogue: 0,0:00:02.38,0:00:02.76,Default,,0,0,0,,Imagine asking an AI\Nto plan your {\c&H0000D8F6\b1}entire{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:02.76,0:00:03.24,Default,,0,0,0,,{\c&H0000D8F6\b1}day.{\c&H00FFFFFF\b1} Not just tell\Nyou what to do,
+Dialogue: 0,0:00:03.54,0:00:03.68,Default,,0,0,0,,day. {\c&H0000D8F6\b1}Not{\c&H00FFFFFF\b1} just tell\Nyou what to do,
+Dialogue: 0,0:00:03.68,0:00:03.86,Default,,0,0,0,,day. Not {\c&H0000D8F6\b1}just{\c&H00FFFFFF\b1} tell\Nyou what to do,
+Dialogue: 0,0:00:03.86,0:00:04.00,Default,,0,0,0,,day. Not just {\c&H0000D8F6\b1}tell{\c&H00FFFFFF\b1}\Nyou what to do,
+Dialogue: 0,0:00:04.00,0:00:04.12,Default,,0,0,0,,day. Not just tell\N{\c&H0000D8F6\b1}you{\c&H00FFFFFF\b1} what to do,
+Dialogue: 0,0:00:04.12,0:00:04.24,Default,,0,0,0,,day. Not just tell\Nyou {\c&H0000D8F6\b1}what{\c&H00FFFFFF\b1} to do,
+Dialogue: 0,0:00:04.24,0:00:04.48,Default,,0,0,0,,day. Not just tell\Nyou what {\c&H0000D8F6\b1}to{\c&H00FFFFFF\b1} do,
+Dialogue: 0,0:00:04.48,0:00:04.74,Default,,0,0,0,,day. Not just tell\Nyou what to {\c&H0000D8F6\b1}do,{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:04.84,0:00:05.10,Default,,0,0,0,,{\c&H0000D8F6\b1}but{\c&H00FFFFFF\b1} actually help get\Neverything done. It finds
+Dialogue: 0,0:00:05.10,0:00:05.48,Default,,0,0,0,,but {\c&H0000D8F6\b1}actually{\c&H00FFFFFF\b1} help get\Neverything done. It finds
+Dialogue: 0,0:00:05.48,0:00:05.76,Default,,0,0,0,,but actually {\c&H0000D8F6\b1}help{\c&H00FFFFFF\b1} get\Neverything done. It finds
+Dialogue: 0,0:00:05.76,0:00:05.98,Default,,0,0,0,,but actually help {\c&H0000D8F6\b1}get{\c&H00FFFFFF\b1}\Neverything done. It finds
+Dialogue: 0,0:00:05.98,0:00:06.36,Default,,0,0,0,,but actually help get\N{\c&H0000D8F6\b1}everything{\c&H00FFFFFF\b1} done. It finds
+Dialogue: 0,0:00:06.36,0:00:06.90,Default,,0,0,0,,but actually help get\Neverything {\c&H0000D8F6\b1}done.{\c&H00FFFFFF\b1} It finds
+Dialogue: 0,0:00:07.32,0:00:07.48,Default,,0,0,0,,but actually help get\Neverything done. {\c&H0000D8F6\b1}It{\c&H00FFFFFF\b1} finds
+Dialogue: 0,0:00:07.48,0:00:07.68,Default,,0,0,0,,but actually help get\Neverything done. It {\c&H0000D8F6\b1}finds{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:07.68,0:00:08.40,Default,,0,0,0,,{\c&H0000D8F6\b1}information,{\c&H00FFFFFF\b1} organizes tasks, and\Nworks through each step.
+Dialogue: 0,0:00:08.84,0:00:09.42,Default,,0,0,0,,information, {\c&H0000D8F6\b1}organizes{\c&H00FFFFFF\b1} tasks, and\Nworks through each step.
+Dialogue: 0,0:00:09.42,0:00:09.80,Default,,0,0,0,,information, organizes {\c&H0000D8F6\b1}tasks,{\c&H00FFFFFF\b1} and\Nworks through each step.
+Dialogue: 0,0:00:09.80,0:00:10.18,Default,,0,0,0,,information, organizes tasks, {\c&H0000D8F6\b1}and{\c&H00FFFFFF\b1}\Nworks through each step.
+Dialogue: 0,0:00:10.18,0:00:10.38,Default,,0,0,0,,information, organizes tasks, and\N{\c&H0000D8F6\b1}works{\c&H00FFFFFF\b1} through each step.
+Dialogue: 0,0:00:10.38,0:00:10.58,Default,,0,0,0,,information, organizes tasks, and\Nworks {\c&H0000D8F6\b1}through{\c&H00FFFFFF\b1} each step.
+Dialogue: 0,0:00:10.58,0:00:10.78,Default,,0,0,0,,information, organizes tasks, and\Nworks through {\c&H0000D8F6\b1}each{\c&H00FFFFFF\b1} step.
+Dialogue: 0,0:00:10.78,0:00:11.20,Default,,0,0,0,,information, organizes tasks, and\Nworks through each {\c&H0000D8F6\b1}step.{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:11.64,0:00:11.84,Default,,0,0,0,,{\c&H0000D8F6\b1}Sounds{\c&H00FFFFFF\b1} futuristic? Welcome to\Nthe world of AI
+Dialogue: 0,0:00:11.84,0:00:12.28,Default,,0,0,0,,Sounds {\c&H0000D8F6\b1}futuristic?{\c&H00FFFFFF\b1} Welcome to\Nthe world of AI
+Dialogue: 0,0:00:13.20,0:00:13.40,Default,,0,0,0,,Sounds futuristic? {\c&H0000D8F6\b1}Welcome{\c&H00FFFFFF\b1} to\Nthe world of AI
+Dialogue: 0,0:00:13.40,0:00:13.66,Default,,0,0,0,,Sounds futuristic? Welcome {\c&H0000D8F6\b1}to{\c&H00FFFFFF\b1}\Nthe world of AI
+Dialogue: 0,0:00:13.66,0:00:13.66,Default,,0,0,0,,Sounds futuristic? Welcome to\N{\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} world of AI
+Dialogue: 0,0:00:13.66,0:00:13.96,Default,,0,0,0,,Sounds futuristic? Welcome to\Nthe {\c&H0000D8F6\b1}world{\c&H00FFFFFF\b1} of AI
+Dialogue: 0,0:00:13.96,0:00:14.42,Default,,0,0,0,,Sounds futuristic? Welcome to\Nthe world {\c&H0000D8F6\b1}of{\c&H00FFFFFF\b1} AI
+Dialogue: 0,0:00:14.42,0:00:14.64,Default,,0,0,0,,Sounds futuristic? Welcome to\Nthe world of {\c&H0000D8F6\b1}AI{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:14.64,0:00:15.10,Default,,0,0,0,,{\c&H0000D8F6\b1}agents.{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:15.71,0:00:16.39,Default,,0,0,0,,{\c&H0000D8F6\b1}A{\c&H00FFFFFF\b1} traditional chatbot mainly\Nresponds to what you
+Dialogue: 0,0:00:16.39,0:00:16.77,Default,,0,0,0,,A {\c&H0000D8F6\b1}traditional{\c&H00FFFFFF\b1} chatbot mainly\Nresponds to what you
+Dialogue: 0,0:00:16.77,0:00:17.37,Default,,0,0,0,,A traditional {\c&H0000D8F6\b1}chatbot{\c&H00FFFFFF\b1} mainly\Nresponds to what you
+Dialogue: 0,0:00:17.37,0:00:17.67,Default,,0,0,0,,A traditional chatbot {\c&H0000D8F6\b1}mainly{\c&H00FFFFFF\b1}\Nresponds to what you
+Dialogue: 0,0:00:17.67,0:00:18.01,Default,,0,0,0,,A traditional chatbot mainly\N{\c&H0000D8F6\b1}responds{\c&H00FFFFFF\b1} to what you
+Dialogue: 0,0:00:18.01,0:00:18.21,Default,,0,0,0,,A traditional chatbot mainly\Nresponds {\c&H0000D8F6\b1}to{\c&H00FFFFFF\b1} what you
+Dialogue: 0,0:00:18.21,0:00:18.39,Default,,0,0,0,,A traditional chatbot mainly\Nresponds to {\c&H0000D8F6\b1}what{\c&H00FFFFFF\b1} you
+Dialogue: 0,0:00:18.39,0:00:18.57,Default,,0,0,0,,A traditional chatbot mainly\Nresponds to what {\c&H0000D8F6\b1}you{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:18.57,0:00:18.87,Default,,0,0,0,,{\c&H0000D8F6\b1}ask.{\c&H00FFFFFF\b1} You ask for\Nan email, and it
+Dialogue: 0,0:00:19.17,0:00:19.33,Default,,0,0,0,,ask. {\c&H0000D8F6\b1}You{\c&H00FFFFFF\b1} ask for\Nan email, and it
+Dialogue: 0,0:00:19.33,0:00:19.49,Default,,0,0,0,,ask. You {\c&H0000D8F6\b1}ask{\c&H00FFFFFF\b1} for\Nan email, and it
+Dialogue: 0,0:00:19.49,0:00:19.67,Default,,0,0,0,,ask. You ask {\c&H0000D8F6\b1}for{\c&H00FFFFFF\b1}\Nan email, and it
+Dialogue: 0,0:00:19.67,0:00:19.85,Default,,0,0,0,,ask. You ask for\N{\c&H0000D8F6\b1}an{\c&H00FFFFFF\b1} email, and it
+Dialogue: 0,0:00:19.85,0:00:20.11,Default,,0,0,0,,ask. You ask for\Nan {\c&H0000D8F6\b1}email,{\c&H00FFFFFF\b1} and it
+Dialogue: 0,0:00:20.11,0:00:20.55,Default,,0,0,0,,ask. You ask for\Nan email, {\c&H0000D8F6\b1}and{\c&H00FFFFFF\b1} it
+Dialogue: 0,0:00:20.55,0:00:20.69,Default,,0,0,0,,ask. You ask for\Nan email, and {\c&H0000D8F6\b1}it{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:20.69,0:00:20.79,Default,,0,0,0,,{\c&H0000D8F6\b1}writes{\c&H00FFFFFF\b1} one. You ask\Nfor a plan, and
+Dialogue: 0,0:00:20.79,0:00:21.19,Default,,0,0,0,,writes {\c&H0000D8F6\b1}one.{\c&H00FFFFFF\b1} You ask\Nfor a plan, and
+Dialogue: 0,0:00:21.45,0:00:21.51,Default,,0,0,0,,writes one. {\c&H0000D8F6\b1}You{\c&H00FFFFFF\b1} ask\Nfor a plan, and
+Dialogue: 0,0:00:21.51,0:00:21.73,Default,,0,0,0,,writes one. You {\c&H0000D8F6\b1}ask{\c&H00FFFFFF\b1}\Nfor a plan, and
+Dialogue: 0,0:00:21.73,0:00:21.89,Default,,0,0,0,,writes one. You ask\N{\c&H0000D8F6\b1}for{\c&H00FFFFFF\b1} a plan, and
+Dialogue: 0,0:00:21.89,0:00:22.03,Default,,0,0,0,,writes one. You ask\Nfor {\c&H0000D8F6\b1}a{\c&H00FFFFFF\b1} plan, and
+Dialogue: 0,0:00:22.03,0:00:22.35,Default,,0,0,0,,writes one. You ask\Nfor a {\c&H0000D8F6\b1}plan,{\c&H00FFFFFF\b1} and
+Dialogue: 0,0:00:22.35,0:00:22.65,Default,,0,0,0,,writes one. You ask\Nfor a plan, {\c&H0000D8F6\b1}and{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:22.65,0:00:22.77,Default,,0,0,0,,{\c&H0000D8F6\b1}it{\c&H00FFFFFF\b1} gives you a\Nplan. But you usually
+Dialogue: 0,0:00:22.77,0:00:22.93,Default,,0,0,0,,it {\c&H0000D8F6\b1}gives{\c&H00FFFFFF\b1} you a\Nplan. But you usually
+Dialogue: 0,0:00:22.93,0:00:23.17,Default,,0,0,0,,it gives {\c&H0000D8F6\b1}you{\c&H00FFFFFF\b1} a\Nplan. But you usually
+Dialogue: 0,0:00:23.17,0:00:23.29,Default,,0,0,0,,it gives you {\c&H0000D8F6\b1}a{\c&H00FFFFFF\b1}\Nplan. But you usually
+Dialogue: 0,0:00:23.29,0:00:23.59,Default,,0,0,0,,it gives you a\N{\c&H0000D8F6\b1}plan.{\c&H00FFFFFF\b1} But you usually
+Dialogue: 0,0:00:24.13,0:00:24.29,Default,,0,0,0,,it gives you a\Nplan. {\c&H0000D8F6\b1}But{\c&H00FFFFFF\b1} you usually
+Dialogue: 0,0:00:24.29,0:00:24.43,Default,,0,0,0,,it gives you a\Nplan. But {\c&H0000D8F6\b1}you{\c&H00FFFFFF\b1} usually
+Dialogue: 0,0:00:24.43,0:00:24.69,Default,,0,0,0,,it gives you a\Nplan. But you {\c&H0000D8F6\b1}usually{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:24.69,0:00:25.01,Default,,0,0,0,,{\c&H0000D8F6\b1}have{\c&H00FFFFFF\b1} to take\Nthose next steps yourself.
+Dialogue: 0,0:00:25.01,0:00:25.13,Default,,0,0,0,,have {\c&H0000D8F6\b1}to{\c&H00FFFFFF\b1} take\Nthose next steps yourself.
+Dialogue: 0,0:00:25.13,0:00:25.39,Default,,0,0,0,,have to {\c&H0000D8F6\b1}take{\c&H00FFFFFF\b1}\Nthose next steps yourself.
+Dialogue: 0,0:00:25.39,0:00:25.61,Default,,0,0,0,,have to take\N{\c&H0000D8F6\b1}those{\c&H00FFFFFF\b1} next steps yourself.
+Dialogue: 0,0:00:25.61,0:00:25.97,Default,,0,0,0,,have to take\Nthose {\c&H0000D8F6\b1}next{\c&H00FFFFFF\b1} steps yourself.
+Dialogue: 0,0:00:25.97,0:00:26.29,Default,,0,0,0,,have to take\Nthose next {\c&H0000D8F6\b1}steps{\c&H00FFFFFF\b1} yourself.
+Dialogue: 0,0:00:26.29,0:00:26.69,Default,,0,0,0,,have to take\Nthose next steps {\c&H0000D8F6\b1}yourself.{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:27.54,0:00:27.96,Default,,0,0,0,,{\c&H0000D8F6\b1}An{\c&H00FFFFFF\b1} AI agent takes\Na different approach. You
+Dialogue: 0,0:00:27.96,0:00:28.28,Default,,0,0,0,,An {\c&H0000D8F6\b1}AI{\c&H00FFFFFF\b1} agent takes\Na different approach. You
+Dialogue: 0,0:00:28.28,0:00:28.66,Default,,0,0,0,,An AI {\c&H0000D8F6\b1}agent{\c&H00FFFFFF\b1} takes\Na different approach. You
+Dialogue: 0,0:00:28.66,0:00:28.98,Default,,0,0,0,,An AI agent {\c&H0000D8F6\b1}takes{\c&H00FFFFFF\b1}\Na different approach. You
+Dialogue: 0,0:00:28.98,0:00:29.26,Default,,0,0,0,,An AI agent takes\N{\c&H0000D8F6\b1}a{\c&H00FFFFFF\b1} different approach. You
+Dialogue: 0,0:00:29.26,0:00:29.44,Default,,0,0,0,,An AI agent takes\Na {\c&H0000D8F6\b1}different{\c&H00FFFFFF\b1} approach. You
+Dialogue: 0,0:00:29.44,0:00:29.96,Default,,0,0,0,,An AI agent takes\Na different {\c&H0000D8F6\b1}approach.{\c&H00FFFFFF\b1} You
+Dialogue: 0,0:00:30.40,0:00:30.44,Default,,0,0,0,,An AI agent takes\Na different approach. {\c&H0000D8F6\b1}You{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:30.44,0:00:30.52,Default,,0,0,0,,{\c&H0000D8F6\b1}give{\c&H00FFFFFF\b1} it a goal,\Nand it can break
+Dialogue: 0,0:00:30.52,0:00:30.68,Default,,0,0,0,,give {\c&H0000D8F6\b1}it{\c&H00FFFFFF\b1} a goal,\Nand it can break
+Dialogue: 0,0:00:30.68,0:00:30.80,Default,,0,0,0,,give it {\c&H0000D8F6\b1}a{\c&H00FFFFFF\b1} goal,\Nand it can break
+Dialogue: 0,0:00:30.80,0:00:31.06,Default,,0,0,0,,give it a {\c&H0000D8F6\b1}goal,{\c&H00FFFFFF\b1}\Nand it can break
+Dialogue: 0,0:00:31.06,0:00:31.56,Default,,0,0,0,,give it a goal,\N{\c&H0000D8F6\b1}and{\c&H00FFFFFF\b1} it can break
+Dialogue: 0,0:00:31.56,0:00:31.60,Default,,0,0,0,,give it a goal,\Nand {\c&H0000D8F6\b1}it{\c&H00FFFFFF\b1} can break
+Dialogue: 0,0:00:31.60,0:00:31.76,Default,,0,0,0,,give it a goal,\Nand it {\c&H0000D8F6\b1}can{\c&H00FFFFFF\b1} break
+Dialogue: 0,0:00:31.76,0:00:31.98,Default,,0,0,0,,give it a goal,\Nand it can {\c&H0000D8F6\b1}break{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:31.98,0:00:32.26,Default,,0,0,0,,{\c&H0000D8F6\b1}that{\c&H00FFFFFF\b1} goal into smaller\Ntasks. It can decide
+Dialogue: 0,0:00:32.26,0:00:32.46,Default,,0,0,0,,that {\c&H0000D8F6\b1}goal{\c&H00FFFFFF\b1} into smaller\Ntasks. It can decide
+Dialogue: 0,0:00:32.46,0:00:32.70,Default,,0,0,0,,that goal {\c&H0000D8F6\b1}into{\c&H00FFFFFF\b1} smaller\Ntasks. It can decide
+Dialogue: 0,0:00:32.70,0:00:33.00,Default,,0,0,0,,that goal into {\c&H0000D8F6\b1}smaller{\c&H00FFFFFF\b1}\Ntasks. It can decide
+Dialogue: 0,0:00:33.00,0:00:33.56,Default,,0,0,0,,that goal into smaller\N{\c&H0000D8F6\b1}tasks.{\c&H00FFFFFF\b1} It can decide
+Dialogue: 0,0:00:34.12,0:00:34.18,Default,,0,0,0,,that goal into smaller\Ntasks. {\c&H0000D8F6\b1}It{\c&H00FFFFFF\b1} can decide
+Dialogue: 0,0:00:34.18,0:00:34.32,Default,,0,0,0,,that goal into smaller\Ntasks. It {\c&H0000D8F6\b1}can{\c&H00FFFFFF\b1} decide
+Dialogue: 0,0:00:34.32,0:00:34.58,Default,,0,0,0,,that goal into smaller\Ntasks. It can {\c&H0000D8F6\b1}decide{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:34.58,0:00:34.76,Default,,0,0,0,,{\c&H0000D8F6\b1}what{\c&H00FFFFFF\b1} to do next,\Nuse available tools, check
+Dialogue: 0,0:00:34.76,0:00:34.92,Default,,0,0,0,,what {\c&H0000D8F6\b1}to{\c&H00FFFFFF\b1} do next,\Nuse available tools, check
+Dialogue: 0,0:00:34.92,0:00:35.06,Default,,0,0,0,,what to {\c&H0000D8F6\b1}do{\c&H00FFFFFF\b1} next,\Nuse available tools, check
+Dialogue: 0,0:00:35.06,0:00:35.48,Default,,0,0,0,,what to do {\c&H0000D8F6\b1}next,{\c&H00FFFFFF\b1}\Nuse available tools, check
+Dialogue: 0,0:00:35.74,0:00:36.10,Default,,0,0,0,,what to do next,\N{\c&H0000D8F6\b1}use{\c&H00FFFFFF\b1} available tools, check
+Dialogue: 0,0:00:36.10,0:00:36.48,Default,,0,0,0,,what to do next,\Nuse {\c&H0000D8F6\b1}available{\c&H00FFFFFF\b1} tools, check
+Dialogue: 0,0:00:36.48,0:00:37.14,Default,,0,0,0,,what to do next,\Nuse available {\c&H0000D8F6\b1}tools,{\c&H00FFFFFF\b1} check
+Dialogue: 0,0:00:37.36,0:00:37.54,Default,,0,0,0,,what to do next,\Nuse available tools, {\c&H0000D8F6\b1}check{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:37.54,0:00:37.78,Default,,0,0,0,,{\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} results, and adjust\Nits approach when something
+Dialogue: 0,0:00:37.78,0:00:38.18,Default,,0,0,0,,the {\c&H0000D8F6\b1}results,{\c&H00FFFFFF\b1} and adjust\Nits approach when something
+Dialogue: 0,0:00:38.64,0:00:38.86,Default,,0,0,0,,the results, {\c&H0000D8F6\b1}and{\c&H00FFFFFF\b1} adjust\Nits approach when something
+Dialogue: 0,0:00:38.86,0:00:39.10,Default,,0,0,0,,the results, and {\c&H0000D8F6\b1}adjust{\c&H00FFFFFF\b1}\Nits approach when something
+Dialogue: 0,0:00:39.10,0:00:39.38,Default,,0,0,0,,the results, and adjust\N{\c&H0000D8F6\b1}its{\c&H00FFFFFF\b1} approach when something
+Dialogue: 0,0:00:39.38,0:00:39.80,Default,,0,0,0,,the results, and adjust\Nits {\c&H0000D8F6\b1}approach{\c&H00FFFFFF\b1} when something
+Dialogue: 0,0:00:39.80,0:00:40.18,Default,,0,0,0,,the results, and adjust\Nits approach {\c&H0000D8F6\b1}when{\c&H00FFFFFF\b1} something
+Dialogue: 0,0:00:40.18,0:00:40.48,Default,,0,0,0,,the results, and adjust\Nits approach when {\c&H0000D8F6\b1}something{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:40.48,0:00:40.68,Default,,0,0,0,,{\c&H0000D8F6\b1}goes{\c&H00FFFFFF\b1} wrong.
+Dialogue: 0,0:00:40.68,0:00:40.98,Default,,0,0,0,,goes {\c&H0000D8F6\b1}wrong.{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:41.49,0:00:41.97,Default,,0,0,0,,{\c&H0000D8F6\b1}Let's{\c&H00FFFFFF\b1} say you need\Nto prepare for a
+Dialogue: 0,0:00:41.97,0:00:42.27,Default,,0,0,0,,Let's {\c&H0000D8F6\b1}say{\c&H00FFFFFF\b1} you need\Nto prepare for a
+Dialogue: 0,0:00:42.27,0:00:42.41,Default,,0,0,0,,Let's say {\c&H0000D8F6\b1}you{\c&H00FFFFFF\b1} need\Nto prepare for a
+Dialogue: 0,0:00:42.41,0:00:42.61,Default,,0,0,0,,Let's say you {\c&H0000D8F6\b1}need{\c&H00FFFFFF\b1}\Nto prepare for a
+Dialogue: 0,0:00:42.61,0:00:42.85,Default,,0,0,0,,Let's say you need\N{\c&H0000D8F6\b1}to{\c&H00FFFFFF\b1} prepare for a
+Dialogue: 0,0:00:42.85,0:00:43.07,Default,,0,0,0,,Let's say you need\Nto {\c&H0000D8F6\b1}prepare{\c&H00FFFFFF\b1} for a
+Dialogue: 0,0:00:43.07,0:00:43.33,Default,,0,0,0,,Let's say you need\Nto prepare {\c&H0000D8F6\b1}for{\c&H00FFFFFF\b1} a
+Dialogue: 0,0:00:43.33,0:00:43.41,Default,,0,0,0,,Let's say you need\Nto prepare for {\c&H0000D8F6\b1}a{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:43.41,0:00:43.63,Default,,0,0,0,,{\c&H0000D8F6\b1}meeting.{\c&H00FFFFFF\b1} An agent could\Ngather information from approved
+Dialogue: 0,0:00:44.37,0:00:44.41,Default,,0,0,0,,meeting. {\c&H0000D8F6\b1}An{\c&H00FFFFFF\b1} agent could\Ngather information from approved
+Dialogue: 0,0:00:44.41,0:00:44.69,Default,,0,0,0,,meeting. An {\c&H0000D8F6\b1}agent{\c&H00FFFFFF\b1} could\Ngather information from approved
+Dialogue: 0,0:00:44.69,0:00:45.09,Default,,0,0,0,,meeting. An agent {\c&H0000D8F6\b1}could{\c&H00FFFFFF\b1}\Ngather information from approved
+Dialogue: 0,0:00:45.09,0:00:45.37,Default,,0,0,0,,meeting. An agent could\N{\c&H0000D8F6\b1}gather{\c&H00FFFFFF\b1} information from approved
+Dialogue: 0,0:00:45.37,0:00:45.87,Default,,0,0,0,,meeting. An agent could\Ngather {\c&H0000D8F6\b1}information{\c&H00FFFFFF\b1} from approved
+Dialogue: 0,0:00:45.87,0:00:46.23,Default,,0,0,0,,meeting. An agent could\Ngather information {\c&H0000D8F6\b1}from{\c&H00FFFFFF\b1} approved
+Dialogue: 0,0:00:46.23,0:00:46.57,Default,,0,0,0,,meeting. An agent could\Ngather information from {\c&H0000D8F6\b1}approved{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:46.57,0:00:47.13,Default,,0,0,0,,{\c&H0000D8F6\b1}sources,{\c&H00FFFFFF\b1} summarize the important\Npoints, draft an agenda,
+Dialogue: 0,0:00:47.51,0:00:47.75,Default,,0,0,0,,sources, {\c&H0000D8F6\b1}summarize{\c&H00FFFFFF\b1} the important\Npoints, draft an agenda,
+Dialogue: 0,0:00:47.75,0:00:48.09,Default,,0,0,0,,sources, summarize {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} important\Npoints, draft an agenda,
+Dialogue: 0,0:00:48.09,0:00:48.33,Default,,0,0,0,,sources, summarize the {\c&H0000D8F6\b1}important{\c&H00FFFFFF\b1}\Npoints, draft an agenda,
+Dialogue: 0,0:00:48.33,0:00:48.79,Default,,0,0,0,,sources, summarize the important\N{\c&H0000D8F6\b1}points,{\c&H00FFFFFF\b1} draft an agenda,
+Dialogue: 0,0:00:49.05,0:00:49.19,Default,,0,0,0,,sources, summarize the important\Npoints, {\c&H0000D8F6\b1}draft{\c&H00FFFFFF\b1} an agenda,
+Dialogue: 0,0:00:49.19,0:00:49.39,Default,,0,0,0,,sources, summarize the important\Npoints, draft {\c&H0000D8F6\b1}an{\c&H00FFFFFF\b1} agenda,
+Dialogue: 0,0:00:49.39,0:00:49.73,Default,,0,0,0,,sources, summarize the important\Npoints, draft an {\c&H0000D8F6\b1}agenda,{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:50.29,0:00:50.55,Default,,0,0,0,,{\c&H0000D8F6\b1}and{\c&H00FFFFFF\b1} organize the results\Ninto one document. Instead
+Dialogue: 0,0:00:50.55,0:00:50.85,Default,,0,0,0,,and {\c&H0000D8F6\b1}organize{\c&H00FFFFFF\b1} the results\Ninto one document. Instead
+Dialogue: 0,0:00:50.85,0:00:51.05,Default,,0,0,0,,and organize {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} results\Ninto one document. Instead
+Dialogue: 0,0:00:51.05,0:00:51.35,Default,,0,0,0,,and organize the {\c&H0000D8F6\b1}results{\c&H00FFFFFF\b1}\Ninto one document. Instead
+Dialogue: 0,0:00:51.35,0:00:51.71,Default,,0,0,0,,and organize the results\N{\c&H0000D8F6\b1}into{\c&H00FFFFFF\b1} one document. Instead
+Dialogue: 0,0:00:51.71,0:00:51.95,Default,,0,0,0,,and organize the results\Ninto {\c&H0000D8F6\b1}one{\c&H00FFFFFF\b1} document. Instead
+Dialogue: 0,0:00:51.95,0:00:52.41,Default,,0,0,0,,and organize the results\Ninto one {\c&H0000D8F6\b1}document.{\c&H00FFFFFF\b1} Instead
+Dialogue: 0,0:00:53.03,0:00:53.21,Default,,0,0,0,,and organize the results\Ninto one document. {\c&H0000D8F6\b1}Instead{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:53.21,0:00:53.39,Default,,0,0,0,,{\c&H0000D8F6\b1}of{\c&H00FFFFFF\b1} handling every little\Nstep yourself, you supervise
+Dialogue: 0,0:00:53.39,0:00:53.65,Default,,0,0,0,,of {\c&H0000D8F6\b1}handling{\c&H00FFFFFF\b1} every little\Nstep yourself, you supervise
+Dialogue: 0,0:00:53.65,0:00:54.21,Default,,0,0,0,,of handling {\c&H0000D8F6\b1}every{\c&H00FFFFFF\b1} little\Nstep yourself, you supervise
+Dialogue: 0,0:00:54.21,0:00:54.49,Default,,0,0,0,,of handling every {\c&H0000D8F6\b1}little{\c&H00FFFFFF\b1}\Nstep yourself, you supervise
+Dialogue: 0,0:00:54.49,0:00:54.67,Default,,0,0,0,,of handling every little\N{\c&H0000D8F6\b1}step{\c&H00FFFFFF\b1} yourself, you supervise
+Dialogue: 0,0:00:54.67,0:00:55.21,Default,,0,0,0,,of handling every little\Nstep {\c&H0000D8F6\b1}yourself,{\c&H00FFFFFF\b1} you supervise
+Dialogue: 0,0:00:55.51,0:00:55.79,Default,,0,0,0,,of handling every little\Nstep yourself, {\c&H0000D8F6\b1}you{\c&H00FFFFFF\b1} supervise
+Dialogue: 0,0:00:55.79,0:00:56.19,Default,,0,0,0,,of handling every little\Nstep yourself, you {\c&H0000D8F6\b1}supervise{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:56.19,0:00:56.41,Default,,0,0,0,,{\c&H0000D8F6\b1}a{\c&H00FFFFFF\b1} process that\Nmoves toward your goal.
+Dialogue: 0,0:00:56.41,0:00:56.87,Default,,0,0,0,,a {\c&H0000D8F6\b1}process{\c&H00FFFFFF\b1} that\Nmoves toward your goal.
+Dialogue: 0,0:00:56.87,0:00:57.19,Default,,0,0,0,,a process {\c&H0000D8F6\b1}that{\c&H00FFFFFF\b1}\Nmoves toward your goal.
+Dialogue: 0,0:00:57.19,0:00:57.45,Default,,0,0,0,,a process that\N{\c&H0000D8F6\b1}moves{\c&H00FFFFFF\b1} toward your goal.
+Dialogue: 0,0:00:57.45,0:00:57.79,Default,,0,0,0,,a process that\Nmoves {\c&H0000D8F6\b1}toward{\c&H00FFFFFF\b1} your goal.
+Dialogue: 0,0:00:57.79,0:00:57.95,Default,,0,0,0,,a process that\Nmoves toward {\c&H0000D8F6\b1}your{\c&H00FFFFFF\b1} goal.
+Dialogue: 0,0:00:57.95,0:00:58.13,Default,,0,0,0,,a process that\Nmoves toward your {\c&H0000D8F6\b1}goal.{\c&H00FFFFFF\b1}
+Dialogue: 0,0:00:58.72,0:00:59.26,Default,,0,0,0,,{\c&H0000D8F6\b1}But{\c&H00FFFFFF\b1} there's an important\Ncatch. Agents can make
+Dialogue: 0,0:00:59.42,0:00:59.64,Default,,0,0,0,,But {\c&H0000D8F6\b1}there's{\c&H00FFFFFF\b1} an important\Ncatch. Agents can make
+Dialogue: 0,0:00:59.64,0:00:59.76,Default,,0,0,0,,But there's {\c&H0000D8F6\b1}an{\c&H00FFFFFF\b1} important\Ncatch. Agents can make
+Dialogue: 0,0:00:59.76,0:01:00.10,Default,,0,0,0,,But there's an {\c&H0000D8F6\b1}important{\c&H00FFFFFF\b1}\Ncatch. Agents can make
+Dialogue: 0,0:01:00.10,0:01:00.54,Default,,0,0,0,,But there's an important\N{\c&H0000D8F6\b1}catch.{\c&H00FFFFFF\b1} Agents can make
+Dialogue: 0,0:01:01.02,0:01:01.34,Default,,0,0,0,,But there's an important\Ncatch. {\c&H0000D8F6\b1}Agents{\c&H00FFFFFF\b1} can make
+Dialogue: 0,0:01:01.34,0:01:01.54,Default,,0,0,0,,But there's an important\Ncatch. Agents {\c&H0000D8F6\b1}can{\c&H00FFFFFF\b1} make
+Dialogue: 0,0:01:01.54,0:01:01.68,Default,,0,0,0,,But there's an important\Ncatch. Agents can {\c&H0000D8F6\b1}make{\c&H00FFFFFF\b1}
+Dialogue: 0,0:01:01.68,0:01:02.06,Default,,0,0,0,,{\c&H0000D8F6\b1}mistakes,{\c&H00FFFFFF\b1} misunderstand instructions, or\Naccess more than they
+Dialogue: 0,0:01:02.72,0:01:03.00,Default,,0,0,0,,mistakes, {\c&H0000D8F6\b1}misunderstand{\c&H00FFFFFF\b1} instructions, or\Naccess more than they
+Dialogue: 0,0:01:03.00,0:01:03.64,Default,,0,0,0,,mistakes, misunderstand {\c&H0000D8F6\b1}instructions,{\c&H00FFFFFF\b1} or\Naccess more than they
+Dialogue: 0,0:01:04.26,0:01:04.38,Default,,0,0,0,,mistakes, misunderstand instructions, {\c&H0000D8F6\b1}or{\c&H00FFFFFF\b1}\Naccess more than they
+Dialogue: 0,0:01:04.38,0:01:04.82,Default,,0,0,0,,mistakes, misunderstand instructions, or\N{\c&H0000D8F6\b1}access{\c&H00FFFFFF\b1} more than they
+Dialogue: 0,0:01:04.82,0:01:05.14,Default,,0,0,0,,mistakes, misunderstand instructions, or\Naccess {\c&H0000D8F6\b1}more{\c&H00FFFFFF\b1} than they
+Dialogue: 0,0:01:05.14,0:01:05.46,Default,,0,0,0,,mistakes, misunderstand instructions, or\Naccess more {\c&H0000D8F6\b1}than{\c&H00FFFFFF\b1} they
+Dialogue: 0,0:01:05.46,0:01:05.50,Default,,0,0,0,,mistakes, misunderstand instructions, or\Naccess more than {\c&H0000D8F6\b1}they{\c&H00FFFFFF\b1}
+Dialogue: 0,0:01:05.50,0:01:05.86,Default,,0,0,0,,{\c&H0000D8F6\b1}should{\c&H00FFFFFF\b1} if permissions are\Npoorly designed. That's why
+Dialogue: 0,0:01:05.86,0:01:06.18,Default,,0,0,0,,should {\c&H0000D8F6\b1}if{\c&H00FFFFFF\b1} permissions are\Npoorly designed. That's why
+Dialogue: 0,0:01:06.18,0:01:06.56,Default,,0,0,0,,should if {\c&H0000D8F6\b1}permissions{\c&H00FFFFFF\b1} are\Npoorly designed. That's why
+Dialogue: 0,0:01:06.56,0:01:06.92,Default,,0,0,0,,should if permissions {\c&H0000D8F6\b1}are{\c&H00FFFFFF\b1}\Npoorly designed. That's why
+Dialogue: 0,0:01:06.92,0:01:07.22,Default,,0,0,0,,should if permissions are\N{\c&H0000D8F6\b1}poorly{\c&H00FFFFFF\b1} designed. That's why
+Dialogue: 0,0:01:07.22,0:01:07.68,Default,,0,0,0,,should if permissions are\Npoorly {\c&H0000D8F6\b1}designed.{\c&H00FFFFFF\b1} That's why
+Dialogue: 0,0:01:08.28,0:01:08.54,Default,,0,0,0,,should if permissions are\Npoorly designed. {\c&H0000D8F6\b1}That's{\c&H00FFFFFF\b1} why
+Dialogue: 0,0:01:08.54,0:01:08.64,Default,,0,0,0,,should if permissions are\Npoorly designed. That's {\c&H0000D8F6\b1}why{\c&H00FFFFFF\b1}
+Dialogue: 0,0:01:08.64,0:01:09.00,Default,,0,0,0,,{\c&H0000D8F6\b1}sensitive{\c&H00FFFFFF\b1} actions need clear\Nlimits, verification, and human
+Dialogue: 0,0:01:09.00,0:01:09.50,Default,,0,0,0,,sensitive {\c&H0000D8F6\b1}actions{\c&H00FFFFFF\b1} need clear\Nlimits, verification, and human
+Dialogue: 0,0:01:09.50,0:01:09.90,Default,,0,0,0,,sensitive actions {\c&H0000D8F6\b1}need{\c&H00FFFFFF\b1} clear\Nlimits, verification, and human
+Dialogue: 0,0:01:09.90,0:01:10.20,Default,,0,0,0,,sensitive actions need {\c&H0000D8F6\b1}clear{\c&H00FFFFFF\b1}\Nlimits, verification, and human
+Dialogue: 0,0:01:10.20,0:01:10.62,Default,,0,0,0,,sensitive actions need clear\N{\c&H0000D8F6\b1}limits,{\c&H00FFFFFF\b1} verification, and human
+Dialogue: 0,0:01:11.06,0:01:11.22,Default,,0,0,0,,sensitive actions need clear\Nlimits, {\c&H0000D8F6\b1}verification,{\c&H00FFFFFF\b1} and human
+Dialogue: 0,0:01:11.22,0:01:12.08,Default,,0,0,0,,sensitive actions need clear\Nlimits, verification, {\c&H0000D8F6\b1}and{\c&H00FFFFFF\b1} human
+Dialogue: 0,0:01:12.08,0:01:12.40,Default,,0,0,0,,sensitive actions need clear\Nlimits, verification, and {\c&H0000D8F6\b1}human{\c&H00FFFFFF\b1}
+Dialogue: 0,0:01:12.40,0:01:12.88,Default,,0,0,0,,{\c&H0000D8F6\b1}approval{\c&H00FFFFFF\b1} when appropriate.
+Dialogue: 0,0:01:12.88,0:01:13.16,Default,,0,0,0,,approval {\c&H0000D8F6\b1}when{\c&H00FFFFFF\b1} appropriate.
+Dialogue: 0,0:01:13.16,0:01:13.48,Default,,0,0,0,,approval when {\c&H0000D8F6\b1}appropriate.{\c&H00FFFFFF\b1}
+Dialogue: 0,0:01:14.15,0:01:14.59,Default,,0,0,0,,{\c&H0000D8F6\b1}The{\c&H00FFFFFF\b1} big shift is\N chatbots give answers,
+Dialogue: 0,0:01:14.59,0:01:14.81,Default,,0,0,0,,The {\c&H0000D8F6\b1}big{\c&H00FFFFFF\b1} shift is\N chatbots give answers,
+Dialogue: 0,0:01:14.81,0:01:15.03,Default,,0,0,0,,The big {\c&H0000D8F6\b1}shift{\c&H00FFFFFF\b1} is\N chatbots give answers,
+Dialogue: 0,0:01:15.03,0:01:15.35,Default,,0,0,0,,The big shift {\c&H0000D8F6\b1}is{\c&H00FFFFFF\b1}\N chatbots give answers,
+Dialogue: 0,0:01:15.35,0:01:15.69,Default,,0,0,0,,The big shift is\N{\c&H0000D8F6\b1}{\c&H00FFFFFF\b1} chatbots give answers,
+Dialogue: 0,0:01:16.31,0:01:16.77,Default,,0,0,0,,The big shift is\N {\c&H0000D8F6\b1}chatbots{\c&H00FFFFFF\b1} give answers,
+Dialogue: 0,0:01:16.77,0:01:17.09,Default,,0,0,0,,The big shift is\N chatbots {\c&H0000D8F6\b1}give{\c&H00FFFFFF\b1} answers,
+Dialogue: 0,0:01:17.09,0:01:17.49,Default,,0,0,0,,The big shift is\N chatbots give {\c&H0000D8F6\b1}answers,{\c&H00FFFFFF\b1}
+Dialogue: 0,0:01:17.87,0:01:18.19,Default,,0,0,0,,{\c&H0000D8F6\b1}but{\c&H00FFFFFF\b1} agents take action.\NAnd the most powerful
+Dialogue: 0,0:01:18.19,0:01:18.51,Default,,0,0,0,,but {\c&H0000D8F6\b1}agents{\c&H00FFFFFF\b1} take action.\NAnd the most powerful
+Dialogue: 0,0:01:18.51,0:01:18.87,Default,,0,0,0,,but agents {\c&H0000D8F6\b1}take{\c&H00FFFFFF\b1} action.\NAnd the most powerful
+Dialogue: 0,0:01:18.87,0:01:19.31,Default,,0,0,0,,but agents take {\c&H0000D8F6\b1}action.{\c&H00FFFFFF\b1}\NAnd the most powerful
+Dialogue: 0,0:01:19.97,0:01:20.07,Default,,0,0,0,,but agents take action.\N{\c&H0000D8F6\b1}And{\c&H00FFFFFF\b1} the most powerful
+Dialogue: 0,0:01:20.07,0:01:20.19,Default,,0,0,0,,but agents take action.\NAnd {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} most powerful
+Dialogue: 0,0:01:20.19,0:01:20.33,Default,,0,0,0,,but agents take action.\NAnd the {\c&H0000D8F6\b1}most{\c&H00FFFFFF\b1} powerful
+Dialogue: 0,0:01:20.33,0:01:20.69,Default,,0,0,0,,but agents take action.\NAnd the most {\c&H0000D8F6\b1}powerful{\c&H00FFFFFF\b1}
+Dialogue: 0,0:01:20.69,0:01:21.13,Default,,0,0,0,,{\c&H0000D8F6\b1}systems{\c&H00FFFFFF\b1} are the ones\Nthat keep humans firmly
+Dialogue: 0,0:01:21.13,0:01:21.31,Default,,0,0,0,,systems {\c&H0000D8F6\b1}are{\c&H00FFFFFF\b1} the ones\Nthat keep humans firmly
+Dialogue: 0,0:01:21.31,0:01:21.41,Default,,0,0,0,,systems are {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} ones\Nthat keep humans firmly
+Dialogue: 0,0:01:21.41,0:01:21.57,Default,,0,0,0,,systems are the {\c&H0000D8F6\b1}ones{\c&H00FFFFFF\b1}\Nthat keep humans firmly
+Dialogue: 0,0:01:21.57,0:01:21.77,Default,,0,0,0,,systems are the ones\N{\c&H0000D8F6\b1}that{\c&H00FFFFFF\b1} keep humans firmly
+Dialogue: 0,0:01:21.77,0:01:21.95,Default,,0,0,0,,systems are the ones\Nthat {\c&H0000D8F6\b1}keep{\c&H00FFFFFF\b1} humans firmly
+Dialogue: 0,0:01:21.95,0:01:22.45,Default,,0,0,0,,systems are the ones\Nthat keep {\c&H0000D8F6\b1}humans{\c&H00FFFFFF\b1} firmly
+Dialogue: 0,0:01:22.45,0:01:22.93,Default,,0,0,0,,systems are the ones\Nthat keep humans {\c&H0000D8F6\b1}firmly{\c&H00FFFFFF\b1}
+Dialogue: 0,0:01:22.93,0:01:23.25,Default,,0,0,0,,{\c&H0000D8F6\b1}in{\c&H00FFFFFF\b1} the loop.
+Dialogue: 0,0:01:23.25,0:01:23.29,Default,,0,0,0,,in {\c&H0000D8F6\b1}the{\c&H00FFFFFF\b1} loop.
+Dialogue: 0,0:01:23.29,0:01:23.47,Default,,0,0,0,,in the {\c&H0000D8F6\b1}loop.{\c&H00FFFFFF\b1}

@@ -1,0 +1,6 @@
+{
+  "level": 1,
+  "motion_preset": "wipe",
+  "label": "Supervise Banner",
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 680 95\" width=\"680\" height=\"95\"><rect x=\"10\" y=\"10\" width=\"660\" height=\"75\" rx=\"16\" fill=\"#f8fafc\" stroke=\"#0f172a\" stroke-width=\"3.5\"/><text x=\"340\" y=\"42\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"20\" fill=\"#2563eb\" text-anchor=\"middle\">YOU SUPERVISE &#x2022; AGENT DELIVERS</text><text x=\"340\" y=\"68\" font-family=\"Arial, sans-serif\" font-weight=\"600\" font-size=\"15\" fill=\"#475569\" text-anchor=\"middle\">High leverage execution without manual friction</text></svg>"
+}

@@ -1,0 +1,6 @@
+{
+  "level": 1,
+  "motion_preset": "wipe",
+  "label": "Final Takeaway Subtitle Card",
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 860 150\" width=\"860\" height=\"150\"><rect x=\"10\" y=\"5\" width=\"840\" height=\"140\" rx=\"24\" fill=\"#17B8A6\" stroke=\"#0D9488\" stroke-width=\"4\"/><text x=\"40\" y=\"65\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"64\" fill=\"#FFFFFF\">AUTONOMY WITH ACCOUNTABILITY</text><text x=\"40\" y=\"115\" font-family=\"Arial, sans-serif\" font-weight=\"bold\" font-size=\"48\" fill=\"#1B1240\">Build smart, supervise wisely</text></svg>"
+}

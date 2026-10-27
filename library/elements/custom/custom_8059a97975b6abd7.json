@@ -1,0 +1,8 @@
+{
+  "level": 1,
+  "motion_preset": "wipe",
+  "label": "Danger Alert Banner",
+  "width": 860,
+  "height": 110,
+  "svg": "<svg viewBox=\"0 0 860 110\"><rect width=\"860\" height=\"110\" rx=\"16\" fill=\"#1B1240\" stroke=\"#E5484D\" stroke-width=\"4\"/><text x=\"40\" y=\"70\" font-size=\"48\" font-weight=\"bold\" fill=\"#E5484D\">Danger: Unchecked Agents</text></svg>"
+}

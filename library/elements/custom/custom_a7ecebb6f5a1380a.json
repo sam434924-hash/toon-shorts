@@ -1,0 +1,6 @@
+{
+  "level": 1,
+  "motion_preset": "wipe",
+  "label": "Danger Alert Banner",
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 860 110\" width=\"860\" height=\"110\"><rect x=\"10\" y=\"10\" width=\"840\" height=\"90\" rx=\"24\" fill=\"#E5484D\" stroke=\"#B91C1C\" stroke-width=\"4\"/><text x=\"40\" y=\"72\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"64\" fill=\"#FFFFFF\">DANGER: UNCHECKED AGENTS</text></svg>"
+}

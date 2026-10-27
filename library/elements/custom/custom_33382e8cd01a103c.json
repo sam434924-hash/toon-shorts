@@ -1,0 +1,6 @@
+{
+  "level": 1,
+  "motion_preset": "wipe",
+  "label": "Manual Steps Notice",
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 680 115\" width=\"680\" height=\"115\"><rect x=\"10\" y=\"10\" width=\"660\" height=\"95\" rx=\"16\" fill=\"#fffbeb\" stroke=\"#f59e0b\" stroke-width=\"4\"/><circle cx=\"55\" cy=\"58\" r=\"24\" fill=\"#f59e0b\"/><text x=\"55\" y=\"69\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"30\" fill=\"#ffffff\" text-anchor=\"middle\">!</text><text x=\"100\" y=\"50\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"23\" fill=\"#0f172a\">YOU TAKE THE NEXT STEPS</text><text x=\"100\" y=\"82\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"18\" fill=\"#b45309\">Manual copy, paste, send, verify required</text></svg>"
+}

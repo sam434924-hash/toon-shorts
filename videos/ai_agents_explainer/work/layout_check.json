@@ -1,0 +1,210 @@
+{
+  "video_dir": "C:\\dev\\toon-shorts\\videos\\.tmp-ai_agents_explainer-055cbe0a",
+  "total_scenes": 6,
+  "passed": true,
+  "failed_scenes": [],
+  "violations_count": 0,
+  "violations": [],
+  "warnings_count": 0,
+  "warnings": [],
+  "scene_results": [
+    {
+      "scene": 1,
+      "html_file": "scene_1_still.html",
+      "passed": true,
+      "violations": [],
+      "warnings": [],
+      "board_zone": {
+        "top": 230,
+        "bottom": 1030,
+        "left": 60,
+        "right": 1020,
+        "width": 960,
+        "height": 800,
+        "visible": true,
+        "scrollWidth": 960,
+        "scrollHeight": 800,
+        "clientWidth": 960,
+        "clientHeight": 800
+      },
+      "title_badge": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "visible": false,
+        "scrollWidth": 0,
+        "scrollHeight": 0,
+        "clientWidth": 0,
+        "clientHeight": 0
+      }
+    },
+    {
+      "scene": 2,
+      "html_file": "scene_2_still.html",
+      "passed": true,
+      "violations": [],
+      "warnings": [],
+      "board_zone": {
+        "top": 230,
+        "bottom": 1030,
+        "left": 60,
+        "right": 1020,
+        "width": 960,
+        "height": 800,
+        "visible": true,
+        "scrollWidth": 960,
+        "scrollHeight": 800,
+        "clientWidth": 960,
+        "clientHeight": 800
+      },
+      "title_badge": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "visible": false,
+        "scrollWidth": 0,
+        "scrollHeight": 0,
+        "clientWidth": 0,
+        "clientHeight": 0
+      }
+    },
+    {
+      "scene": 3,
+      "html_file": "scene_3_still.html",
+      "passed": true,
+      "violations": [],
+      "warnings": [],
+      "board_zone": {
+        "top": 230,
+        "bottom": 1030,
+        "left": 60,
+        "right": 1020,
+        "width": 960,
+        "height": 800,
+        "visible": true,
+        "scrollWidth": 960,
+        "scrollHeight": 800,
+        "clientWidth": 960,
+        "clientHeight": 800
+      },
+      "title_badge": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "visible": false,
+        "scrollWidth": 0,
+        "scrollHeight": 0,
+        "clientWidth": 0,
+        "clientHeight": 0
+      }
+    },
+    {
+      "scene": 4,
+      "html_file": "scene_4_still.html",
+      "passed": true,
+      "violations": [],
+      "warnings": [],
+      "board_zone": {
+        "top": 230,
+        "bottom": 1030,
+        "left": 60,
+        "right": 1020,
+        "width": 960,
+        "height": 800,
+        "visible": true,
+        "scrollWidth": 960,
+        "scrollHeight": 800,
+        "clientWidth": 960,
+        "clientHeight": 800
+      },
+      "title_badge": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "visible": false,
+        "scrollWidth": 0,
+        "scrollHeight": 0,
+        "clientWidth": 0,
+        "clientHeight": 0
+      }
+    },
+    {
+      "scene": 5,
+      "html_file": "scene_5_still.html",
+      "passed": true,
+      "violations": [],
+      "warnings": [],
+      "board_zone": {
+        "top": 230,
+        "bottom": 1030,
+        "left": 60,
+        "right": 1020,
+        "width": 960,
+        "height": 800,
+        "visible": true,
+        "scrollWidth": 960,
+        "scrollHeight": 800,
+        "clientWidth": 960,
+        "clientHeight": 800
+      },
+      "title_badge": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "visible": false,
+        "scrollWidth": 0,
+        "scrollHeight": 0,
+        "clientWidth": 0,
+        "clientHeight": 0
+      }
+    },
+    {
+      "scene": 6,
+      "html_file": "scene_6_still.html",
+      "passed": true,
+      "violations": [],
+      "warnings": [],
+      "board_zone": {
+        "top": 230,
+        "bottom": 1030,
+        "left": 60,
+        "right": 1020,
+        "width": 960,
+        "height": 800,
+        "visible": true,
+        "scrollWidth": 960,
+        "scrollHeight": 800,
+        "clientWidth": 960,
+        "clientHeight": 800
+      },
+      "title_badge": {
+        "top": 0,
+        "bottom": 0,
+        "left": 0,
+        "right": 0,
+        "width": 0,
+        "height": 0,
+        "visible": false,
+        "scrollWidth": 0,
+        "scrollHeight": 0,
+        "clientWidth": 0,
+        "clientHeight": 0
+      }
+    }
+  ]
+}

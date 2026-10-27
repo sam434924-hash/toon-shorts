@@ -1,0 +1,6 @@
+{
+  "level": 1,
+  "motion_preset": "wipe",
+  "label": "Key Question Banner",
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 860 110\" width=\"860\" height=\"110\"><rect x=\"10\" y=\"10\" width=\"840\" height=\"90\" rx=\"24\" fill=\"#FFC233\" stroke=\"#D97706\" stroke-width=\"4\"/><circle cx=\"65\" cy=\"55\" r=\"32\" fill=\"#3D1F7A\"/><text x=\"65\" y=\"75\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"64\" fill=\"#FFC233\" text-anchor=\"middle\">?</text><text x=\"125\" y=\"72\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"64\" fill=\"#1B1240\">PLAN YOUR ENTIRE DAY?</text></svg>"
+}

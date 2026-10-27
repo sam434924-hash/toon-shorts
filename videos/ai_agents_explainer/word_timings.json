@@ -1,0 +1,1169 @@
+{
+  "scene_1": [
+    {
+      "word": "Imagine",
+      "start_time": 0.0,
+      "end_time": 0.68
+    },
+    {
+      "word": "asking",
+      "start_time": 0.68,
+      "end_time": 1.08
+    },
+    {
+      "word": "an",
+      "start_time": 1.08,
+      "end_time": 1.34
+    },
+    {
+      "word": "AI",
+      "start_time": 1.34,
+      "end_time": 1.58
+    },
+    {
+      "word": "to",
+      "start_time": 1.58,
+      "end_time": 1.86
+    },
+    {
+      "word": "plan",
+      "start_time": 1.86,
+      "end_time": 2.14
+    },
+    {
+      "word": "your",
+      "start_time": 2.14,
+      "end_time": 2.38
+    },
+    {
+      "word": "entire",
+      "start_time": 2.38,
+      "end_time": 2.76
+    },
+    {
+      "word": "day.",
+      "start_time": 2.76,
+      "end_time": 3.24
+    },
+    {
+      "word": "Not",
+      "start_time": 3.54,
+      "end_time": 3.68
+    },
+    {
+      "word": "just",
+      "start_time": 3.68,
+      "end_time": 3.86
+    },
+    {
+      "word": "tell",
+      "start_time": 3.86,
+      "end_time": 4.0
+    },
+    {
+      "word": "you",
+      "start_time": 4.0,
+      "end_time": 4.12
+    },
+    {
+      "word": "what",
+      "start_time": 4.12,
+      "end_time": 4.24
+    },
+    {
+      "word": "to",
+      "start_time": 4.24,
+      "end_time": 4.48
+    },
+    {
+      "word": "do,",
+      "start_time": 4.48,
+      "end_time": 4.74
+    },
+    {
+      "word": "but",
+      "start_time": 4.84,
+      "end_time": 5.1
+    },
+    {
+      "word": "actually",
+      "start_time": 5.1,
+      "end_time": 5.48
+    },
+    {
+      "word": "help",
+      "start_time": 5.48,
+      "end_time": 5.76
+    },
+    {
+      "word": "get",
+      "start_time": 5.76,
+      "end_time": 5.98
+    },
+    {
+      "word": "everything",
+      "start_time": 5.98,
+      "end_time": 6.36
+    },
+    {
+      "word": "done.",
+      "start_time": 6.36,
+      "end_time": 6.9
+    },
+    {
+      "word": "It",
+      "start_time": 7.32,
+      "end_time": 7.48
+    },
+    {
+      "word": "finds",
+      "start_time": 7.48,
+      "end_time": 7.68
+    },
+    {
+      "word": "information,",
+      "start_time": 7.68,
+      "end_time": 8.4
+    },
+    {
+      "word": "organizes",
+      "start_time": 8.84,
+      "end_time": 9.42
+    },
+    {
+      "word": "tasks,",
+      "start_time": 9.42,
+      "end_time": 9.8
+    },
+    {
+      "word": "and",
+      "start_time": 9.8,
+      "end_time": 10.18
+    },
+    {
+      "word": "works",
+      "start_time": 10.18,
+      "end_time": 10.38
+    },
+    {
+      "word": "through",
+      "start_time": 10.38,
+      "end_time": 10.58
+    },
+    {
+      "word": "each",
+      "start_time": 10.58,
+      "end_time": 10.78
+    },
+    {
+      "word": "step.",
+      "start_time": 10.78,
+      "end_time": 11.2
+    },
+    {
+      "word": "Sounds",
+      "start_time": 11.64,
+      "end_time": 11.84
+    },
+    {
+      "word": "futuristic?",
+      "start_time": 11.84,
+      "end_time": 12.28
+    },
+    {
+      "word": "Welcome",
+      "start_time": 13.2,
+      "end_time": 13.4
+    },
+    {
+      "word": "to",
+      "start_time": 13.4,
+      "end_time": 13.66
+    },
+    {
+      "word": "the",
+      "start_time": 13.66,
+      "end_time": 13.66
+    },
+    {
+      "word": "world",
+      "start_time": 13.66,
+      "end_time": 13.96
+    },
+    {
+      "word": "of",
+      "start_time": 13.96,
+      "end_time": 14.42
+    },
+    {
+      "word": "AI",
+      "start_time": 14.42,
+      "end_time": 14.64
+    },
+    {
+      "word": "agents.",
+      "start_time": 14.64,
+      "end_time": 15.1
+    }
+  ],
+  "scene_2": [
+    {
+      "word": "A",
+      "start_time": 0.0,
+      "end_time": 0.68
+    },
+    {
+      "word": "traditional",
+      "start_time": 0.68,
+      "end_time": 1.06
+    },
+    {
+      "word": "chatbot",
+      "start_time": 1.06,
+      "end_time": 1.66
+    },
+    {
+      "word": "mainly",
+      "start_time": 1.66,
+      "end_time": 1.96
+    },
+    {
+      "word": "responds",
+      "start_time": 1.96,
+      "end_time": 2.3
+    },
+    {
+      "word": "to",
+      "start_time": 2.3,
+      "end_time": 2.5
+    },
+    {
+      "word": "what",
+      "start_time": 2.5,
+      "end_time": 2.68
+    },
+    {
+      "word": "you",
+      "start_time": 2.68,
+      "end_time": 2.86
+    },
+    {
+      "word": "ask.",
+      "start_time": 2.86,
+      "end_time": 3.16
+    },
+    {
+      "word": "You",
+      "start_time": 3.46,
+      "end_time": 3.62
+    },
+    {
+      "word": "ask",
+      "start_time": 3.62,
+      "end_time": 3.78
+    },
+    {
+      "word": "for",
+      "start_time": 3.78,
+      "end_time": 3.96
+    },
+    {
+      "word": "an",
+      "start_time": 3.96,
+      "end_time": 4.14
+    },
+    {
+      "word": "email,",
+      "start_time": 4.14,
+      "end_time": 4.4
+    },
+    {
+      "word": "and",
+      "start_time": 4.4,
+      "end_time": 4.84
+    },
+    {
+      "word": "it",
+      "start_time": 4.84,
+      "end_time": 4.98
+    },
+    {
+      "word": "writes",
+      "start_time": 4.98,
+      "end_time": 5.08
+    },
+    {
+      "word": "one.",
+      "start_time": 5.08,
+      "end_time": 5.48
+    },
+    {
+      "word": "You",
+      "start_time": 5.74,
+      "end_time": 5.8
+    },
+    {
+      "word": "ask",
+      "start_time": 5.8,
+      "end_time": 6.02
+    },
+    {
+      "word": "for",
+      "start_time": 6.02,
+      "end_time": 6.18
+    },
+    {
+      "word": "a",
+      "start_time": 6.18,
+      "end_time": 6.32
+    },
+    {
+      "word": "plan,",
+      "start_time": 6.32,
+      "end_time": 6.64
+    },
+    {
+      "word": "and",
+      "start_time": 6.64,
+      "end_time": 6.94
+    },
+    {
+      "word": "it",
+      "start_time": 6.94,
+      "end_time": 7.06
+    },
+    {
+      "word": "gives",
+      "start_time": 7.06,
+      "end_time": 7.22
+    },
+    {
+      "word": "you",
+      "start_time": 7.22,
+      "end_time": 7.46
+    },
+    {
+      "word": "a",
+      "start_time": 7.46,
+      "end_time": 7.58
+    },
+    {
+      "word": "plan.",
+      "start_time": 7.58,
+      "end_time": 7.88
+    },
+    {
+      "word": "But",
+      "start_time": 8.42,
+      "end_time": 8.58
+    },
+    {
+      "word": "you",
+      "start_time": 8.58,
+      "end_time": 8.72
+    },
+    {
+      "word": "usually",
+      "start_time": 8.72,
+      "end_time": 8.98
+    },
+    {
+      "word": "have",
+      "start_time": 8.98,
+      "end_time": 9.3
+    },
+    {
+      "word": "to",
+      "start_time": 9.3,
+      "end_time": 9.42
+    },
+    {
+      "word": "take",
+      "start_time": 9.42,
+      "end_time": 9.68
+    },
+    {
+      "word": "those",
+      "start_time": 9.68,
+      "end_time": 9.9
+    },
+    {
+      "word": "next",
+      "start_time": 9.9,
+      "end_time": 10.26
+    },
+    {
+      "word": "steps",
+      "start_time": 10.26,
+      "end_time": 10.58
+    },
+    {
+      "word": "yourself.",
+      "start_time": 10.58,
+      "end_time": 10.98
+    }
+  ],
+  "scene_3": [
+    {
+      "word": "An",
+      "start_time": 0.0,
+      "end_time": 0.42
+    },
+    {
+      "word": "AI",
+      "start_time": 0.42,
+      "end_time": 0.74
+    },
+    {
+      "word": "agent",
+      "start_time": 0.74,
+      "end_time": 1.12
+    },
+    {
+      "word": "takes",
+      "start_time": 1.12,
+      "end_time": 1.44
+    },
+    {
+      "word": "a",
+      "start_time": 1.44,
+      "end_time": 1.72
+    },
+    {
+      "word": "different",
+      "start_time": 1.72,
+      "end_time": 1.9
+    },
+    {
+      "word": "approach.",
+      "start_time": 1.9,
+      "end_time": 2.42
+    },
+    {
+      "word": "You",
+      "start_time": 2.86,
+      "end_time": 2.9
+    },
+    {
+      "word": "give",
+      "start_time": 2.9,
+      "end_time": 2.98
+    },
+    {
+      "word": "it",
+      "start_time": 2.98,
+      "end_time": 3.14
+    },
+    {
+      "word": "a",
+      "start_time": 3.14,
+      "end_time": 3.26
+    },
+    {
+      "word": "goal,",
+      "start_time": 3.26,
+      "end_time": 3.52
+    },
+    {
+      "word": "and",
+      "start_time": 3.52,
+      "end_time": 4.02
+    },
+    {
+      "word": "it",
+      "start_time": 4.02,
+      "end_time": 4.06
+    },
+    {
+      "word": "can",
+      "start_time": 4.06,
+      "end_time": 4.22
+    },
+    {
+      "word": "break",
+      "start_time": 4.22,
+      "end_time": 4.44
+    },
+    {
+      "word": "that",
+      "start_time": 4.44,
+      "end_time": 4.72
+    },
+    {
+      "word": "goal",
+      "start_time": 4.72,
+      "end_time": 4.92
+    },
+    {
+      "word": "into",
+      "start_time": 4.92,
+      "end_time": 5.16
+    },
+    {
+      "word": "smaller",
+      "start_time": 5.16,
+      "end_time": 5.46
+    },
+    {
+      "word": "tasks.",
+      "start_time": 5.46,
+      "end_time": 6.02
+    },
+    {
+      "word": "It",
+      "start_time": 6.58,
+      "end_time": 6.64
+    },
+    {
+      "word": "can",
+      "start_time": 6.64,
+      "end_time": 6.78
+    },
+    {
+      "word": "decide",
+      "start_time": 6.78,
+      "end_time": 7.04
+    },
+    {
+      "word": "what",
+      "start_time": 7.04,
+      "end_time": 7.22
+    },
+    {
+      "word": "to",
+      "start_time": 7.22,
+      "end_time": 7.38
+    },
+    {
+      "word": "do",
+      "start_time": 7.38,
+      "end_time": 7.52
+    },
+    {
+      "word": "next,",
+      "start_time": 7.52,
+      "end_time": 7.94
+    },
+    {
+      "word": "use",
+      "start_time": 8.2,
+      "end_time": 8.56
+    },
+    {
+      "word": "available",
+      "start_time": 8.56,
+      "end_time": 8.94
+    },
+    {
+      "word": "tools,",
+      "start_time": 8.94,
+      "end_time": 9.6
+    },
+    {
+      "word": "check",
+      "start_time": 9.82,
+      "end_time": 10.0
+    },
+    {
+      "word": "the",
+      "start_time": 10.0,
+      "end_time": 10.24
+    },
+    {
+      "word": "results,",
+      "start_time": 10.24,
+      "end_time": 10.64
+    },
+    {
+      "word": "and",
+      "start_time": 11.1,
+      "end_time": 11.32
+    },
+    {
+      "word": "adjust",
+      "start_time": 11.32,
+      "end_time": 11.56
+    },
+    {
+      "word": "its",
+      "start_time": 11.56,
+      "end_time": 11.84
+    },
+    {
+      "word": "approach",
+      "start_time": 11.84,
+      "end_time": 12.26
+    },
+    {
+      "word": "when",
+      "start_time": 12.26,
+      "end_time": 12.64
+    },
+    {
+      "word": "something",
+      "start_time": 12.64,
+      "end_time": 12.94
+    },
+    {
+      "word": "goes",
+      "start_time": 12.94,
+      "end_time": 13.14
+    },
+    {
+      "word": "wrong.",
+      "start_time": 13.14,
+      "end_time": 13.44
+    }
+  ],
+  "scene_4": [
+    {
+      "word": "Let's",
+      "start_time": 0.0,
+      "end_time": 0.48
+    },
+    {
+      "word": "say",
+      "start_time": 0.48,
+      "end_time": 0.78
+    },
+    {
+      "word": "you",
+      "start_time": 0.78,
+      "end_time": 0.92
+    },
+    {
+      "word": "need",
+      "start_time": 0.92,
+      "end_time": 1.12
+    },
+    {
+      "word": "to",
+      "start_time": 1.12,
+      "end_time": 1.36
+    },
+    {
+      "word": "prepare",
+      "start_time": 1.36,
+      "end_time": 1.58
+    },
+    {
+      "word": "for",
+      "start_time": 1.58,
+      "end_time": 1.84
+    },
+    {
+      "word": "a",
+      "start_time": 1.84,
+      "end_time": 1.92
+    },
+    {
+      "word": "meeting.",
+      "start_time": 1.92,
+      "end_time": 2.14
+    },
+    {
+      "word": "An",
+      "start_time": 2.88,
+      "end_time": 2.92
+    },
+    {
+      "word": "agent",
+      "start_time": 2.92,
+      "end_time": 3.2
+    },
+    {
+      "word": "could",
+      "start_time": 3.2,
+      "end_time": 3.6
+    },
+    {
+      "word": "gather",
+      "start_time": 3.6,
+      "end_time": 3.88
+    },
+    {
+      "word": "information",
+      "start_time": 3.88,
+      "end_time": 4.38
+    },
+    {
+      "word": "from",
+      "start_time": 4.38,
+      "end_time": 4.74
+    },
+    {
+      "word": "approved",
+      "start_time": 4.74,
+      "end_time": 5.08
+    },
+    {
+      "word": "sources,",
+      "start_time": 5.08,
+      "end_time": 5.64
+    },
+    {
+      "word": "summarize",
+      "start_time": 6.02,
+      "end_time": 6.26
+    },
+    {
+      "word": "the",
+      "start_time": 6.26,
+      "end_time": 6.6
+    },
+    {
+      "word": "important",
+      "start_time": 6.6,
+      "end_time": 6.84
+    },
+    {
+      "word": "points,",
+      "start_time": 6.84,
+      "end_time": 7.3
+    },
+    {
+      "word": "draft",
+      "start_time": 7.56,
+      "end_time": 7.7
+    },
+    {
+      "word": "an",
+      "start_time": 7.7,
+      "end_time": 7.9
+    },
+    {
+      "word": "agenda,",
+      "start_time": 7.9,
+      "end_time": 8.24
+    },
+    {
+      "word": "and",
+      "start_time": 8.8,
+      "end_time": 9.06
+    },
+    {
+      "word": "organize",
+      "start_time": 9.06,
+      "end_time": 9.36
+    },
+    {
+      "word": "the",
+      "start_time": 9.36,
+      "end_time": 9.56
+    },
+    {
+      "word": "results",
+      "start_time": 9.56,
+      "end_time": 9.86
+    },
+    {
+      "word": "into",
+      "start_time": 9.86,
+      "end_time": 10.22
+    },
+    {
+      "word": "one",
+      "start_time": 10.22,
+      "end_time": 10.46
+    },
+    {
+      "word": "document.",
+      "start_time": 10.46,
+      "end_time": 10.92
+    },
+    {
+      "word": "Instead",
+      "start_time": 11.54,
+      "end_time": 11.72
+    },
+    {
+      "word": "of",
+      "start_time": 11.72,
+      "end_time": 11.9
+    },
+    {
+      "word": "handling",
+      "start_time": 11.9,
+      "end_time": 12.16
+    },
+    {
+      "word": "every",
+      "start_time": 12.16,
+      "end_time": 12.72
+    },
+    {
+      "word": "little",
+      "start_time": 12.72,
+      "end_time": 13.0
+    },
+    {
+      "word": "step",
+      "start_time": 13.0,
+      "end_time": 13.18
+    },
+    {
+      "word": "yourself,",
+      "start_time": 13.18,
+      "end_time": 13.72
+    },
+    {
+      "word": "you",
+      "start_time": 14.02,
+      "end_time": 14.3
+    },
+    {
+      "word": "supervise",
+      "start_time": 14.3,
+      "end_time": 14.7
+    },
+    {
+      "word": "a",
+      "start_time": 14.7,
+      "end_time": 14.92
+    },
+    {
+      "word": "process",
+      "start_time": 14.92,
+      "end_time": 15.38
+    },
+    {
+      "word": "that",
+      "start_time": 15.38,
+      "end_time": 15.7
+    },
+    {
+      "word": "moves",
+      "start_time": 15.7,
+      "end_time": 15.96
+    },
+    {
+      "word": "toward",
+      "start_time": 15.96,
+      "end_time": 16.3
+    },
+    {
+      "word": "your",
+      "start_time": 16.3,
+      "end_time": 16.46
+    },
+    {
+      "word": "goal.",
+      "start_time": 16.46,
+      "end_time": 16.64
+    }
+  ],
+  "scene_5": [
+    {
+      "word": "But",
+      "start_time": 0.0,
+      "end_time": 0.54
+    },
+    {
+      "word": "there's",
+      "start_time": 0.7,
+      "end_time": 0.92
+    },
+    {
+      "word": "an",
+      "start_time": 0.92,
+      "end_time": 1.04
+    },
+    {
+      "word": "important",
+      "start_time": 1.04,
+      "end_time": 1.38
+    },
+    {
+      "word": "catch.",
+      "start_time": 1.38,
+      "end_time": 1.82
+    },
+    {
+      "word": "Agents",
+      "start_time": 2.3,
+      "end_time": 2.62
+    },
+    {
+      "word": "can",
+      "start_time": 2.62,
+      "end_time": 2.82
+    },
+    {
+      "word": "make",
+      "start_time": 2.82,
+      "end_time": 2.96
+    },
+    {
+      "word": "mistakes,",
+      "start_time": 2.96,
+      "end_time": 3.34
+    },
+    {
+      "word": "misunderstand",
+      "start_time": 4.0,
+      "end_time": 4.28
+    },
+    {
+      "word": "instructions,",
+      "start_time": 4.28,
+      "end_time": 4.92
+    },
+    {
+      "word": "or",
+      "start_time": 5.54,
+      "end_time": 5.66
+    },
+    {
+      "word": "access",
+      "start_time": 5.66,
+      "end_time": 6.1
+    },
+    {
+      "word": "more",
+      "start_time": 6.1,
+      "end_time": 6.42
+    },
+    {
+      "word": "than",
+      "start_time": 6.42,
+      "end_time": 6.74
+    },
+    {
+      "word": "they",
+      "start_time": 6.74,
+      "end_time": 6.78
+    },
+    {
+      "word": "should",
+      "start_time": 6.78,
+      "end_time": 7.14
+    },
+    {
+      "word": "if",
+      "start_time": 7.14,
+      "end_time": 7.46
+    },
+    {
+      "word": "permissions",
+      "start_time": 7.46,
+      "end_time": 7.84
+    },
+    {
+      "word": "are",
+      "start_time": 7.84,
+      "end_time": 8.2
+    },
+    {
+      "word": "poorly",
+      "start_time": 8.2,
+      "end_time": 8.5
+    },
+    {
+      "word": "designed.",
+      "start_time": 8.5,
+      "end_time": 8.96
+    },
+    {
+      "word": "That's",
+      "start_time": 9.56,
+      "end_time": 9.82
+    },
+    {
+      "word": "why",
+      "start_time": 9.82,
+      "end_time": 9.92
+    },
+    {
+      "word": "sensitive",
+      "start_time": 9.92,
+      "end_time": 10.28
+    },
+    {
+      "word": "actions",
+      "start_time": 10.28,
+      "end_time": 10.78
+    },
+    {
+      "word": "need",
+      "start_time": 10.78,
+      "end_time": 11.18
+    },
+    {
+      "word": "clear",
+      "start_time": 11.18,
+      "end_time": 11.48
+    },
+    {
+      "word": "limits,",
+      "start_time": 11.48,
+      "end_time": 11.9
+    },
+    {
+      "word": "verification,",
+      "start_time": 12.34,
+      "end_time": 12.5
+    },
+    {
+      "word": "and",
+      "start_time": 12.5,
+      "end_time": 13.36
+    },
+    {
+      "word": "human",
+      "start_time": 13.36,
+      "end_time": 13.68
+    },
+    {
+      "word": "approval",
+      "start_time": 13.68,
+      "end_time": 14.16
+    },
+    {
+      "word": "when",
+      "start_time": 14.16,
+      "end_time": 14.44
+    },
+    {
+      "word": "appropriate.",
+      "start_time": 14.44,
+      "end_time": 14.76
+    }
+  ],
+  "scene_6": [
+    {
+      "word": "The",
+      "start_time": 0.0,
+      "end_time": 0.44
+    },
+    {
+      "word": "big",
+      "start_time": 0.44,
+      "end_time": 0.66
+    },
+    {
+      "word": "shift",
+      "start_time": 0.66,
+      "end_time": 0.88
+    },
+    {
+      "word": "is",
+      "start_time": 0.88,
+      "end_time": 1.2
+    },
+    {
+      "word": "simple:",
+      "start_time": 1.2,
+      "end_time": 1.54
+    },
+    {
+      "word": "chatbots",
+      "start_time": 2.16,
+      "end_time": 2.62
+    },
+    {
+      "word": "give",
+      "start_time": 2.62,
+      "end_time": 2.94
+    },
+    {
+      "word": "answers,",
+      "start_time": 2.94,
+      "end_time": 3.34
+    },
+    {
+      "word": "but",
+      "start_time": 3.72,
+      "end_time": 4.04
+    },
+    {
+      "word": "agents",
+      "start_time": 4.04,
+      "end_time": 4.36
+    },
+    {
+      "word": "take",
+      "start_time": 4.36,
+      "end_time": 4.72
+    },
+    {
+      "word": "action.",
+      "start_time": 4.72,
+      "end_time": 5.16
+    },
+    {
+      "word": "And",
+      "start_time": 5.82,
+      "end_time": 5.92
+    },
+    {
+      "word": "the",
+      "start_time": 5.92,
+      "end_time": 6.04
+    },
+    {
+      "word": "most",
+      "start_time": 6.04,
+      "end_time": 6.18
+    },
+    {
+      "word": "powerful",
+      "start_time": 6.18,
+      "end_time": 6.54
+    },
+    {
+      "word": "systems",
+      "start_time": 6.54,
+      "end_time": 6.98
+    },
+    {
+      "word": "are",
+      "start_time": 6.98,
+      "end_time": 7.16
+    },
+    {
+      "word": "the",
+      "start_time": 7.16,
+      "end_time": 7.26
+    },
+    {
+      "word": "ones",
+      "start_time": 7.26,
+      "end_time": 7.42
+    },
+    {
+      "word": "that",
+      "start_time": 7.42,
+      "end_time": 7.62
+    },
+    {
+      "word": "keep",
+      "start_time": 7.62,
+      "end_time": 7.8
+    },
+    {
+      "word": "humans",
+      "start_time": 7.8,
+      "end_time": 8.3
+    },
+    {
+      "word": "firmly",
+      "start_time": 8.3,
+      "end_time": 8.78
+    },
+    {
+      "word": "in",
+      "start_time": 8.78,
+      "end_time": 9.1
+    },
+    {
+      "word": "the",
+      "start_time": 9.1,
+      "end_time": 9.14
+    },
+    {
+      "word": "loop.",
+      "start_time": 9.14,
+      "end_time": 9.32
+    }
+  ]
+}

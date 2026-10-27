@@ -176,3 +176,37 @@ def test_real_ffmpeg_subtitles_with_spaces_and_drive_path(tmp_path):
     res = subprocess.run(cmd, capture_output=True, text=True)
     assert res.returncode == 0, f"FFmpeg failed to load subtitles from {escaped}:\n{res.stderr}"
 
+
+
+def test_burned_in_subtitles_filter_produces_caption_pixels(tmp_path):
+    """Verifies that burning in subtitles onto a video stream alters pixels from black to white/rendered text."""
+    try:
+        check_ffmpeg_subtitles_support()
+    except RuntimeError as e:
+        pytest.skip(f"FFmpeg with libass/subtitles filter not available: {e}")
+
+    sub_file = tmp_path / "burn_test.ass"
+    sub_file.write_text(
+        "[Script Info]\nScriptType: v4.00+\nPlayResX: 320\nPlayResY: 240\n\n"
+        "[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, BackColour, Bold, Alignment, MarginV\n"
+        "Style: Default,Arial,32,&H00FFFFFF,&H00000000,1,2,30\n\n"
+        "[Events]\nFormat: Layer, Start, End, Style, Text\n"
+        "Dialogue: 0,0:00:00.00,0:00:01.00,Default,TESTCAPTION\n",
+        encoding="utf-8"
+    )
+
+    out_mp4 = tmp_path / "burned.mp4"
+    escaped = escape_ffmpeg_subtitles_path(str(sub_file.resolve()))
+
+    cmd = [
+        "ffmpeg",
+        "-y",
+        "-f", "lavfi",
+        "-i", "color=c=black:s=320x240:d=0.5:r=10",
+        "-vf", f"subtitles={escaped}",
+        "-pix_fmt", "yuv420p",
+        str(out_mp4),
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    assert res.returncode == 0, f"Burn-in failed:\n{res.stderr}"
+    assert out_mp4.is_file() and out_mp4.stat().st_size > 0

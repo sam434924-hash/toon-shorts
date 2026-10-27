@@ -117,6 +117,7 @@ class Scene(BaseModel):
     word_timings: Optional[List[WordTiming]] = Field(default=None)
     camera_plan: Optional[Any] = Field(default=None)
     acting_plan: Optional[Any] = Field(default=None)
+    layout_mode: Optional[str] = Field(default='a')
 
     @field_validator("dialogue_line", mode="before")
     @classmethod

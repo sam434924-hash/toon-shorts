@@ -1,0 +1,259 @@
+{
+  "video_name": "ai_agents_explainer",
+  "created_at": "2026-10-27T12:12:06Z",
+  "style": "whiteboard",
+  "characters": [
+    {
+      "name": "boy_b",
+      "pack": "boy_b",
+      "version": "1.0.0"
+    }
+  ],
+  "voice": {
+    "engine": "gemini_tts",
+    "voice_name": "Puck",
+    "model": "gemini-3.8-flash-tts"
+  },
+  "library_pieces_used": [
+    "library/backgrounds/bg_whiteboard_far_142c5936d9b26248.png",
+    "library/backgrounds/bg_whiteboard_far_7e2d2561c5ff00b5.png",
+    "library/backgrounds/bg_whiteboard_mid_0847d47bf4dd8dcc.png",
+    "library/backgrounds/bg_whiteboard_mid_d3db225a83b95f7a.png",
+    "library/backgrounds/bg_whiteboard_near_87451727253f82e2.png",
+    "library/backgrounds/bg_whiteboard_near_daad40c3feafc29f.png",
+    "library/elements/custom/custom_053f1d3aec33ef40.json",
+    "library/elements/custom/custom_0b7eb1dc95d510d7.json",
+    "library/elements/custom/custom_1fd78386bd032422.json",
+    "library/elements/custom/custom_4ba1d4889f296326.json",
+    "library/elements/custom/custom_50c1c3fc821ba530.json",
+    "library/elements/custom/custom_5e421a798337323c.json",
+    "library/elements/custom/custom_62e3562fa2c23e7e.json",
+    "library/elements/custom/custom_8059a97975b6abd7.json",
+    "library/elements/custom/custom_8c5d1bc862ed2017.json",
+    "library/elements/custom/custom_a3c9b10cb1719883.json",
+    "library/elements/custom/custom_aff3bdbaac1b3503.json",
+    "library/elements/custom/custom_b40af4c73b78b756.json",
+    "library/elements/custom/custom_b617aea57359e470.json",
+    "library/elements/custom/custom_d33fa7bcdaec5eb2.json",
+    "library/elements/custom/custom_edfb9aacef6b23d6.json",
+    "library/elements/custom/custom_f693a922d6e573a9.json",
+    "library/elements/images/img_20d1b54603a28d83.png",
+    "library/elements/images/img_cfc46e85c02793a2.png",
+    "library/sfx/sfx_bell_8916f9634d3bead0.wav",
+    "library/sfx/sfx_boing_1a844751dcfca809.wav",
+    "library/sfx/sfx_click_7ad9b1e169aa7e18.wav",
+    "library/sfx/sfx_pop_47e9f275ccb62bb6.wav",
+    "library/sfx/sfx_task_complete_bfc9c32ec6fe543f.wav",
+    "library/sfx/sfx_whistle_f385dbe00174d272.wav",
+    "library/sfx/sfx_whoosh_89645695a0cf3c58.wav"
+  ],
+  "tool_versions": {
+    "python": "3.14.4",
+    "ffmpeg": "installed",
+    "toonshorts": "1.0.0"
+  },
+  "level2_custom_visuals": [],
+  "tools_used": [
+    {
+      "category": "skills",
+      "name": "toon-shorts-directing"
+    },
+    {
+      "category": "skills",
+      "name": "animejs-animation"
+    },
+    {
+      "category": "skills",
+      "name": "toon-shorts-visual-check"
+    },
+    {
+      "category": "skills",
+      "name": "toon-shorts-style"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_053f1d3aec33ef40.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_0b7eb1dc95d510d7.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_1fd78386bd032422.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_4ba1d4889f296326.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_50c1c3fc821ba530.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_5e421a798337323c.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_62e3562fa2c23e7e.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_8059a97975b6abd7.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_8c5d1bc862ed2017.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_a3c9b10cb1719883.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_aff3bdbaac1b3503.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_b40af4c73b78b756.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_b617aea57359e470.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_d33fa7bcdaec5eb2.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_edfb9aacef6b23d6.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/custom/custom_f693a922d6e573a9.json"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/images/img_20d1b54603a28d83.png"
+    },
+    {
+      "category": "library hits",
+      "name": "library/elements/images/img_cfc46e85c02793a2.png"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 1,
+      "id": "bo_sc1_qmark",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 1,
+      "id": "bo_sc1_tasks",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 2,
+      "id": "bo_sc2_label",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 2,
+      "id": "bo_sc2_hero",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 2,
+      "id": "bo_sc2_drag",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 3,
+      "id": "bo_sc3_title",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 3,
+      "id": "bo_sc3_hero",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 3,
+      "id": "bo_sc3_tools",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 4,
+      "id": "bo_sc4_bigcard",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 4,
+      "id": "bo_sc4_hero",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 4,
+      "id": "bo_sc4_supervise",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 5,
+      "id": "bo_sc5_warn",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 5,
+      "id": "bo_sc5_gate",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 6,
+      "id": "bo_sc6_header",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 6,
+      "id": "bo_sc6_hero",
+      "level": 1,
+      "effect": "custom_svg"
+    },
+    {
+      "category": "custom visuals",
+      "scene": 6,
+      "id": "bo_sc6_quote",
+      "level": 1,
+      "effect": "custom_svg"
+    }
+  ],
+  "images": []
+}

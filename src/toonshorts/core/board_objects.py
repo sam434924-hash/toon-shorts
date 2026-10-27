@@ -267,6 +267,14 @@ def validate_board_object_schema(
         sanitized_data["alt"] = sanitize_board_text(raw_data.get("alt", ""))
         sanitized_data["highlight_region"] = raw_data.get("highlight_region") or [50, 50]
         sanitized_data["push_region"] = raw_data.get("push_region") or [50, 50]
+        if "card_bg" in raw_data:
+            sanitized_data["card_bg"] = str(raw_data["card_bg"])
+        if "width" in raw_data:
+            sanitized_data["width"] = int(raw_data["width"])
+        if "height" in raw_data:
+            sanitized_data["height"] = int(raw_data["height"])
+        if "class_name" in raw_data:
+            sanitized_data["class_name"] = str(raw_data["class_name"])
 
     elif obj_type == "custom":
         level = int(raw_data.get("level", 1))

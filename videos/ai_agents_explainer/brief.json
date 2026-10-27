@@ -1,0 +1,26 @@
+{
+  "video_name": "ai_agents_explainer",
+  "story": "A complete 90-second explainer on AI agents, showing how they transition from passive responders to autonomous goal-driven systems that plan, act, check, and adjust with proper human supervision.",
+  "format": "explanation video",
+  "style": "whiteboard",
+  "characters": [
+    "boy_b"
+  ],
+  "speaker": "boy_b",
+  "voice": "Puck",
+  "voice_engine": "gemini_tts",
+  "board_animations_use": [
+    "flow",
+    "check_cross",
+    "draw_svg",
+    "step_ladder"
+  ],
+  "board_animations_avoid": [
+    "typed_code"
+  ],
+  "hand_gestures": "on",
+  "camera": "zoom_speaker",
+  "length_seconds": 90,
+  "custom": "Clear outline and borders. Captions at the top, word-by-word. Animated vector SVG boards matching boy_b character. Real agent loop with PLAN ACT CHECK ADJUST, meeting prep workflow, locked file shield, and THINK ACT VERIFY.",
+  "created_at": "2026-10-25T17:00:00Z"
+}

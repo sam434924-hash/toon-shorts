@@ -1,0 +1,6 @@
+{
+  "level": 1,
+  "motion_preset": "wipe",
+  "label": "Final Quote Card",
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 680 110\" width=\"680\" height=\"110\"><rect x=\"10\" y=\"10\" width=\"660\" height=\"90\" rx=\"16\" fill=\"#eff6ff\" stroke=\"#2563eb\" stroke-width=\"3.5\"/><text x=\"340\" y=\"44\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"19\" fill=\"#0f172a\" text-anchor=\"middle\">&quot;Not just what AI can tell us...</text><text x=\"340\" y=\"76\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"22\" fill=\"#2563eb\" text-anchor=\"middle\">It is what we can SAFELY let it do.&quot;</text></svg>"
+}

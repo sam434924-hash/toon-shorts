@@ -1,0 +1,26 @@
+/* Auto-generated from src/toonshorts/styles/design_rules.json */
+:root {
+  /* Design System Color Tokens */
+  --color-dominant: #F7F4FF;
+  --color-secondary-deep: #3D1F7A;
+  --color-secondary-mid: #6D3FD0;
+  --color-text-dark: #1B1240;
+  --color-accent: #FFB800;
+  --color-meaning-teal: #17B8A6;
+  --color-meaning-red: #E5484D;
+  --color-meaning-purple: #6D3FD0;
+  --color-meaning-amber: #FFB800;
+
+  /* Typography Modular Scale (1.333 ratio from 48px) */
+  --font-hero: 114px;
+  --font-scene-title: 85px;
+  --font-card-title: 64px;
+  --font-body-min: 48px;
+  --font-caption: 68px;
+
+  /* Spacing and Geometry */
+  --grid-step: 24px;
+  --card-radius: 24px;
+  --card-stroke: 4px;
+  --board-top: 230px;
+}

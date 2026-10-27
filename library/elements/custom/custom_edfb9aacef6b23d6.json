@@ -1,0 +1,8 @@
+{
+  "level": 1,
+  "motion_preset": "wipe",
+  "label": "Verified Outcome Card",
+  "width": 860,
+  "height": 130,
+  "svg": "<svg viewBox=\"0 0 860 130\"><rect width=\"860\" height=\"130\" rx=\"16\" fill=\"#1B1240\" stroke=\"#FFB800\" stroke-width=\"4\"/><text x=\"40\" y=\"80\" font-size=\"64\" font-weight=\"bold\" fill=\"#FFB800\">Saved 45 Minutes</text></svg>"
+}

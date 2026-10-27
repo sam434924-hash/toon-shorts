@@ -1,0 +1,8 @@
+{
+  "level": 1,
+  "motion_preset": "wipe",
+  "label": "Manual Subtitle Card",
+  "width": 860,
+  "height": 130,
+  "svg": "<svg viewBox=\"0 0 860 130\"><rect width=\"860\" height=\"130\" rx=\"16\" fill=\"#1B1240\" stroke=\"#3D1F7A\" stroke-width=\"4\"/><text x=\"40\" y=\"80\" font-size=\"48\" font-weight=\"bold\" fill=\"#FFFFFF\">End-to-end autonomous tasks</text></svg>"
+}

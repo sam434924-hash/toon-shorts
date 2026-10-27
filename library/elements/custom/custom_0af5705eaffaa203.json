@@ -1,0 +1,6 @@
+{
+  "level": 1,
+  "motion_preset": "wipe",
+  "label": "Plan Day Question",
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 580 100\" width=\"580\" height=\"100\"><rect x=\"10\" y=\"10\" width=\"560\" height=\"80\" rx=\"20\" fill=\"#fef3c7\" stroke=\"#f59e0b\" stroke-width=\"4.5\"/><circle cx=\"60\" cy=\"50\" r=\"28\" fill=\"#f59e0b\"/><text x=\"60\" y=\"62\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"38\" fill=\"#ffffff\" text-anchor=\"middle\">?</text><text x=\"110\" y=\"58\" font-family=\"Arial, sans-serif\" font-weight=\"800\" font-size=\"28\" fill=\"#0f172a\">Plan Your Entire Day?</text></svg>"
+}

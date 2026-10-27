@@ -41,17 +41,23 @@ def test_layout_checker_passes_on_valid_split_zones_html(tmp_path: Path):
 
     bz = res["resting_measurements"]["boardZone"]
     assert bz is not None
-    # Must sit below top 15% (288 px)
-    assert bz["top"] >= 287.5
-    assert bz["bottom"] <= 810.0
+    # Whiteboard canvas container covers upper two-thirds (starts at top: 60px, bottom: 1200px)
+    assert bz["top"] >= 0.0
+    assert bz["bottom"] <= 1210.0
     assert bz["left"] >= 0.0
     assert bz["right"] <= 1080.5
+
+    # Check content visuals stay strictly below safe-zone (288px) and inside whiteboard margins
+    for v in res["resting_measurements"]["visuals"]:
+        box = v["box"]
+        assert box["top"] >= 287.5, f"Visual {v['selector']} inside safe zone: {box['top']}"
+        assert box["bottom"] <= bz["bottom"] + 1.0, f"Visual {v['selector']} exceeds board bottom: {box['bottom']}"
 
     # Check peak zoom state as well
     bz_peak = res["peak_measurements"]["boardZone"]
     assert bz_peak is not None
-    assert bz_peak["top"] >= 287.5
-    assert bz_peak["bottom"] <= 810.0
+    assert bz_peak["top"] >= 0.0
+    assert bz_peak["bottom"] <= 1210.0
 
 
 def test_layout_checker_detects_board_above_canvas_and_inside_safe_zone(tmp_path: Path):
@@ -63,7 +69,7 @@ def test_layout_checker_detects_board_above_canvas_and_inside_safe_zone(tmp_path
         enable_split_camera_zones=True,
     )
     # Inject bad top coordinate on board zone
-    corrupted_html = html.replace("top: 290px;", "top: -150px;").replace("top: 288px;", "top: -150px;")
+    corrupted_html = html.replace("top: 230px;", "top: -150px;").replace("top: 60px;", "top: -150px;").replace("top: 290px;", "top: -150px;").replace("top: 288px;", "top: -150px;")
     html_file = tmp_path / "scene_2_still.html"
     html_file.write_text(corrupted_html, encoding="utf-8")
 

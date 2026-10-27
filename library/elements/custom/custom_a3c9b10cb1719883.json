@@ -1,0 +1,8 @@
+{
+  "level": 1,
+  "motion_preset": "pop",
+  "label": "Hero Comparison Workflow",
+  "width": 860,
+  "height": 410,
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 860 410\" width=\"860\" height=\"410\"><rect x=\"10\" y=\"10\" width=\"840\" height=\"390\" rx=\"24\" fill=\"#25124D\" stroke=\"#6D3FD0\" stroke-width=\"4\"/><g><rect x=\"30\" y=\"30\" width=\"800\" height=\"160\" rx=\"20\" fill=\"#3D1F7A\" stroke=\"#6D3FD0\" stroke-width=\"3\"/><text x=\"60\" y=\"90\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"64\" fill=\"#FFFFFF\">Passive Chatbot</text><text x=\"60\" y=\"150\" font-family=\"Arial, sans-serif\" font-weight=\"bold\" font-size=\"48\" fill=\"#F7F4FF\">Waits for manual prompts</text></g><g><rect x=\"30\" y=\"210\" width=\"800\" height=\"170\" rx=\"20\" fill=\"#3D1F7A\" stroke=\"#FFB800\" stroke-width=\"4\"/><rect x=\"60\" y=\"232\" width=\"210\" height=\"46\" rx=\"12\" fill=\"#FFB800\"/><text x=\"165\" y=\"267\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"48\" fill=\"#1B1240\" text-anchor=\"middle\">Autonomous</text><text x=\"295\" y=\"270\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"64\" fill=\"#FFFFFF\">Goal-Driven Agent</text><text x=\"60\" y=\"345\" font-family=\"Arial, sans-serif\" font-weight=\"bold\" font-size=\"48\" fill=\"#F7F4FF\">Executes multi-step plans</text></g></svg>"
+}

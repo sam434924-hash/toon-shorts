@@ -1,0 +1,67 @@
+{
+  "video_name": "ai_agents_explainer",
+  "theme_name": "ai_agents_explainer_purple",
+  "background_style": "whiteboard",
+  "palette": {
+    "dominant": {
+      "name": "whiteboard_canvas",
+      "hex": "#F7F4FF",
+      "target_share": 0.60,
+      "role": "Whiteboard drawing surface and primary canvas background"
+    },
+    "secondary": {
+      "deep": {
+        "name": "deep_purple",
+        "hex": "#3D1F7A",
+        "role": "Room wall, board outer frame, title bars, card headers and primary outlines"
+      },
+      "mid": {
+        "name": "mid_purple",
+        "hex": "#6D3FD0",
+        "role": "Supporting shapes, arrows, accents and secondary containers"
+      },
+      "text": {
+        "name": "dark_purple_text",
+        "hex": "#1B1240",
+        "role": "High-contrast text on whiteboard and cards (minimum 4.5:1 WCAG)"
+      },
+      "target_share": 0.30
+    },
+    "accent": {
+      "name": "warm_amber",
+      "hex": "#FFB800",
+      "target_share": 0.10,
+      "min_share": 0.05,
+      "max_share": 0.15,
+      "max_card_fill_share": 0.10,
+      "role": "Outline, underline, or small highlight on the one key item per scene only (never full card fill)"
+    },
+    "meaning": {
+      "done_safe": {
+        "name": "teal",
+        "hex": "#17B8A6",
+        "role": "Verified, done, safe, approval state"
+      },
+      "danger_blocked": {
+        "name": "red",
+        "hex": "#E5484D",
+        "role": "Danger, blocked, warning, error loop (used only in danger scenes)"
+      },
+      "agent_ai": {
+        "name": "purple",
+        "hex": "#6D3FD0",
+        "role": "Autonomous agent, AI workflow, execution"
+      },
+      "key_item": {
+        "name": "amber",
+        "hex": "#FFB800",
+        "role": "Single key focal element highlight"
+      }
+    },
+    "rules": {
+      "max_hues_per_board": 3,
+      "color_by_meaning_only": true,
+      "min_text_contrast": 4.5
+    }
+  }
+}

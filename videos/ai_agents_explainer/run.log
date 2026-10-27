@@ -1,0 +1,85 @@
+[17:40:36] INFO [toonshorts.pipeline]: Loaded pre-authored screenplay from briefs/ai_agents_explainer_scene.json
+[17:40:36] INFO [toonshorts.pipeline]: Running critic review on screenplay...
+[17:40:50] INFO [toonshorts.plugins.llm.gemini]: Critic review successfully parsed and validated on first attempt.
+[17:40:50] WARNING [toonshorts.client]: Gemini Developer API mode does not support additionalProperties in response_schema; retrying with application/json: additionalProperties is only supported in Gemini Enterprise Agent Platform mode, , not in Gemini Developer API mode.
+[17:41:15] WARNING [toonshorts.plugins.llm.gemini]: Critic review score (3.5/10) remained below the 7.0 pass threshold after reaching the maximum re-plan limit of 2 attempts.
+[17:41:15] INFO [toonshorts.pipeline]: Critic review score: 3.5/10
+[17:41:15] WARNING [toonshorts.pipeline]: Proceeding despite low critic score (3.5/10) due to --allow-low-score flag.
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_5e421a798337323c.json - saving ONCE into library
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_b617aea57359e470.json - saving ONCE into library
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_0b7eb1dc95d510d7.json - saving ONCE into library
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_a3c9b10cb1719883.json - saving ONCE into library
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_aff3bdbaac1b3503.json - saving ONCE into library
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_8c5d1bc862ed2017.json - saving ONCE into library
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_d33fa7bcdaec5eb2.json - saving ONCE into library
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_62e3562fa2c23e7e.json - saving ONCE into library
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_f693a922d6e573a9.json - saving ONCE into library
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_b40af4c73b78b756.json - saving ONCE into library
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_edfb9aacef6b23d6.json - saving ONCE into library
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_8059a97975b6abd7.json - saving ONCE into library
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_1fd78386bd032422.json - saving ONCE into library
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_50c1c3fc821ba530.json - saving ONCE into library
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_4ba1d4889f296326.json - saving ONCE into library
+[17:41:15] INFO [toonshorts.library]: Library MISS for element custom/custom_053f1d3aec33ef40.json - saving ONCE into library
+[17:41:16] INFO [toonshorts.pipeline]: Generating voice tracks using engine 'gemini_tts' (voice: Puck)...
+[17:41:18] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 0 (key: 555322cb49e3429fb2543269d209ac56db10d8e4181d46332eb243aeb3a973b4)
+[17:41:21] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 1 (key: c1177fd3d7e446d42f3838cdf00f48d3203ea9c5af6e5b93c52c181ab4fccc80)
+[17:41:24] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 2 (key: 0f46a19f51d17d08be0208d01309493b3b16f01f6285d8d8e8bb6be23d335518)
+[17:41:28] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 3 (key: 02615aba96ca96f6be926cc0ca35a16349846cdf419a7832124f6ff6d9f88fc1)
+[17:41:31] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 4 (key: 426748c31bec8615a9a8734714e9e4fceab3eee01bd69e7cc47e828b1cd926ea)
+[17:41:34] INFO [toonshorts.plugins.voice.gemini_tts]: Gemini TTS cache HIT for scene 5 (key: 0eb1f9f4f8db51ece8599f6aa14f9ef02b05edaeec4047511a1e1b8a16cc7790)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_5e421a798337323c.json (5e421a79)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_b617aea57359e470.json (b617aea5)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_0b7eb1dc95d510d7.json (0b7eb1dc)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_a3c9b10cb1719883.json (a3c9b10c)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_aff3bdbaac1b3503.json (aff3bdba)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_8c5d1bc862ed2017.json (8c5d1bc8)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_d33fa7bcdaec5eb2.json (d33fa7bc)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_62e3562fa2c23e7e.json (62e3562f)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_f693a922d6e573a9.json (f693a922)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_b40af4c73b78b756.json (b40af4c7)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_edfb9aacef6b23d6.json (edfb9aac)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_8059a97975b6abd7.json (8059a979)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_1fd78386bd032422.json (1fd78386)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_50c1c3fc821ba530.json (50c1c3fc)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_4ba1d4889f296326.json (4ba1d488)
+[17:41:36] INFO [toonshorts.library]: Library HIT for element custom/custom_053f1d3aec33ef40.json (053f1d3a)
+[17:41:36] INFO [toonshorts.sync]: Saved word timings to C:\dev\toon-shorts\videos\.tmp-ai_agents_explainer-055cbe0a\word_timings.json
+[17:41:36] INFO [toonshorts.sync]: Updated scene manifest written to C:\dev\toon-shorts\videos\.tmp-ai_agents_explainer-055cbe0a\scene.json
+[17:41:36] INFO [toonshorts.sync]: Wrote audio-visual sync report to C:\dev\toon-shorts\videos\.tmp-ai_agents_explainer-055cbe0a\sync_report.txt
+[17:41:46] INFO [toonshorts.pipeline]: Rendered 6 scene stills: ['ai_agents_explainer_still_sc1.png', 'ai_agents_explainer_still_sc2.png', 'ai_agents_explainer_still_sc3.png', 'ai_agents_explainer_still_sc4.png', 'ai_agents_explainer_still_sc5.png', 'ai_agents_explainer_still_sc6.png']
+[17:41:46] INFO [toonshorts.pipeline]: Running automated layout and safe-zone check on all scene stills...
+[17:41:54] INFO [toonshorts.pipeline]: Automated layout check PASSED for all 6 scenes.
+[17:41:54] INFO [toonshorts.pipeline]: Running automated visual quality review on scene stills...
+[17:41:55] ERROR [toonshorts.visual_checker]: Visual review FAILED: 10 violation(s) detected across 6 scene(s).
+[17:41:55] WARNING [toonshorts.pipeline]: Visual review Round 1 FAILED (Score: 5.0). Re-rendering stills for Round 2...
+[17:42:06] ERROR [toonshorts.visual_checker]: Visual review FAILED: 10 violation(s) detected across 6 scene(s).
+[17:42:06] WARNING [toonshorts.pipeline]: Visual quality review failed, but proceeding due to --allow-low-score flag.
+[17:42:07] INFO [toonshorts.library]: Library HIT for background whiteboard far (7e2d2561)
+[17:42:07] INFO [toonshorts.library]: Library HIT for background whiteboard mid (0847d47b)
+[17:42:07] INFO [toonshorts.library]: Library HIT for background whiteboard far (7e2d2561)
+[17:42:07] INFO [toonshorts.library]: Library HIT for background whiteboard near (87451727)
+[17:42:07] INFO [toonshorts.library]: Library HIT for background whiteboard mid (0847d47b)
+[17:42:07] INFO [toonshorts.library]: Library HIT for background whiteboard near (87451727)
+[17:46:07] INFO [toonshorts.library]: Library HIT for background whiteboard far (7e2d2561)
+[17:46:07] INFO [toonshorts.library]: Library HIT for background whiteboard mid (0847d47b)
+[17:46:07] INFO [toonshorts.library]: Library HIT for background whiteboard near (87451727)
+[17:48:18] INFO [toonshorts.library]: Library HIT for background whiteboard far (7e2d2561)
+[17:48:18] INFO [toonshorts.library]: Library HIT for background whiteboard mid (0847d47b)
+[17:48:18] INFO [toonshorts.library]: Library HIT for background whiteboard near (87451727)
+[17:52:10] INFO [toonshorts.library]: Library HIT for background whiteboard far (7e2d2561)
+[17:52:10] INFO [toonshorts.library]: Library HIT for background whiteboard mid (0847d47b)
+[17:52:10] INFO [toonshorts.library]: Library HIT for background whiteboard near (87451727)
+[17:54:37] INFO [toonshorts.library]: Library HIT for background whiteboard far (7e2d2561)
+[17:54:37] INFO [toonshorts.library]: Library HIT for background whiteboard mid (0847d47b)
+[17:54:37] INFO [toonshorts.library]: Library HIT for background whiteboard near (87451727)
+[17:59:05] INFO [toonshorts.library]: Library HIT for SFX pop (47e9f275)
+[17:59:05] INFO [toonshorts.library]: Library HIT for SFX boing (1a844751)
+[17:59:05] INFO [toonshorts.library]: Library HIT for SFX whistle (f385dbe0)
+[17:59:05] INFO [toonshorts.library]: Library HIT for SFX click (7ad9b1e1)
+[17:59:05] INFO [toonshorts.library]: Library HIT for SFX whoosh (89645695)
+[17:59:05] INFO [toonshorts.library]: Library HIT for SFX task_complete (bfc9c32e)
+[17:59:05] INFO [toonshorts.library]: Library HIT for SFX bell (8916f963)
+[17:59:05] INFO [toonshorts.assembler]: Concatenating all scenes into unified video stream...
+[17:59:14] INFO [toonshorts.assembler]: Phase 5: Subtitle burn-in skipped. captions.ass preserved as sidecar only: C:\dev\toon-shorts\videos\.tmp-ai_agents_explainer-055cbe0a\captions.ass
+[17:59:14] INFO [toonshorts.assembler]: Successfully assembled video: C:\dev\toon-shorts\videos\.tmp-ai_agents_explainer-055cbe0a\ai_agents_explainer.mp4

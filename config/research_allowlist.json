@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "description": "Allowed domains for safe offline-isolated web research step",
+  "allowed_domains": [
+    "en.wikipedia.org",
+    "ai.google.dev",
+    "anthropic.com",
+    "docs.python.org"
+  ],
+  "max_pages_per_run": 5,
+  "max_kb_per_page": 20,
+  "max_notes_lines": 60,
+  "require_https": true,
+  "allow_downloads": false,
+  "allow_javascript": false
+}

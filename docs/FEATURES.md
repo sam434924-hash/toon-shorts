@@ -35,10 +35,22 @@ Comprehensive index of commands, swappable plugins, art styles, configuration, a
 - **Tests**: `tests/unit/test_acting.py`
 
 ### `check-visuals`
-- **Description**: Inspects rendered scene still frames against a 6-item quality checklist, safe zones (top 288px, bottom 1440px), WCAG contrast ratios, and outputs visual_review.md.
+- **Description**: Inspects rendered scene still frames against a 6-item quality checklist, safe zones (top 288px, bottom 1440px), pixel-level board edge clipping, WCAG contrast ratios, and outputs visual_review.md.
 - **Files**: `src/toonshorts/cli.py`, `src/toonshorts/core/visual_checker.py`, `src/toonshorts/core/pipeline.py`
 - **Config Flags / Options**: `video_name`, `--json`, `--allow-low-score`
 - **Tests**: `tests/unit/test_phase2_quality_gate.py`
+
+### `judge`
+- **Description**: Automated design system judge evaluating rendered stills against typography, board fill, character proportions, text fit, and safe-zone rules.
+- **Files**: `src/toonshorts/cli.py`, `src/toonshorts/core/design_judge.py`, `src/toonshorts/core/design_rules.py`
+- **Config Flags / Options**: `video_name`
+- **Tests**: `tests/unit/test_design_judge.py`
+
+### `research`
+- **Description**: Offline-isolated web research fetching plain text only from allowlisted HTTPS sources with size caps and timeouts.
+- **Files**: `src/toonshorts/cli.py`, `src/toonshorts/core/research.py`
+- **Config Flags / Options**: `urls`, `--output`, `--allowlist`
+- **Tests**: `tests/unit/test_research.py`
 
 ---
 

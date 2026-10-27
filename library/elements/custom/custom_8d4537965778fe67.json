@@ -1,0 +1,6 @@
+{
+  "level": 1,
+  "motion_preset": "wipe",
+  "label": "Guardrails Guard Card",
+  "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 860 140\" width=\"860\" height=\"140\"><rect x=\"10\" y=\"10\" width=\"840\" height=\"120\" rx=\"24\" fill=\"#3D1F7A\" stroke=\"#6D3FD0\" stroke-width=\"4\"/><text x=\"40\" y=\"60\" font-family=\"Arial, sans-serif\" font-weight=\"900\" font-size=\"64\" fill=\"#FFFFFF\">ALWAYS KEEP HUMAN IN THE LOOP</text><text x=\"40\" y=\"104\" font-family=\"Arial, sans-serif\" font-weight=\"bold\" font-size=\"48\" fill=\"#F7F4FF\">Agents need supervision, not blind trust</text></svg>"
+}
